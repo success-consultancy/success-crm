@@ -16,8 +16,7 @@ const BrandLogoNav: React.FC<IBrandLogoNavProps> = (props) => {
     <Link
       href={ROUTES.DASHBOARD}
       className={cn([
-        "relative duration-200 flex items-center gap-px",
-        !props.isCollapsed ? " pl-5" : "pl-2.5",
+        "relative duration-200 flex items-center gap-px pl-2.5",
         props.className,
       ])}
     >

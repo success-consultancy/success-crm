@@ -9,6 +9,7 @@ export const api = axios.create({
     baseURL,
     headers: {
         Accept: 'application/json',
+        "Content-Type": 'application/json'
     },
 });
 
@@ -19,7 +20,7 @@ api.interceptors.request.use(
     (config) => {
         const token = getAccessToken();
         if (token) {
-            config.headers['Authorization'] = 'Bearer ' + token;
+            config.headers['Authorization'] = token;
         }
 
         return config;

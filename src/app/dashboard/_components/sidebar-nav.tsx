@@ -79,7 +79,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
 
           <ClipFromLeftAnimation
             show={!props.isCollapsed}
-            className={`text-b1 overflow-hidden truncate line-clamp-1 text-content-subtitle ${
+            className={`text-b1-b overflow-hidden truncate line-clamp-1 text-content-subtitle ${
               isActive && "text-accent-700"
             }`}
           >

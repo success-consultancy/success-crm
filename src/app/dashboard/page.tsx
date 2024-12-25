@@ -1,9 +1,9 @@
 import React from "react";
+import Dashboard from "./_components/dashboard";
 
-type Props = {};
-
-const page = (props: Props) => {
-  return <div>page</div>;
+const page = () => {
+  return <Dashboard />;
 };
 
 export default page;
+
