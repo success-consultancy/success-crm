@@ -8,6 +8,12 @@ import { SidebarNavItem, SidebarNavType } from "@/types/sidebar-type";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { ClipFromLeftAnimation } from "@/components/common/clip-from-left-animation";
+import Tooltip from "@/components/common/tooltip";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 type SidebarNavProps = {
   className?: string;
@@ -55,14 +61,6 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
         className={cn(["px-2 2xl:2.5", props.className])}
         tabIndex={0}
       >
-        {/* <NavItemTooltip
-          disabled={
-            !!props.subNavItems ||
-            props.title === "Notifications" ||
-            !props.isCollapsed
-          }
-          tip={props.title}
-        > */}
         <span
           className={cn([
             "transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer",
@@ -75,12 +73,47 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
             "hover:bg-accent-50",
           ])}
         >
-          <Icon className="w-5.5 h-5.5 2xl:w-6.5 2xl:h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+          <Popover>
+            <PopoverTrigger>
+              <Tooltip
+                trigger={
+                  <Icon className="w-5.5 h-5.5 2xl:w-6.5 2xl:h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+                }
+                side="right"
+                sideOffset={20}
+                hidden={!props.isCollapsed}
+              >
+                {props.title}
+              </Tooltip>
+            </PopoverTrigger>
+            <PopoverContent
+              className="w-[12.5rem] bg-white-100 p-2"
+              hidden={!props.subNav}
+              side="right"
+              align="start"
+              sideOffset={10}
+            >
+              <div className="flex flex-col">
+                {props.subNav?.map((nav) => (
+                  <Link
+                    href={nav.href as string}
+                    className={cn([
+                      "flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 ",
+                      props.currentPathname === nav.href &&
+                        "text-accent-700 bg-accent-50  ",
+                    ])}
+                  >
+                    {nav.title}
+                  </Link>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
 
           <ClipFromLeftAnimation
             show={!props.isCollapsed}
             className={`text-b1-b overflow-hidden truncate line-clamp-1 text-content-subtitle ${
-              isActive && "text-accent-700"
+              isActive && "text-accent-700 "
             }`}
           >
             {props.title}
