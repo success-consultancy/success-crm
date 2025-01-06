@@ -62,33 +62,36 @@ const ColumnHeader = (props: Props) => {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <span>{props.title}</span>
-      <TooltipProvider>
-        <Tooltip>
-          <TooltipTrigger>
-            {(hovered || !!sortingState) && (
-              <ArrowUp
-                className={cn([
-                  "h-4 w-4",
-                  sortingState === "desc" && "rotate-180",
-                ])}
-                strokeWidth={2}
-                onClick={() => handleArrowClick()}
-              />
-            )}
-          </TooltipTrigger>
-          <TooltipContent
-            side="bottom"
-            sideOffset={20}
-            className="text-b2-b bg-white-100"
-          >
-            <span>
-              Sort {sortingState === "asc" ? "descending" : "ascending"} by{" "}
-              {props.title}
-            </span>
-          </TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
+      <div className="relative">
+        {props.title}
+
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger className="absolute -right-5  bottom-[50%] translate-y-[40%]">
+              {(hovered || !!sortingState) && (
+                <ArrowUp
+                  className={cn([
+                    "h-4 w-4",
+                    sortingState === "desc" && "rotate-180",
+                  ])}
+                  strokeWidth={2}
+                  onClick={() => handleArrowClick()}
+                />
+              )}
+            </TooltipTrigger>
+            <TooltipContent
+              side="bottom"
+              sideOffset={20}
+              className="text-b2-b bg-white-100"
+            >
+              <span>
+                Sort {sortingState === "asc" ? "descending" : "ascending"} by{" "}
+                {props.title}
+              </span>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
+      </div>
     </div>
   );
 };

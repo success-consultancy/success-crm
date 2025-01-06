@@ -14,7 +14,10 @@ const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
-  const { data, isLoading } = useGetLeads(filterParams);
+  const { data, isLoading } = useGetLeads({
+    ...filterParams,
+    limit: filterParams.limit || "25",
+  });
 
   return (
     <Container className="flex flex-col py-10 gap-5">
@@ -25,7 +28,11 @@ const Leads = () => {
       <TableComponent
         data={data?.rows as ILead[]}
         columns={LeadColumns}
+        skeletonColumns={LeadColumns}
         isLoading={isLoading}
+        offset={filterParams.limit || 25}
+        totalItems={data?.count}
+        currentPage={filterParams.page}
       />
     </Container>
   );

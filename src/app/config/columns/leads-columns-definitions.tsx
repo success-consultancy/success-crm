@@ -1,6 +1,7 @@
 import ColumnHeader from "@/components/common/column-header";
 import { useTableContext } from "@/components/providers/table-context-provider";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Popover,
   PopoverContent,
@@ -9,9 +10,41 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { ILead, LeadStatusTypes } from "@/types/response-types/leads-response";
 import { ColumnDef } from "@tanstack/react-table";
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle } from "lucide-react";
+import {
+  Edit,
+  EllipsisVertical,
+  Eye,
+  Mail,
+  MessageCircle,
+  Minus,
+} from "lucide-react";
 
 export const LeadColumns: ColumnDef<ILead>[] = [
+  {
+    id: "select",
+    header: ({ table }) => (
+      <Checkbox
+        checked={
+          table.getIsAllPageRowsSelected() ||
+          (table.getIsSomePageRowsSelected() && "indeterminate")
+        }
+        onCheckedChange={(value: boolean) => {
+          if (table.getIsSomePageRowsSelected()) {
+            table.toggleAllPageRowsSelected(false);
+          } else table.toggleAllPageRowsSelected(!!value);
+        }}
+        aria-label="Select all"
+        icon={table.getIsSomePageRowsSelected() ? Minus : undefined}
+      />
+    ),
+    cell: ({ row, table }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    ),
+  },
   {
     id: "lead-id",
     header: () => <ColumnHeader title="ID" keyParam="id" />,
@@ -24,7 +57,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
   },
   {
     id: "lead-name",
-    header: () => <ColumnHeader title="FULL NAME" keyParam="first_name" />,
+    header: () => <ColumnHeader title="FULL NAME" keyParam="firstName" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;

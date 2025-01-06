@@ -69,15 +69,15 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
             isActive
               ? "bg-accent-50 after:scale-x-100 text-accent-700"
               : "after:scale-x-0",
-            props.isCollapsed && "w-11  2xl:w-12",
+            props.isCollapsed && "w-11 2xl:w-12",
             "hover:bg-accent-50",
           ])}
         >
           <Popover>
-            <PopoverTrigger>
+            <PopoverTrigger asChild>
               <Tooltip
                 trigger={
-                  <Icon className="w-5.5 h-5.5 2xl:w-6.5 2xl:h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+                  <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
                 }
                 side="right"
                 sideOffset={20}
@@ -94,9 +94,10 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
               sideOffset={10}
             >
               <div className="flex flex-col">
-                {props.subNav?.map((nav) => (
+                {props.subNav?.map((nav, idx) => (
                   <Link
                     href={nav.href as string}
+                    key={nav.title + idx}
                     className={cn([
                       "flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 ",
                       props.currentPathname === nav.href &&
@@ -147,15 +148,6 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
           subNavItems={props.subNav}
         />
       )}
-
-      {/* divider */}
-      {/* {props.hasDivider && (
-        <Separator
-          orientation="horizontal"
-          className="my-0.5 w-[90%] mx-auto"
-          dark
-        />
-      )} */}
     </>
   );
 };
