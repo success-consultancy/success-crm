@@ -2,7 +2,7 @@ import { useToast } from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { saveAccessToken } from "@/lib/utils/auth-token";
 import { LoginSchemaType } from "@/schemas/auth/login-schema";
-import { ILoginResponse } from "@/types/user";
+import { ILoginResponse } from "@/types/user-type";
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 

@@ -1,14 +1,14 @@
 "use client";
 
 import React from "react";
-import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
+import { Plus } from "lucide-react";
+import Button from "@/components/common/button";
 import Container from "@/components/common/container";
 import TableComponent from "@/components/common/table";
 import { ILead } from "@/types/response-types/leads-response";
+import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
 import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
 import useSearchParams from "@/hooks/use-search-params";
-import Button from "@/components/common/button";
-import { Plus } from "lucide-react";
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();

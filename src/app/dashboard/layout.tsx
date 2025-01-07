@@ -1,4 +1,4 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, Suspense } from "react";
 import DashboardSidebar from "./_components/dashboard-sidebar";
 
 type Props = {
@@ -11,7 +11,7 @@ const layout = (props: Props) => {
       <DashboardSidebar />
       <div className="flex flex-col grow overflow-hidden">
         <div className="grow bg-bg-light-grey overflow-y-auto flex flex-col">
-          {props.children}
+          <Suspense>{props.children}</Suspense>
         </div>
       </div>
     </div>
