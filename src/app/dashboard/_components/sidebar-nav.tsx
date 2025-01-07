@@ -1,4 +1,5 @@
 "use client";
+
 import * as React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -75,16 +76,20 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
         >
           <Popover>
             <PopoverTrigger asChild>
-              <Tooltip
-                trigger={
-                  <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
-                }
-                side="right"
-                sideOffset={20}
-                hidden={!props.isCollapsed}
-              >
-                {props.title}
-              </Tooltip>
+              {!props.subNav ? (
+                <Tooltip
+                  trigger={
+                    <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+                  }
+                  side="right"
+                  sideOffset={20}
+                  hidden={!props.isCollapsed}
+                >
+                  {props.title}
+                </Tooltip>
+              ) : (
+                <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+              )}
             </PopoverTrigger>
             <PopoverContent
               className="w-[12.5rem] bg-white-100 p-2"
