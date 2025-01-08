@@ -26,6 +26,7 @@ import {
 } from "../ui/select";
 import useSearchParams from "@/hooks/use-search-params";
 import { TableCell, TableRow } from "../ui/table";
+import TableSearchInput from "./table-search";
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -53,6 +54,7 @@ interface Props<TData, TValue> {
   offset?: number | string;
   totalItems?: number;
   skeletonColumns?: ColumnDef<TData, TValue>[];
+  searchKey?: string;
 }
 
 const TableComponent = <TData, TValue>({
@@ -66,6 +68,7 @@ const TableComponent = <TData, TValue>({
   offset,
   totalItems,
   skeletonColumns,
+  searchKey,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -118,7 +121,12 @@ const TableComponent = <TData, TValue>({
           className,
         ])}
       >
-        <div className="flex w-full items-center justify-end pb-5 gap-5">
+        <div className="flex w-full items-center justify-between pb-5 gap-5">
+          <TableSearchInput
+            searchParamField={searchKey as string}
+            className="max-w-[18rem]"
+            placeholder={`Search by ${searchKey}...`}
+          />
           <Pagination
             totalItems={totalItems || 0}
             offset={parseInt(offset?.toString() as string)}

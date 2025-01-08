@@ -1,10 +1,10 @@
-import { useToast } from "@/hooks/use-toast";
+import axios from "axios";
 import { api } from "@/lib/api";
+import { useToast } from "@/hooks/use-toast";
 import { saveAccessToken } from "@/lib/utils/auth-token";
 import { LoginSchemaType } from "@/schemas/auth/login-schema";
 import { ILoginResponse } from "@/types/user-type";
 import { useMutation } from "@tanstack/react-query";
-import axios from "axios";
 
 const loginUser = async (payload: LoginSchemaType) => {
     const res = await api.post('/auth/login', payload);

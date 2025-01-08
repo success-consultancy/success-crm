@@ -7,10 +7,12 @@ import QueryString from "qs";
 
 interface LeadsFilterParams extends IPagination {
     order?: string,
-    order_by?: string
+    order_by?: string,
+    q_field?: string,
+    q?: string
 }
 
-export const LEADS_FILTER_PARAMS: Array<keyof LeadsFilterParams> = [...PAGINATION_PARAMS, 'order', 'order_by']
+export const LEADS_FILTER_PARAMS: Array<keyof LeadsFilterParams> = [...PAGINATION_PARAMS, 'order', 'order_by', 'q_field', 'q']
 
 const getLeads = async (params: LeadsFilterParams) => {
     const res = await api.get('/lead?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));

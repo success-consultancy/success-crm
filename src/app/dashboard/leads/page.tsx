@@ -33,6 +33,7 @@ const Leads = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
+        searchKey="email"
       />
     </Container>
   );
