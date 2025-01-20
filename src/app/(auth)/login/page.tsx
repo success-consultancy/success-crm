@@ -16,9 +16,11 @@ import { loginSchema, LoginSchemaType } from "@/schemas/auth/login-schema";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/app/config/routes";
+import useAuthStore from "@/store/auth-store";
 
 const Login = () => {
   const router = useRouter();
+  const { setProfile } = useAuthStore();
 
   const form = useForm<LoginSchemaType>({
     resolver: zodResolver(loginSchema),
@@ -37,7 +39,8 @@ const Login = () => {
 
   const handleLogin = (values: LoginSchemaType) => {
     loginUser.mutate(values, {
-      onSuccess: () => {
+      onSuccess: (res) => {
+        setProfile(res.user);
         router.push(ROUTES.DASHBOARD);
       },
     });

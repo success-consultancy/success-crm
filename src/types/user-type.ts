@@ -1,10 +1,10 @@
 export interface ILoginResponse {
     token: string;
-    user: User;
+    user: IUser;
     expiry: number;
 }
 
-interface User {
+interface IUser {
     id: number;
     profileUrl: null;
     firstName: string;

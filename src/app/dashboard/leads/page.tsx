@@ -9,6 +9,7 @@ import { ILead } from "@/types/response-types/leads-response";
 import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
 import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
 import useSearchParams from "@/hooks/use-search-params";
+import AddEditLeadDialog from "./_components/add-edit-lead-dialog";
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
@@ -23,7 +24,9 @@ const Leads = () => {
     <Container className="flex flex-col py-10 gap-5">
       <div className="w-full flex items-center justify-between">
         <h3 className="text-h3 text-content-heading">Leads</h3>
-        <Button LeftIcon={Plus}>Add Lead</Button>
+        <AddEditLeadDialog
+          trigger={<Button LeftIcon={Plus}>Add Lead</Button>}
+        />
       </div>
       <TableComponent
         data={data?.rows as ILead[]}
