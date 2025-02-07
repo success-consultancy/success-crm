@@ -66,9 +66,9 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
           className={cn([
             "transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer",
             "py-[0.4375rem] px-2.5",
-            "after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-accent-600",
+            "after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary",
             isActive
-              ? "bg-accent-50 after:scale-x-100 text-accent-700"
+              ? "bg-primary-faded after:scale-x-100 text-primary"
               : "after:scale-x-0",
             props.isCollapsed && "w-11 2xl:w-12",
             "hover:bg-accent-50",
@@ -106,7 +106,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
                     className={cn([
                       "flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 ",
                       props.currentPathname === nav.href &&
-                        "text-accent-700 bg-accent-50  ",
+                        "text-primary bg-primary-faded  ",
                     ])}
                   >
                     {nav.title}
@@ -199,10 +199,10 @@ const SubNavigations: React.FC<SubNavigationsProps> = (props) => {
                   prefetch={false}
                   className={cn([
                     i === 0 ? "mt-0" : "mt-1",
-                    "block relative text-b1 px-2 py-1.5 ms-3 rounded hover:bg-accent-50",
-                    "after:absolute after:top-1/2 after:left-0 after:bg-accent-600 after:rounded-lg after:w-0.5 after:translate-y-[-50%] after:h-[70%]",
+                    "block relative text-b1 px-2 py-1.5 ms-3 rounded hover:bg-primary-faded",
+                    "after:absolute after:top-1/2 after:left-0 after:bg-primary after:rounded-lg after:w-0.5 after:translate-y-[-50%] after:h-[70%]",
                     props.currentPathname === nav.href
-                      ? "after:scale-y-100 bg-accent-50 text-accent-700"
+                      ? "after:scale-y-100 bg-primary-faded text-accent-700"
                       : "after:scale-y-0",
                   ])}
                 >

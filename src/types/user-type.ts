@@ -4,7 +4,7 @@ export interface ILoginResponse {
     expiry: number;
 }
 
-interface IUser {
+export interface IUser {
     id: number;
     profileUrl: null;
     firstName: string;

@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
 
 import {
   ColumnDef,
@@ -27,6 +27,7 @@ import {
 import useSearchParams from "@/hooks/use-search-params";
 import { TableCell, TableRow } from "../ui/table";
 import TableSearchInput from "./table-search";
+import { Separator } from "../ui/separator";
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -55,6 +56,7 @@ interface Props<TData, TValue> {
   totalItems?: number;
   skeletonColumns?: ColumnDef<TData, TValue>[];
   searchKey?: string;
+  topRightSection?: ReactNode;
 }
 
 const TableComponent = <TData, TValue>({
@@ -69,6 +71,7 @@ const TableComponent = <TData, TValue>({
   totalItems,
   skeletonColumns,
   searchKey,
+  topRightSection,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -117,7 +120,7 @@ const TableComponent = <TData, TValue>({
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div
         className={cn([
-          "p-7 bg-white-100 min-w-[1174px] rounded-3xl border border-stroke-divider",
+          "p-7 bg-white-100 min-w-[1174px] rounded-xl border border-stroke-divider",
           className,
         ])}
       >
@@ -127,14 +130,9 @@ const TableComponent = <TData, TValue>({
             className="max-w-[18rem]"
             placeholder={`Search by ${searchKey}...`}
           />
-          <Pagination
-            totalItems={totalItems || 0}
-            offset={parseInt(offset?.toString() as string)}
-            // since tanstack table uses 0 index for 1st page, we need to add 1 to the current page
-            currentPage={+_currentPage}
-            onNextClick={paginationMethods.goToNextPage}
-            onPreviousClick={paginationMethods.gotToPrevPage}
-          />
+
+          {topRightSection && <Separator orientation="vertical" />}
+          {topRightSection}
         </div>
         <table
           className="w-full caption-bottom !border-none  "
@@ -144,7 +142,7 @@ const TableComponent = <TData, TValue>({
             {table.getHeaderGroups().map((headerGroup) => (
               <tr
                 className={cn([
-                  "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-stroke-divider bg-white-100 sticky top-0 z-10",
+                  "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-stroke-divider bg-white-100 ",
                   "*:text-[.875rem] *:px-4 *:py-3.5 *:text-content-placeholder *:uppercase *:align-middle",
                   "first:*:pl-2 last:*:pr-2 px-4 py-3",
                   "*:text-left",

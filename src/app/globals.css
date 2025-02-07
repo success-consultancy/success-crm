@@ -33,12 +33,9 @@
     --accent-red: #d4145a;
     --accent-green: #22b573;
 
-    --accent-50: #f4f4f5;
-    --accent-100: #bde5f6;
-    --accent-600: #d0163f;
-    --accent-700: #e11d48;
-    --accent-800: #1f80aa;
-    --accent-900: #0e3c4f;
+    --primary: #007acc;
+    --primary-hovered: #006eb8;
+    --primary-faded: #dcf1ff;
 
     /* ? WARNING COLOR ACCENTS */
     --state-warning-base: #fdc854;
@@ -103,42 +100,9 @@
     --button-normal-800: #e11d48;
 
     /* ? STROKE COLORS */
-    --stroke-default: #d9e2e8;
+    --stroke-default: #e5e7eb;
     --stroke-focus: #272727;
     --stroke-divider: #dfe3e599;
-
-    /* ? ICON COLORS */
-    --icon-default: #3e3d4b;
-    --icon-disabled: #a3a3a9;
-
-    /* ? SCRIM COLORS */
-    --scrim-overlay: #27272729;
-
-    /* ----- time picker variables --- */
-    /* ? main wrapper */
-    --main-box-shadow: none;
-    --main-bg: none;
-    --top-text-color: var(--text-body);
-    --top-colon-color: var(--text-body);
-    --top-selected-color: var(--accent-600);
-    --top-meridiem-color: var(--text-body);
-
-    /* ? clock */
-    --clock-wrapper-bg: none;
-    --clock-bg: #f4f4f4f4;
-
-    /* ?clock hand */
-    --hand-line-color: var(--accent-600);
-    --hand-circle-center: var(--accent-600);
-    --hand-circle-outer: var(--accent-600);
-    --hand-minute-circle: var(--white-100);
-
-    /*? numbers */
-    --numbers-text-color: var(--text-body);
-    --meridiem-bg-color: #f4f4f4f4;
-    --meridiem-text-color: var(--text-body);
-    --meridiem-selected-bg-color: var(--accent-600);
-    --meridiem-selected-text-color: var(--white-100);
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -169,7 +133,7 @@
 
   input[type="checkbox"],
   input[type="radio"] {
-    @apply accent-accent-600 bg-transparent border-2 border-stroke rounded-full;
+    @apply accent-primary bg-transparent border-2 border-stroke rounded-full;
     appearance: none;
     background-clip: content-box;
   }
@@ -177,7 +141,7 @@
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
     padding: calc(0.5%);
-    @apply border-accent-600 bg-accent-600;
+    @apply border-primary bg-primary;
   }
 
   body {

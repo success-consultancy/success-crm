@@ -9,7 +9,10 @@ import { ILead } from "@/types/response-types/leads-response";
 import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
 import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
 import useSearchParams from "@/hooks/use-search-params";
-import AddEditLeadDialog from "./_components/add-edit-lead-dialog";
+import { ButtonLink } from "@/components/common/button-link";
+import { ROUTES } from "@/app/config/routes";
+import Portal from "@/components/common/portal";
+import { PortalIds } from "@/app/config/portal";
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
@@ -21,13 +24,10 @@ const Leads = () => {
   });
 
   return (
-    <Container className="flex flex-col py-10 gap-5">
-      <div className="w-full flex items-center justify-between">
-        <h3 className="text-h3 text-content-heading">Leads</h3>
-        <AddEditLeadDialog
-          trigger={<Button LeftIcon={Plus}>Add Lead</Button>}
-        />
-      </div>
+    <Container className="flex flex-col py-4">
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
+      </Portal>
       <TableComponent
         data={data?.rows as ILead[]}
         columns={LeadColumns}
@@ -37,6 +37,11 @@ const Leads = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        topRightSection={
+          <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
+            Add Lead
+          </ButtonLink>
+        }
       />
     </Container>
   );

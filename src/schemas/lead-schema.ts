@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 const leadFormSchema = z.object({
-    emailAddress: z
+    email: z
         .string()
         .email({ message: "Invalid email address" }),
-    phoneNumber: z
+    phone: z
         .string()
         .min(10, { message: "Phone number must be at least 10 characters" }),
     firstName: z

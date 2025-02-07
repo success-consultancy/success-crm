@@ -14,5 +14,7 @@ export const ROUTES = {
     VISA: '/dashboard/visa',
     TRIBUNAL_REVIEW: '/dashboard/tribunal-review',
     AGENCY_AGREEMENT: '/dashboard/agency-agreement',
-    UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements'
+    UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements',
+
+    ADD_LEAD: '/dashboard/leads/add-lead'
 };

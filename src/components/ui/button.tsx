@@ -6,12 +6,12 @@ import { cn } from "@/lib/cn";
 import { LoaderCircle } from "lucide-react";
 
 const buttonVariants = cva(
-  "inline-flex relative shrink-0 items-center justify-center whitespace-nowrap rounded-full ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex relative shrink-0 items-center justify-center whitespace-nowrap rounded-[.375rem] ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {
         primary:
-          "bg-button-600 text-white-100 hover:bg-button-700 active:bg-button-800",
+          "bg-primary text-white-100 hover:bg-primary-hovered active:bg-hovered",
         destructive:
           "bg-state-error-base text-white-100 hover:bg-state-error-dark active:bg-button-800",
         destructiveHover:

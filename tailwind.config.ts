@@ -60,8 +60,9 @@ export default {
 				background: 'hsl(var(--background))',
 				foreground: 'hsl(var(--foreground))',
 				primary: {
-					DEFAULT: 'hsl(var(--primary))',
-					foreground: 'hsl(var(--primary-foreground))',
+					DEFAULT: 'var(--primary)',
+					hovered: 'var(--primary-hovered)',
+					faded: 'var(--primary-faded)'
 				},
 				secondary: {
 					DEFAULT: 'hsl(var(--secondary))',
@@ -75,36 +76,7 @@ export default {
 					DEFAULT: 'hsl(var(--muted))',
 					foreground: 'hsl(var(--muted-foreground))',
 				},
-				// ? Accents shades
-				accent: {
-					DEFAULT: 'hsl(var(--accent))',
-					foreground: 'hsl(var(--accent-foreground))',
 
-					purple: 'var(--accent-purple)',
-					red: 'var(--accent-red)',
-					green: 'var(--accent-green)',
-
-					friendship: 'var(--accent-friendship)',
-					spiritual: 'var(--accent-spiritual)',
-					study: 'var(--accent-study)',
-					baptismal: 'var(--accent-baptismal)',
-					mentorInTraining: 'var(--accent-mentor-in-training)',
-
-					50: 'var(--accent-50)',
-					100: 'var(--accent-100)',
-					600: 'var(--accent-600)',
-					700: 'var(--accent-700)',
-					800: 'var(--accent-800)',
-					900: 'var(--accent-900)',
-					popover: {
-						DEFAULT: 'hsl(var(--popover))',
-						foreground: 'hsl(var(--popover-foreground))',
-					},
-					card: {
-						DEFAULT: 'hsl(var(--card))',
-						foreground: 'hsl(var(--card-foreground))',
-					},
-				},
 				//? text colors
 				content: {
 					heading: 'var(--text-heading)',
