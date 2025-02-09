@@ -210,9 +210,9 @@ export default {
 						lineHeight: '1.4',
 						fontWeight: '500',
 					},
-				], //20px
+				], //18px
 				h6: [
-					'1.063rem',
+					'1.125rem',
 					{
 						lineHeight: '1.4',
 						fontWeight: '500',

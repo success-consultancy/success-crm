@@ -92,14 +92,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn([
-              "text-b1 text-content-subtitle",
+              "text-b3-b font-semibold",
               props.disabled && "text-content-disabled",
               classNames?.label,
             ])}
           >
             {label}{" "}
             {optionalText && (
-              <span className="text-content-placeholder">(Optional)</span>
+              <span className="text-content-placeholder font-normal">
+                (Optional)
+              </span>
             )}
           </label>
         )}

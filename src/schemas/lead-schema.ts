@@ -34,6 +34,7 @@ const leadFormSchema = z.object({
         .min(1, { message: "Service Type is required" }),
     location: z.string().optional(),
     source: z.string().optional(),
+    leadGenerator: z.string().optional(),
     assignedTo: z.string().optional(),
     status: z
         .string()

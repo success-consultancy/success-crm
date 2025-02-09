@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import Providers from "@/components/providers/query-provider";
+import "react-datepicker/dist/react-datepicker.css";
 
 const inter = Inter({
   variable: "--font-inter-sans",
