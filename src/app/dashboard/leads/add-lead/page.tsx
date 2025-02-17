@@ -4,13 +4,10 @@ import Container from "@/components/common/container";
 import { Form, FormField } from "@/components/ui/form";
 import leadFormSchema, { LeadSchemaType } from "@/schemas/lead-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 import Portal from "@/components/common/portal";
 import { PortalIds } from "@/app/config/portal";
-import { ButtonLink } from "@/components/common/button-link";
-import { ROUTES } from "@/app/config/routes";
-import { ArrowLeft } from "lucide-react";
 import Input from "@/components/common/input";
 import { DatePicker } from "@/components/ui/date-picker";
 import { Label } from "@/components/ui/label";
@@ -22,6 +19,10 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import TinyEditor from "@/components/common/text-editor";
+import { LeadsFormSteps } from "@/app/config/leads-form-steps";
+import PersonalDetailsStep from "./_components/personal-details-fields";
+import Button from "@/components/common/button";
+import FormSteps from "@/components/common/form-steps";
 
 type Props = {};
 
@@ -43,116 +44,31 @@ const AddLeadForm = () => {
     formState: { errors },
   } = form;
 
+  const [currentStep, setCurrentStep] = useState(
+    LeadsFormSteps.PersonalDetails
+  );
+
   return (
     <Form {...form}>
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
       </Portal>
+      <FormSteps
+        currentStep={currentStep}
+        formSteps={Object.values(LeadsFormSteps)}
+      />
       <div className="w-full bg-white-100 rounded-2xl flex flex-col gap-6 pb-5">
         <div className=" py-3 border-b border-b-stroke-divider flex items-center gap-2 px-6">
-          <div className="h-10 w-10 flex items-center justify-center">
-            <ButtonLink href={ROUTES.LEADS} variant={"ghost"} className="p-0">
-              <ArrowLeft className="h-5 w-5" />
-            </ButtonLink>
-          </div>
           <span className="text-h5 font-bold text-content-heading">
-            New Lead
+            {currentStep}
           </span>
         </div>
-
-        <form action="" className="flex flex-col gap-5 px-6">
-          <div className="flex items-center w-full gap-5">
-            <FormField
-              control={control}
-              name="firstName"
-              render={({ field }) => (
-                <Input
-                  label={"First Name*"}
-                  {...field}
-                  error={errors.firstName?.message}
-                />
-              )}
-            />
-            <FormField
-              control={control}
-              name="middleName"
-              render={({ field }) => (
-                <Input
-                  label={"Middle Name"}
-                  {...field}
-                  error={errors.middleName?.message}
-                  optionalText
-                />
-              )}
-            />
-            <FormField
-              control={control}
-              name="lastName"
-              render={({ field }) => (
-                <Input
-                  label={"Last Name*"}
-                  {...field}
-                  error={errors.lastName?.message}
-                />
-              )}
-            />
-          </div>
-          <div className="flex items-center gap-5">
-            <FormField
-              control={control}
-              name="email"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  label="Email*"
-                  error={errors.email?.message}
-                />
-              )}
-            />
-            <FormField
-              control={control}
-              name="phone"
-              render={({ field }) => (
-                <Input
-                  {...field}
-                  label="Phone*"
-                  error={errors.phone?.message}
-                />
-              )}
-            />
-          </div>
-          <div className="flex items-center gap-5 ">
-            <FormField
-              control={control}
-              name="dateOfBirth"
-              render={({ field }) => (
-                <div className=" flex flex-col gap-2 flex-1">
-                  <Label className="text-b3-b font-semibold">Birth Date</Label>
-                  <DatePicker
-                    selected={field.value}
-                    onSelect={(date) => {
-                      field.onChange(date);
-                    }}
-                  />
-                </div>
-              )}
-            />
-            <FormField
-              control={control}
-              name="address"
-              render={({ field }) => (
-                <Input
-                  label={"Address"}
-                  className="flex-1"
-                  {...field}
-                  error={errors.address?.message}
-                  optionalText
-                />
-              )}
-            />
-          </div>
-
-          <div className="flex items-center gap-5">
+        <FormProvider {...form}>
+          <form action="" className="flex flex-col gap-5 px-6">
+            {currentStep === LeadsFormSteps.PersonalDetails && (
+              <PersonalDetailsStep />
+            )}
+            {/* <div className="flex items-center gap-5">
             <FormField
               control={control}
               name="country"
@@ -220,50 +136,6 @@ const AddLeadForm = () => {
             />
           </div>
 
-          <div className="flex items-center gap-5">
-            <FormField
-              control={control}
-              name="occupation"
-              render={({ field }) => (
-                <div className=" flex flex-col gap-1 flex-1">
-                  <Label className="text-b3-b font-semibold">Occupation</Label>
-
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="-Select-" className="" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            />
-            <FormField
-              control={control}
-              name="qualification"
-              render={({ field }) => (
-                <div className=" flex flex-col gap-1 flex-1">
-                  <Label className="text-b3-b font-semibold">
-                    Qualification
-                  </Label>
-
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger className="">
-                      <SelectValue placeholder="-Select-" className="" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="light">Light</SelectItem>
-                      <SelectItem value="dark">Dark</SelectItem>
-                      <SelectItem value="system">System</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              )}
-            />
-          </div>
           <div className="flex items-center gap-5">
             <FormField
               control={control}
@@ -424,8 +296,13 @@ const AddLeadForm = () => {
           </div>
           <div className="w-full" suppressHydrationWarning>
             <TinyEditor />
-          </div>
-        </form>
+          </div> */}
+            <div className="flex items-center self-end gap-3">
+              <Button variant={"secondary"}>Cancel</Button>
+              <Button>Next</Button>
+            </div>
+          </form>
+        </FormProvider>
       </div>
     </Form>
   );

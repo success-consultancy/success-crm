@@ -1,22 +1,27 @@
 import React from "react";
-import { cn } from "@/lib/cn";
 import Input from "@/components/common/input";
 import { FormField } from "@/components/ui/form";
 import { LeadSchemaType } from "@/schemas/lead-schema";
-import { Control, FieldErrors } from "react-hook-form";
-import DatePicker from "@/components/common/date-picker";
-import FormFieldGroup from "@/components/common/form-field-group";
+import { useFormContext } from "react-hook-form";
 
-type Props = {
-  control: Control<LeadSchemaType>;
-  errors: FieldErrors<LeadSchemaType>;
-  className?: string;
-};
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { DatePicker } from "@/components/ui/date-picker";
 
-const PersonalDetailsFields = ({ control, errors, className }: Props) => {
+const PersonalDetailsStep = () => {
+  const {
+    control,
+    formState: { errors },
+  } = useFormContext<LeadSchemaType>();
   return (
-    <FormFieldGroup title="Personal Details" className={cn(["", className])}>
-      <div className="flex items-center gap-5">
+    <>
+      <div className="flex items-center w-full gap-5">
         <FormField
           control={control}
           name="firstName"
@@ -36,6 +41,7 @@ const PersonalDetailsFields = ({ control, errors, className }: Props) => {
               label={"Middle Name"}
               {...field}
               error={errors.middleName?.message}
+              optionalText
             />
           )}
         />
@@ -54,19 +60,33 @@ const PersonalDetailsFields = ({ control, errors, className }: Props) => {
       <div className="flex items-center gap-5">
         <FormField
           control={control}
+          name="email"
+          render={({ field }) => (
+            <Input {...field} label="Email*" error={errors.email?.message} />
+          )}
+        />
+        <FormField
+          control={control}
+          name="phone"
+          render={({ field }) => (
+            <Input {...field} label="Phone*" error={errors.phone?.message} />
+          )}
+        />
+      </div>
+      <div className="flex items-center gap-5 ">
+        <FormField
+          control={control}
           name="dateOfBirth"
           render={({ field }) => (
-            <DatePicker
-              label="Date of Birth"
-              className="w-full"
-              mode="single"
-              onSelect={(date) => {
-                if (!date) return;
-                field.onChange(date.toISOString());
-              }}
-              selected={field.value ? new Date(field.value) : undefined}
-              error={errors.dateOfBirth?.message}
-            />
+            <div className=" flex flex-col gap-2 flex-1">
+              <Label className="text-b3-b font-semibold">Birth Date</Label>
+              <DatePicker
+                selected={field.value}
+                onSelect={(date) => {
+                  field.onChange(date);
+                }}
+              />
+            </div>
           )}
         />
         <FormField
@@ -75,26 +95,59 @@ const PersonalDetailsFields = ({ control, errors, className }: Props) => {
           render={({ field }) => (
             <Input
               label={"Address"}
+              className="flex-1"
               {...field}
               error={errors.address?.message}
-            />
-          )}
-        />
-        <FormField
-          control={control}
-          name="country"
-          render={({ field }) => (
-            <Input
-              label={"Country"}
-              {...field}
-              error={errors.country?.message}
+              optionalText
             />
           )}
         />
       </div>
-    </FormFieldGroup>
+      <div className="flex items-center gap-5">
+        <FormField
+          control={control}
+          name="occupation"
+          render={({ field }) => (
+            <div className=" flex flex-col gap-1 flex-1">
+              <Label className="text-b3-b font-semibold">Occupation</Label>
+
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="">
+                  <SelectValue placeholder="-Select-" className="" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        />
+        <FormField
+          control={control}
+          name="qualification"
+          render={({ field }) => (
+            <div className=" flex flex-col gap-1 flex-1">
+              <Label className="text-b3-b font-semibold">Qualification</Label>
+
+              <Select value={field.value} onValueChange={field.onChange}>
+                <SelectTrigger className="">
+                  <SelectValue placeholder="-Select-" className="" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="light">Light</SelectItem>
+                  <SelectItem value="dark">Dark</SelectItem>
+                  <SelectItem value="system">System</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+        />
+      </div>
+    </>
   );
 };
 
-export default PersonalDetailsFields;
+export default PersonalDetailsStep;
 

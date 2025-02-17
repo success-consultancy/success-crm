@@ -16,5 +16,15 @@ export const ROUTES = {
     AGENCY_AGREEMENT: '/dashboard/agency-agreement',
     UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements',
 
-    ADD_LEAD: '/dashboard/leads/add-lead'
+    ADD_LEAD: '/dashboard/leads/add-lead',
+
+    USERS: '/dashboard/users',
+    EMPLOYEES: '/dashboard/employees',
+    OCCUPATION: '/dashboard/occupation',
+    VISA_LIST: '/dashboard/visa-list',
+    UNIVERSITY: '/dashboard/university',
+    COURSE: '/dashboard/course',
+    SOURCE: '/dashboard/source',
+    SETTINGS: '/dashboard/settings',
+    NEWS_AND_UPDATES: '/dashboard/news-updates'
 };

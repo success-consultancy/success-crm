@@ -74,13 +74,13 @@
     /* ? BLACK SHADES */
     --black-100: #000000;
     --black-80: #000000cc;
-    --black-60: #00000099;
+    --black-20: #1c1c1c;
     --black-40: #00000066;
-    --black-20: #00000033;
+    --black-60: #484848;
     --black-25: #0000003d;
     --black-10: #0000001a;
     --black-8: #00000014;
-    --black-4: #0000000a;
+    --black-4: #b4b4b4;
 
     /* ? WHITE SHADES */
     --white-100: #ffffff;

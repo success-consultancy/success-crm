@@ -1,41 +1,41 @@
 import { Icon } from "iconsax-react";
 import { LucideIcon } from "lucide-react";
+import { ReactNode } from "react";
 
 export enum DashboardTitle {
     Dashboard = 'Dashboard',
-    Calendar = 'Calendar',
-    Services = 'Services',
-    Todo = 'To Do',
+    AppointmentCalendar = 'Appointment Calendar',
     Administrative = 'Administrative',
     LegalAndAgreements = 'Legal & Agreements',
-    UpdatesAndAnnouncements = 'Announcements',
-
-}
-
-export enum SubNavTitle {
+    NewsAndUpdates = 'News and Updates',
     EducationService = 'Education Service',
     VisaService = 'Visa Service',
     SkillAssessmentService = 'Skill Assessment Service',
     InsuranceService = 'Insurance Service',
+    Visa = 'Visa',
+    Leads = 'Leads',
+    FiscalReport = 'Fiscal Report',
+    AgencyAgreement = 'Agency Agreement',
+    TribunalReview = 'Tribunal Review',
+    CheckIn = 'Check-In',
+    Setup = 'Setup'
+}
+
+export enum SubNavTitle {
     Users = 'Users',
     Employees = 'Employees',
-    Occupation = 'Occupation',
-    Visa = 'Visa',
+    Occupation = 'Occupation List',
     University = 'University',
     Course = 'Course',
     Source = 'Source',
-    Appointment = 'Appointment',
-    CheckIn = 'Check-In',
-    Leads = 'Leads',
     FaceUpload = 'Face Upload',
-    FiscalReport = 'Fiscal Report',
-    AgencyAgreement = 'Agency Agreement',
-    TribunalReview = 'Tribunal Review'
+    VisaList = 'Visa List',
+    Settings = 'Settings'
 }
 
 export interface SidebarNavType {
     title: DashboardTitle | SubNavTitle;
-    icon: LucideIcon | Icon
+    icon?: ReactNode
     href?: string
 }
 

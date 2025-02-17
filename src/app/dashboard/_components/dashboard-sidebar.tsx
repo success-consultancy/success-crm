@@ -8,8 +8,8 @@ import { ChevronLeft } from "lucide-react";
 
 import { usePathname } from "next/navigation";
 import { useAppStateStore } from "@/store/app-state-store";
-import { NAVIGATION_LIST } from "@/app/config/dashboard-navs";
 import { BrandLogoNav } from "./brand-logo-nav";
+import { NAVIGATION_LIST } from "@/app/config/dashboard-navs";
 
 type Props = {
   className?: string;

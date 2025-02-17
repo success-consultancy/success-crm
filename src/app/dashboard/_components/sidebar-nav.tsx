@@ -78,9 +78,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
             <PopoverTrigger asChild>
               {!props.subNav ? (
                 <Tooltip
-                  trigger={
-                    <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
-                  }
+                  trigger={props.icon}
                   side="right"
                   sideOffset={20}
                   hidden={!props.isCollapsed}
@@ -88,7 +86,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
                   {props.title}
                 </Tooltip>
               ) : (
-                <Icon className="w-6.5 h-6.5 text-center shrink-0 stroke-[.0938rem]" />
+                props.icon
               )}
             </PopoverTrigger>
             <PopoverContent
