@@ -67,7 +67,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
             "py-2 px-2.5",
             "after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary",
             isActive
-              ? "bg-primary-faded after:scale-x-100 text-primary"
+              ? "bg-component-active after:scale-x-100 text-primary-blue"
               : "after:scale-x-0",
             props.isCollapsed && "w-11 2xl:w-12 ",
             "hover:bg-accent-50",

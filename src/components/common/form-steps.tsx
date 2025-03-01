@@ -1,3 +1,4 @@
+import useSearchParams from "@/hooks/use-search-params";
 import { cn } from "@/lib/cn";
 import React from "react";
 
@@ -36,12 +37,16 @@ const IndividualStep = ({
   isLast: boolean;
   currentStep: string;
 }) => {
+  const { setParam } = useSearchParams();
   return (
     <div
       className={cn([
-        "flex items-center gap-9",
-        currentStep === step && "text-primary-blue",
+        "flex items-center gap-9 cursor-pointer",
+        currentStep === step
+          ? "text-primary-blue"
+          : "!text-neutral-inActiveGrey",
       ])}
+      onClick={() => setParam("step", step)}
     >
       <div className="flex items-center gap-3">
         <div
