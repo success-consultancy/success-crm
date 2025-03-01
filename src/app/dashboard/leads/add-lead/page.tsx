@@ -107,7 +107,7 @@ const AddLeadForm = () => {
             {currentStep === LeadsFormSteps.ServiceDetails && (
               <ServiceDetailsStep />
             )}
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between pt-2">
               {currentStep !== LeadsFormSteps.PersonalDetails && (
                 <Button variant={"ghost"} onClick={() => handlePrevStep()}>
                   Back

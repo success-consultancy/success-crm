@@ -1,8 +1,10 @@
 import AgencyAgreementIcon from "./agency-agreement-icon";
 import AppointmentCalendarIcon from "./appointment-calendar-icon";
 import CheckInIcon from "./check-in-icon";
+import CloudUploadIcon from "./cloud-upload-icon";
 import DashboardIcon from "./dashboard-icon";
 import EducationIcon from "./education-icon";
+import FileIcon from "./file-icon";
 import FiscalReportIcon from "./fiscal-report-icon";
 import InsuranceIcon from "./insurance-service-icon";
 import LeadsIcon from "./leads-icon";
@@ -14,7 +16,7 @@ import TribunalReviewIcon from "./tribunal-review-icon";
 import VisaIcon from "./visa-icon";
 
 const Icons = {
-    AgencyAgreementIcon, AppointmentCalendarIcon, CheckInIcon, DashboardIcon, EducationIcon, FiscalReportIcon, InsuranceIcon, LeadsIcon, LogoutIcon, NewUpdatesIcon, SetupIcon, SkillAssessmentIcon, TribunalReviewIcon, VisaIcon
+    AgencyAgreementIcon, AppointmentCalendarIcon, CheckInIcon, DashboardIcon, EducationIcon, FiscalReportIcon, InsuranceIcon, LeadsIcon, LogoutIcon, NewUpdatesIcon, SetupIcon, SkillAssessmentIcon, TribunalReviewIcon, VisaIcon, FileIcon, CloudUploadIcon
 }
 
 export default Icons;

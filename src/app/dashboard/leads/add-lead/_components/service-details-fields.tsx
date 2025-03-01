@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/select";
 import TinyEditor from "@/components/common/text-editor";
 import SelectCommon from "@/components/common/select-common";
+import FileUploader from "@/components/common/file-uploader";
 
 const ServiceDetailsStep = () => {
   const {
@@ -101,10 +102,15 @@ const ServiceDetailsStep = () => {
           )}
         />
       </div>
-      <div className="w-full space-y-5" suppressHydrationWarning>
+      <div className="w-full space-y-1" suppressHydrationWarning>
         <Label className="text-b3-b font-semibold">Note</Label>
 
         <TinyEditor />
+      </div>
+
+      <div className="space-y-1">
+        <Label className="text-b3-b font-semibold">Documents</Label>
+        <FileUploader maxFileSize={20} acceptedFiles={["PDF"]} />
       </div>
     </div>
   );
