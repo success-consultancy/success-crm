@@ -19,7 +19,7 @@ type Props = {
 const SelectCommon = (props: Props) => {
   return (
     <div className=" flex flex-col gap-1 flex-1">
-      <Label className="text-b3-b font-semibold">Location</Label>
+      <Label className="text-b3-b font-semibold">{props.label}</Label>
 
       <Select value={props.value} onValueChange={props.onSelect}>
         <SelectTrigger className="">

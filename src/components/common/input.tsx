@@ -116,7 +116,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 props.disabled && "",
                 // ? focused class
                 isInputFocused ? ["border-black-40"] : "hover:border-black-20",
-                (error || errorBorder) && ["border-state-error-base"],
+                (error || errorBorder) && ["border-primary-red"],
                 // ? rest classes
                 classNames?.container,
               ])}
@@ -190,10 +190,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         )}
         {error && (
           <div
-            className={cn([
-              "text-sm text-state-error-base mt-1",
-              classNames?.error,
-            ])}
+            className={cn(["text-sm text-primary-red mt-1", classNames?.error])}
           >
             {error}
           </div>

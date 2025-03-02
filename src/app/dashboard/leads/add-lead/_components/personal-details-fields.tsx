@@ -15,7 +15,7 @@ const PersonalDetailsStep = () => {
   } = useFormContext<LeadSchemaType>();
   return (
     <div className="space-y-5">
-      <div className="flex items-center w-full gap-5">
+      <div className="flex items-start w-full gap-5">
         <FormField
           control={control}
           name="firstName"
@@ -110,6 +110,21 @@ const PersonalDetailsStep = () => {
               ]}
               value={field.value}
               label="Occupation"
+              onSelect={(val) => field.onChange(val)}
+            />
+          )}
+        />
+        <FormField
+          control={control}
+          name="anzsco"
+          render={({ field }) => (
+            <SelectCommon
+              options={[
+                { value: "Light", label: "Light" },
+                { value: "Dark", label: "Dark" },
+              ]}
+              value={field.value}
+              label="ANZSCO"
               onSelect={(val) => field.onChange(val)}
             />
           )}

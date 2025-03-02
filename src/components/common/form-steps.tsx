@@ -1,10 +1,14 @@
+import { LeadsFormSteps } from "@/app/config/leads-form-steps";
 import useSearchParams from "@/hooks/use-search-params";
 import { cn } from "@/lib/cn";
+import { TickCircle } from "iconsax-react";
+import { Check } from "lucide-react";
 import React from "react";
 
 type Props = {
   currentStep: string;
   formSteps: string[];
+  completedSteps: LeadsFormSteps[];
 };
 
 const FormSteps = (props: Props) => {
@@ -19,6 +23,7 @@ const FormSteps = (props: Props) => {
             isLast={isLast}
             key={idx}
             currentStep={props.currentStep}
+            completedSteps={props.completedSteps}
           />
         );
       })}
@@ -31,11 +36,13 @@ const IndividualStep = ({
   index,
   isLast,
   currentStep,
+  completedSteps,
 }: {
   step: string;
   index: number;
   isLast: boolean;
   currentStep: string;
+  completedSteps: LeadsFormSteps[];
 }) => {
   const { setParam } = useSearchParams();
   return (
@@ -53,11 +60,28 @@ const IndividualStep = ({
           className={cn([
             "h-6 w-6 rounded-full border flex items-center justify-center text-b1-b",
             currentStep === step && "border-primary-blue",
+            completedSteps.includes(step as LeadsFormSteps) &&
+              currentStep !== step &&
+              "bg-primary-blue",
           ])}
         >
-          <span>{index}</span>
+          {completedSteps.includes(step as LeadsFormSteps) &&
+          currentStep !== step ? (
+            <Check className="text-neutral-white size-4" />
+          ) : (
+            <span>{index}</span>
+          )}
         </div>
-        <span className="text-b1-b">{step}</span>
+        <span
+          className={cn([
+            "text-b1-b",
+            completedSteps.includes(step as LeadsFormSteps) &&
+              currentStep !== step &&
+              "text-b1-b text-neutral-black ",
+          ])}
+        >
+          {step}
+        </span>
       </div>
       {!isLast && <div className="w-16 h-0.5 bg-neutral-border"></div>}
     </div>

@@ -1,30 +1,32 @@
 "use client";
 
-import Container from "@/components/common/container";
-import { Form, FormField } from "@/components/ui/form";
-import leadFormSchema, { LeadSchemaType } from "@/schemas/lead-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
+import leadFormSchema, {
+  LeadSchemaType,
+  passportDetailsSchema,
+  personalDetailsSchema,
+} from "@/schemas/lead-schema";
+
+import { Form } from "@/components/ui/form";
+
 import Portal from "@/components/common/portal";
 import { PortalIds } from "@/app/config/portal";
-import Input from "@/components/common/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import TinyEditor from "@/components/common/text-editor";
-import { LeadsFormSteps } from "@/app/config/leads-form-steps";
-import PersonalDetailsStep from "./_components/personal-details-fields";
 import Button from "@/components/common/button";
+
+import React, { useEffect, useState } from "react";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import Container from "@/components/common/container";
 import FormSteps from "@/components/common/form-steps";
+
+import { FormProvider, useForm } from "react-hook-form";
 import useSearchParams from "@/hooks/use-search-params";
-import PassportDetailsStep from "./_components/passport-details-fields";
+
+import { LeadsFormSteps } from "@/app/config/leads-form-steps";
+
 import ServiceDetailsStep from "./_components/service-details-fields";
+import PersonalDetailsStep from "./_components/personal-details-fields";
+import PassportDetailsStep from "./_components/passport-details-fields";
+import { getCompletedSteps } from "@/utils/lead-helper";
 
 type Props = {};
 
@@ -44,20 +46,40 @@ const AddLeadForm = () => {
   const { searchParams, setParam } = useSearchParams();
 
   const {
+    handleSubmit,
     control,
     formState: { errors },
+    getValues,
   } = form;
 
   const [currentStep, setCurrentStep] = useState(
     searchParams.get("step") || LeadsFormSteps.PersonalDetails
   );
 
-  const handleStepChange = () => {
-    if (currentStep === LeadsFormSteps.PersonalDetails) {
+  const [completedSteps, setCompletedSteps] = useState<LeadsFormSteps[]>([]);
+
+  const handleStepChange = async () => {
+    await handleSubmit((data) => {})();
+
+    const completed = await getCompletedSteps(getValues());
+
+    console.log(completed);
+    setCompletedSteps(completed);
+
+    if (
+      currentStep === LeadsFormSteps.PersonalDetails &&
+      !Object.keys(personalDetailsSchema.shape).some(
+        (field) => errors[field as keyof typeof errors]
+      )
+    ) {
       setParam("step", LeadsFormSteps.PassportAndVisa);
       setCurrentStep(LeadsFormSteps.PassportAndVisa);
-    }
-    if (currentStep === LeadsFormSteps.PassportAndVisa) {
+    } else if (
+      currentStep === LeadsFormSteps.PassportAndVisa &&
+      !Object.keys(passportDetailsSchema.shape).some(
+        (field) => errors[field as keyof typeof errors]
+      )
+    ) {
       setParam("step", LeadsFormSteps.ServiceDetails);
       setCurrentStep(LeadsFormSteps.ServiceDetails);
     }
@@ -88,6 +110,7 @@ const AddLeadForm = () => {
         <FormSteps
           currentStep={currentStep}
           formSteps={Object.values(LeadsFormSteps)}
+          completedSteps={completedSteps}
         />
       </div>
       <div className="w-full bg-neutral-white rounded-2xl flex flex-col gap-6 pb-5">
@@ -114,8 +137,7 @@ const AddLeadForm = () => {
                 </Button>
               )}
               <div></div>
-
-              <div className="flex items-center  gap-3">
+              <div className="flex items-center gap-3">
                 <Button variant={"secondary"}>Cancel</Button>
                 <Button onClick={() => handleStepChange()}>Next</Button>
               </div>

@@ -12,7 +12,10 @@ const PassportDetailsStep = () => {
   const {
     control,
     formState: { errors },
+    setValue,
   } = useFormContext<LeadSchemaType>();
+
+  setValue("hasVisitedStep", true);
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5">
