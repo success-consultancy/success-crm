@@ -48,7 +48,7 @@ export const serviceDetailsSchema = z.object({
         .string()
         .min(1, { message: "Status is required" }),
     note: z.string().optional(),
-    files: z.array(z.string())
+    files: z.array(z.string()).optional()
 
 })
 

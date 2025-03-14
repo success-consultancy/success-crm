@@ -23,10 +23,11 @@ import useSearchParams from "@/hooks/use-search-params";
 
 import { LeadsFormSteps } from "@/app/config/leads-form-steps";
 
+import { getCompletedSteps } from "@/utils/lead-helper";
 import ServiceDetailsStep from "./_components/service-details-fields";
 import PersonalDetailsStep from "./_components/personal-details-fields";
 import PassportDetailsStep from "./_components/passport-details-fields";
-import { getCompletedSteps } from "@/utils/lead-helper";
+import { useAddLead } from "@/mutations/leads/add-lead";
 
 type Props = {};
 
@@ -50,7 +51,12 @@ const AddLeadForm = () => {
     control,
     formState: { errors },
     getValues,
+    trigger,
   } = form;
+
+  const addLead = useAddLead();
+
+  console.log(errors);
 
   const [currentStep, setCurrentStep] = useState(
     searchParams.get("step") || LeadsFormSteps.PersonalDetails
@@ -59,29 +65,32 @@ const AddLeadForm = () => {
   const [completedSteps, setCompletedSteps] = useState<LeadsFormSteps[]>([]);
 
   const handleStepChange = async () => {
-    await handleSubmit((data) => {})();
+    let isValid = false;
 
-    const completed = await getCompletedSteps(getValues());
+    // Validate only the fields for the current step
+    if (currentStep === LeadsFormSteps.PersonalDetails) {
+      // Trigger validation only for personal details fields
+      isValid = await trigger(Object.keys(personalDetailsSchema.shape) as any);
+    } else if (currentStep === LeadsFormSteps.PassportAndVisa) {
+      // Trigger validation only for passport details fields
+      isValid = await trigger(Object.keys(passportDetailsSchema.shape) as any);
+    } else if (currentStep === LeadsFormSteps.ServiceDetails) {
+      // For the last step, we can validate all fields or just service details
+      isValid = await trigger();
+    }
 
-    console.log(completed);
-    setCompletedSteps(completed);
+    // Only proceed if validation passed
+    if (isValid) {
+      const completed = await getCompletedSteps(getValues());
+      setCompletedSteps(completed);
 
-    if (
-      currentStep === LeadsFormSteps.PersonalDetails &&
-      !Object.keys(personalDetailsSchema.shape).some(
-        (field) => errors[field as keyof typeof errors]
-      )
-    ) {
-      setParam("step", LeadsFormSteps.PassportAndVisa);
-      setCurrentStep(LeadsFormSteps.PassportAndVisa);
-    } else if (
-      currentStep === LeadsFormSteps.PassportAndVisa &&
-      !Object.keys(passportDetailsSchema.shape).some(
-        (field) => errors[field as keyof typeof errors]
-      )
-    ) {
-      setParam("step", LeadsFormSteps.ServiceDetails);
-      setCurrentStep(LeadsFormSteps.ServiceDetails);
+      if (currentStep === LeadsFormSteps.PersonalDetails) {
+        setParam("step", LeadsFormSteps.PassportAndVisa);
+        setCurrentStep(LeadsFormSteps.PassportAndVisa);
+      } else if (currentStep === LeadsFormSteps.PassportAndVisa) {
+        setParam("step", LeadsFormSteps.ServiceDetails);
+        setCurrentStep(LeadsFormSteps.ServiceDetails);
+      }
     }
   };
 
@@ -93,6 +102,10 @@ const AddLeadForm = () => {
       setParam("step", LeadsFormSteps.PersonalDetails);
       setCurrentStep(LeadsFormSteps.PersonalDetails);
     }
+  };
+
+  const onSubmit = (data: LeadSchemaType) => {
+    addLead.mutate(data); // Submit logic goes here
   };
 
   useEffect(() => {
@@ -120,7 +133,10 @@ const AddLeadForm = () => {
           </span>
         </div>
         <FormProvider {...form}>
-          <form action="" className="flex flex-col gap-5 px-6">
+          <form
+            className="flex flex-col gap-5 px-6"
+            onSubmit={form.handleSubmit(onSubmit)}
+          >
             {currentStep === LeadsFormSteps.PersonalDetails && (
               <PersonalDetailsStep />
             )}
@@ -139,7 +155,11 @@ const AddLeadForm = () => {
               <div></div>
               <div className="flex items-center gap-3">
                 <Button variant={"secondary"}>Cancel</Button>
-                <Button onClick={() => handleStepChange()}>Next</Button>
+                {currentStep === LeadsFormSteps.ServiceDetails ? (
+                  <Button type="submit">Submit</Button>
+                ) : (
+                  <Button onClick={() => handleStepChange()}>Next</Button>
+                )}
               </div>
             </div>
           </form>

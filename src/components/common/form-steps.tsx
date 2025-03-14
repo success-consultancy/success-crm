@@ -1,9 +1,8 @@
-import { LeadsFormSteps } from "@/app/config/leads-form-steps";
-import useSearchParams from "@/hooks/use-search-params";
-import { cn } from "@/lib/cn";
-import { TickCircle } from "iconsax-react";
-import { Check } from "lucide-react";
 import React from "react";
+import { cn } from "@/lib/cn";
+
+import { Check } from "lucide-react";
+import { LeadsFormSteps } from "@/app/config/leads-form-steps";
 
 type Props = {
   currentStep: string;
@@ -44,16 +43,14 @@ const IndividualStep = ({
   currentStep: string;
   completedSteps: LeadsFormSteps[];
 }) => {
-  const { setParam } = useSearchParams();
   return (
     <div
       className={cn([
-        "flex items-center gap-9 cursor-pointer",
+        "flex items-center gap-9 ",
         currentStep === step
           ? "text-primary-blue"
           : "!text-neutral-inActiveGrey",
       ])}
-      onClick={() => setParam("step", step)}
     >
       <div className="flex items-center gap-3">
         <div

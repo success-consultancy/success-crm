@@ -35,6 +35,7 @@ const ServiceDetailsStep = () => {
               value={field.value}
               label="Service Type"
               onSelect={(val) => field.onChange(val)}
+              error={errors.serviceType?.message}
             />
           )}
         />
@@ -98,6 +99,7 @@ const ServiceDetailsStep = () => {
               value={field.value}
               label="Status"
               onSelect={(val) => field.onChange(val)}
+              error={errors.status?.message}
             />
           )}
         />
