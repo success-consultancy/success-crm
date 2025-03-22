@@ -53,11 +53,13 @@ const AddLeadForm = () => {
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
       </Portal>
-      <FormSteps
-        currentStep={currentStep}
-        formSteps={Object.values(LeadsFormSteps)}
-      />
-      <div className="w-full bg-white-100 rounded-2xl flex flex-col gap-6 pb-5">
+      <div className="flex items-center justify-center">
+        <FormSteps
+          currentStep={currentStep}
+          formSteps={Object.values(LeadsFormSteps)}
+        />
+      </div>
+      <div className="w-full bg-neutral-white rounded-2xl flex flex-col gap-6 pb-5">
         <div className=" py-3 border-b border-b-stroke-divider flex items-center gap-2 px-6">
           <span className="text-h5 font-bold text-content-heading">
             {currentStep}

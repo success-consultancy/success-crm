@@ -54,118 +54,36 @@ export default {
 				'sm-gutter': '1rem', //16px
 			},
 			colors: {
-				border: 'hsl(var(--border))',
-				input: 'hsl(var(--input))',
-				ring: 'hsl(var(--ring))',
-				background: 'hsl(var(--background))',
-				foreground: 'hsl(var(--foreground))',
+				neutral: {
+					black: 'var(--neutral-black)',
+					darkGrey: 'var(--neutral-dark-grey)',
+					lightGrey: 'var(--neutral-light-grey)',
+					inActiveGrey: 'var(--neutral-inactive-grey)',
+					border: 'var(--neutral-border)',
+					borderLight: 'var(--neutral-border-light)',
+					white: 'var(--neutral-white)'
+				},
 				primary: {
-					DEFAULT: 'var(--primary)',
-					hovered: 'var(--primary-hovered)',
-					faded: 'var(--primary-faded)'
+					red: 'var(--primary-red)',
+					blue: 'var(--primary-blue)'
 				},
-				secondary: {
-					DEFAULT: 'hsl(var(--secondary))',
-					foreground: 'hsl(var(--secondary-foreground))',
+				utility: {
+					red: 'var(--utility-red)',
+					blue: 'var(utility-blue)',
+					green: 'var(--utility-green)'
 				},
-				destructive: {
-					DEFAULT: 'hsl(var(--destructive))',
-					foreground: 'hsl(var(--destructive-foreground))',
+				component: {
+					hoveredBlue: 'var(--component-hovered-blue)',
+					hoveredLight: 'var(--component-hovered-light)',
+					active: 'var(--component-active)'
 				},
-				muted: {
-					DEFAULT: 'hsl(var(--muted))',
-					foreground: 'hsl(var(--muted-foreground))',
+				border: {
+					normal: 'var(--border-normal)'
 				},
-
-				//? text colors
-				content: {
-					heading: 'var(--text-heading)',
-					subtitle: 'var(--text-subtitle)',
-					body: 'var(--text-body)',
-					placeholder: 'var(--text-placeholder)',
-					disabled: 'var(--text-disabled)',
-				},
-				day: {
-					body: 'rgba(34, 34, 55, 0.74)',
-				},
-				//? BG colors
 				bg: {
-					tooltip: 'var(--tooltip-bg)',
-					dark: 'var(--dark)',
-					white: 'var(--white)',
-					disabled: 'var(--disabled)',
-					light: {
-						grey: 'var(--light-grey)',
-						B: '#EBEFF7',
-						A: '#F7F8FA',
-					},
-				},
-				state: {
-					success: {
-						base: 'var(--state-success-base)',
-						light: 'var(--state-success-light)',
-						dark: 'var(--state-success-dark)',
-					},
-					error: {
-						base: 'var(--state-error-base)',
-						light: 'var(--state-error-light)',
-						dark: 'var(--state-error-dark)',
-					},
-					info: {
-						base: 'var(--state-info-base)',
-						light: 'var(--state-info-light)',
-						dark: 'var(--state-info-dark)',
-					},
-					warning: {
-						base: 'var(--state-warning-base)',
-						light: 'var(--state-warning-light)',
-						dark: 'var(--state-warning-dark)',
-					},
-				},
-				button: {
-					50: 'var(--button-normal-50)',
-					100: 'var(--button-normal-100)',
-					600: 'var(--button-normal-600)',
-					700: 'var(--button-normal-700)',
-					800: 'var(--button-normal-800)',
-				},
-				//? Black shades
-				black: {
-					100: 'var(--black-100)',
-					80: 'var(--black-80)',
-					60: 'var(--black-60)',
-					40: 'var(--black-40)',
-					25: 'var(--black-25)',
-					20: 'var(--black-20)',
-					10: 'var(--black-10)',
-					8: 'var(--black-8)',
-					4: 'var(--black-4)',
-				},
-				//? White shades
-				white: {
-					100: 'var(--white-100)',
-					80: 'var(--white-80)',
-					60: 'var(--white-60)',
-					40: 'var(--white-40)',
-					20: 'var(--white-20)',
-					10: 'var(--white-10)',
-					8: 'var(--white-8)',
-					4: 'var(--white-4)',
-				},
-				//? Stroke
-				stroke: {
-					DEFAULT: 'var(--stroke-default)',
-					focus: 'var(--stroke-focus)',
-					divider: 'var(--stroke-divider)',
-				},
-				// ? Icon colors
-				icon: {
-					default: 'var(--icon-default)',
-					disabled: 'var(--icon-disabled)',
-				},
-				scrim: {
-					overlay: 'var(--scrim-overlay)',
-				},
+					blueExtraLight: 'var(--bg-blue-extra-light)'
+				}
+
 			},
 			borderRadius: {
 				Md: 'var(--Radius-Md)',

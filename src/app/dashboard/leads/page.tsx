@@ -24,7 +24,7 @@ const Leads = () => {
   });
 
   return (
-    <Container className="flex flex-col py-4">
+    <Container className="flex flex-col py-4 ">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
       </Portal>
@@ -42,6 +42,7 @@ const Leads = () => {
             Add Lead
           </ButtonLink>
         }
+        className="bg-neutral-white"
       />
     </Container>
   );

@@ -37,7 +37,6 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
   const isActive = props.currentPathname === props.href;
 
   const Tag = !!props.subNav ? "button" : Link;
-  const Icon = props.icon;
 
   const linkProps = !!props.subNav
     ? {
@@ -65,12 +64,12 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
         <span
           className={cn([
             "transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer",
-            "py-[0.4375rem] px-2.5",
+            "py-2 px-2.5",
             "after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary",
             isActive
               ? "bg-primary-faded after:scale-x-100 text-primary"
               : "after:scale-x-0",
-            props.isCollapsed && "w-11 2xl:w-12",
+            props.isCollapsed && "w-11 2xl:w-12 ",
             "hover:bg-accent-50",
           ])}
         >

@@ -11,7 +11,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         primary:
-          "bg-primary text-white-100 hover:bg-primary-hovered active:bg-hovered",
+          "bg-primary-blue text-neutral-white hover:bg-component-hoveredBlue active:bg-component-active",
         destructive:
           "bg-state-error-base text-white-100 hover:bg-state-error-dark active:bg-button-800",
         destructiveHover:

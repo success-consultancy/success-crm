@@ -112,6 +112,8 @@ const TableComponent = <TData, TValue>({
     state: {
       rowSelection,
     },
+    enableColumnResizing: true,
+    columnResizeMode: "onChange",
   });
 
   const paginationMethods = usePagination();

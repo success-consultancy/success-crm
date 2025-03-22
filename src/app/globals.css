@@ -28,81 +28,29 @@
     --Radius-Full: 12.5rem;
     --Radius-Md: 1rem;
     --radius-Sm: 0.5rem;
-    /* ? PRIMARY COLOR ACCENTS */
-    --accent-purple: #9f1eba;
-    --accent-red: #d4145a;
-    --accent-green: #22b573;
 
-    --primary: #007acc;
-    --primary-hovered: #006eb8;
-    --primary-faded: #dcf1ff;
+    --neutral-black: #1c1c1c;
+    --neutral-dark-grey: #484848;
+    --neutral-light-grey: #757575;
+    --neutral-inactive-grey: #aaaaaa;
+    --neutral-border: #b4b4b4;
+    --neutral-border-light: #ebebeb;
+    --neutral-white: #ffffff;
 
-    /* ? WARNING COLOR ACCENTS */
-    --state-warning-base: #fdc854;
-    --state-warning-light: #fff9ee;
-    --state-warning-dark: #533c09;
+    --primary-red: #ed1c24;
+    --primary-blue: #007acc;
 
-    /* ? INFO COLOR ACCENTS */
-    --state-info-base: #00b8d1;
-    --state-info-light: #e7fcff;
-    --state-info-dark: #004c57;
+    --utility-red: #e81b00;
+    --utility-green: #13d256;
+    --utility-blue: #33a0d2;
 
-    /* ? ERROR COLOR ACCENTS */
-    --state-error-base: #e64c4c;
-    --state-error-light: #ffe7e7;
-    --state-error-dark: #8c0505;
+    --component-hovered-blue: #006eb8;
+    --component-hovered-light: #ebf1f4;
+    --component-active: #dcf1ff;
 
-    /* ? SUCCESS COLOR ACCENTS */
-    --state-success-base: #3cc9ae;
-    --state-success-light: #e4f5e6;
-    --state-success-dark: #00550a;
+    --border-normal: #e5e7eb;
 
-    /* ? TEXT SHADES */
-    --text-heading: #010101;
-    --text-subtitle: #010101d6;
-    --text-body: #010101bd;
-    --text-placeholder: #757575;
-    --text-disabled: #01010170;
-
-    /* ? BG COLOR */
-    --dark: #333333;
-    --white: #fafbfc;
-    --disabled: #eff0f2;
-    --light-grey: #f7f8fa;
-    --tooltip-bg: #333333;
-
-    /* ? BLACK SHADES */
-    --black-100: #000000;
-    --black-80: #000000cc;
-    --black-20: #1c1c1c;
-    --black-40: #00000066;
-    --black-60: #484848;
-    --black-25: #0000003d;
-    --black-10: #0000001a;
-    --black-8: #00000014;
-    --black-4: #b4b4b4;
-
-    /* ? WHITE SHADES */
-    --white-100: #ffffff;
-    --white-80: #ffffffcc;
-    --white-60: #ffffff99;
-    --white-40: #ffffff66;
-    --white-20: #ffffff33;
-    --white-10: #ffffff1a;
-    --white-8: #ffffff14;
-    --white-4: #ffffff0a;
-
-    /* ? BUTTON COLORS */
-    --button-normal-50: #eaf7fc;
-    --button-normal-50: #bde5f6;
-    --button-normal-600: #e11d48;
-    --button-normal-700: #c81c42;
-    --button-normal-800: #e11d48;
-
-    /* ? STROKE COLORS */
-    --stroke-default: #e5e7eb;
-    --stroke-focus: #272727;
-    --stroke-divider: #ebebeb;
+    --bg-blue-extra-light: #f7f8fa;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -128,12 +76,10 @@
 }
 @layer base {
   * {
-    @apply border-border;
   }
 
   input[type="checkbox"],
   input[type="radio"] {
-    @apply accent-primary bg-transparent border-2 border-stroke rounded-full;
     appearance: none;
     background-clip: content-box;
   }
@@ -141,12 +87,8 @@
   input[type="checkbox"]:checked,
   input[type="radio"]:checked {
     padding: calc(0.5%);
-    @apply border-primary bg-primary;
   }
 
-  body {
-    @apply bg-background font-default text-content-body;
-  }
   h1 {
     @apply text-h1;
   }
@@ -166,14 +108,6 @@
     @apply text-h6;
   }
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    @apply font-heading text-content-heading;
-  }
   .flex-center {
     @apply flex justify-center items-center;
   }
@@ -300,34 +234,30 @@ input[type="time"]::-webkit-clear-button {
   background: linear-gradient(180deg, rgba(41, 171, 226, 0) 0%, #29abe2 100%);
 }
 
-/* Custom scrollbar for the specific div */
-.styled-scroll {
-  overflow: scroll; /* Enable scrolling */
-  scrollbar-width: thin; /* For Firefox */
-  scrollbar-color: rgba(0, 0, 0, 0) transparent; /* For Firefox */
-}
-.styled-scroll:hover {
-  overflow: scroll; /* Enable scrolling */
-  scrollbar-color: rgba(0, 0, 0, 0.2) transparent; /* For Firefox */
-}
-
-/* For WebKit browsers (Chrome, Safari, Edge) */
-.styled-scroll::-webkit-scrollbar {
-  width: 4px; /* Scrollbar width */
-  height: 4px; /* Scrollbar height for horizontal scrolling */
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 5px;
+  background: rgba(0, 0, 0, 0.5);
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
 }
 
-.styled-scroll::-webkit-scrollbar-thumb {
-  background-color: rgba(0, 0, 0, 0.2); /* Thumb color */
-  border-radius: 6px; /* Rounded corners */
+.resizer.isResizing {
+  background: blue;
+  opacity: 1;
 }
 
-.styled-scroll::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(0, 0, 0, 0.5); /* Darker on hover */
-}
+@media (hover: hover) {
+  .resizer {
+    opacity: 0;
+  }
 
-.styled-scroll::-webkit-scrollbar-track {
-  background-color: transparent; /* Transparent track */
-  border-radius: 6px; /* Rounded corners */
+  *:hover > .resizer {
+    opacity: 1;
+  }
 }
 

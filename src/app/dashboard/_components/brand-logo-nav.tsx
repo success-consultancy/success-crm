@@ -31,12 +31,12 @@ const BrandLogoNav: React.FC<IBrandLogoNavProps> = (props) => {
       </div>
 
       <ClipFromLeftAnimation show={!props.isCollapsed}>
-        <div className="w-[8.5rem] h-full">
+        <div className="w-[6.5rem] h-full">
           <Image
             src="/success-logo-letter.png"
             alt="mini-logo"
-            width={136}
-            height={24}
+            width={125}
+            height={20}
             priority={true}
             className="object-cover h-auto w-[75%]"
           />

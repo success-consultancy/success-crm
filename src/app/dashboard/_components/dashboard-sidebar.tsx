@@ -29,20 +29,15 @@ const DashboardSidebar = ({ className }: Props) => {
         className={cn([
           "relative duration-500 bg-white-100 shrink-0 ease-out group h-full pt-[.875rem] flex flex-col",
           // use after pseudo element to add border-r so that it doesn't affect the pointer out
-          "after:right-0 after:top-0 after:h-full after:w-px after:bg-stroke-divider after:absolute after:pointer-events-none",
-          isSidebarCollapsed ? "w-auto" : "w-[15.635rem]",
+          "after:right-0 after:top-0 after:h-full after:w-px after:bg-border-normal after:absolute after:pointer-events-none",
+          isSidebarCollapsed ? "w-auto" : "w-fit",
           className,
         ])}
       >
         <BrandLogoNav isCollapsed={isSidebarCollapsed} className="mb-5.5" />
 
         {/* nav menu group */}
-        <div
-          style={{
-            scrollbarGutter: "auto",
-          }}
-          className="grow flex flex-col gap-2 overflow-hidden hover:overflow-y-auto custom-scrollbar"
-        >
+        <div className="grow flex flex-col gap-2 overflow-hidden hover:overflow-y-auto custom-scrollbar">
           {NAVIGATION_LIST.map((nav) => (
             <SidebarNav
               key={nav.href + nav.title}

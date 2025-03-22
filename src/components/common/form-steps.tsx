@@ -1,3 +1,4 @@
+import { cn } from "@/lib/cn";
 import React from "react";
 
 type Props = {
@@ -10,7 +11,15 @@ const FormSteps = (props: Props) => {
     <div className="flex items-center gap-9">
       {props.formSteps.map((step, idx) => {
         const isLast = idx + 1 === props.formSteps.length;
-        return <IndividualStep step={step} index={idx + 1} isLast={isLast} />;
+        return (
+          <IndividualStep
+            step={step}
+            index={idx + 1}
+            isLast={isLast}
+            key={idx}
+            currentStep={props.currentStep}
+          />
+        );
       })}
     </div>
   );
@@ -20,20 +29,32 @@ const IndividualStep = ({
   step,
   index,
   isLast,
+  currentStep,
 }: {
   step: string;
   index: number;
   isLast: boolean;
+  currentStep: string;
 }) => {
   return (
-    <div className="flex items-center gap-9">
+    <div
+      className={cn([
+        "flex items-center gap-9",
+        currentStep === step && "text-primary-blue",
+      ])}
+    >
       <div className="flex items-center gap-3">
-        <div className="h-5 w-5 rounded-full border flex items-center justify-center text-b1-b">
-          {index}
+        <div
+          className={cn([
+            "h-6 w-6 rounded-full border flex items-center justify-center text-b1-b",
+            currentStep === step && "border-primary-blue",
+          ])}
+        >
+          <span>{index}</span>
         </div>
         <span className="text-b1-b">{step}</span>
       </div>
-      {!isLast && <div className="w-16 h-0.5 bg-black-4"></div>}
+      {!isLast && <div className="w-16 h-0.5 bg-neutral-border"></div>}
     </div>
   );
 };
