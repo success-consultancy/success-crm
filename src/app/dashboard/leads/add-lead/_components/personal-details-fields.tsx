@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import Input from "@/components/common/input";
 import { FormField } from "@/components/ui/form";
 import { LeadSchemaType } from "@/schemas/lead-schema";
@@ -6,16 +6,66 @@ import { useFormContext } from "react-hook-form";
 
 import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/ui/date-picker";
-import SelectCommon from "@/components/common/select-common";
+import SelectCommon, {
+  ISelectOptions,
+} from "@/components/common/select-common";
+import { useGetOccupations } from "@/query/get-occupations";
+import SelectWithCommand from "@/components/common/select-with-command";
 
 const PersonalDetailsStep = () => {
   const {
     control,
     formState: { errors },
+    setValue,
+    watch,
   } = useFormContext<LeadSchemaType>();
+
+  const { data: occupations } = useGetOccupations();
+
+  const occupationsOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.title as string,
+        label: occupation.title as string,
+      };
+    });
+  }, [occupations]);
+
+  const ANZSCOOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.code as string,
+        label: occupation.code as string,
+      };
+    });
+  }, [occupations]);
+
+  const [selectedOccupation, selectedANZSCO] = watch(["occupation", "anzsco"]);
+
+  useEffect(() => {
+    if (selectedOccupation) {
+      const selected = occupations?.find(
+        (occupation) => occupation.title === selectedOccupation
+      );
+      setValue("anzsco", selected?.code);
+    }
+  }, [selectedOccupation]);
+
+  useEffect(() => {
+    if (selectedANZSCO) {
+      const selected = occupations?.find(
+        (occupation) => occupation.code === selectedANZSCO
+      );
+      setValue("occupation", selected?.title);
+    }
+  }, [selectedANZSCO]);
+
   return (
     <div className="space-y-5">
-      <div className="flex items-start w-full gap-5">
+      <div
+        className="flex items-start
+       w-full gap-5"
+      >
         <FormField
           control={control}
           name="firstName"
@@ -103,11 +153,8 @@ const PersonalDetailsStep = () => {
           control={control}
           name="occupation"
           render={({ field }) => (
-            <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
+            <SelectWithCommand
+              options={occupationsOptions || []}
               value={field.value}
               label="Occupation"
               onSelect={(val) => field.onChange(val)}
@@ -118,11 +165,8 @@ const PersonalDetailsStep = () => {
           control={control}
           name="anzsco"
           render={({ field }) => (
-            <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
+            <SelectWithCommand
+              options={ANZSCOOptions || []}
               value={field.value}
               label="ANZSCO"
               onSelect={(val) => field.onChange(val)}
@@ -133,14 +177,11 @@ const PersonalDetailsStep = () => {
           control={control}
           name="qualification"
           render={({ field }) => (
-            <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
-              value={field.value}
-              label="Qualification"
-              onSelect={(val) => field.onChange(val)}
+            <Input
+              {...field}
+              label="Qualification*"
+              error={errors.qualification?.message}
+              className="flex-1"
             />
           )}
         />

@@ -8,6 +8,7 @@ import {
   SelectContent,
 } from "../ui/select";
 import { cn } from "@/lib/cn";
+import { FixedSizeList } from "react-window";
 
 export interface ISelectOptions {
   label: string;
@@ -38,11 +39,25 @@ const SelectCommon = (props: Props) => {
           />
         </SelectTrigger>
         <SelectContent>
-          {props.options.map((option, idx) => (
-            <SelectItem value={option.value} key={option.value + idx}>
-              {option.label}
-            </SelectItem>
-          ))}
+          <FixedSizeList
+            height={200}
+            itemCount={props.options.length}
+            itemSize={35}
+            width={"100%"}
+          >
+            {({ index, style }) => {
+              const option = props.options[index];
+              return (
+                <SelectItem
+                  value={option.value}
+                  key={option.value}
+                  style={style}
+                >
+                  {option.label}
+                </SelectItem>
+              );
+            }}
+          </FixedSizeList>
         </SelectContent>
       </Select>
       {props.error && <span className="text-primary-red">{props.error}</span>}

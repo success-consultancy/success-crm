@@ -80,7 +80,7 @@ const IndividualStep = ({
           {step}
         </span>
       </div>
-      {!isLast && <div className="w-16 h-0.5 bg-neutral-border"></div>}
+      {!isLast && <div className="w-16 h-px bg-neutral-border"></div>}
     </div>
   );
 };

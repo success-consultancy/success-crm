@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import Input from "@/components/common/input";
 import { FormField } from "@/components/ui/form";
 import { LeadSchemaType } from "@/schemas/lead-schema";
@@ -7,13 +7,40 @@ import { useFormContext } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/ui/date-picker";
 import SelectCommon from "@/components/common/select-common";
+import countryList from "react-select-country-list";
+import SelectWithCommand from "@/components/common/select-with-command";
+import { useGetVisa } from "@/query/get-visa";
 
 const PassportDetailsStep = () => {
   const {
     control,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext<LeadSchemaType>();
+
+  const countries = useMemo(
+    () =>
+      countryList()
+        .getData()
+        .map((country) => {
+          return { label: country.label, value: country.label };
+        }),
+    []
+  );
+
+  const { data: visas } = useGetVisa();
+
+  const visaOptions = useMemo(() => {
+    if (!!visas?.length) {
+      return visas.map((visa) => {
+        return {
+          label: visa.visaType,
+          value: visa.visaType,
+        };
+      });
+    }
+  }, [visas]);
 
   setValue("hasVisitedStep", true);
   return (
@@ -23,11 +50,8 @@ const PassportDetailsStep = () => {
           control={control}
           name="country"
           render={({ field }) => (
-            <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
+            <SelectWithCommand
+              options={countries || []}
               value={field.value}
               label="Country"
               onSelect={(val) => field.onChange(val)}
@@ -86,11 +110,8 @@ const PassportDetailsStep = () => {
           control={control}
           name="visa"
           render={({ field }) => (
-            <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
+            <SelectWithCommand
+              options={visaOptions || []}
               value={field.value}
               label="Visa"
               onSelect={(val) => field.onChange(val)}

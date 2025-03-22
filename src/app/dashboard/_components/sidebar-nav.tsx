@@ -15,6 +15,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { includes } from "lodash";
 
 type SidebarNavProps = {
   className?: string;
@@ -34,7 +35,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
     setExpandSubNavs((pre) => !pre);
   };
 
-  const isActive = props.currentPathname === props.href;
+  const isActive = props.currentPathname?.includes(props.href as string);
 
   const Tag = !!props.subNav ? "button" : Link;
 
@@ -102,7 +103,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
                     key={nav.title + idx}
                     className={cn([
                       "flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 ",
-                      props.currentPathname === nav.href &&
+                      props.currentPathname?.includes(nav.href as string) &&
                         "text-primary bg-primary-faded  ",
                     ])}
                   >
