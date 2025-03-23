@@ -108,7 +108,6 @@ const SelectWithCommand = ({
       >
         <SelectTrigger className={cn([error && "border-primary-red"])}>
           <SelectValue>
-            !!
             {initialOptions.find((option) => option.value === value)?.label
               ? initialOptions.find((option) => option.value === value)?.label
               : `Select a ${label.toLowerCase()}`}

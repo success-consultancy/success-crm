@@ -39,9 +39,7 @@ export const passportDetailsSchema = z.object({
 
 export const serviceDetailsSchema = z.object({
     location: z.string().optional(),
-    serviceType: z
-        .string()
-        .min(1, { message: "Service Type is required" }),
+    serviceType: z.array(z.string()),
     source: z.string().optional(),
     assignedTo: z.string().optional(),
     status: z
