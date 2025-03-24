@@ -4,6 +4,7 @@ import { FormField } from "@/components/ui/form";
 import { LeadSchemaType } from "@/schemas/lead-schema";
 import { useFormContext } from "react-hook-form";
 
+import { format } from "date-fns";
 import { Label } from "@/components/ui/label";
 import DatePicker from "@/components/ui/date-picker";
 import SelectCommon, {
@@ -120,7 +121,7 @@ const PersonalDetailsStep = () => {
       <div className="flex items-center gap-5 ">
         <FormField
           control={control}
-          name="dateOfBirth"
+          name="dob"
           render={({ field }) => (
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Birth Date</Label>
@@ -128,7 +129,7 @@ const PersonalDetailsStep = () => {
                 mode="single"
                 selected={!!field.value ? new Date(field.value) : undefined}
                 onSelect={(date) => {
-                  field.onChange(date);
+                  if (date) field.onChange(format(date, "MM/dd/yyyy"));
                 }}
               />
             </div>
@@ -191,4 +192,3 @@ const PersonalDetailsStep = () => {
 };
 
 export default PersonalDetailsStep;
-

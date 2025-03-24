@@ -13,6 +13,13 @@ import { useGetSource } from "@/query/get-source";
 import { useGetUsers } from "@/query/get-user";
 import SelectWithCommand from "@/components/common/select-with-command";
 
+const STATUS_OPTIONS = [
+  { value: "New", label: "New" },
+  { value: "Converted", label: "Converted" },
+  { value: "Not Converted", label: "Not Converted" },
+  { value: "Follow Up", label: "Follow Up" },
+];
+
 const ServiceDetailsStep = () => {
   const {
     control,
@@ -118,10 +125,7 @@ const ServiceDetailsStep = () => {
           name="status"
           render={({ field }) => (
             <SelectCommon
-              options={[
-                { value: "Light", label: "Light" },
-                { value: "Dark", label: "Dark" },
-              ]}
+              options={STATUS_OPTIONS}
               value={field.value}
               label="Status"
               onSelect={(val) => field.onChange(val)}
@@ -145,4 +149,3 @@ const ServiceDetailsStep = () => {
 };
 
 export default ServiceDetailsStep;
-

@@ -105,7 +105,14 @@ const AddLeadForm = () => {
   };
 
   const onSubmit = (data: LeadSchemaType) => {
-    addLead.mutate(data); // Submit logic goes here
+    const serviceType = JSON.stringify(data.serviceType);
+
+    const payload = {
+      ...data,
+      serviceType,
+    } as Omit<LeadSchemaType, "serviceType"> & { serviceType: string };
+
+    addLead.mutate(payload); // Submit logic goes here
   };
 
   useEffect(() => {
@@ -170,4 +177,3 @@ const AddLeadForm = () => {
 };
 
 export default page;
-

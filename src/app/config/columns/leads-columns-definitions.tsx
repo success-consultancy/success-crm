@@ -387,4 +387,3 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 60,
   },
 ];
-

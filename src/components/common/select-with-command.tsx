@@ -129,6 +129,7 @@ const SelectWithCommand = ({
             itemCount={filteredOptions.length}
             itemSize={35}
             width={"100%"}
+            className="mt-1"
           >
             {({ index, style }) => {
               const option = filteredOptions[index];
@@ -156,4 +157,3 @@ const SelectWithCommand = ({
 };
 
 export default SelectWithCommand;
-

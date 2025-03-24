@@ -42,6 +42,7 @@ const ColumnHeader = (props: Props) => {
         },
       ]);
     }
+
     //eslint-disable-next-line
   }, [sortingState, searchParams]);
 
@@ -65,6 +66,7 @@ const ColumnHeader = (props: Props) => {
       ])}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onClick={() => handleArrowClick()}
     >
       <div className="relative">
         {props.title}
@@ -79,7 +81,6 @@ const ColumnHeader = (props: Props) => {
                     sortingState === "desc" && "rotate-180",
                   ])}
                   strokeWidth={2}
-                  onClick={() => handleArrowClick()}
                 />
               )}
             </TooltipTrigger>
@@ -101,4 +102,3 @@ const ColumnHeader = (props: Props) => {
 };
 
 export default ColumnHeader;
-
