@@ -14,6 +14,7 @@ import { cn } from "@/lib/cn";
 type Props = {
   title: string;
   keyParam: string;
+  className?: string;
 };
 
 const ColumnHeader = (props: Props) => {
@@ -58,7 +59,10 @@ const ColumnHeader = (props: Props) => {
 
   return (
     <div
-      className="flex items-center cursor-pointer h-fit gap-1 "
+      className={cn([
+        "flex items-center cursor-pointer gap-1 ",
+        props.className,
+      ])}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

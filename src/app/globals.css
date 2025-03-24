@@ -169,6 +169,7 @@
 
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
+  height: 4px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
@@ -179,7 +180,9 @@
   background-color: rgba(0, 0, 0, 0);
 }
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: var(--black-20); /* Change the background color on hover */
+  background-color: var(
+    --neutral-inactive-grey
+  ); /* Change the background color on hover */
 }
 .on-hover-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0);
@@ -232,23 +235,6 @@ input[type="time"]::-webkit-clear-button {
   opacity: 20%;
   height: 20px; /* Adjust thickness */
   background: linear-gradient(180deg, rgba(41, 171, 226, 0) 0%, #29abe2 100%);
-}
-
-.resizer {
-  position: absolute;
-  right: 0;
-  top: 0;
-  height: 100%;
-  width: 5px;
-  background: rgba(0, 0, 0, 0.5);
-  cursor: col-resize;
-  user-select: none;
-  touch-action: none;
-}
-
-.resizer.isResizing {
-  background: blue;
-  opacity: 1;
 }
 
 @media (hover: hover) {

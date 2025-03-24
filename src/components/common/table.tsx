@@ -1,12 +1,15 @@
-import React, { Dispatch, ReactNode, SetStateAction, useState } from "react";
+"use client";
+
+import React, {
+  type Dispatch,
+  type ReactNode,
+  type SetStateAction,
+  useState,
+} from "react";
 
 import {
-  ColumnDef,
-  PaginationState,
-  Row,
-  SortingState,
-  Table,
-  VisibilityState,
+  type ColumnDef,
+  type PaginationState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -57,6 +60,7 @@ interface Props<TData, TValue> {
   skeletonColumns?: ColumnDef<TData, TValue>[];
   searchKey?: string;
   topRightSection?: ReactNode;
+  tableHeight?: string;
 }
 
 const TableComponent = <TData, TValue>({
@@ -72,12 +76,13 @@ const TableComponent = <TData, TValue>({
   skeletonColumns,
   searchKey,
   topRightSection,
+  tableHeight = "calc(100vh - 300px)", // Default height, can be overridden via props
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState({});
 
-  const _currentPage = currentPage ? parseInt(`${currentPage}`) : 1;
+  const _currentPage = currentPage ? Number.parseInt(`${currentPage}`) : 1;
 
   const _offset = offset || 25;
 
@@ -95,7 +100,7 @@ const TableComponent = <TData, TValue>({
 
   const [pagination, setPagination] = React.useState<PaginationState>({
     pageIndex: _currentPage,
-    pageSize: parseInt(_offset.toString()),
+    pageSize: Number.parseInt(_offset.toString()),
   });
 
   const table = useReactTable<TData>({
@@ -107,7 +112,7 @@ const TableComponent = <TData, TValue>({
     onRowSelectionChange: setRowSelectionState || setRowSelection,
     manualPagination: true,
     onPaginationChange: setPagination,
-    pageCount: parseInt(`${(totalItems || 0) / pagination.pageSize}`),
+    pageCount: Number.parseInt(`${(totalItems || 0) / pagination.pageSize}`),
     getRowId: (row) => (row as any)?.id,
     state: {
       rowSelection,
@@ -122,7 +127,7 @@ const TableComponent = <TData, TValue>({
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div
         className={cn([
-          "p-7 bg-white-100 min-w-[1174px] rounded-xl border border-stroke-divider",
+          "flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full",
           className,
         ])}
       >
@@ -136,73 +141,110 @@ const TableComponent = <TData, TValue>({
           {topRightSection && <Separator orientation="vertical" />}
           {topRightSection}
         </div>
-        <table
-          className="w-full caption-bottom !border-none  "
-          suppressHydrationWarning
+
+        {/* Single scrollable container for the entire table */}
+        <div
+          className="overflow-auto flex-1 custom-scrollbar"
+          style={{ height: tableHeight }}
         >
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <tr
-                className={cn([
-                  "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-stroke-divider bg-white-100 ",
-                  "*:text-[.875rem] *:px-4 *:py-3.5 *:text-content-placeholder *:uppercase *:align-middle",
-                  "first:*:pl-2 last:*:pr-2 px-4 py-3",
-                  "*:text-left",
-                  "*:align-middle *:[&:has([role=checkbox])]:pr-0",
-                ])}
-                key={headerGroup.id}
-              >
-                {headerGroup.headers.map((header) => (
-                  <th key={header.id}>
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                  </th>
-                ))}
-              </tr>
-            ))}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row, idx) => (
-              <tr
-                className={cn([
-                  "group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-b1 text-content-body",
-                  "*:px-4 *:py-3.5",
-                  "first:*:pl-2 last:*:pr-2 px-4 py-3",
-                  "*:text-left select-none",
-                  "*:align-middle *:[&:has([role=checkbox])]:pr-0",
-                  "last:border-none",
-                ])}
-                key={idx}
-              >
-                {row.getVisibleCells().map((cell, i) => (
-                  <td
-                    className={cn([
-                      "first:pl-2 last:pr-2 py-3 align-middle [&:has([role=checkbox])]:pr-0 last:text-end text-b1",
-                    ])}
-                    key={cell.id}
-                  >
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </td>
-                ))}
-              </tr>
-            ))}
-            {!skeletonColumns && isLoading && (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
+          <table
+            className="w-full caption-bottom !border-none"
+            suppressHydrationWarning
+          >
+            <thead className="sticky top-0 z-10 bg-component-hoveredLight">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <tr
+                  className={cn([
+                    "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-neutral-borderLight",
+                    "*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:uppercase *:align-middle",
+                    "first:*:pl-2 last:*:pr-2 px-4 py-2",
+                    "*:text-left",
+                    "*:align-middle *:[&:has([role=checkbox])]:pr-0",
+                  ])}
+                  key={headerGroup.id}
                 >
-                  Loading...
-                </TableCell>
-              </TableRow>
-            )}
-          </tbody>
-        </table>
-        <div className="flex w-full items-center justify-end pt-5 gap-5">
+                  {headerGroup.headers.map((header, idx) => (
+                    <th
+                      key={header.id}
+                      style={{
+                        position: "relative",
+                        width: header.getSize(),
+                      }}
+                      className="py-0 leading-[150%]"
+                    >
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      {header.column.getCanResize() &&
+                        idx < headerGroup.headers.length - 1 && (
+                          <div
+                            onMouseDown={header.getResizeHandler()}
+                            onTouchStart={header.getResizeHandler()}
+                            className={cn([
+                              "absolute right-0 inset-y-0 m-auto h-full w-1 flex items-center justify-center cursor-col-resize",
+                              header.column.getIsResizing()
+                                ? "cursor-col-resize"
+                                : "",
+                            ])}
+                          >
+                            <div className="h-[60%] bg-border-normal w-0.5"></div>
+                          </div>
+                        )}
+                    </th>
+                  ))}
+                </tr>
+              ))}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row, idx) => (
+                <tr
+                  className={cn([
+                    "group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-b1 text-content-body",
+                    "*:px-4 *:py-2.5",
+                    "first:*:pl-2 last:*:pr-2 px-4 py-2",
+                    "*:text-left select-none",
+                    "*:align-middle *:[&:has([role=checkbox])]:pr-0",
+                    "last:border-none",
+                  ])}
+                  key={idx}
+                >
+                  {row.getVisibleCells().map((cell, i) => (
+                    <td
+                      className={cn([
+                        "first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1",
+                      ])}
+                      key={cell.id}
+                      style={{
+                        width: cell.column.getSize(),
+                      }}
+                    >
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+              {!skeletonColumns && isLoading && (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination controls - fixed at bottom */}
+        <div className="flex w-full items-center justify-end pt-5 gap-5 mt-auto">
           <div className="text-b1 flex items-center gap-2">
             <span>Items per page</span>
             <Select
@@ -225,7 +267,7 @@ const TableComponent = <TData, TValue>({
           </div>
           <Pagination
             totalItems={totalItems || 0}
-            offset={parseInt(offset?.toString() as string)}
+            offset={Number.parseInt(offset?.toString() as string)}
             // since tanstack table uses 0 index for 1st page, we need to add 1 to the current page
             currentPage={+_currentPage}
             onNextClick={paginationMethods.goToNextPage}

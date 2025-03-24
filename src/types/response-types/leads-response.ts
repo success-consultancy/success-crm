@@ -5,7 +5,9 @@ export interface LeadsResponseType {
 
 export enum LeadStatusTypes {
     New = 'New',
-    Converted = 'Converted'
+    Converted = 'Converted',
+    NotConverted = 'Not Converted',
+    FollowUp = 'Follow Up'
 }
 
 export interface ILead {

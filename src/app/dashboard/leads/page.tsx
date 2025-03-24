@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Plus } from "lucide-react";
 import Button from "@/components/common/button";
 import Container from "@/components/common/container";
@@ -13,6 +13,7 @@ import { ButtonLink } from "@/components/common/button-link";
 import { ROUTES } from "@/app/config/routes";
 import Portal from "@/components/common/portal";
 import { PortalIds } from "@/app/config/portal";
+import { ColumnDef } from "@tanstack/react-table";
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
@@ -23,15 +24,18 @@ const Leads = () => {
     limit: filterParams.limit || "25",
   });
 
+  const [visibleColumns, setVisibleColumns] =
+    useState<ColumnDef<ILead>[]>(LeadColumns);
+
   return (
-    <Container className="flex flex-col py-4 ">
+    <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
       </Portal>
       <TableComponent
         data={data?.rows as ILead[]}
-        columns={LeadColumns}
-        skeletonColumns={LeadColumns}
+        columns={visibleColumns}
+        skeletonColumns={visibleColumns}
         isLoading={isLoading}
         offset={filterParams.limit || 25}
         totalItems={data?.count}
