@@ -31,6 +31,7 @@ import useSearchParams from "@/hooks/use-search-params";
 import { TableCell, TableRow } from "../ui/table";
 import TableSearchInput from "./table-search";
 import { Separator } from "../ui/separator";
+import { ColumnSelector } from "./table-column-selector";
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -81,6 +82,7 @@ const TableComponent = <TData, TValue>({
   const { setParam } = useSearchParams();
 
   const [rowSelection, setRowSelection] = useState({});
+  const [columnSizing, setColumnSizing] = useState({});
 
   const _currentPage = currentPage ? Number.parseInt(`${currentPage}`) : 1;
 
@@ -116,12 +118,25 @@ const TableComponent = <TData, TValue>({
     getRowId: (row) => (row as any)?.id,
     state: {
       rowSelection,
+      columnSizing,
     },
+    onColumnSizingChange: setColumnSizing,
     enableColumnResizing: true,
     columnResizeMode: "onChange",
+    defaultColumn: {
+      minSize: 40,
+      maxSize: 500,
+    },
   });
 
   const paginationMethods = usePagination();
+
+  // Calculate total table width based on column sizes
+  const totalTableWidth = React.useMemo(() => {
+    return table.getAllColumns().reduce((acc, column) => {
+      return acc + column.getSize();
+    }, 0);
+  }, [table]);
 
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
@@ -137,9 +152,11 @@ const TableComponent = <TData, TValue>({
             className="max-w-[18rem]"
             placeholder={`Search by ${searchKey}...`}
           />
-
-          {topRightSection && <Separator orientation="vertical" />}
-          {topRightSection}
+          <div className="flex items-center gap-3.5">
+            <ColumnSelector table={table} />
+            <Separator orientation="vertical" />
+            {topRightSection}
+          </div>
         </div>
 
         {/* Single scrollable container for the entire table */}
@@ -149,6 +166,7 @@ const TableComponent = <TData, TValue>({
         >
           <table
             className="w-full caption-bottom !border-none"
+            style={{ width: `${totalTableWidth}px`, tableLayout: "fixed" }}
             suppressHydrationWarning
           >
             <thead className="sticky top-0 z-10 bg-component-hoveredLight">
@@ -156,7 +174,7 @@ const TableComponent = <TData, TValue>({
                 <tr
                   className={cn([
                     "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-neutral-borderLight",
-                    "*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:uppercase *:align-middle",
+                    "*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:align-middle",
                     "first:*:pl-2 last:*:pr-2 px-4 py-2",
                     "*:text-left",
                     "*:align-middle *:[&:has([role=checkbox])]:pr-0",
@@ -168,9 +186,11 @@ const TableComponent = <TData, TValue>({
                       key={header.id}
                       style={{
                         position: "relative",
-                        width: header.getSize(),
+                        width: `${header.getSize()}px`,
+                        minWidth: `${header.getSize()}px`,
+                        maxWidth: `${header.getSize()}px`,
                       }}
-                      className="py-0 leading-[150%]"
+                      className="py-0 select-none leading-[150%] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
                       {header.isPlaceholder
                         ? null
@@ -184,9 +204,9 @@ const TableComponent = <TData, TValue>({
                             onMouseDown={header.getResizeHandler()}
                             onTouchStart={header.getResizeHandler()}
                             className={cn([
-                              "absolute right-0 inset-y-0 m-auto h-full w-1 flex items-center justify-center cursor-col-resize",
+                              "absolute right-0 top-0 h-full w-1 flex items-center justify-center cursor-col-resize z-10",
                               header.column.getIsResizing()
-                                ? "cursor-col-resize"
+                                ? "bg-primary/50 w-1"
                                 : "",
                             ])}
                           >
@@ -214,11 +234,13 @@ const TableComponent = <TData, TValue>({
                   {row.getVisibleCells().map((cell, i) => (
                     <td
                       className={cn([
-                        "first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1",
+                        "first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap",
                       ])}
                       key={cell.id}
                       style={{
-                        width: cell.column.getSize(),
+                        width: `${cell.column.getSize()}px`,
+                        minWidth: `${cell.column.getSize()}px`,
+                        maxWidth: `${cell.column.getSize()}px`,
                       }}
                     >
                       {flexRender(
