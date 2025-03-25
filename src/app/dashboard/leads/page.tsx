@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState } from "react";
 import { Plus } from "lucide-react";
-import Button from "@/components/common/button";
-import Container from "@/components/common/container";
-import TableComponent from "@/components/common/table";
-import { ILead } from "@/types/response-types/leads-response";
-import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
-import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
-import useSearchParams from "@/hooks/use-search-params";
-import { ButtonLink } from "@/components/common/button-link";
+import React, { useState } from "react";
 import { ROUTES } from "@/app/config/routes";
 import Portal from "@/components/common/portal";
 import { PortalIds } from "@/app/config/portal";
 import { ColumnDef } from "@tanstack/react-table";
+import Container from "@/components/common/container";
+import TableComponent from "@/components/common/table";
+import useSearchParams from "@/hooks/use-search-params";
+import { ButtonLink } from "@/components/common/button-link";
+import { ILead } from "@/types/response-types/leads-response";
+import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
+import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();

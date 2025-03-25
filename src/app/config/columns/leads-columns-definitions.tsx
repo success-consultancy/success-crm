@@ -73,7 +73,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <div className="">{row.original.firstName}</div>;
     },
-    size: 120,
+    size: 160,
   },
   {
     id: "lead-middle-name",
@@ -83,7 +83,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <div className="">{row.original.middleName}</div>;
     },
-    size: 120,
+    size: 160,
   },
   {
     id: "lead-last-name",
@@ -93,7 +93,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <div className="">{row.original.lastName}</div>;
     },
-    size: 120,
+    size: 160,
   },
   {
     id: "lead-birth-date",
@@ -103,7 +103,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.dob}</span>;
     },
-    size: 100,
+    size: 128,
   },
   {
     id: "lead-email",
@@ -113,7 +113,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.email}</span>;
     },
-    size: 200,
+    size: 216,
   },
   {
     id: "lead-phone",
@@ -123,7 +123,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.phone}</span>;
     },
-    size: 130,
+    size: 152,
   },
   {
     id: "passport-no",
@@ -133,7 +133,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.passport}</span>;
     },
-    size: 120,
+    size: 140,
   },
   {
     id: "issue-date",
@@ -143,7 +143,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.issueDate}</span>;
     },
-    size: 100,
+    size: 128,
   },
   {
     id: "expiry-date",
@@ -153,7 +153,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.expiryDate}</span>;
     },
-    size: 100,
+    size: 132,
   },
   {
     id: "address",
@@ -163,7 +163,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.address}</span>;
     },
-    size: 200,
+    size: 216,
   },
   {
     id: "location",
@@ -183,7 +183,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.occupation}</span>;
     },
-    size: 150,
+    size: 280,
   },
   {
     id: "qualification",
@@ -195,7 +195,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.qualification}</span>;
     },
-    size: 150,
+    size: 160,
   },
   {
     id: "country",
@@ -205,7 +205,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.country}</span>;
     },
-    size: 120,
+    size: 136,
   },
   {
     id: "visa",
@@ -215,7 +215,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.visa}</span>;
     },
-    size: 120,
+    size: 216,
   },
   {
     id: "visa-expiry",
@@ -231,7 +231,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
         </span>
       );
     },
-    size: 100,
+    size: 132,
   },
   {
     id: "service-type",
@@ -268,7 +268,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
 
       return <div className="w-full">{getServiceBadge()}</div>;
     },
-    size: 130,
+    size: 176,
   },
   {
     id: "source",
@@ -278,7 +278,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return <span className="w-full">{row.original.sourceId}</span>;
     },
-    size: 120,
+    size: 144,
   },
   {
     id: "assigned-to",
@@ -292,7 +292,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
         </div>
       );
     },
-    size: 130,
+    size: 160,
   },
   {
     id: "follow-up",
@@ -303,7 +303,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
 
       return <div className="w-full">Show Follow Up</div>;
     },
-    size: 120,
+    size: 140,
   },
   {
     id: "status",
@@ -346,7 +346,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
 
       return <div className="w-full">{getStatusBadge()}</div>;
     },
-    size: 120,
+    size: 152,
   },
   {
     id: "lead-actions",
@@ -384,6 +384,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
         </div>
       );
     },
-    size: 60,
+    size: 64,
   },
 ];
+
