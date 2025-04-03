@@ -11,7 +11,6 @@ export default function NotFound() {
         <div className="grow bg-bg-blueExtraLight overflow-y-auto flex flex-col">
           <div className="w-full border-b border-b-border-normal bg-neutral-white py-3 px-6 flex items-center justify-between sticky top-0 z-[999]">
             <div id={PortalIds.DashboardHeader}></div>
-            <div>User Profile</div>
           </div>
           <div className="flex flex-col items-center justify-center gap-10 h-screen">
             <div className="text-h1 text-content-heading">404</div>
