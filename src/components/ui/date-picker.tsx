@@ -74,7 +74,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
   return (
     <>
       <div className={cn(["", className])}>
-        <Popover open={show} onOpenChange={setShow}>
+        <Popover modal={true} open={show} onOpenChange={setShow}>
           <PopoverAnchor>
             <Input
               label={label}
@@ -116,4 +116,3 @@ const DatePicker: React.FC<DatePickerProps> = ({
 };
 
 export default DatePicker;
-
