@@ -1,14 +1,8 @@
-"use client";
-import {
-  Select,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-} from "../ui/select";
-import { cn } from "@/lib/cn";
-import { FixedSizeList } from "react-window";
-import { Label } from "../ui/label";
+'use client';
+import { Select, SelectItem, SelectTrigger, SelectValue, SelectContent } from '../ui/select';
+import { cn } from '@/lib/cn';
+import { FixedSizeList } from 'react-window';
+import { Label } from '../ui/label';
 
 export interface ISelectOptions {
   label: string;
@@ -38,38 +32,23 @@ const SelectCommon = ({ maxHeight = 200, ...props }: Props) => {
       <Label className="text-b3-b font-semibold">{props.label}</Label>
 
       <Select value={props.value} onValueChange={props.onSelect}>
-        <SelectTrigger className={cn([props.error && "border-primary-red"])}>
-          <SelectValue
-            placeholder={
-              props.placeholder || `Select a ${props.label.toLowerCase()}`
-            }
-          />
+        <SelectTrigger className={cn([props.error && 'border-primary-red'])}>
+          <SelectValue placeholder={props.placeholder || `Select a ${props.label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent>
           {props.options.length > 0 ? (
-            <FixedSizeList
-              height={listHeight}
-              itemCount={props.options.length}
-              itemSize={itemSize}
-              width={"100%"}
-            >
+            <FixedSizeList height={listHeight} itemCount={props.options.length} itemSize={itemSize} width={'100%'}>
               {({ index, style }) => {
                 const option = props.options[index];
                 return (
-                  <SelectItem
-                    value={option.value}
-                    key={option.value}
-                    style={style}
-                  >
+                  <SelectItem value={option.value} key={option.value} style={style}>
                     {option.label}
                   </SelectItem>
                 );
               }}
             </FixedSizeList>
           ) : (
-            <div className="py-2 px-2 text-sm text-muted-foreground">
-              No options available
-            </div>
+            <div className="py-2 px-2 text-sm text-muted-foreground">No options available</div>
           )}
         </SelectContent>
       </Select>
@@ -79,4 +58,3 @@ const SelectCommon = ({ maxHeight = 200, ...props }: Props) => {
 };
 
 export default SelectCommon;
-

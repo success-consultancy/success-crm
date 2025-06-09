@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 type Props = {
   className?: string;
@@ -25,4 +25,3 @@ const CloudUploadIcon = (props: Props) => {
 };
 
 export default CloudUploadIcon;
-

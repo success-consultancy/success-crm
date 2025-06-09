@@ -1,5 +1,5 @@
-import Container from "@/components/common/container";
-import React from "react";
+import Container from '@/components/common/container';
+import React from 'react';
 
 const Dashboard = () => {
   return (
@@ -10,4 +10,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-

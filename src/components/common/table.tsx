@@ -1,11 +1,6 @@
-"use client";
+'use client';
 
-import React, {
-  type Dispatch,
-  type ReactNode,
-  type SetStateAction,
-  useState,
-} from "react";
+import React, { type Dispatch, type ReactNode, type SetStateAction, useState } from 'react';
 
 import {
   type ColumnDef,
@@ -15,36 +10,30 @@ import {
   getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
-} from "@tanstack/react-table";
-import { cn } from "@/lib/cn";
-import { TableContextProvider } from "../providers/table-context-provider";
-import Pagination from "./pagination";
-import usePagination from "@/hooks/use-pagination";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
-import useSearchParams from "@/hooks/use-search-params";
-import { TableCell, TableRow } from "../ui/table";
-import TableSearchInput from "./table-search";
-import { Separator } from "../ui/separator";
-import { ColumnSelector } from "./table-column-selector";
+} from '@tanstack/react-table';
+import { cn } from '@/lib/cn';
+import { TableContextProvider } from '../providers/table-context-provider';
+import Pagination from './pagination';
+import usePagination from '@/hooks/use-pagination';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
+import useSearchParams from '@/hooks/use-search-params';
+import { TableCell, TableRow } from '../ui/table';
+import TableSearchInput from './table-search';
+import { Separator } from '../ui/separator';
+import { ColumnSelector } from './table-column-selector';
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
-    value: "25",
-    label: "25",
+    value: '25',
+    label: '25',
   },
   {
-    value: "50",
-    label: "50",
+    value: '50',
+    label: '50',
   },
   {
-    value: "100",
-    label: "100",
+    value: '100',
+    label: '100',
   },
 ];
 
@@ -77,7 +66,7 @@ const TableComponent = <TData, TValue>({
   skeletonColumns,
   searchKey,
   topRightSection,
-  tableHeight = "calc(100vh - 300px)", // Default height, can be overridden via props
+  tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -92,12 +81,12 @@ const TableComponent = <TData, TValue>({
 
   const memoizedColumns = React.useMemo(
     () => (isLoading ? skeletonColumns : columns),
-    [columns, isLoading, skeletonColumns]
+    [columns, isLoading, skeletonColumns],
   );
 
   const memoizedData = React.useMemo(
-    () => (isLoading ? Array(_loadingSkeletonCount).fill("") : data || []),
-    [data, _loadingSkeletonCount, isLoading]
+    () => (isLoading ? Array(_loadingSkeletonCount).fill('') : data || []),
+    [data, _loadingSkeletonCount, isLoading],
   );
 
   const [pagination, setPagination] = React.useState<PaginationState>({
@@ -122,7 +111,7 @@ const TableComponent = <TData, TValue>({
     },
     onColumnSizingChange: setColumnSizing,
     enableColumnResizing: true,
-    columnResizeMode: "onChange",
+    columnResizeMode: 'onChange',
     defaultColumn: {
       minSize: 40,
       maxSize: 500,
@@ -140,12 +129,7 @@ const TableComponent = <TData, TValue>({
 
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
-      <div
-        className={cn([
-          "flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full",
-          className,
-        ])}
-      >
+      <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
         <div className="flex w-full items-center justify-between pb-5 gap-5">
           <TableSearchInput
             searchParamField={searchKey as string}
@@ -160,24 +144,21 @@ const TableComponent = <TData, TValue>({
         </div>
 
         {/* Single scrollable container for the entire table */}
-        <div
-          className="overflow-auto flex-1 custom-scrollbar"
-          style={{ height: tableHeight }}
-        >
+        <div className="overflow-auto flex-1 custom-scrollbar" style={{ height: tableHeight }}>
           <table
             className="w-full caption-bottom !border-none"
-            style={{ width: `${totalTableWidth}px`, tableLayout: "fixed" }}
+            style={{ width: `${totalTableWidth}px`, tableLayout: 'fixed' }}
             suppressHydrationWarning
           >
             <thead className="sticky top-0 z-10 bg-component-hoveredLight">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr
                   className={cn([
-                    "after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-neutral-borderLight",
-                    "*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:align-middle",
-                    "first:*:pl-2 last:*:pr-2 px-4 py-2",
-                    "*:text-left",
-                    "*:align-middle *:[&:has([role=checkbox])]:pr-0",
+                    'after:absolute after:w-full after:bottom-0 after:inset-x-0 after:h-0.5 after:bg-neutral-borderLight',
+                    '*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:align-middle',
+                    'first:*:pl-2 last:*:pr-2 px-4 py-2',
+                    '*:text-left',
+                    '*:align-middle *:[&:has([role=checkbox])]:pr-0',
                   ])}
                   key={headerGroup.id}
                 >
@@ -185,34 +166,26 @@ const TableComponent = <TData, TValue>({
                     <th
                       key={header.id}
                       style={{
-                        position: "relative",
+                        position: 'relative',
                         width: `${header.getSize()}px`,
                         minWidth: `${header.getSize()}px`,
                         maxWidth: `${header.getSize()}px`,
                       }}
                       className="py-0 select-none leading-[150%] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      {header.column.getCanResize() &&
-                        idx < headerGroup.headers.length - 1 && (
-                          <div
-                            onMouseDown={header.getResizeHandler()}
-                            onTouchStart={header.getResizeHandler()}
-                            className={cn([
-                              "absolute right-0 top-0 h-full w-1 flex items-center justify-center cursor-col-resize z-10",
-                              header.column.getIsResizing()
-                                ? "bg-primary/50 w-1"
-                                : "",
-                            ])}
-                          >
-                            <div className="h-[60%] bg-border-normal w-0.5"></div>
-                          </div>
-                        )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.column.getCanResize() && idx < headerGroup.headers.length - 1 && (
+                        <div
+                          onMouseDown={header.getResizeHandler()}
+                          onTouchStart={header.getResizeHandler()}
+                          className={cn([
+                            'absolute right-0 top-0 h-full w-1 flex items-center justify-center cursor-col-resize z-10',
+                            header.column.getIsResizing() ? 'bg-primary/50 w-1' : '',
+                          ])}
+                        >
+                          <div className="h-[60%] bg-border-normal w-0.5"></div>
+                        </div>
+                      )}
                     </th>
                   ))}
                 </tr>
@@ -222,19 +195,19 @@ const TableComponent = <TData, TValue>({
               {table.getRowModel().rows.map((row, idx) => (
                 <tr
                   className={cn([
-                    "group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-b1 text-content-body",
-                    "*:px-4 *:py-2.5",
-                    "first:*:pl-2 last:*:pr-2 px-4 py-2",
-                    "*:text-left select-none",
-                    "*:align-middle *:[&:has([role=checkbox])]:pr-0",
-                    "last:border-none",
+                    'group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-b1 text-content-body',
+                    '*:px-4 *:py-2.5',
+                    'first:*:pl-2 last:*:pr-2 px-4 py-2',
+                    '*:text-left select-none',
+                    '*:align-middle *:[&:has([role=checkbox])]:pr-0',
+                    'last:border-none',
                   ])}
                   key={idx}
                 >
                   {row.getVisibleCells().map((cell, i) => (
                     <td
                       className={cn([
-                        "first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap",
+                        'first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap',
                       ])}
                       key={cell.id}
                       style={{
@@ -243,20 +216,14 @@ const TableComponent = <TData, TValue>({
                         maxWidth: `${cell.column.getSize()}px`,
                       }}
                     >
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
               ))}
               {!skeletonColumns && isLoading && (
                 <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
+                  <TableCell colSpan={columns.length} className="h-24 text-center">
                     Loading...
                   </TableCell>
                 </TableRow>
@@ -272,7 +239,7 @@ const TableComponent = <TData, TValue>({
             <Select
               defaultValue={_offset.toString()}
               onValueChange={(val) => {
-                setParam("limit", val);
+                setParam('limit', val);
               }}
             >
               <SelectTrigger className="w-fit">
@@ -302,4 +269,3 @@ const TableComponent = <TData, TValue>({
 };
 
 export default TableComponent;
-

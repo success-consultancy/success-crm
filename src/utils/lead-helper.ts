@@ -1,25 +1,31 @@
-import { LeadsFormSteps } from "@/app/config/leads-form-steps";
-import { LeadSchemaType, passportDetailsSchema, personalDetailsSchema, serviceDetailsSchema } from "@/schemas/lead-schema";
+import { LeadsFormSteps } from '@/app/config/leads-form-steps';
+import {
+  LeadSchemaType,
+  passportDetailsSchema,
+  personalDetailsSchema,
+  serviceDetailsSchema,
+} from '@/schemas/lead-schema';
 
 export const getCompletedSteps = async (formData: LeadSchemaType) => {
-    let completedSteps = []
+  let completedSteps = [];
 
-    const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] = await Promise.all([
-        personalDetailsSchema.safeParse(formData), passportDetailsSchema.safeParse(formData), serviceDetailsSchema.safeParse(formData)
-    ])
+  const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] = await Promise.all([
+    personalDetailsSchema.safeParse(formData),
+    passportDetailsSchema.safeParse(formData),
+    serviceDetailsSchema.safeParse(formData),
+  ]);
 
-    console.log(personalDetailsResult.error)
+  console.log(personalDetailsResult.error);
 
-    if (personalDetailsResult.success) {
-        completedSteps.push(LeadsFormSteps.PersonalDetails)
-    }
-    if (passportDetailsResult.success) {
-        completedSteps.push(LeadsFormSteps.PassportAndVisa)
-    }
-    if (serviceDetailsResult.success) {
-        completedSteps.push(LeadsFormSteps.ServiceDetails)
-    }
+  if (personalDetailsResult.success) {
+    completedSteps.push(LeadsFormSteps.PersonalDetails);
+  }
+  if (passportDetailsResult.success) {
+    completedSteps.push(LeadsFormSteps.PassportAndVisa);
+  }
+  if (serviceDetailsResult.success) {
+    completedSteps.push(LeadsFormSteps.ServiceDetails);
+  }
 
-    return completedSteps
-
-}
+  return completedSteps;
+};

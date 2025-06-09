@@ -1,18 +1,22 @@
+'use client';
+import React, { useState } from 'react';
 
-"use client";
-import React, { useState } from "react";
-
-import { FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { PasswordChangeSchema, PasswordChangeSchemaType, ProfileSchema, ProfileSchemaType } from "@/schemas/profile-schema";
-import Input from "@/components/common/input";
-import { useUserUpdate } from "@/mutations/user/user";
-import Button from "@/components/common/button";
+import { FormField } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  PasswordChangeSchema,
+  PasswordChangeSchemaType,
+  ProfileSchema,
+  ProfileSchemaType,
+} from '@/schemas/profile-schema';
+import Input from '@/components/common/input';
+import { useUserUpdate } from '@/mutations/user/user';
+import Button from '@/components/common/button';
 
 const PersonalDetailsTab = ({ user }: any) => {
   const form = useForm<PasswordChangeSchemaType>({
-    resolver: zodResolver(PasswordChangeSchema)
+    resolver: zodResolver(PasswordChangeSchema),
   });
 
   const {
@@ -29,34 +33,26 @@ const PersonalDetailsTab = ({ user }: any) => {
 
   return (
     <>
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-3"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <FormField
           control={control}
           name="oldPassword"
           render={({ field }) => (
-            <Input
-              {...field}
-              label="Old Password"
-              type="password"
-              error={errors.oldPassword?.message}
-            />
+            <Input {...field} label="Old Password" type="password" error={errors.oldPassword?.message} />
           )}
         />
         <FormField
           control={control}
           name="newPassword"
           render={({ field }) => (
-            <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />)} />
+            <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />
+          )}
+        />
         <FormField
           control={control}
           name="confirmPassword"
           render={({ field }) => (
-            <Input {...field}
-              type="password"
-              label="Confirm Password" error={errors.confirmPassword?.message} />
+            <Input {...field} type="password" label="Confirm Password" error={errors.confirmPassword?.message} />
           )}
         />
 

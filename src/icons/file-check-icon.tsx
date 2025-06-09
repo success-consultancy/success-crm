@@ -1,5 +1,4 @@
-
-import React from "react";
+import React from 'react';
 
 type Props = {
   className?: string;
@@ -26,4 +25,3 @@ const FileCheckIcon = (props: Props) => {
 };
 
 export default FileCheckIcon;
-

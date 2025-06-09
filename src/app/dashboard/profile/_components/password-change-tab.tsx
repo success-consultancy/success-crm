@@ -1,21 +1,18 @@
-"use client";
-import React, { useState } from "react";
+'use client';
+import React, { useState } from 'react';
 
-import { FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  PasswordChangeSchemaType,
-  PasswordChangeSchema,
-} from "@/schemas/profile-schema";
-import Input from "@/components/common/input";
+import { FormField } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { PasswordChangeSchemaType, PasswordChangeSchema } from '@/schemas/profile-schema';
+import Input from '@/components/common/input';
 
 const PasswordChangeTab = ({ user }: any) => {
   console.log(user);
 
   const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),
-    mode: "onBlur",
+    mode: 'onBlur',
   });
 
   const {
@@ -32,13 +29,7 @@ const PasswordChangeTab = ({ user }: any) => {
         <FormField
           control={control}
           name="oldPassword"
-          render={({ field }) => (
-            <Input
-              {...field}
-              label="Old Password*"
-              error={errors.oldPassword?.message}
-            />
-          )}
+          render={({ field }) => <Input {...field} label="Old Password*" error={errors.oldPassword?.message} />}
         />
       </div>
     </div>

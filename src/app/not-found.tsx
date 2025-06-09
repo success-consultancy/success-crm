@@ -1,7 +1,7 @@
-import Link from "next/link";
-import DashboardSidebar from "./dashboard/_components/dashboard-sidebar";
-import { PortalIds } from "./config/portal";
-import { Suspense } from "react";
+import Link from 'next/link';
+import DashboardSidebar from './dashboard/_components/dashboard-sidebar';
+import { PortalIds } from './config/portal';
+import { Suspense } from 'react';
 
 export default function NotFound() {
   return (
@@ -15,8 +15,7 @@ export default function NotFound() {
           <div className="flex flex-col items-center justify-center gap-10 h-screen">
             <div className="text-h1 text-content-heading">404</div>
             <div className="text-b1 text-content-body">
-              Oops! It looks like you&apos;ve reached a page that doesn&apos;t
-              exist.
+              Oops! It looks like you&apos;ve reached a page that doesn&apos;t exist.
             </div>
           </div>
         </div>

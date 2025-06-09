@@ -1,10 +1,10 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/lib/cn";
-import Link from "next/link";
-import { ROUTES } from "@/app/config/routes";
-import Image from "next/image";
-import { ClipFromLeftAnimation } from "@/components/common/clip-from-left-animation";
+import { cn } from '@/lib/cn';
+import Link from 'next/link';
+import { ROUTES } from '@/app/config/routes';
+import Image from 'next/image';
+import { ClipFromLeftAnimation } from '@/components/common/clip-from-left-animation';
 
 interface IBrandLogoNavProps {
   isCollapsed?: boolean;
@@ -15,19 +15,10 @@ const BrandLogoNav: React.FC<IBrandLogoNavProps> = (props) => {
   return (
     <Link
       href={ROUTES.DASHBOARD}
-      className={cn([
-        "relative duration-200 flex items-center gap-px pl-2.5",
-        props.className,
-      ])}
+      className={cn(['relative duration-200 flex items-center gap-px pl-2.5', props.className])}
     >
       <div className="w-10 h-10  flex items-center justify-center">
-        <Image
-          src="/success-logo-mini.png"
-          alt="mini-logo"
-          height={40}
-          width={40}
-          className="object-contain"
-        />
+        <Image src="/success-logo-mini.png" alt="mini-logo" height={40} width={40} className="object-contain" />
       </div>
 
       <ClipFromLeftAnimation show={!props.isCollapsed}>
@@ -47,4 +38,3 @@ const BrandLogoNav: React.FC<IBrandLogoNavProps> = (props) => {
 };
 
 export { BrandLogoNav };
-

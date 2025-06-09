@@ -1,9 +1,9 @@
-import FormFieldGroup from "@/components/common/form-field-group";
-import Input from "@/components/common/input";
-import { FormField } from "@/components/ui/form";
-import { LeadSchemaType } from "@/schemas/lead-schema";
-import React from "react";
-import { Control, FieldErrors } from "react-hook-form";
+import FormFieldGroup from '@/components/common/form-field-group';
+import Input from '@/components/common/input';
+import { FormField } from '@/components/ui/form';
+import { LeadSchemaType } from '@/schemas/lead-schema';
+import React from 'react';
+import { Control, FieldErrors } from 'react-hook-form';
 
 type Props = {
   control: Control<LeadSchemaType>;
@@ -18,16 +18,12 @@ const ContactDetailsFields = ({ control, errors, ...props }: Props) => {
         <FormField
           control={control}
           name="email"
-          render={({ field }) => (
-            <Input {...field} label="Email*" error={errors.email?.message} />
-          )}
+          render={({ field }) => <Input {...field} label="Email*" error={errors.email?.message} />}
         />
         <FormField
           control={control}
           name="phone"
-          render={({ field }) => (
-            <Input {...field} label="Phone*" error={errors.phone?.message} />
-          )}
+          render={({ field }) => <Input {...field} label="Phone*" error={errors.phone?.message} />}
         />
       </div>
     </FormFieldGroup>
@@ -35,4 +31,3 @@ const ContactDetailsFields = ({ control, errors, ...props }: Props) => {
 };
 
 export default ContactDetailsFields;
-

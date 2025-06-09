@@ -1,5 +1,5 @@
-import { cn } from "@/lib/cn";
-import React from "react";
+import { cn } from '@/lib/cn';
+import React from 'react';
 
 type Props = {
   className?: string;
@@ -41,4 +41,3 @@ const SetupIcon = (props: Props) => {
 };
 
 export default SetupIcon;
-

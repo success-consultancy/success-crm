@@ -1,7 +1,7 @@
-import * as React from "react";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import * as React from 'react';
+import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 
-import { cn } from "@/lib/cn";
+import { cn } from '@/lib/cn';
 
 interface ITooltipProps extends TooltipPrimitive.TooltipContentProps {
   trigger: React.ReactNode;
@@ -13,29 +13,17 @@ interface ITooltipProps extends TooltipPrimitive.TooltipContentProps {
   };
 }
 
-const Tooltip: React.FC<ITooltipProps> = ({
-  trigger,
-  children,
-  classNames,
-  ...contentProps
-}) => {
+const Tooltip: React.FC<ITooltipProps> = ({ trigger, children, classNames, ...contentProps }) => {
   return (
     <TooltipPrimitive.Provider>
       <TooltipPrimitive.Root delayDuration={150}>
-        <TooltipPrimitive.TooltipTrigger asChild>
-          {trigger}
-        </TooltipPrimitive.TooltipTrigger>
+        <TooltipPrimitive.TooltipTrigger asChild>{trigger}</TooltipPrimitive.TooltipTrigger>
         <TooltipPrimitive.Portal>
           <TooltipPrimitive.Content
-            className={cn([
-              "text-b1 text-white-100  bg-bg-dark px-4 py-3 rounded-lg z-[1000000]",
-              classNames?.content,
-            ])}
+            className={cn(['text-b1 text-white-100  bg-bg-dark px-4 py-3 rounded-lg z-[1000000]', classNames?.content])}
             {...contentProps}
           >
-            <TooltipPrimitive.TooltipArrow
-              className={cn(["fill-bg-dark", classNames?.arrow])}
-            />
+            <TooltipPrimitive.TooltipArrow className={cn(['fill-bg-dark', classNames?.arrow])} />
             {children}
           </TooltipPrimitive.Content>
         </TooltipPrimitive.Portal>
@@ -45,4 +33,3 @@ const Tooltip: React.FC<ITooltipProps> = ({
 };
 
 export default Tooltip;
-

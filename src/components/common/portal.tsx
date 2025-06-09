@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import { createPortal } from "react-dom";
-import { useEffect, useState, ReactNode } from "react";
-import { PortalIds } from "@/app/config/portal";
+import { createPortal } from 'react-dom';
+import { useEffect, useState, ReactNode } from 'react';
+import { PortalIds } from '@/app/config/portal';
 
 interface PortalProps {
   rootId: PortalIds;
@@ -12,8 +12,7 @@ interface PortalProps {
 
 const Portal = ({ children, rootId, rootClassName }: PortalProps) => {
   const [mounted, setMounted] = useState(false);
-  const node =
-    typeof window !== "undefined" ? document.getElementById(rootId) : null;
+  const node = typeof window !== 'undefined' ? document.getElementById(rootId) : null;
 
   useEffect(() => {
     setMounted(true);
@@ -32,4 +31,3 @@ const Portal = ({ children, rootId, rootClassName }: PortalProps) => {
 };
 
 export default Portal;
-

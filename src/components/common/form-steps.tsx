@@ -1,8 +1,8 @@
-import React from "react";
-import { cn } from "@/lib/cn";
+import React from 'react';
+import { cn } from '@/lib/cn';
 
-import { Check } from "lucide-react";
-import { LeadsFormSteps } from "@/app/config/leads-form-steps";
+import { Check } from 'lucide-react';
+import { LeadsFormSteps } from '@/app/config/leads-form-steps';
 
 type Props = {
   currentStep: string;
@@ -46,24 +46,19 @@ const IndividualStep = ({
   return (
     <div
       className={cn([
-        "flex items-center gap-9 ",
-        currentStep === step
-          ? "text-primary-blue"
-          : "!text-neutral-inActiveGrey",
+        'flex items-center gap-9 ',
+        currentStep === step ? 'text-primary-blue' : '!text-neutral-inActiveGrey',
       ])}
     >
       <div className="flex items-center gap-3">
         <div
           className={cn([
-            "h-6 w-6 rounded-full border flex items-center justify-center text-b1-b",
-            currentStep === step && "border-primary-blue",
-            completedSteps.includes(step as LeadsFormSteps) &&
-              currentStep !== step &&
-              "bg-primary-blue",
+            'h-6 w-6 rounded-full border flex items-center justify-center text-b1-b',
+            currentStep === step && 'border-primary-blue',
+            completedSteps.includes(step as LeadsFormSteps) && currentStep !== step && 'bg-primary-blue',
           ])}
         >
-          {completedSteps.includes(step as LeadsFormSteps) &&
-          currentStep !== step ? (
+          {completedSteps.includes(step as LeadsFormSteps) && currentStep !== step ? (
             <Check className="text-neutral-white size-4" />
           ) : (
             <span>{index}</span>
@@ -71,10 +66,8 @@ const IndividualStep = ({
         </div>
         <span
           className={cn([
-            "text-b1-b",
-            completedSteps.includes(step as LeadsFormSteps) &&
-              currentStep !== step &&
-              "text-b1-b text-neutral-black ",
+            'text-b1-b',
+            completedSteps.includes(step as LeadsFormSteps) && currentStep !== step && 'text-b1-b text-neutral-black ',
           ])}
         >
           {step}
@@ -86,4 +79,3 @@ const IndividualStep = ({
 };
 
 export default FormSteps;
-

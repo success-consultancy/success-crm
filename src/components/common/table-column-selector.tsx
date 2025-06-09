@@ -1,59 +1,37 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import type { Table } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
-import { ChevronDown } from "lucide-react";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Command,
-  CommandInput,
-  CommandItem,
-  CommandList,
-} from "./command/command";
+import { useState } from 'react';
+import type { Table } from '@tanstack/react-table';
+import { Button } from '@/components/ui/button';
+import { ChevronDown } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Command, CommandInput, CommandItem, CommandList } from './command/command';
 
 interface ColumnSelectorProps<TData> {
   table: Table<TData>;
   title?: string;
 }
 
-export function ColumnSelector<TData>({
-  table,
-  title = "Columns",
-}: ColumnSelectorProps<TData>) {
+export function ColumnSelector<TData>({ table, title = 'Columns' }: ColumnSelectorProps<TData>) {
   // Track selected columns
   const [open, setOpen] = useState(false);
-  const [selected, setSelected] = useState<Set<string>>(
-    new Set(table.getVisibleLeafColumns().map((col) => col.id))
-  );
+  const [selected, setSelected] = useState<Set<string>>(new Set(table.getVisibleLeafColumns().map((col) => col.id)));
 
   const allColumns = table.getAllColumns();
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        className="w-full text-sm h-10 px-3 py-2 border rounded-md"
-        asChild
-      >
+      <PopoverTrigger className="w-full text-sm h-10 px-3 py-2 border rounded-md" asChild>
         <div className="flex items-center gap-3 w-full">
           <span className="grow text-left">
-            {selected.size > 0
-              ? `${selected.size} items selected`
-              : "Select items"}
+            {selected.size > 0 ? `${selected.size} items selected` : 'Select items'}
           </span>
 
           <ChevronDown className="size-4" />
         </div>
       </PopoverTrigger>
-      <PopoverContent
-        className="p-0 flex flex-col w-[17.1875rem]"
-        align="start"
-      >
+      <PopoverContent className="p-0 flex flex-col w-[17.1875rem]" align="start">
         {/* Columns List */}
         <Command className="p-2">
           <CommandInput placeholder="Search" />
@@ -61,17 +39,13 @@ export function ColumnSelector<TData>({
             <div className="max-h-[400px] h-[13.5rem] overflow-y-auto custom-scrollbar">
               {allColumns.map((column) => {
                 const columnName = column.id
-                  .split("-")
+                  .split('-')
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(" ")
-                  .replace("Lead ", "");
+                  .join(' ')
+                  .replace('Lead ', '');
 
                 return (
-                  <CommandItem
-                    className="p-0 m-0"
-                    key={column.id}
-                    value={columnName}
-                  >
+                  <CommandItem className="p-0 m-0" key={column.id} value={columnName}>
                     <div
                       className="flex items-center gap-1.5 px-2 py-2.5 min-w-full text-sm hover:bg-component-hoveredLight cursor-pointer"
                       key={column.id}
@@ -91,10 +65,7 @@ export function ColumnSelector<TData>({
                         }}
                         id={`option-${column.id}`}
                       />
-                      <label
-                        htmlFor={`option-${column.id}`}
-                        className="cursor-pointer flex-1"
-                      >
+                      <label htmlFor={`option-${column.id}`} className="cursor-pointer flex-1">
                         {columnName}
                       </label>
                     </div>
@@ -131,4 +102,3 @@ export function ColumnSelector<TData>({
     </Popover>
   );
 }
-

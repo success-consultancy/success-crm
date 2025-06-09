@@ -1,21 +1,21 @@
-"use client";
-import React, { ReactNode, Suspense } from "react";
-import DashboardSidebar from "./_components/dashboard-sidebar";
-import { PortalIds } from "../config/portal";
-import { TasksDrawer } from "../task/tasks-drawer";
-import { ChevronDownIcon } from "lucide-react";
-import Icons from "@/icons";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import { ROUTES } from "../config/routes";
-import Avatar from "react-avatar";
+'use client';
+import React, { ReactNode, Suspense } from 'react';
+import DashboardSidebar from './_components/dashboard-sidebar';
+import { PortalIds } from '../config/portal';
+import { TasksDrawer } from '../task/tasks-drawer';
+import { ChevronDownIcon } from 'lucide-react';
+import Icons from '@/icons';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '../config/routes';
+import Avatar from 'react-avatar';
 
 type Props = {
   children: ReactNode;
 };
 
 const layout = (props: Props) => {
-  const name = "Super Administrator";
+  const name = 'Super Administrator';
   const router = useRouter();
 
   return (
@@ -28,10 +28,7 @@ const layout = (props: Props) => {
             <div className="flex gap-4 items-center">
               <Icons.FileCheckIcon className="cursor-pointer" />
               <Icons.BellIcon className="cursor-pointer" />
-              <div
-                className="flex align-center gap-1 cursor-pointer"
-                onClick={() => router.push(ROUTES.PROFILE)}
-              >
+              <div className="flex align-center gap-1 cursor-pointer" onClick={() => router.push(ROUTES.PROFILE)}>
                 <Avatar name={name} round size="28" className="mr-1" />
 
                 {/* <Image
