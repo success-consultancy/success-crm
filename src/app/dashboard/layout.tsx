@@ -25,11 +25,13 @@ const layout = (props: Props) => {
         <div className="grow bg-bg-blueExtraLight overflow-y-auto flex flex-col">
           <div className="w-full border-b border-b-border-normal bg-neutral-white py-3 px-6 flex items-center justify-between sticky top-0">
             <div id={PortalIds.DashboardHeader}></div>
-            <div className="flex gap-4 items-center">
-              <Icons.FileCheckIcon className="cursor-pointer" />
-              <Icons.BellIcon className="cursor-pointer" />
-              <div className="flex align-center gap-1 cursor-pointer" onClick={() => router.push(ROUTES.PROFILE)}>
-                <Avatar name={name} round size="28" className="mr-1" />
+            <div className="flex items-center gap-6">
+              <div className="flex gap-3 items-center">
+                <TasksDrawer />
+                <Icons.BellIcon className="cursor-pointer" />
+              </div>
+              <div className="flex align-center gap-2 cursor-pointer" onClick={() => router.push(ROUTES.PROFILE)}>
+                <Avatar name={name} round size="28" />
 
                 {/* <Image
                   src="/success-logo-mini.png"
