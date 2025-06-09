@@ -1,38 +1,21 @@
-import ColumnHeader from "@/components/common/column-header";
-import { useTableContext } from "@/components/providers/table-context-provider";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  LeadStatusTypes,
-  type ILead,
-} from "@/types/response-types/leads-response";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import {
-  Edit,
-  EllipsisVertical,
-  Eye,
-  Mail,
-  MessageCircle,
-  Minus,
-} from "lucide-react";
+import ColumnHeader from '@/components/common/column-header';
+import { useTableContext } from '@/components/providers/table-context-provider';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
+import type { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus } from 'lucide-react';
 
 export const LeadColumns: ColumnDef<ILead>[] = [
   {
-    id: "select",
+    id: 'select',
     header: ({ table }) => (
       <div className="w-full h-full flex items-center justify-center">
         <Checkbox
-          checked={
-            table.getIsAllPageRowsSelected() ||
-            (table.getIsSomePageRowsSelected() && "indeterminate")
-          }
+          checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
           onCheckedChange={(value: boolean) => {
             if (table.getIsSomePageRowsSelected()) {
               table.toggleAllPageRowsSelected(false);
@@ -55,7 +38,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 40,
   },
   {
-    id: "lead-id",
+    id: 'lead-id',
     header: () => <ColumnHeader title="ID" keyParam="id" className="h-10" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -66,7 +49,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 80,
   },
   {
-    id: "lead-first-name",
+    id: 'lead-first-name',
     header: () => <ColumnHeader title="First name" keyParam="firstName" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -76,7 +59,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 160,
   },
   {
-    id: "lead-middle-name",
+    id: 'lead-middle-name',
     header: () => <ColumnHeader title="Middle name" keyParam="middleName" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -86,7 +69,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 160,
   },
   {
-    id: "lead-last-name",
+    id: 'lead-last-name',
     header: () => <ColumnHeader title="Last name" keyParam="lastName" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -96,7 +79,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 160,
   },
   {
-    id: "lead-birth-date",
+    id: 'lead-birth-date',
     header: () => <ColumnHeader title="Birth date" keyParam="dob" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -106,7 +89,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 128,
   },
   {
-    id: "lead-email",
+    id: 'lead-email',
     header: () => <ColumnHeader title="Email" keyParam="email" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -116,7 +99,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 216,
   },
   {
-    id: "lead-phone",
+    id: 'lead-phone',
     header: () => <ColumnHeader title="Phone" keyParam="phone" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -126,7 +109,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 152,
   },
   {
-    id: "passport-no",
+    id: 'passport-no',
     header: () => <ColumnHeader title="Passport no." keyParam="passportNo" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -136,7 +119,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 140,
   },
   {
-    id: "issue-date",
+    id: 'issue-date',
     header: () => <ColumnHeader title="Issue date" keyParam="issueDate" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -146,7 +129,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 128,
   },
   {
-    id: "expiry-date",
+    id: 'expiry-date',
     header: () => <ColumnHeader title="Expiry date" keyParam="expiryDate" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -156,7 +139,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 132,
   },
   {
-    id: "address",
+    id: 'address',
     header: () => <ColumnHeader title="Address" keyParam="address" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -166,7 +149,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 216,
   },
   {
-    id: "location",
+    id: 'location',
     header: () => <ColumnHeader title="Location" keyParam="location" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -176,7 +159,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 120,
   },
   {
-    id: "occupation",
+    id: 'occupation',
     header: () => <ColumnHeader title="Occupation" keyParam="occupation" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -186,10 +169,8 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 280,
   },
   {
-    id: "qualification",
-    header: () => (
-      <ColumnHeader title="Qualification" keyParam="qualification" />
-    ),
+    id: 'qualification',
+    header: () => <ColumnHeader title="Qualification" keyParam="qualification" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
@@ -198,7 +179,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 160,
   },
   {
-    id: "country",
+    id: 'country',
     header: () => <ColumnHeader title="Country" keyParam="country" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -208,7 +189,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 136,
   },
   {
-    id: "visa",
+    id: 'visa',
     header: () => <ColumnHeader title="Visa" keyParam="visa" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -218,23 +199,21 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 216,
   },
   {
-    id: "visa-expiry",
+    id: 'visa-expiry',
     header: () => <ColumnHeader title="Visa expiry" keyParam="visaExpiry" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
       return (
         <span className="w-full">
-          {row.original.visaExpiry
-            ? format(new Date(row.original.visaExpiry as string), "dd/MM/yyyy")
-            : "-"}
+          {row.original.visaExpiry ? format(new Date(row.original.visaExpiry as string), 'dd/MM/yyyy') : '-'}
         </span>
       );
     },
     size: 132,
   },
   {
-    id: "service-type",
+    id: 'service-type',
     header: () => <ColumnHeader title="Service type" keyParam="serviceType" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -243,24 +222,12 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       const serviceType = row.original.serviceType;
       const getServiceBadge = () => {
         switch (serviceType) {
-          case "Education":
-            return (
-              <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                Education
-              </Badge>
-            );
-          case "Visa":
-            return (
-              <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                Visa
-              </Badge>
-            );
-          case "Skill Assessment":
-            return (
-              <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
-                Skill Assessment
-              </Badge>
-            );
+          case 'Education':
+            return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Education</Badge>;
+          case 'Visa':
+            return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Visa</Badge>;
+          case 'Skill Assessment':
+            return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Skill Assessment</Badge>;
           default:
             return <span>{serviceType}</span>;
         }
@@ -271,7 +238,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 176,
   },
   {
-    id: "source",
+    id: 'source',
     header: () => <ColumnHeader title="Source" keyParam="source" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -281,7 +248,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 144,
   },
   {
-    id: "assigned-to",
+    id: 'assigned-to',
     header: () => <ColumnHeader title="Assigned to" keyParam="assignedTo" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -295,7 +262,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 160,
   },
   {
-    id: "follow-up",
+    id: 'follow-up',
     header: () => <ColumnHeader title="Follow up" keyParam="followUp" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -306,7 +273,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 140,
   },
   {
-    id: "status",
+    id: 'status',
     header: () => <ColumnHeader title="Status" keyParam="status" />,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -316,29 +283,13 @@ export const LeadColumns: ColumnDef<ILead>[] = [
       const getStatusBadge = () => {
         switch (status) {
           case LeadStatusTypes.New:
-            return (
-              <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                New
-              </Badge>
-            );
+            return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
           case LeadStatusTypes.Converted:
-            return (
-              <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                Completed
-              </Badge>
-            );
+            return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
           case LeadStatusTypes.NotConverted:
-            return (
-              <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                Not Converted
-              </Badge>
-            );
+            return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
           case LeadStatusTypes.FollowUp:
-            return (
-              <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                Follow Up
-              </Badge>
-            );
+            return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
           default:
             return <span>{status}</span>;
         }
@@ -349,7 +300,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 152,
   },
   {
-    id: "lead-actions",
+    id: 'lead-actions',
     header: () => <span className="sr-only">Actions</span>,
     cell: ({ row }) => {
       const tableCtx = useTableContext();
@@ -387,4 +338,3 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     size: 64,
   },
 ];
-

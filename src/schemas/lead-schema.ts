@@ -1,19 +1,13 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 export const personalDetailsSchema = z.object({
-  email: z
-    .string({ required_error: "Email is required." })
-    .email({ message: "Invalid email address" }),
+  email: z.string({ required_error: 'Email is required.' }).email({ message: 'Invalid email address' }),
   phone: z
-    .string({ required_error: "Phone number is required." })
-    .min(10, { message: "Phone number must be at least 10 characters" }),
-  firstName: z
-    .string({ required_error: "First name is required." })
-    .min(1, { message: "First name is required" }),
+    .string({ required_error: 'Phone number is required.' })
+    .min(10, { message: 'Phone number must be at least 10 characters' }),
+  firstName: z.string({ required_error: 'First name is required.' }).min(1, { message: 'First name is required' }),
   middleName: z.string().optional(),
-  lastName: z
-    .string({ required_error: "Last name is required." })
-    .min(1, { message: "Last name is required" }),
+  lastName: z.string({ required_error: 'Last name is required.' }).min(1, { message: 'Last name is required' }),
   dob: z.string().optional(),
   address: z.string().optional(),
   qualification: z.string().optional(),
@@ -36,14 +30,12 @@ export const serviceDetailsSchema = z.object({
   serviceType: z.array(z.string()),
   source: z.string().optional(),
   assignedTo: z.string().optional(),
-  status: z.string().min(1, { message: "Status is required" }),
+  status: z.string().min(1, { message: 'Status is required' }),
   note: z.string().optional(),
   files: z.array(z.string()).optional(),
 });
 
-const leadFormSchema = personalDetailsSchema
-  .and(serviceDetailsSchema)
-  .and(passportDetailsSchema);
+const leadFormSchema = personalDetailsSchema.and(serviceDetailsSchema).and(passportDetailsSchema);
 
 export type LeadSchemaType = z.infer<typeof leadFormSchema>;
 

@@ -5,7 +5,7 @@ type Props = {
   className?: string;
 };
 
-const FileIcon = (props: Props) => {
+const BellIcon = (props: Props) => {
   return (
     <svg
       width="20"
@@ -25,4 +25,4 @@ const FileIcon = (props: Props) => {
   );
 };
 
-export default FileIcon;
+export default BellIcon;

@@ -1,5 +1,5 @@
-import Image from "next/image";
-import React, { ReactNode } from "react";
+import Image from 'next/image';
+import React, { ReactNode } from 'react';
 
 type Props = {
   children: ReactNode;
@@ -19,12 +19,7 @@ const layout = (props: Props) => {
         />
         <div className="w-full h-full bg-[#000000c2] absolute inset-0 m-auto"></div>
         <div className="absolute top-20 left-20 flex flex-col gap-10 text-white">
-          <Image
-            src={"/success-logo.png"}
-            alt="logo"
-            height={100}
-            width={180}
-          />
+          <Image src={'/success-logo.png'} alt="logo" height={100} width={180} />
           <h3 className="text-h1 text-white-100 font-bold">
             We
             <br />
@@ -34,12 +29,9 @@ const layout = (props: Props) => {
           </h3>
         </div>
       </aside>
-      <div className="h-full w-full flex items-center justify-center">
-        {props.children}
-      </div>
+      <div className="h-full w-full flex items-center justify-center">{props.children}</div>
     </div>
   );
 };
 
 export default layout;
-

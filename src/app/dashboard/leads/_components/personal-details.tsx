@@ -1,7 +1,7 @@
-import SectionWrapper from "@/components/common/section-wrapper"
-import { Label } from "@/components/ui/label";
+import SectionWrapper from '@/components/common/section-wrapper';
+import { Label } from '@/components/ui/label';
 
-type Props = {}
+type Props = {};
 
 enum PersonalDetailsKeys {
   firstName = 'First Name',
@@ -17,20 +17,16 @@ enum PersonalDetailsKeys {
 }
 
 const personalDetails = {
-  firstName: "Bartholomew",
+  firstName: 'Bartholomew',
   middleName: null,
-  lastName: "Macquarie-Wilkinson",
-  emailAddress: "bartholomew@gmail.com",
-  phoneNumber: "+61 0928 5153 8368",
-  birthDate: "2000-02-22",
+  lastName: 'Macquarie-Wilkinson',
+  emailAddress: 'bartholomew@gmail.com',
+  phoneNumber: '+61 0928 5153 8368',
+  birthDate: '2000-02-22',
   address: null,
-  occupation: [
-    "Defence Force Senior Officer",
-    "Managing Director",
-    "Corporate General Manager"
-  ],
-  anzsco: ["111213", "111211", "111111"],
-  qualification: "Masters in Computer Science"
+  occupation: ['Defence Force Senior Officer', 'Managing Director', 'Corporate General Manager'],
+  anzsco: ['111213', '111211', '111111'],
+  qualification: 'Masters in Computer Science',
 };
 
 const PersonalDetails = (props: Props) => {
@@ -40,12 +36,7 @@ const PersonalDetails = (props: Props) => {
         {Object.entries(personalDetails).map(([key, value]) => {
           const label = PersonalDetailsKeys[key as keyof typeof PersonalDetailsKeys] ?? key;
 
-          const formattedValue =
-            value === null
-              ? "N/A"
-              : Array.isArray(value)
-                ? value.join(", ")
-                : value;
+          const formattedValue = value === null ? 'N/A' : Array.isArray(value) ? value.join(', ') : value;
 
           return (
             <div key={key} className="col-span-1 flex flex-col gap-2">
@@ -60,4 +51,3 @@ const PersonalDetails = (props: Props) => {
 };
 
 export default PersonalDetails;
-

@@ -1,5 +1,5 @@
-import { cn } from "@/lib/cn";
-import React from "react";
+import { cn } from '@/lib/cn';
+import React from 'react';
 
 type Props = {
   className?: string;
@@ -32,4 +32,3 @@ const VisaIcon = (props: Props) => {
 };
 
 export default VisaIcon;
-

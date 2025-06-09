@@ -10,9 +10,7 @@ interface TaskFilterParams {
 }
 
 const getTasks = async (params: TaskFilterParams) => {
-  const res = await api.get(
-    '/todo?' + QueryString.stringify(params, { arrayFormat: 'repeat' })
-  );
+  const res = await api.get('/todo?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
 
   return res.data as any;
 };

@@ -1,6 +1,6 @@
-import { IUser } from "@/types/user-type";
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { IUser } from '@/types/user-type';
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 interface AuthState {
   profile: IUser | null;
@@ -17,9 +17,9 @@ const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "auth-storage", // Name of the storage key
-    }
-  )
+      name: 'auth-storage', // Name of the storage key
+    },
+  ),
 );
 
 export default useAuthStore;

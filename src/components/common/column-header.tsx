@@ -1,15 +1,10 @@
-"use client";
+'use client';
 
-import { ArrowUp } from "lucide-react";
-import React, { useEffect, useState } from "react";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "../ui/tooltip";
-import useSearchParams from "@/hooks/use-search-params";
-import { cn } from "@/lib/cn";
+import { ArrowUp } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip';
+import useSearchParams from '@/hooks/use-search-params';
+import { cn } from '@/lib/cn';
 
 type Props = {
   title: string;
@@ -23,21 +18,21 @@ const ColumnHeader = (props: Props) => {
   const { searchParams, setParams } = useSearchParams();
 
   useEffect(() => {
-    if (!searchParams.get("order")) {
+    if (!searchParams.get('order')) {
       setSortingState(undefined);
     }
     if (sortingState) {
       setParams([
         {
-          name: "order",
+          name: 'order',
           value: sortingState,
         },
         {
-          name: "order_by",
+          name: 'order_by',
           value: props.keyParam,
         },
         {
-          name: "page",
+          name: 'page',
           value: null,
         },
       ]);
@@ -48,22 +43,19 @@ const ColumnHeader = (props: Props) => {
 
   const handleArrowClick = () => {
     if (sortingState) {
-      if (sortingState === "asc") {
-        setSortingState("desc");
+      if (sortingState === 'asc') {
+        setSortingState('desc');
       } else {
-        setSortingState("asc");
+        setSortingState('asc');
       }
     } else {
-      setSortingState("asc");
+      setSortingState('asc');
     }
   };
 
   return (
     <div
-      className={cn([
-        "flex items-center cursor-pointer gap-1 ",
-        props.className,
-      ])}
+      className={cn(['flex items-center cursor-pointer gap-1 ', props.className])}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       onClick={() => handleArrowClick()}
@@ -75,23 +67,12 @@ const ColumnHeader = (props: Props) => {
           <Tooltip>
             <TooltipTrigger className="absolute -right-5  bottom-[50%] translate-y-[40%]">
               {(hovered || !!sortingState) && (
-                <ArrowUp
-                  className={cn([
-                    "h-4 w-4",
-                    sortingState === "desc" && "rotate-180",
-                  ])}
-                  strokeWidth={2}
-                />
+                <ArrowUp className={cn(['h-4 w-4', sortingState === 'desc' && 'rotate-180'])} strokeWidth={2} />
               )}
             </TooltipTrigger>
-            <TooltipContent
-              side="bottom"
-              sideOffset={20}
-              className="text-b2-b bg-white-100"
-            >
+            <TooltipContent side="bottom" sideOffset={20} className="text-b2-b bg-white-100">
               <span>
-                Sort {sortingState === "asc" ? "descending" : "ascending"} by{" "}
-                {props.title}
+                Sort {sortingState === 'asc' ? 'descending' : 'ascending'} by {props.title}
               </span>
             </TooltipContent>
           </Tooltip>
@@ -102,4 +83,3 @@ const ColumnHeader = (props: Props) => {
 };
 
 export default ColumnHeader;
-
