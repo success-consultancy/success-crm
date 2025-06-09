@@ -15,6 +15,8 @@ import TribunalReviewIcon from "./tribunal-review-icon";
 import AgencyAgreementIcon from "./agency-agreement-icon";
 import SkillAssessmentIcon from "./skill-assessment-icon";
 import AppointmentCalendarIcon from "./appointment-calendar-icon";
+import FileCheckIcon from "./file-check-icon";
+import BellIcon from "./bell-icon";
 
 const Icons = {
   AgencyAgreementIcon,
@@ -33,7 +35,9 @@ const Icons = {
   VisaIcon,
   FileIcon,
   CloudUploadIcon,
+  FileCheckIcon,
   TaskIcon,
+  BellIcon,
 };
 
 export default Icons;

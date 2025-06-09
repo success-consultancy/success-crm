@@ -9,7 +9,6 @@ import { PasswordChangeSchema, PasswordChangeSchemaType, ProfileSchema, ProfileS
 import Input from "@/components/common/input";
 import { useUserUpdate } from "@/mutations/user/user";
 import Button from "@/components/common/button";
-import Avatar from "react-avatar";
 
 const PersonalDetailsTab = ({ user }: any) => {
   const form = useForm<PasswordChangeSchemaType>({
@@ -34,7 +33,6 @@ const PersonalDetailsTab = ({ user }: any) => {
         onSubmit={form.handleSubmit(onSubmit)}
         className="flex flex-col gap-3"
       >
-
         <FormField
           control={control}
           name="oldPassword"
@@ -42,6 +40,7 @@ const PersonalDetailsTab = ({ user }: any) => {
             <Input
               {...field}
               label="Old Password"
+              type="password"
               error={errors.oldPassword?.message}
             />
           )}
@@ -50,15 +49,14 @@ const PersonalDetailsTab = ({ user }: any) => {
           control={control}
           name="newPassword"
           render={({ field }) => (
-            <Input {...field} label="New Password" error={errors.newPassword?.message} />
-          )}
-        />
-
+            <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />)} />
         <FormField
           control={control}
           name="confirmPassword"
           render={({ field }) => (
-            <Input {...field} label="Confirm Password" error={errors.confirmPassword?.message} />
+            <Input {...field}
+              type="password"
+              label="Confirm Password" error={errors.confirmPassword?.message} />
           )}
         />
 

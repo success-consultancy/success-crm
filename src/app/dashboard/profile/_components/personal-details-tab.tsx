@@ -42,13 +42,9 @@ const PersonalDetailsTab = ({ user }: any) => {
   return (
     <>
       <div className="flex gap-4 items-center">
-        <Avatar
-          name={name}
-          round
-          className="w-[88px] h-[88px] text-[24px]"
-        />
+        <Avatar name={name} round className="w-[88px] h-[88px] text-[24px]" />
         <div className="flex flex-col">
-          <h1 className="text-bu-l">{name}</h1>
+          <h1 className="text-bu-l mb-1">{name}</h1>
           <span className="text-c1">Super admin</span>
         </div>
       </div>
@@ -61,7 +57,12 @@ const PersonalDetailsTab = ({ user }: any) => {
             control={control}
             name="id"
             render={({ field }) => (
-              <Input {...field} label="ID" disabled error={errors.id?.message} />
+              <Input
+                {...field}
+                label="ID"
+                disabled
+                error={errors.id?.message}
+              />
             )}
           />
           <FormField
@@ -104,7 +105,11 @@ const PersonalDetailsTab = ({ user }: any) => {
             control={control}
             name="address"
             render={({ field }) => (
-              <Input {...field} label="Address" error={errors.address?.message} />
+              <Input
+                {...field}
+                label="Address"
+                error={errors.address?.message}
+              />
             )}
           />
         </div>
@@ -142,7 +147,9 @@ const PersonalDetailsTab = ({ user }: any) => {
                 label="Bio (optional)"
                 error={errors.bio?.message}
               />
-              <span className="mt-1 text-[#757575] text-[14px]">Brief description for your profile</span>
+              <span className="mt-1 text-[#757575] text-[14px]">
+                Brief description for your profile
+              </span>
             </>
           )}
         />
