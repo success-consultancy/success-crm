@@ -24,10 +24,10 @@ export const personalDetailsSchema = z.object({
 export const passportDetailsSchema = z.object({
   country: z.string().optional(),
   passportNo: z.string().optional(),
-  issueDate: z.string().optional(),
-  expiryDate: z.string().optional(),
+  issueDate: z.date().optional(),
+  expiryDate: z.date().optional(),
   visa: z.string().optional(),
-  visaExpiry: z.string().optional(),
+  visaExpiry: z.date().optional(),
   hasVisitedStep: z.boolean(),
 });
 

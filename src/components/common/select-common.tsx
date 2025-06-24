@@ -79,4 +79,3 @@ const SelectCommon = ({ maxHeight = 200, ...props }: Props) => {
 };
 
 export default SelectCommon;
-

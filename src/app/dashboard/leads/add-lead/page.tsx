@@ -110,7 +110,11 @@ const AddLeadForm = () => {
     const payload = {
       ...data,
       serviceType,
-    } as Omit<LeadSchemaType, "serviceType"> & { serviceType: string };
+      sourceId: data.source ? Number(data.source) : undefined,
+    } as Omit<LeadSchemaType, "serviceType" | "source"> & {
+      serviceType: string;
+      sourceId?: number;
+    };
 
     addLead.mutate(payload); // Submit logic goes here
   };
@@ -161,11 +165,21 @@ const AddLeadForm = () => {
               )}
               <div></div>
               <div className="flex items-center gap-3">
-                <Button variant={"secondary"}>Cancel</Button>
+                <Button type="button" variant={"secondary"}>
+                  Cancel
+                </Button>
                 {currentStep === LeadsFormSteps.ServiceDetails ? (
                   <Button type="submit">Submit</Button>
                 ) : (
-                  <Button onClick={() => handleStepChange()}>Next</Button>
+                  <Button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleStepChange();
+                    }}
+                  >
+                    Next
+                  </Button>
                 )}
               </div>
             </div>
