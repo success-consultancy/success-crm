@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { cn } from "@/lib/cn";
+import { cn } from '@/lib/cn';
 
-import React from "react";
-import { SidebarNav } from "./sidebar-nav";
-import { ChevronLeft } from "lucide-react";
+import React from 'react';
+import { SidebarNav } from './sidebar-nav';
+import { ChevronLeft } from 'lucide-react';
 
-import { usePathname } from "next/navigation";
-import { useAppStateStore } from "@/store/app-state-store";
-import { BrandLogoNav } from "./brand-logo-nav";
-import { NAVIGATION_LIST } from "@/app/config/dashboard-navs";
+import { usePathname } from 'next/navigation';
+import { useAppStateStore } from '@/store/app-state-store';
+import { BrandLogoNav } from './brand-logo-nav';
+import { NAVIGATION_LIST } from '@/app/config/dashboard-navs';
 
 type Props = {
   className?: string;
@@ -20,17 +20,16 @@ const DashboardSidebar = ({ className }: Props) => {
 
   const currentPathname = usePathname();
 
-  const { isSidebarCollapsed, handleToggleSidebarCollapse } =
-    useAppStateStore();
+  const { isSidebarCollapsed, handleToggleSidebarCollapse } = useAppStateStore();
 
   return (
     <div className="relative isolate z-50">
       <aside
         className={cn([
-          "relative duration-500 bg-white-100 shrink-0 ease-out group h-full pt-[.875rem] flex flex-col",
+          'relative duration-500 bg-white-100 shrink-0 ease-out group h-full pt-[.875rem] flex flex-col',
           // use after pseudo element to add border-r so that it doesn't affect the pointer out
-          "after:right-0 after:top-0 after:h-full after:w-px after:bg-border-normal after:absolute after:pointer-events-none",
-          isSidebarCollapsed ? "w-auto" : "w-fit",
+          'after:right-0 after:top-0 after:h-full after:w-px after:bg-border-normal after:absolute after:pointer-events-none',
+          isSidebarCollapsed ? 'w-auto' : 'w-fit',
           className,
         ])}
       >
@@ -53,18 +52,13 @@ const DashboardSidebar = ({ className }: Props) => {
           ref={toggleButtonRef}
           onClick={() => handleToggleSidebarCollapse(!isSidebarCollapsed)}
           className={cn(
-            "absolute bottom-[7%] right-0 z-30 translate-x-1/2",
-            "rounded-full cursor-pointer bg-bg-light-grey p-1 shrink-0 shadow-round w-9 h-9 flex-center",
-            "active:scale-90 hover:shadow-lg duration-200",
-            "opacity-0 group-hover:opacity-100"
+            'absolute bottom-[7%] right-0 z-30 translate-x-1/2',
+            'rounded-full cursor-pointer bg-bg-light-grey p-1 shrink-0 shadow-round w-9 h-9 flex-center',
+            'active:scale-90 hover:shadow-lg duration-200',
+            'opacity-0 group-hover:opacity-100',
           )}
         >
-          <ChevronLeft
-            className={cn(
-              "duration-200 stroke-[.0625rem]",
-              isSidebarCollapsed && "rotate-180"
-            )}
-          />
+          <ChevronLeft className={cn('duration-200 stroke-[.0625rem]', isSidebarCollapsed && 'rotate-180')} />
         </button>
       </aside>
     </div>
@@ -72,4 +66,3 @@ const DashboardSidebar = ({ className }: Props) => {
 };
 
 export default DashboardSidebar;
-

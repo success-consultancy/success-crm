@@ -1,3 +1,3 @@
 export enum PortalIds {
-    DashboardHeader = 'dashboard-header'
+  DashboardHeader = 'dashboard-header',
 }

@@ -1,9 +1,8 @@
-import { PortalIds } from "@/app/config/portal"
-import Container from "@/components/common/container"
-import Portal from "@/components/common/portal"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import LeadsOverview from "../../_components/overview-section"
-
+import { PortalIds } from '@/app/config/portal';
+import Container from '@/components/common/container';
+import Portal from '@/components/common/portal';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import LeadsOverview from '../../_components/overview-section';
 
 const page = () => {
   return (
@@ -22,10 +21,9 @@ const page = () => {
             <LeadsOverview />
           </TabsContent>
         </Tabs>
-
       </div>
     </Container>
-  )
-}
+  );
+};
 
-export default page
+export default page;

@@ -1,9 +1,9 @@
-import Button from "@/components/common/button"
-import SectionWrapper from "@/components/common/section-wrapper"
-import Stage from "@/components/common/stage"
+import Button from '@/components/common/button';
+import SectionWrapper from '@/components/common/section-wrapper';
+import Stage from '@/components/common/stage';
 
 const LeadStages = () => {
-  const leadsStages = ['New lead', 'Negotiation', 'Converted', 'Not converted', 'Follow up']
+  const leadsStages = ['New lead', 'Negotiation', 'Converted', 'Not converted', 'Follow up'];
   return (
     <SectionWrapper title="Lead Stages">
       <div className="space-y-3">
@@ -19,16 +19,18 @@ const LeadStages = () => {
         </div>
         <div className="flex w-full items-center justify-between">
           <div className="flex items-center gap-3">
-            {leadsStages.map((stage, idx) => <Stage title={stage} isActive={idx == 0} isFirst={idx == 0} isLast={idx == leadsStages.length - 1} />)}
+            {leadsStages.map((stage, idx) => (
+              <Stage title={stage} isActive={idx == 0} isFirst={idx == 0} isLast={idx == leadsStages.length - 1} />
+            ))}
           </div>
           <div className="flex items-center gap-2">
-            <Button variant='success'>Won</Button>
+            <Button variant="success">Won</Button>
             <Button variant={'destructive'}>Lost</Button>
           </div>
         </div>
       </div>
     </SectionWrapper>
-  )
-}
+  );
+};
 
-export default LeadStages 
+export default LeadStages;

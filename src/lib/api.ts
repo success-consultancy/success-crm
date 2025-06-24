@@ -1,19 +1,15 @@
-import axios, { AxiosRequestConfig } from "axios";
-import {
-  getAccessToken,
-  removeAccessToken,
-  saveAccessToken,
-} from "./utils/auth-token";
-import { toast } from "@/hooks/use-toast";
-import { queryClient } from "@/components/providers/query-provider";
+import axios, { AxiosRequestConfig } from 'axios';
+import { getAccessToken, removeAccessToken, saveAccessToken } from './utils/auth-token';
+import { toast } from '@/hooks/use-toast';
+import { queryClient } from '@/components/providers/query-provider';
 
 const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export const api = axios.create({
   baseURL,
   headers: {
-    Accept: "application/json",
-    "Content-Type": "application/json",
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
   },
 });
 
@@ -22,14 +18,14 @@ api.interceptors.request.use(
   (config) => {
     const token = getAccessToken();
     if (token) {
-      config.headers["Authorization"] = token;
+      config.headers['Authorization'] = token;
     }
 
     return config;
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 //  generate refresh token
@@ -47,7 +43,7 @@ api.interceptors.response.use(
 
         try {
           // refresh the access token
-          const { data } = await axios.get(baseURL + "/user/auth/refresh", {
+          const { data } = await axios.get(baseURL + '/user/auth/refresh', {
             withCredentials: true,
           });
 
@@ -62,13 +58,13 @@ api.interceptors.response.use(
           if (_error?.response?.status === 401) {
             if (getAccessToken()) {
               toast({
-                title: "Session has expired",
-                variant: "destructive",
+                title: 'Session has expired',
+                variant: 'destructive',
               });
             }
 
             removeAccessToken();
-            if (originalConfig.url !== "/user/auth/login") {
+            if (originalConfig.url !== '/user/auth/login') {
               queryClient.resetQueries();
             }
 
@@ -82,5 +78,5 @@ api.interceptors.response.use(
     }
 
     return Promise.reject(err);
-  }
+  },
 );

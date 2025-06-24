@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import * as React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 
-import { cn } from "@/lib/cn";
+import { cn } from '@/lib/cn';
 
 interface ClipFromLeftAnimationProps {
   children?: React.ReactNode;
@@ -19,21 +19,21 @@ const ClipFromLeftAnimation: React.FC<ClipFromLeftAnimationProps> = (props) => {
         <motion.span
           transition={{
             duration: props.duration || 0.05,
-            ease: "linear",
+            ease: 'linear',
           }}
           initial={{
-            width: "0px",
-            clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)",
+            width: '0px',
+            clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)',
           }}
           animate={{
-            width: "auto",
-            clipPath: "polygon(0 0, 100% 0%, 100% 100%, 0% 100%)",
+            width: 'auto',
+            clipPath: 'polygon(0 0, 100% 0%, 100% 100%, 0% 100%)',
           }}
           exit={{
-            width: "0px",
-            clipPath: "polygon(0 0, 0 0, 0 100%, 0% 100%)",
+            width: '0px',
+            clipPath: 'polygon(0 0, 0 0, 0 100%, 0% 100%)',
           }}
-          className={cn(["inline-block overflow-hidden", props.className])}
+          className={cn(['inline-block overflow-hidden', props.className])}
         >
           {props.children}
         </motion.span>
@@ -43,4 +43,3 @@ const ClipFromLeftAnimation: React.FC<ClipFromLeftAnimationProps> = (props) => {
 };
 
 export { ClipFromLeftAnimation };
-

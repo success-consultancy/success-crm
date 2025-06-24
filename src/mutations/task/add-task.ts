@@ -1,10 +1,10 @@
-import { QUERY_KEYS } from "@/constants/query-keys";
-import { api } from "@/lib/api";
-import { TaskSchemaType } from "@/schemas/task-schema";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { api } from '@/lib/api';
+import { TaskSchemaType } from '@/schemas/task-schema';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const addTask = async (payload: TaskSchemaType) => {
-  const res = await api.post("/todo", payload);
+  const res = await api.post('/todo', payload);
   return res.data;
 };
 
@@ -38,8 +38,5 @@ export const useEditTask = () => {
         queryKey: [QUERY_KEYS.GET_TASKS],
       });
     },
-
   });
-
 };
-

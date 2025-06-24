@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "../ui/toaster";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Toaster } from '../ui/toaster';
 
 interface Providers {
   children?: React.ReactNode;
@@ -37,4 +37,3 @@ const Providers: React.FC<Providers> = (props) => {
 
 export { queryClient };
 export default Providers;
-

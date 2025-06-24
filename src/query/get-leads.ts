@@ -1,13 +1,9 @@
-import { QUERY_KEYS } from "@/constants/query-keys";
-import { api } from "@/lib/api";
-import {
-  IPagination,
-  PAGINATION_PARAMS,
-  SortingState,
-} from "@/types/pagination";
-import { LeadsResponseType } from "@/types/response-types/leads-response";
-import { useQuery } from "@tanstack/react-query";
-import QueryString from "qs";
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { api } from '@/lib/api';
+import { IPagination, PAGINATION_PARAMS, SortingState } from '@/types/pagination';
+import { LeadsResponseType } from '@/types/response-types/leads-response';
+import { useQuery } from '@tanstack/react-query';
+import QueryString from 'qs';
 
 interface LeadsFilterParams extends IPagination {
   order?: string;
@@ -18,16 +14,14 @@ interface LeadsFilterParams extends IPagination {
 
 export const LEADS_FILTER_PARAMS: Array<keyof LeadsFilterParams> = [
   ...PAGINATION_PARAMS,
-  "order",
-  "order_by",
-  "q_field",
-  "q",
+  'order',
+  'order_by',
+  'q_field',
+  'q',
 ];
 
 const getLeads = async (params: LeadsFilterParams) => {
-  const res = await api.get(
-    "/lead?" + QueryString.stringify(params, { arrayFormat: "repeat" })
-  );
+  const res = await api.get('/lead?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
   return res.data as LeadsResponseType;
 };
 

@@ -17,9 +17,9 @@ const useAuthStore = create<AuthState>()(
       },
     }),
     {
-      name: "auth-storage", // Name of the storage key
-    }
-  )
+      name: 'auth-storage', // Name of the storage key
+    },
+  ),
 );
 
 export default useAuthStore;

@@ -1,27 +1,24 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import {
-  Sheet,
-  SheetContent,
-} from "@/components/ui/sheet";
+import { useEffect, useState } from 'react';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
-import TaskIcon from "@/icons/task-icon";
-import EmptyTaskIcon from "@/icons/empty-task-icon";
-import { useGetTasks } from "@/query/get-tasks";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import useAuthStore from "@/store/auth-store";
-import { useGetUsers } from "@/query/get-user";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import taskFormSchema, { TaskSchemaType } from "@/schemas/task-schema";
-import { useAddTask, useEditTask } from "@/mutations/task/add-task";
-import TaskHeader from "./task-header";
-import TaskFilter from "./task-filter";
-import TaskForm from "./task-form";
-import TaskList from "./task-list";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { TaskStatus, TaskType } from "@/constants/task-constants";
+import TaskIcon from '@/icons/task-icon';
+import EmptyTaskIcon from '@/icons/empty-task-icon';
+import { useGetTasks } from '@/query/get-tasks';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import useAuthStore from '@/store/auth-store';
+import { useGetUsers } from '@/query/get-user';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import taskFormSchema, { TaskSchemaType } from '@/schemas/task-schema';
+import { useAddTask, useEditTask } from '@/mutations/task/add-task';
+import TaskHeader from './task-header';
+import TaskFilter from './task-filter';
+import TaskForm from './task-form';
+import TaskList from './task-list';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TaskStatus, TaskType } from '@/constants/task-constants';
 
 interface Task {
   id: string;
@@ -64,14 +61,14 @@ export function TasksDrawer() {
   const superAdmin = profile?.roleId === 1;
   const { data: tasks } = useGetTasks({
     userId: Number(taskFilter.selectedEmployee),
-    status: taskFilter.status.toLowerCase()
+    status: taskFilter.status.toLowerCase(),
   });
   const { data: users } = useGetUsers();
   const addTask = useAddTask();
   const editTask = useEditTask();
 
   useEffect(() => {
-    if(taskFilter.type === TaskType.MyTask){
+    if (taskFilter.type === TaskType.MyTask) {
       setTaskFilter({
         ...taskFilter,
         selectedEmployee: profile?.id,
@@ -80,7 +77,7 @@ export function TasksDrawer() {
   }, [taskFilter.type]);
 
   useEffect(() => {
-    if(profile){
+    if (profile) {
       setTaskFilter({
         ...taskFilter,
         selectedEmployee: profile.id,
@@ -89,17 +86,16 @@ export function TasksDrawer() {
   }, [profile]);
 
   const saveTask = (data: TaskSchemaType) => {
-    if(taskFormState.isEditMode){
-
+    if (taskFormState.isEditMode) {
       editTask.mutateAsync({
         ...data,
         id: taskFormState.currentTaskId as number,
       });
-    }else{
-    addTask.mutateAsync({
-      ...data,
-      userId: Number(profile?.id),
-    });
+    } else {
+      addTask.mutateAsync({
+        ...data,
+        userId: Number(profile?.id),
+      });
     }
   };
   const openAddTaskForm = () => {
@@ -126,16 +122,11 @@ export function TasksDrawer() {
   };
   return (
     <>
-      <div 
-      onClick={() => openModelTaskForm()}
-      >
+      <div onClick={() => openModelTaskForm()}>
         <TaskIcon />
       </div>
       <Sheet open={taskFormState.isOpen} onOpenChange={closeTaskForm}>
-        <SheetContent
-          side="right"
-          className="min-w-[688px] sm:max-w-md border-l bg-white p-3 "
-        >
+        <SheetContent side="right" className="min-w-[688px] sm:max-w-md border-l bg-white p-3 ">
           {!taskFormState.isAddMode ? (
             <>
               <TaskHeader />
@@ -151,9 +142,7 @@ export function TasksDrawer() {
                 <div className="border-b">
                   <Tabs
                     value={String(taskFilter.selectedEmployee)}
-                    onValueChange={(value) =>
-                      setTaskFilter({ ...taskFilter, selectedEmployee: Number(value) })
-                    }
+                    onValueChange={(value) => setTaskFilter({ ...taskFilter, selectedEmployee: Number(value) })}
                     className="w-full"
                   >
                     <TabsList className="w-full h-auto flex overflow-x-auto bg-transparent justify-start px-4 py-0 hide-scrollbar">
@@ -164,16 +153,14 @@ export function TasksDrawer() {
                             value={String(employee.id)}
                             className="px-4 py-3 data-[state=active]:border-b-2 data-[state=active]:border-blue-500 data-[state=active]:bg-transparent data-[state=active]:shadow-none rounded-none"
                           >
-                            {employee.firstName + " " + employee.lastName}
+                            {employee.firstName + ' ' + employee.lastName}
                           </TabsTrigger>
                         ))}
                     </TabsList>
                   </Tabs>
                 </div>
               )}
-              <div className="px-4 py-2 text-sm font-medium text-gray-500 border-b">
-                {taskFilter.status + ' tasks'}
-              </div>
+              <div className="px-4 py-2 text-sm font-medium text-gray-500 border-b">{taskFilter.status + ' tasks'}</div>
 
               {tasks?.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-16 text-center h-[calc(100vh-200px)]">
@@ -181,13 +168,11 @@ export function TasksDrawer() {
                     <EmptyTaskIcon />
                   </div>
                   <h3 className="text-lg font-medium mb-1">No tasks yet</h3>
-                  <p className="text-sm text-muted-foreground">
-                    Add a task to start tracking your work
-                  </p>
+                  <p className="text-sm text-muted-foreground">Add a task to start tracking your work</p>
                 </div>
               ) : (
                 <ScrollArea className="h-full w-full" type="hover">
-                 <TaskList tasks={tasks} openEditTaskForm={openEditTaskForm} />
+                  <TaskList tasks={tasks} openEditTaskForm={openEditTaskForm} />
                 </ScrollArea>
               )}
             </>

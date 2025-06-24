@@ -1,18 +1,18 @@
-"use client";
+'use client';
 
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
-import { ROUTES } from "@/app/config/routes";
-import Portal from "@/components/common/portal";
-import { PortalIds } from "@/app/config/portal";
-import { ColumnDef } from "@tanstack/react-table";
-import Container from "@/components/common/container";
-import TableComponent from "@/components/common/table";
-import useSearchParams from "@/hooks/use-search-params";
-import { ButtonLink } from "@/components/common/button-link";
-import { ILead } from "@/types/response-types/leads-response";
-import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
-import { LeadColumns } from "@/app/config/columns/leads-columns-definitions";
+import { Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { ROUTES } from '@/app/config/routes';
+import Portal from '@/components/common/portal';
+import { PortalIds } from '@/app/config/portal';
+import { ColumnDef } from '@tanstack/react-table';
+import Container from '@/components/common/container';
+import TableComponent from '@/components/common/table';
+import useSearchParams from '@/hooks/use-search-params';
+import { ButtonLink } from '@/components/common/button-link';
+import { ILead } from '@/types/response-types/leads-response';
+import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
+import { LeadColumns } from '@/app/config/columns/leads-columns-definitions';
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
@@ -20,11 +20,10 @@ const Leads = () => {
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
   const { data, isLoading } = useGetLeads({
     ...filterParams,
-    limit: filterParams.limit || "25",
+    limit: filterParams.limit || '25',
   });
 
-  const [visibleColumns, setVisibleColumns] =
-    useState<ColumnDef<ILead>[]>(LeadColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
 
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
@@ -52,4 +51,3 @@ const Leads = () => {
 };
 
 export default Leads;
-

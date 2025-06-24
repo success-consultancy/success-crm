@@ -1,24 +1,24 @@
-import SectionWrapper from "@/components/common/section-wrapper";
-import { Label } from "@/components/ui/label";
+import SectionWrapper from '@/components/common/section-wrapper';
+import { Label } from '@/components/ui/label';
 
 type Props = {};
 
 enum PassportVisaKeys {
-  country = "Country",
-  visa = "Visa",
-  visaExpiryDate = "Visa expiry date",
-  passportNumber = "Passport number",
-  issueDate = "Issue date",
-  expiryDate = "Expiry date",
+  country = 'Country',
+  visa = 'Visa',
+  visaExpiryDate = 'Visa expiry date',
+  passportNumber = 'Passport number',
+  issueDate = 'Issue date',
+  expiryDate = 'Expiry date',
 }
 
 const passportVisaInfo = {
-  country: "Australia",
-  visa: "TSS Visa (482) - Small Business Sponsorship",
-  visaExpiryDate: "22/02/2025",
-  passportNumber: "B7654321",
-  issueDate: "22/02/2020",
-  expiryDate: "22/02/2030",
+  country: 'Australia',
+  visa: 'TSS Visa (482) - Small Business Sponsorship',
+  visaExpiryDate: '22/02/2025',
+  passportNumber: 'B7654321',
+  issueDate: '22/02/2020',
+  expiryDate: '22/02/2030',
 };
 
 const PassportVisaInfo = (props: Props) => {
@@ -41,4 +41,3 @@ const PassportVisaInfo = (props: Props) => {
 };
 
 export default PassportVisaInfo;
-
