@@ -26,10 +26,10 @@ const DashboardSidebar = ({ className }: Props) => {
     <div className="relative isolate z-50">
       <aside
         className={cn([
-          'relative duration-500 bg-white-100 shrink-0 ease-out group h-full pt-[.875rem] flex flex-col',
+          'relative duration-300 bg-white-100 shrink-0 ease-out group h-full pt-[.875rem] flex flex-col transition-all',
           // use after pseudo element to add border-r so that it doesn't affect the pointer out
           'after:right-0 after:top-0 after:h-full after:w-px after:bg-border-normal after:absolute after:pointer-events-none',
-          isSidebarCollapsed ? 'w-auto' : 'w-fit',
+          isSidebarCollapsed ? 'w-[4.5rem]' : 'w-[16rem]',
           className,
         ])}
       >
@@ -46,7 +46,7 @@ const DashboardSidebar = ({ className }: Props) => {
             />
           ))}
         </div>
-        {/* <UserNavMenu isCollapsed={isSidebarCollapsed} /> */}
+
         {/* sidebar toggle */}
         <button
           ref={toggleButtonRef}
@@ -54,11 +54,17 @@ const DashboardSidebar = ({ className }: Props) => {
           className={cn(
             'absolute bottom-[7%] right-0 z-30 translate-x-1/2',
             'rounded-full cursor-pointer bg-bg-light-grey p-1 shrink-0 shadow-round w-9 h-9 flex-center',
-            'active:scale-90 hover:shadow-lg duration-200',
+            'active:scale-90 hover:shadow-lg duration-200 transition-all',
             'opacity-0 group-hover:opacity-100',
+            'hover:bg-white border border-border-normal',
           )}
         >
-          <ChevronLeft className={cn('duration-200 stroke-[.0625rem]', isSidebarCollapsed && 'rotate-180')} />
+          <ChevronLeft 
+            className={cn(
+              'duration-300 stroke-[1.5] transition-transform', 
+              isSidebarCollapsed ? 'rotate-180' : 'rotate-0'
+            )} 
+          />
         </button>
       </aside>
     </div>

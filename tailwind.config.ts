@@ -66,6 +66,7 @@ export default {
         primary: {
           red: 'var(--primary-red)',
           blue: 'var(--primary-blue)',
+          faded: '#dcf1ff',
         },
         utility: {
           red: 'var(--utility-red)',
@@ -82,7 +83,20 @@ export default {
         },
         bg: {
           blueExtraLight: 'var(--bg-blue-extra-light)',
+          'light-grey': '#f8f9fa',
         },
+        accent: {
+          50: '#f0f9ff',
+          700: '#0369a1',
+        },
+        content: {
+          subtitle: '#6b7280',
+          heading: '#111827',
+        },
+        stroke: {
+          divider: '#e5e7eb',
+        },
+        'white-100': '#ffffff',
       },
       borderRadius: {
         Md: 'var(--Radius-Md)',

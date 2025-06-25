@@ -18,17 +18,16 @@ type SidebarNavProps = {
   isCollapsed: boolean;
   currentPathname?: string;
   isSidebarShown?: boolean;
-  //   onSetNewActiveIndex: () => void;
-  //   onClearActiveIndex: () => void;
-  //   onClearNewSidebarItemIndex: () => void;
-  //   isActiveIndex: boolean;
 } & SidebarNavItem;
 
 const SidebarNav: React.FC<SidebarNavProps> = (props) => {
   const [expandSubNavs, setExpandSubNavs] = React.useState(false);
+  const [isPopoverOpen, setIsPopoverOpen] = React.useState(false);
 
   const toggleExpandSubNav = () => {
-    setExpandSubNavs((pre) => !pre);
+    if (!props.isCollapsed) {
+      setExpandSubNavs((pre) => !pre);
+    }
   };
 
   const isActive = props.currentPathname?.includes(props.href as string);
@@ -49,81 +48,126 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
     props.subNav?.forEach(({ href }) => subNavHrefs.push(href as string));
   }
 
+  // Check if any sub-navigation item is active
+  const isSubNavActive = props.subNav?.some((nav) => props.currentPathname?.includes(nav.href as string));
+
   return (
     <>
-      {/* @ts-expect-error Tag is dynamic as it can be button or link */}
-
-      <Tag {...linkProps} className={cn(['px-2 2xl:2.5', props.className])} tabIndex={0}>
-        <span
-          className={cn([
-            'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
-            'py-2 px-2.5',
-            'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
-            isActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
-            props.isCollapsed && 'w-11 2xl:w-12 ',
-            'hover:bg-accent-50',
-          ])}
-        >
-          <Popover>
-            <PopoverTrigger asChild>
-              {!props.subNav ? (
-                <Tooltip trigger={props.icon} side="right" sideOffset={20} hidden={!props.isCollapsed}>
-                  {props.title}
-                </Tooltip>
-              ) : (
-                props.icon
-              )}
-            </PopoverTrigger>
-            <PopoverContent
-              className="w-[12.5rem] bg-white-100 p-2"
-              hidden={!props.subNav}
-              side="right"
-              align="start"
-              sideOffset={10}
-            >
-              <div className="flex flex-col">
-                {props.subNav?.map((nav, idx) => (
-                  <Link
-                    href={nav.href as string}
-                    key={nav.title + idx}
+      {/* Main Navigation Item */}
+      {props.isCollapsed && props.subNav ? (
+        // Collapsed state with sub-navigation - use Popover
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+          <PopoverTrigger asChild>
+            <button className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
+              <Tooltip 
+                trigger={
+                  <span
                     className={cn([
-                      'flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 ',
-                      props.currentPathname?.includes(nav.href as string) && 'text-primary bg-primary-faded  ',
+                      'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
+                      'py-2 px-2.5',
+                      'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
+                      isActive || isSubNavActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
+                      'w-11 2xl:w-12',
+                      'hover:bg-accent-50 transition-colors duration-200',
                     ])}
                   >
-                    {nav.title}
-                  </Link>
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
-
-          <ClipFromLeftAnimation
-            show={!props.isCollapsed}
-            className={`text-b1-b overflow-hidden truncate line-clamp-1 text-content-subtitle ${
-              isActive && 'text-accent-700 '
-            }`}
+                    {props.icon}
+                  </span>
+                } 
+                side="right" 
+                sideOffset={20}
+              >
+                {props.title}
+              </Tooltip>
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-[12.5rem] bg-white-100 p-2"
+            side="right"
+            align="start"
+            sideOffset={10}
           >
-            {props.title}
-          </ClipFromLeftAnimation>
+            <div className="flex flex-col">
+              {props.subNav?.map((nav, idx) => (
+                <Link
+                  href={nav.href as string}
+                  key={nav.title + idx}
+                  className={cn([
+                    'flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 rounded-md transition-colors duration-200',
+                    props.currentPathname?.includes(nav.href as string) && 'text-primary bg-primary-faded',
+                  ])}
+                  onClick={() => setIsPopoverOpen(false)}
+                >
+                  {nav.title}
+                </Link>
+              ))}
+            </div>
+          </PopoverContent>
+        </Popover>
+      ) : props.isCollapsed ? (
+        // Collapsed state without sub-navigation - use Tooltip
+        <Tooltip 
+          trigger={
+            {/* @ts-expect-error Tag is dynamic as it can be button or link */}
+            <Tag {...linkProps} className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
+              <span
+                className={cn([
+                  'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
+                  'py-2 px-2.5',
+                  'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
+                  isActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
+                  'w-11 2xl:w-12',
+                  'hover:bg-accent-50 transition-colors duration-200',
+                ])}
+              >
+                {props.icon}
+              </span>
+            </Tag>
+          } 
+          side="right" 
+          sideOffset={20}
+        >
+          {props.title}
+        </Tooltip>
+      ) : (
+        // Expanded state
+        {/* @ts-expect-error Tag is dynamic as it can be button or link */}
+        <Tag {...linkProps} className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
+          <span
+            className={cn([
+              'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
+              'py-2 px-2.5',
+              'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
+              isActive || isSubNavActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
+              'hover:bg-accent-50 transition-colors duration-200',
+            ])}
+          >
+            {props.icon}
 
-          {/* render chevron if has sub nav items */}
-          {!!props.subNav && (
-            <ChevronDown
-              className={cn([
-                'absolute z-10 -translate-y-1/2 top-1/2 duration-200 stroke-[.0625rem]',
-                props.isCollapsed
-                  ? '-rotate-90 hidden right-0 w-3 h-3 '
-                  : ['h-5 w-5 right-2.5', expandSubNavs ? 'rotate-180' : 'rotate-0'],
-              ])}
-            />
-          )}
+            <ClipFromLeftAnimation
+              show={!props.isCollapsed}
+              className={`text-b1-b overflow-hidden truncate line-clamp-1 text-content-subtitle ${
+                isActive || isSubNavActive ? 'text-accent-700' : ''
+              }`}
+            >
+              {props.title}
+            </ClipFromLeftAnimation>
 
-          {/* popover sub navigations menu for collapsed state */}
-        </span>
-        {/* </NavItemTooltip> */}
-      </Tag>
+            {/* render chevron if has sub nav items */}
+            {!!props.subNav && (
+              <ChevronDown
+                className={cn([
+                  'absolute z-10 -translate-y-1/2 top-1/2 duration-200 stroke-[.0625rem]',
+                  'h-5 w-5 right-2.5',
+                  expandSubNavs ? 'rotate-180' : 'rotate-0',
+                ])}
+              />
+            )}
+          </span>
+        </Tag>
+      )}
 
+      {/* Sub-navigation for expanded state */}
       {!props.isCollapsed && !!props.subNav && (
         <SubNavigations
           setIsExpanded={setExpandSubNavs}
@@ -178,8 +222,8 @@ const SubNavigations: React.FC<SubNavigationsProps> = (props) => {
                   prefetch={false}
                   className={cn([
                     i === 0 ? 'mt-0' : 'mt-1',
-                    'block relative text-b1 px-2 py-1.5 ms-3 rounded hover:bg-primary-faded',
-                    'after:absolute after:top-1/2 after:left-0 after:bg-primary after:rounded-lg after:w-0.5 after:translate-y-[-50%] after:h-[70%]',
+                    'block relative text-b1 px-2 py-1.5 ms-3 rounded hover:bg-primary-faded transition-colors duration-200',
+                    'after:absolute after:top-1/2 after:left-0 after:bg-primary after:rounded-lg after:w-0.5 after:translate-y-[-50%] after:h-[70%] after:transition-transform after:duration-200',
                     props.currentPathname === nav.href
                       ? 'after:scale-y-100 bg-primary-faded text-accent-700'
                       : 'after:scale-y-0',
