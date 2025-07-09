@@ -35,7 +35,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
   const Tag = !!props.subNav ? 'button' : Link;
 
   const linkProps = !!props.subNav
-    ? {
+    ? { 
         onClick: () => {
           toggleExpandSubNav();
         },
@@ -59,34 +59,31 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
           <PopoverTrigger asChild>
             <button className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
-              <Tooltip 
+              <Tooltip
                 trigger={
                   <span
                     className={cn([
                       'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
                       'py-2 px-2.5',
                       'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
-                      isActive || isSubNavActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
+                      isActive || isSubNavActive
+                        ? 'bg-component-active after:scale-x-100 text-primary-blue'
+                        : 'after:scale-x-0',
                       'w-11 2xl:w-12',
                       'hover:bg-accent-50 transition-colors duration-200',
                     ])}
                   >
                     {props.icon}
                   </span>
-                } 
-                side="right" 
+                }
+                side="right"
                 sideOffset={20}
               >
                 {props.title}
               </Tooltip>
             </button>
           </PopoverTrigger>
-          <PopoverContent
-            className="w-[12.5rem] bg-white-100 p-2"
-            side="right"
-            align="start"
-            sideOffset={10}
-          >
+          <PopoverContent className="w-[12.5rem] bg-white-100 p-2" side="right" align="start" sideOffset={10}>
             <div className="flex flex-col">
               {props.subNav?.map((nav, idx) => (
                 <Link
@@ -106,9 +103,9 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
         </Popover>
       ) : props.isCollapsed ? (
         // Collapsed state without sub-navigation - use Tooltip
-        <Tooltip 
+        <Tooltip
           trigger={
-            {/* @ts-expect-error Tag is dynamic as it can be button or link */}
+            // @ts-ignore
             <Tag {...linkProps} className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
               <span
                 className={cn([
@@ -123,22 +120,24 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
                 {props.icon}
               </span>
             </Tag>
-          } 
-          side="right" 
+          }
+          side="right"
           sideOffset={20}
         >
           {props.title}
         </Tooltip>
       ) : (
         // Expanded state
-        {/* @ts-expect-error Tag is dynamic as it can be button or link */}
+        // @ts-ignore
         <Tag {...linkProps} className={cn(['px-2 2xl:px-2.5', props.className])} tabIndex={0}>
           <span
             className={cn([
               'transition-all duration-300 relative rounded-md overflow-hidden line-clamp-1 flex items-center gap-5 cursor-pointer',
-              'py-2 px-2.5',
+              'py-2 px-2.5 text-b1-b',
               'after:absolute after:w-0.5 after:left-0 after:duration-200 after:rounded-md after:h-1/2 after:bg-primary',
-              isActive || isSubNavActive ? 'bg-component-active after:scale-x-100 text-primary-blue' : 'after:scale-x-0',
+              isActive || isSubNavActive
+                ? 'bg-component-active after:scale-x-100 text-primary-blue'
+                : 'after:scale-x-0',
               'hover:bg-accent-50 transition-colors duration-200',
             ])}
           >
@@ -146,7 +145,7 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
 
             <ClipFromLeftAnimation
               show={!props.isCollapsed}
-              className={`text-b1-b overflow-hidden truncate line-clamp-1 text-content-subtitle ${
+              className={`!text-b1-b overflow-hidden truncate line-clamp-1 ${
                 isActive || isSubNavActive ? 'text-accent-700' : ''
               }`}
             >
