@@ -160,7 +160,7 @@ export default {
           '0.875rem',
           {
             lineHeight: '1.4',
-            fontWeight: '600',
+            fontWeight: '500',
           },
         ], //14px semibold
         b2: [

@@ -44,7 +44,7 @@ const Leads = () => {
             Add Lead
           </ButtonLink>
         }
-        className="bg-neutral-white"
+        className="bg-neutral-white text-neutral-darkGrey"
       />
     </Container>
   );

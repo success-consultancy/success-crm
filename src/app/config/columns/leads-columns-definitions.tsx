@@ -54,7 +54,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <div className="">{row.original.firstName}</div>;
+      return <div className="">{row.original.firstName || "-"}</div>;
     },
     size: 160,
   },
@@ -64,7 +64,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <div className="">{row.original.middleName}</div>;
+      return <div className="">{row.original.middleName || "-"}</div>;
     },
     size: 160,
   },
@@ -74,7 +74,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <div className="">{row.original.lastName}</div>;
+      return <div className="">{row.original.lastName || "-"}</div>;
     },
     size: 160,
   },
@@ -84,7 +84,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.dob}</span>;
+      return <span className="w-full">{row.original.dob || "-"}</span>;
     },
     size: 128,
   },
@@ -94,7 +94,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.email}</span>;
+      return <span className="w-full">{row.original.email || "-"}</span>;
     },
     size: 216,
   },
@@ -104,7 +104,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.phone}</span>;
+      return <span className="w-full">{row.original.phone || "-"}</span>;
     },
     size: 152,
   },
@@ -114,7 +114,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.passport}</span>;
+      return <span className="w-full">{row.original.passport || "-"}</span>;
     },
     size: 140,
   },
@@ -124,7 +124,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.issueDate}</span>;
+      return <span className="w-full">{row.original.issueDate || "-"}</span>;
     },
     size: 128,
   },
@@ -134,7 +134,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.expiryDate}</span>;
+      return <span className="w-full">{row.original.expiryDate || "-"}</span>;
     },
     size: 132,
   },
@@ -144,7 +144,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.address}</span>;
+      return <span className="w-full">{row.original.address || "-"}</span>;
     },
     size: 216,
   },
@@ -154,7 +154,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.location}</span>;
+      return <span className="w-full">{row.original.location || "-"}</span>;
     },
     size: 120,
   },
@@ -164,7 +164,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.occupation}</span>;
+      return <span className="w-full">{row.original.occupation || "-"}</span>;
     },
     size: 280,
   },
@@ -174,7 +174,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.qualification}</span>;
+      return <span className="w-full">{row.original.qualification || "-"}</span>;
     },
     size: 160,
   },
@@ -184,7 +184,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.country}</span>;
+      return <span className="w-full">{row.original.country || "-"}</span>;
     },
     size: 136,
   },
@@ -194,7 +194,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.visa}</span>;
+      return <span className="w-full">{row.original.visa || "-"}</span>;
     },
     size: 216,
   },
@@ -243,7 +243,7 @@ export const LeadColumns: ColumnDef<ILead>[] = [
     cell: ({ row }) => {
       const tableCtx = useTableContext();
       if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-      return <span className="w-full">{row.original.sourceId}</span>;
+      return <span className="w-full">{row.original.sourceId || "-"}</span>;
     },
     size: 144,
   },

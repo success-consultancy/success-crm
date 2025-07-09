@@ -10,6 +10,8 @@ import { usePathname } from 'next/navigation';
 import { useAppStateStore } from '@/store/app-state-store';
 import { BrandLogoNav } from './brand-logo-nav';
 import { NAVIGATION_LIST } from '@/app/config/dashboard-navs';
+import Link from 'next/link';
+import Icons from '@/icons';
 
 type Props = {
   className?: string;
@@ -45,15 +47,24 @@ const DashboardSidebar = ({ className }: Props) => {
               {...nav}
             />
           ))}
+
         </div>
 
+      <Link
+        href={'/login'}
+        className={cn(['flex items-center gap-4 cursor-pointer hover:bg-accent-50 px-3 py-5 text-b1-b mx-4 border-t border-primary', isSidebarCollapsed && '!px-0 mx-auto'])}
+      >
+         <Icons.LogoutIcon className="h-5 w-5 shrink-0" />
+        {!isSidebarCollapsed && "Logout"}
+      </Link>
+        {/* <UserNavMenu isCollapsed={isSidebarCollapsed} /> */}
         {/* sidebar toggle */}
         <button
           ref={toggleButtonRef}
           onClick={() => handleToggleSidebarCollapse(!isSidebarCollapsed)}
           className={cn(
             'absolute bottom-[7%] right-0 z-30 translate-x-1/2',
-            'rounded-full cursor-pointer bg-bg-light-grey p-1 shrink-0 shadow-round w-9 h-9 flex-center',
+            'rounded-full cursor-pointer bg-white p-1 shrink-0 shadow-round w-9 h-9 flex-center',
             'active:scale-90 hover:shadow-lg duration-200 transition-all',
             'opacity-0 group-hover:opacity-100',
             'hover:bg-white border border-border-normal',
