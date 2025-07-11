@@ -79,6 +79,7 @@ const PassportDetailsStep = () => {
                 onSelect={(date) => {
                   field.onChange(date);
                 }}
+                error={errors.issueDate?.message}
               />
             </div>
           )}
@@ -92,8 +93,9 @@ const PassportDetailsStep = () => {
               <DatePicker
                 mode="single"
                 selected={!!field.value ? new Date(field.value) : undefined}
+                error={errors.expiryDate?.message}
                 onSelect={(date) => {
-                  field.onChange(date);
+                  field.onChange(new Date(date as Date).toISOString());
                 }}
               />
             </div>
@@ -109,13 +111,13 @@ const PassportDetailsStep = () => {
               options={visaOptions || []}
               value={field.value}
               label="Visa"
-              onSelect={(val) => field.onChange(val)}
+              error={errors.visa?.message}
             />
           )}
         />
         <FormField
           control={control}
-          name="expiryDate"
+          name="visaExpiry"
           render={({ field }) => (
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Visa Expiry Date</Label>
@@ -123,8 +125,9 @@ const PassportDetailsStep = () => {
                 mode="single"
                 selected={!!field.value ? new Date(field.value) : undefined}
                 onSelect={(date) => {
-                  field.onChange(date);
+                  field.onChange(new Date(date as Date).toISOString());
                 }}
+                error={errors.visaExpiry?.message}
               />
             </div>
           )}

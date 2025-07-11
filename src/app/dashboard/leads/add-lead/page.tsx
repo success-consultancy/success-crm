@@ -52,7 +52,7 @@ const AddLeadForm = () => {
 
   const addLead = useAddLead();
 
-  console.log(errors);
+  console.log(errors, getValues());
 
   const [currentStep, setCurrentStep] = useState(searchParams.get('step') || LeadsFormSteps.PersonalDetails);
 
