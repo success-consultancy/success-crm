@@ -3,6 +3,7 @@ import { cn } from '@/lib/cn';
 
 import { Check } from 'lucide-react';
 import { LeadsFormSteps } from '@/app/config/leads-form-steps';
+import useSearchParams from '@/hooks/use-search-params';
 
 type Props = {
   currentStep: string;
@@ -43,12 +44,17 @@ const IndividualStep = ({
   currentStep: string;
   completedSteps: LeadsFormSteps[];
 }) => {
+
+  const { searchParams, setParam } = useSearchParams();
+
+
   return (
     <div
       className={cn([
-        'flex items-center gap-9 ',
+        'flex items-center gap-9 cursor-pointer',
         currentStep === step ? 'text-primary-blue' : '!text-neutral-inActiveGrey',
       ])}
+      onClick={() => setParam('step', step)}
     >
       <div className="flex items-center gap-3">
         <div
