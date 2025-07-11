@@ -7,6 +7,8 @@ interface AuthState {
   setProfile: (profile: IUser | null) => void;
 }
 
+export const AUTH_STORAGE_KEY = 'auth-storage';
+
 const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({

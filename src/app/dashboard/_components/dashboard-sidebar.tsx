@@ -6,12 +6,14 @@ import React from 'react';
 import { SidebarNav } from './sidebar-nav';
 import { ChevronLeft } from 'lucide-react';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useAppStateStore } from '@/store/app-state-store';
 import { BrandLogoNav } from './brand-logo-nav';
 import { NAVIGATION_LIST } from '@/app/config/dashboard-navs';
 import Link from 'next/link';
 import Icons from '@/icons';
+import Button from '@/components/common/button';
+import useAuthStore from '@/store/auth-store';
 
 type Props = {
   className?: string;
@@ -21,6 +23,7 @@ const DashboardSidebar = ({ className }: Props) => {
   const toggleButtonRef = React.useRef<HTMLButtonElement>(null);
 
   const currentPathname = usePathname();
+  const router = useRouter();
 
   const { isSidebarCollapsed, handleToggleSidebarCollapse } = useAppStateStore();
 
@@ -50,13 +53,20 @@ const DashboardSidebar = ({ className }: Props) => {
 
         </div>
 
-      <Link
-        href={'/login'}
-        className={cn(['flex items-center gap-4 cursor-pointer hover:bg-accent-50 px-3 py-5 text-b1-b mx-4 border-t border-primary', isSidebarCollapsed && '!px-0 mx-auto'])}
-      >
-         <Icons.LogoutIcon className="h-5 w-5 shrink-0" />
-        {!isSidebarCollapsed && "Logout"}
-      </Link>
+        <Button
+          onClick={() => {
+            // remove login state
+            useAuthStore.setState({
+              profile: null,
+            })
+            router.replace('/login')
+          }}
+          variant={'link'}
+          className={cn(['flex items-center gap-4 cursor-pointer hover:bg-accent-50 px-3 py-5 text-b1-b mx-4 border-t border-primary', isSidebarCollapsed && '!px-0 mx-auto'])}
+        >
+          <Icons.LogoutIcon className="h-5 w-5 shrink-0" />
+          {!isSidebarCollapsed && "Logout"}
+        </Button>
         {/* <UserNavMenu isCollapsed={isSidebarCollapsed} /> */}
         {/* sidebar toggle */}
         <button
@@ -70,11 +80,11 @@ const DashboardSidebar = ({ className }: Props) => {
             'hover:bg-white border border-border-normal',
           )}
         >
-          <ChevronLeft 
+          <ChevronLeft
             className={cn(
-              'duration-300 stroke-[1.5] transition-transform', 
+              'duration-300 stroke-[1.5] transition-transform',
               isSidebarCollapsed ? 'rotate-180' : 'rotate-0'
-            )} 
+            )}
           />
         </button>
       </aside>
