@@ -15,32 +15,13 @@ import SecurityTab from './_components/security-tab';
 import { useGetUserProfile } from '@/query/get-user-profile';
 import useSearchParams from '@/hooks/use-search-params';
 import { cn } from '@/lib/cn';
+import TabSelector from '@/components/common/tab-selector';
 
 // Tab Config
 const TAB_CONFIG = [
   { key: 'personal_details', label: 'Personal Details' },
   { key: 'security', label: 'Security' },
 ];
-
-// Extracted Tabs UI component
-const TabSelector = ({ activeTab, onTabChange }: { activeTab: string; onTabChange: (tabKey: string) => void }) => {
-  return (
-    <div className="border-b my-4 flex gap-2">
-      {TAB_CONFIG.map(({ key, label }) => (
-        <button
-          key={key}
-          onClick={() => onTabChange(key)}
-          className={cn(
-            'px-4 py-2 transition delay-150 duration-300 ease-in-out transition-colors border-b-2 border-b-transparent',
-            activeTab === key ? 'bg-primary border-b-[#007ACC] text-bolder' : 'hover:bg-gray-100',
-          )}
-        >
-          {label}
-        </button>
-      ))}
-    </div>
-  );
-};
 
 const Account = () => {
   const { data: user, isLoading } = useGetUserProfile();
@@ -61,7 +42,7 @@ const Account = () => {
       </Portal>
 
       <div className="container bg-white py-6 rounded-xl">
-        <TabSelector activeTab={currentTab} onTabChange={handleTabChange} />
+        <TabSelector className='mb-4' tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
         {currentTab === 'personal_details' ? <PersonalDetailsTab user={user} /> : <SecurityTab />}
       </div>

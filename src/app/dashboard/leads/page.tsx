@@ -13,6 +13,17 @@ import { ButtonLink } from '@/components/common/button-link';
 import { ILead } from '@/types/response-types/leads-response';
 import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
 import { LeadColumns } from '@/app/config/columns/leads-columns-definitions';
+import { cn } from '@/lib/cn';
+import TabSelector from '@/components/common/tab-selector';
+
+// Tab Config
+const TAB_CONFIG = [
+  { key: 'all_leads', label: 'All Leads' },
+  { key: 'new_leads', label: 'New Leads' },
+  { key: 'qualified_leads', label: 'Qualified leads' },
+  { key: 'disqualified_leads', label: 'Disqualified leads' },
+  { key: 'follow_up', label: 'Follow up' }
+];
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
@@ -24,6 +35,14 @@ const Leads = () => {
   });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
+
+  const { searchParams, setParams } = useSearchParams();
+
+  const currentTab = searchParams.get('tab') || 'all_leads';
+
+  const handleTabChange = (tabKey: string) => {
+    setParams([{ name: 'tab', value: tabKey }]);
+  };
 
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
@@ -43,6 +62,9 @@ const Leads = () => {
           <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
             Add Lead
           </ButtonLink>
+        }
+        tableHeaderSection={
+          <TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
       />

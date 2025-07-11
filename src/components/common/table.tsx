@@ -50,6 +50,7 @@ interface Props<TData, TValue> {
   skeletonColumns?: ColumnDef<TData, TValue>[];
   searchKey?: string;
   topRightSection?: ReactNode;
+  tableHeaderSection?: ReactNode;
   tableHeight?: string;
 }
 
@@ -66,6 +67,7 @@ const TableComponent = <TData, TValue>({
   skeletonColumns,
   searchKey,
   topRightSection,
+  tableHeaderSection,
   tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
@@ -134,7 +136,7 @@ const TableComponent = <TData, TValue>({
           <TableSearchInput
             searchParamField={searchKey as string}
             className="max-w-[18rem]"
-            placeholder={`Search by ${searchKey}...`}
+            placeholder={`Search data here`}
           />
           <div className="flex items-center gap-3.5">
             <ColumnSelector table={table} />
@@ -142,6 +144,8 @@ const TableComponent = <TData, TValue>({
             {topRightSection}
           </div>
         </div>
+
+        {tableHeaderSection}
 
         {/* Single scrollable container for the entire table */}
         <div className="overflow-auto flex-1 custom-scrollbar" style={{ height: tableHeight }}>
