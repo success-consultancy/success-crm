@@ -30,16 +30,17 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
     }
   };
 
-  const isActive = props.currentPathname?.includes(props.href as string);
+  const isActive = props.currentPathname === props.href;
+
 
   const Tag = !!props.subNav ? 'button' : Link;
 
   const linkProps = !!props.subNav
-    ? { 
-        onClick: () => {
-          toggleExpandSubNav();
-        },
-      }
+    ? {
+      onClick: () => {
+        toggleExpandSubNav();
+      },
+    }
     : { href: props.href, prefetch: false };
 
   const subNavHrefs: string[] = [];
@@ -145,9 +146,8 @@ const SidebarNav: React.FC<SidebarNavProps> = (props) => {
 
             <ClipFromLeftAnimation
               show={!props.isCollapsed}
-              className={`!text-b1-b overflow-hidden truncate line-clamp-1 ${
-                isActive || isSubNavActive ? 'text-accent-700' : ''
-              }`}
+              className={`!text-b1-b overflow-hidden truncate line-clamp-1 ${isActive || isSubNavActive ? 'text-accent-700' : ''
+                }`}
             >
               {props.title}
             </ClipFromLeftAnimation>
