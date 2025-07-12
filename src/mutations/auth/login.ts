@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { api } from '@/lib/api';
+import { api, custom_api } from '@/lib/api';
 import { useToast } from '@/hooks/use-toast';
 import { saveAccessToken } from '@/lib/utils/auth-token';
 import { LoginSchemaType } from '@/schemas/auth/login-schema';
@@ -37,12 +37,12 @@ interface IResetUserPassword {
   payload: Partial<LoginCredentials>;
 }
 
-	/*
-		########################################################################################
-		#                         Login
-    #           This function is used to login user
-		########################################################################################
-	*/
+/*
+  ########################################################################################
+  #                         Login
+  #           This function is used to login user
+  ########################################################################################
+*/
 const loginUser = async (payload: LoginSchemaType) => {
   const res = await api.post('/auth/login', payload);
   return res.data;
@@ -76,12 +76,12 @@ const useLoginUser = () => {
 };
 
 
-	/*
-		########################################################################################
-		#                         Update user
-    #           This function is used to update user profile
-		########################################################################################
-	*/
+/*
+  ########################################################################################
+  #                         Update user
+  #           This function is used to update user profile
+  ########################################################################################
+*/
 const updateUser = async (payload: ProfileSchemaType) => {
   const url = '/user/' + payload.id;
 
@@ -93,7 +93,7 @@ const updateUser = async (payload: ProfileSchemaType) => {
   return res.data;
 };
 
- const useUserUpdate = () => {
+const useUserUpdate = () => {
   const { toast } = useToast();
   return useMutation({
     mutationFn: updateUser,
@@ -120,21 +120,25 @@ const updateUser = async (payload: ProfileSchemaType) => {
   });
 };
 
-	/*
-		########################################################################################
-		#                         Reset Password
-    #           This function is used to reset user password
-		########################################################################################
-	*/
+/*
+  ########################################################################################
+  #                         Reset Password
+  #           This function is used to reset user password
+  ########################################################################################
+*/
 const resetUserPassword = async (resetPayload: IResetUserPassword) => {
   const { params, payload } = resetPayload;
+  console.log(params, resetPayload, "hello")
+  const requestPayload = { password: payload.password };
 
-  const queryParams = qs.stringify(params);
-  const requestPayload = { new_password: payload.password };
-
-  const { data }: AxiosResponse<ResetPasswordResponse> = await api.post(
-    '/user/auth/reset-password' + `?${queryParams}`,
+  const { data }: AxiosResponse<ResetPasswordResponse> = await custom_api.post(
+    '/auth/resetpassword',
     requestPayload,
+    {
+      headers: {
+        authorization: params.token
+      }
+    }
   );
 
   return data.payload;
@@ -144,16 +148,15 @@ const useUserResetPassword = () => {
   return useMutation({ mutationFn: resetUserPassword });
 };
 
-	/*
-		########################################################################################
-		#                         Request reset password
-    #           This function is used to request reset password
-		########################################################################################
-	*/
+/*
+  ########################################################################################
+  #                         Request reset password
+  #           This function is used to request reset password
+  ########################################################################################
+*/
 const requestResetPassword = async (credentials: ForgotPasswordCredentials) => {
-  const queryParams = qs.stringify(credentials);
 
-  const { data }: AxiosResponse<ResetPasswordResponse> = await api.get('/user/auth/reset-password' + `?${queryParams}`);
+  const { data }: AxiosResponse<ResetPasswordResponse> = await api.post('/auth/passwordreseturl', credentials);
 
   return data.payload;
 };

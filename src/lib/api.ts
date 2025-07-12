@@ -13,6 +13,14 @@ export const api = axios.create({
   },
 });
 
+export const custom_api = axios.create({
+  baseURL,
+  headers: {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  },
+});
+
 // set bearer token
 api.interceptors.request.use(
   (config) => {
@@ -43,7 +51,7 @@ api.interceptors.response.use(
 
         try {
           // refresh the access token
-          const { data } = await axios.get(baseURL + '/user/auth/refresh', {
+          const { data } = await axios.get(baseURL + '/auth/refresh', {
             withCredentials: true,
           });
 
@@ -64,7 +72,7 @@ api.interceptors.response.use(
             }
 
             removeAccessToken();
-            if (originalConfig.url !== '/user/auth/login') {
+            if (originalConfig.url !== '/auth/login') {
               queryClient.resetQueries();
             }
 

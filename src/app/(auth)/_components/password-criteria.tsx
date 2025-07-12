@@ -1,5 +1,4 @@
 import { cn } from '@/lib/cn';
-// import Icons from '@/components/icons';
 import { passwordRequirements } from '@/constants';
 import { CloseCircle, TickCircle } from 'iconsax-react';
 

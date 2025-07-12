@@ -5,21 +5,20 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
-import { useUserResetPassword } from '@/mutations';
-import useSearchParams from '@/hooks/useSearchParams';
+import { useUserResetPassword } from '@/mutations/auth/login';
+import useSearchParams from '@/hooks/use-search-params';
 import { resetPasswordSchema } from './reset-password.schema';
 import PasswordInput from '@/components/common/password-input';
 import { validatePassword } from '@/constants/password-criteria';
-import PasswordCriteria from '@/app/[locale]/(auth)/onboarding/_components/password-criteria';
-import { ResetPasswordCredentials } from '@/mutations';
-import PasswordChangeSuccess from '@/app/[locale]/(auth)/reset-password/_components/password-change-success';
-import { BrandLogoNav } from '@/app/[locale]/dashboard/_components/dashboard-layout/dashboard-sidebar/brand-logo-nav';
+import PasswordCriteria from '@/app/(auth)/_components/password-criteria';
+import { ResetPasswordCredentials } from '@/mutations/auth/login';
+import PasswordChangeSuccess from '@/app/(auth)/reset-password/_components/password-change-success';
 import { useRouter } from '@/lib/navigation';
 
 const ResetPasswordForm: React.FC = () => {
   const { searchParams } = useSearchParams();
   const router = useRouter();
-  const token = searchParams.get('token');
+  const token = searchParams.get('token') || '';
 
   const { mutate: userResetPassword, isPending, isSuccess, error } = useUserResetPassword();
 
@@ -42,9 +41,7 @@ const ResetPasswordForm: React.FC = () => {
   const onResetPasswordFormSubmit = (data: ResetPasswordCredentials) => {
     userResetPassword(
       {
-        params: {
-          token: token || '',
-        },
+        params: { token },
         payload: {
           password: data.password,
         },
@@ -71,7 +68,7 @@ const ResetPasswordForm: React.FC = () => {
   return (
     <form onSubmit={handleSubmit(onResetPasswordFormSubmit)} className="w-[400px] m-auto">
       <div className="flex flex-col mb-10 items-center">
-        <BrandLogoNav logo="one-accord" />
+        {/* <BrandLogoNav logo="one-accord" /> */}
 
         <h2 className="text-h2 text-center text-content-heading mt-20">Create Your New Password</h2>
       </div>
@@ -92,7 +89,7 @@ const ResetPasswordForm: React.FC = () => {
         Update Password
       </Button>
 
-      <div className="text-content-body text-center text-[13px] mt-20 font-normal">© One Accord {currentYear}</div>
+      <div className="text-content-body text-center text-[13px] mt-20 font-normal">© Success {currentYear}</div>
     </form>
   );
 };

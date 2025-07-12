@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import TokenExpired from '@/app/(auth)/_components/token-expired';
 
 import { TokenExpiredEnum } from '@/constants';
+import ResetPasswordForm from './reset-password.form';
 
 export const metadata: Metadata = {
   title: 'Reset-password',
@@ -22,13 +23,13 @@ export default async function ForgotPasswordPage(props: Props) {
   // const data = await getVerifyForgotPasswordToken(props.searchParams.token);
 
   // if (data?.success)
-  //   return (
-  //     <div className="min-h-[100vh] flex">
-  //       <ResetPasswordForm />
-  //     </div>
-  //   );
-  // else
     return (
-        <TokenExpired className="m-auto" type={TokenExpiredEnum.ForgotPassword} />
+      <div className="min-h-[100vh] flex">
+        <ResetPasswordForm />
+      </div>
     );
+  // else
+    // return (
+    //     <TokenExpired className="m-auto" type={TokenExpiredEnum.ForgotPassword} />
+    // );
 }

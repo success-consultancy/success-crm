@@ -6,16 +6,13 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/common/input';
-// import { useRequestResetPassword } from '@/mutations';
-import { ForgotPasswordCredentials } from '@/mutations/auth/login';
+import { ForgotPasswordCredentials, useRequestResetPassword, useUserResetPassword } from '@/mutations/auth/login';
 import { forgotPasswordSchema } from './login.schema';
 import Image from 'next/image';
-// import { toast } from 'sonner';
+import { toast } from 'sonner';
 
 const ForgotPasswordForm: React.FC = () => {
-  // const { mutate: userResetPassword, isPending } = useRequestResetPassword();
-  const isPending = false;
-
+  const { mutate: userResetPassword, isPending } = useRequestResetPassword();
 
   const defaultValues: ForgotPasswordCredentials = {
     email: '',
@@ -32,19 +29,19 @@ const ForgotPasswordForm: React.FC = () => {
   });
 
   const onForgotPasswordFormSubmit = (data: ForgotPasswordCredentials) => {
-    // userResetPassword(data, {
-    //   onSuccess: (payload) => {
-    //     setValue('email', '');
-    //     toast.success(payload);
-    //   },
-    //   onError: (error: any) => {
-    //     let errorMessage = error?.response?.data?.message || 'Something went wrong.';
-    //     if (error?.response?.status === 401) {
-    //       errorMessage = 'Email address not found.';
-    //     }
-    //     toast.error(errorMessage);
-    //   },
-    // });
+    userResetPassword(data, {
+      onSuccess: (payload) => {
+        setValue('email', '');
+        toast.success(payload);
+      },
+      onError: (error: any) => {
+        let errorMessage = error?.response?.data?.message || 'Something went wrong.';
+        if (error?.response?.status === 401) {
+          errorMessage = 'Email address not found.';
+        }
+        toast.error(errorMessage);
+      },
+    });
   };
 
   return (
