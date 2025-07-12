@@ -13,7 +13,8 @@ import { NAVIGATION_LIST } from '@/app/config/dashboard-navs';
 import Link from 'next/link';
 import Icons from '@/icons';
 import Button from '@/components/common/button';
-import useAuthStore from '@/store/auth-store';
+import useAuthStore, { AUTH_STORAGE_KEY } from '@/store/auth-store';
+import { removeAccessToken } from '@/lib/utils/auth-token';
 
 type Props = {
   className?: string;
@@ -59,6 +60,9 @@ const DashboardSidebar = ({ className }: Props) => {
             useAuthStore.setState({
               profile: null,
             })
+            removeAccessToken();
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+
             router.replace('/login')
           }}
           variant={'link'}

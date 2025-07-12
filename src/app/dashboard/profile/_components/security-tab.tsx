@@ -11,7 +11,7 @@ import {
   ProfileSchemaType,
 } from '@/schemas/profile-schema';
 import Input from '@/components/common/input';
-import { useUserUpdate } from '@/mutations/user/user';
+import { useUserUpdate } from '@/mutations/auth/login';
 import Button from '@/components/common/button';
 
 const PersonalDetailsTab = ({ user }: any) => {

@@ -65,7 +65,7 @@ const IndividualStep = ({
           ])}
         >
           {completedSteps.includes(step as LeadsFormSteps) && currentStep !== step ? (
-            <Check className="text-neutral-white size-4" />
+            <Check className="text-neutral-white size-4 shrink-0" />
           ) : (
             <span>{index}</span>
           )}

@@ -105,13 +105,13 @@ export default {
       fontSize: {
         // *=========== HEADINGS START ===========
         h1: [
-          '2.625rem',
+          '2rem',
           {
             lineHeight: '1.2',
             letterSpacing: '-2',
             fontWeight: '700',
           },
-        ], //42px
+        ], //32px
         h2: [
           '2.188rem',
           {
@@ -288,7 +288,7 @@ export default {
     // eslint-disable-next-line
     require('tailwindcss-animate'),
 
-    plugin(function ({ addUtilities }) {
+    plugin(function({ addUtilities }) {
       const newUtilities = {
         '.hide-number-arrows': {
           /* Hide the arrows in most modern browsers */

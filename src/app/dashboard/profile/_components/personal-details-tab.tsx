@@ -6,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ProfileSchema, ProfileSchemaType } from '@/schemas/profile-schema';
 import Input from '@/components/common/input';
-import { useUserUpdate } from '@/mutations/user/user';
+import { useUserUpdate } from '@/mutations/auth/login';
 import Button from '@/components/common/button';
 import Avatar from 'react-avatar';
 
@@ -50,11 +50,6 @@ const PersonalDetailsTab = ({ user }: any) => {
       </div>
       <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <div className="flex items-center gap-5">
-          <FormField
-            control={control}
-            name="id"
-            render={({ field }) => <Input {...field} label="ID" disabled error={errors.id?.message} />}
-          />
           <FormField
             control={control}
             name="firstName"
