@@ -1,8 +1,7 @@
-import { QUERY_KEYS } from '@/constants/query-keys';
-import { api } from '@/lib/api';
-
-import { useQuery } from '@tanstack/react-query';
-import QueryString from 'qs';
+import { QUERY_KEYS } from "@/constants/query-keys";
+import { api } from "@/lib/api";
+import QueryString from "qs";
+import { useQuery } from "@tanstack/react-query";
 
 interface TaskFilterParams {
   userId?: number;
@@ -10,7 +9,9 @@ interface TaskFilterParams {
 }
 
 const getTasks = async (params: TaskFilterParams) => {
-  const res = await api.get('/todo?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
+  const res = await api.get(
+    "/todo?" + QueryString.stringify(params, { arrayFormat: "repeat" })
+  );
 
   return res.data as any;
 };

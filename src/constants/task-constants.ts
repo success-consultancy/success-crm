@@ -1,9 +1,9 @@
 export enum TaskType {
-  MyTask = 'my-tasks',
-  EmployeeTask = 'employee-tasks',
+  MyTask = "my-tasks",
+  EmployeeTask = "employee-tasks",
 }
 
 export enum TaskStatus {
-  Upcoming = 'Upcoming',
-  Completed = 'Completed',
+  Upcoming = "Upcoming",
+  Completed = "Completed",
 }
