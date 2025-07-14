@@ -2,7 +2,6 @@
 
 import React from 'react';
 import { cn } from '@/lib/cn';
-import { toast } from 'sonner';
 import { Danger } from 'iconsax-react';
 
 import { TokenExpiredEnum } from '@/constants';
@@ -23,14 +22,13 @@ const TokenExpired = (props: Props) => {
   const isRequestSuccess = searchParams.get('success') || '';
   const requestReinvitation = useRequestResetPassword();
 
-  const request =requestReinvitation;
-   
+  const request = requestReinvitation;
+
   if (request.isSuccess || isRequestSuccess) return <TokenSuccess />;
 
   return (
     <div className={cn(props.className)}>
       <div className="flex flex-col items-center justify-center">
-
         <div className="w-[7.1875rem] h-[7.1875rem] bg-state-error-light  flex-center rounded-full">
           <Danger variant="Linear" className="w-11 h-11 text-state-error-dark" />
         </div>
