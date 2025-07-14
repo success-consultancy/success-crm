@@ -1,7 +1,5 @@
 import { Metadata } from 'next';
 
-import TokenExpired from '@/app/(auth)/_components/token-expired';
-import { TokenExpiredEnum } from '@/constants';
 import ResetPasswordForm from './reset-password.form';
 
 export const metadata: Metadata = {
@@ -9,15 +7,15 @@ export const metadata: Metadata = {
   description: 'Reset your account password',
 };
 
-type Props = {
-  params: {};
-  searchParams: {
-    token: string;
-    email: string;
-  };
-};
+// type Props = {
+//   params: {};
+//   searchParams: {
+//     token: string;
+//     email: string;
+//   };
+// };
 
-export default async function ResetPasswordPage(props: Props) {
+export default async function ResetPasswordPage() {
   // const data = await getVerifyForgotPasswordToken(props.searchParams.token);
 
   // if (data?.success)
