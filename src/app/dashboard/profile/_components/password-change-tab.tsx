@@ -1,39 +1,84 @@
 'use client';
-import React, { useState } from 'react';
-
 import { FormField } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PasswordChangeSchemaType, PasswordChangeSchema } from '@/schemas/profile-schema';
+import { PasswordChangeSchema, type PasswordChangeSchemaType } from '@/schemas/profile-schema';
 import Input from '@/components/common/input';
+import { useUserUpdate } from '@/mutations/auth/login';
+import Button from '@/components/common/button';
 
-const PasswordChangeTab = ({ user }: any) => {
-  console.log(user);
-
+const PersonalDetailsTab = ({ user }: any) => {
   const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),
-    mode: 'onBlur',
+    defaultValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+    mode: 'onChange',
   });
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-    getValues,
-    trigger,
   } = form;
 
+  const { mutate: updateUser } = useUserUpdate();
+
+  const onSubmit = (data: PasswordChangeSchemaType) => {
+    //updateUser(data);
+  };
+
   return (
-    <div className="flex flex-col gap-3">
-      <div className="flex items-center gap-5">
+    <>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <FormField
           control={control}
           name="oldPassword"
-          render={({ field }) => <Input {...field} label="Old Password*" error={errors.oldPassword?.message} />}
+          render={({ field }) => <Input {...field} label="Old Password" error={errors.oldPassword?.message} />}
         />
-      </div>
-    </div>
+
+        <FormField
+          control={control}
+          name="newPassword"
+          render={({ field }) => (
+            <Input
+              {...field}
+              label="New Password"
+              type="password"
+              error={errors.newPassword?.message}
+              value={field.value || ''}
+              onChange={field.onChange}
+            />
+          )}
+        />
+
+        <FormField
+          control={control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <Input
+              {...field}
+              type="password"
+              label="Confirm Password"
+              error={errors.confirmPassword?.message}
+              value={field.value || ''}
+              onChange={field.onChange}
+            />
+          )}
+        />
+
+        <Button
+          type="submit"
+          className="w-[143px] ml-auto btn btn-primary mt-4"
+          disabled={Object.keys(errors).length > 0}
+        >
+          Save Changes
+        </Button>
+      </form>
+    </>
   );
 };
 
-export default PasswordChangeTab;
+export default PersonalDetailsTab;

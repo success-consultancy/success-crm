@@ -29,5 +29,5 @@ export const ROUTES = {
   NEWS_AND_UPDATES: '/dashboard/news-updates',
 
   PROFILE: '/dashboard/profile',
-  LOGIN: '/login'
+  LOGIN: '/login',
 };

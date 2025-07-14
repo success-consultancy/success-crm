@@ -1,9 +1,7 @@
 'use client';
 
 import React from 'react';
-import Avatar from 'react-avatar';
 
-import { ROUTES } from '@/app/config/routes';
 import { PortalIds } from '@/app/config/portal';
 
 import Portal from '@/components/common/portal';
@@ -14,7 +12,7 @@ import SecurityTab from './_components/security-tab';
 
 import { useGetUserProfile } from '@/query/get-user-profile';
 import useSearchParams from '@/hooks/use-search-params';
-import { cn } from '@/lib/cn';
+
 import TabSelector from '@/components/common/tab-selector';
 
 // Tab Config
@@ -42,7 +40,7 @@ const Account = () => {
       </Portal>
 
       <div className="container bg-white py-6 rounded-xl">
-        <TabSelector className='mb-4' tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
+        <TabSelector className="mb-4" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
         {currentTab === 'personal_details' ? <PersonalDetailsTab user={user} /> : <SecurityTab />}
       </div>
