@@ -1,44 +1,52 @@
 'use client';
 import * as React from 'react';
-import { toast } from 'sonner';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Eye, EyeClosed } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { useUserResetPassword } from '@/mutations/auth/login';
 import useSearchParams from '@/hooks/use-search-params';
-import { resetPasswordSchema } from './reset-password.schema';
-import PasswordInput from '@/components/common/password-input';
+import { resetPasswordSchema, ResetPasswordSchemaType } from './reset-password.schema';
+import Input from '@/components/common/input';
 import { validatePassword } from '@/constants/password-criteria';
 import PasswordCriteria from '@/app/(auth)/_components/password-criteria';
-import { ResetPasswordCredentials } from '@/mutations/auth/login';
 import PasswordChangeSuccess from '@/app/(auth)/reset-password/_components/password-change-success';
-import { useRouter } from '@/lib/navigation';
+import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
+import { ROUTES } from '@/app/config/routes';
 
 const ResetPasswordForm: React.FC = () => {
   const { searchParams } = useSearchParams();
   const router = useRouter();
+  const { toast } = useToast();
   const token = searchParams.get('token') || '';
 
-  const { mutate: userResetPassword, isPending, isSuccess, error } = useUserResetPassword();
+  const { mutate: userResetPassword, isPending, isSuccess } = useUserResetPassword();
 
-  const defaultValues: ResetPasswordCredentials = {
-    password: '',
-  };
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const {
     handleSubmit,
     formState: { errors },
     control,
     watch,
-  } = useForm({
-    defaultValues,
+  } = useForm<ResetPasswordSchemaType>({
     resolver: zodResolver(resetPasswordSchema),
+    defaultValues: {
+      password: '',
+      confirmPassword: '',
+    },
   });
 
   const password = watch('password');
+  const confirmPassword = watch('confirmPassword');
   const currentYear = new Date().getFullYear();
-  const onResetPasswordFormSubmit = (data: ResetPasswordCredentials) => {
+
+  const onResetPasswordFormSubmit = (data: ResetPasswordSchemaType) => {
     userResetPassword(
       {
         params: { token },
@@ -47,18 +55,28 @@ const ResetPasswordForm: React.FC = () => {
         },
       },
       {
+        onSuccess: () => {
+          toast({
+            title: 'Success!',
+            description: 'Your password has been updated successfully.',
+          });
+        },
         onError: (error: any) => {
           let errorMessage = error?.response?.data?.message || 'Something went wrong.';
           if (error?.response?.status === 401) {
-            errorMessage = 'Email or Password is not correct.';
+            errorMessage = 'Invalid or expired token.';
           }
-          toast.error(errorMessage);
-          // When user is in forget password page and the token is expired error is thrown refresh the page so the it is redirected token expire page
+          toast({
+            title: 'Error',
+            description: errorMessage,
+            variant: 'destructive',
+          });
           router.refresh();
         },
       },
     );
   };
+
   const isValidPassword = validatePassword(password);
 
   if (isSuccess) {
@@ -66,31 +84,81 @@ const ResetPasswordForm: React.FC = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit(onResetPasswordFormSubmit)} className="w-[400px] m-auto">
-      <div className="flex flex-col mb-10 items-center">
-        {/* <BrandLogoNav logo="one-accord" /> */}
-
-        <h2 className="text-h2 text-center text-content-heading mt-20">Create Your New Password</h2>
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center lg:text-left">
+        <h3 className="font-bold mb-2">Create Your New Password</h3>
+        <p className="text-neutral-darkGrey text-b1">Enter a strong password to secure your account</p>
       </div>
 
-      <div className="flex flex-col gap-4 ">
-        <Controller
-          control={control}
-          name="password"
-          render={({ field }) => (
-            <PasswordInput {...field} label="Password" autoComplete="off" error={errors.password?.message} />
-          )}
-        />
+      <form onSubmit={handleSubmit(onResetPasswordFormSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          <Controller
+            control={control}
+            name="password"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="New Password"
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your new password"
+                autoComplete="new-password"
+                error={errors.password?.message}
+                classNames={{
+                  rightIcon: 'cursor-pointer',
+                }}
+                RightIcon={!!field.value ? (showPassword ? Eye : EyeClosed) : undefined}
+                onIconClick={() => setShowPassword((prev) => !prev)}
+              />
+            )}
+          />
 
-        <PasswordCriteria password={password} />
-      </div>
+          <Controller
+            control={control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Confirm New Password"
+                type={showConfirmPassword ? 'text' : 'password'}
+                placeholder="Confirm your new password"
+                autoComplete="new-password"
+                error={errors.confirmPassword?.message}
+                classNames={{
+                  rightIcon: 'cursor-pointer',
+                }}
+                RightIcon={!!field.value ? (showConfirmPassword ? Eye : EyeClosed) : undefined}
+                onIconClick={() => setShowConfirmPassword((prev) => !prev)}
+              />
+            )}
+          />
 
-      <Button loading={isPending || isSuccess} disabled={!isValidPassword} className="w-full mt-10" type="submit">
-        Update Password
-      </Button>
+          {/* Password Criteria */}
+          <PasswordCriteria password={password} />
+        </div>
 
-      <div className="text-content-body text-center text-[13px] mt-20 font-normal">© Success {currentYear}</div>
-    </form>
+        <Button
+          loading={isPending || isSuccess}
+          disabled={!isValidPassword || !confirmPassword || password !== confirmPassword}
+          className="w-full"
+          type="submit"
+        >
+          Update Password
+        </Button>
+
+        {/* Back to Login Link */}
+        <div className="text-center">
+          <p className="text-neutral-darkGrey text-sm">
+            Remember your password?{' '}
+            <Link href={ROUTES.LOGIN} className="text-primary-blue font-semibold hover:underline">
+              Back to Login
+            </Link>
+          </p>
+        </div>
+
+        <div className="text-center text-sm text-neutral-darkGrey">© Success {currentYear}</div>
+      </form>
+    </div>
   );
 };
 

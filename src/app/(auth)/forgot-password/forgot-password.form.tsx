@@ -3,16 +3,18 @@
 import * as React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import TextInput from '@/components/common/input';
-import { ForgotPasswordCredentials, useRequestResetPassword, useUserResetPassword } from '@/mutations/auth/login';
+import { ForgotPasswordCredentials, useRequestResetPassword } from '@/mutations/auth/login';
 import { forgotPasswordSchema } from './login.schema';
-import Image from 'next/image';
-import { toast } from 'sonner';
+import { useToast } from '@/hooks/use-toast';
+import { ROUTES } from '@/app/config/routes';
 
 const ForgotPasswordForm: React.FC = () => {
   const { mutate: userResetPassword, isPending } = useRequestResetPassword();
+  const { toast } = useToast();
 
   const defaultValues: ForgotPasswordCredentials = {
     email: '',
@@ -32,45 +34,67 @@ const ForgotPasswordForm: React.FC = () => {
     userResetPassword(data, {
       onSuccess: (payload) => {
         setValue('email', '');
-        toast.success(payload);
+        toast({
+          title: 'Success!',
+          description: payload,
+        });
       },
       onError: (error: any) => {
         let errorMessage = error?.response?.data?.message || 'Something went wrong.';
         if (error?.response?.status === 401) {
           errorMessage = 'Email address not found.';
         }
-        toast.error(errorMessage);
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
       },
     });
   };
 
   return (
-    <form onSubmit={handleSubmit(onForgotPasswordFormSubmit)} className="max-w-[424px]">
-      <div className="flex flex-col mb-8">
-        <Image className='mb-10' src={'/success-logo.png'} alt="logo" height={100} width={180} />
-
-        <h2 className="text-h1 mb-3">Forgot Your Password?</h2>
-        <p className="text-b1 text-sm text-neutral-darkGrey">
+    <div className="space-y-6">
+      {/* Header */}
+      <div className="text-center lg:text-left">
+        <h2 className="text-h3 font-bold mb-2">Forgot Your Password?</h2>
+        <p className="text-neutral-darkGrey text-b1">
           Please enter the email you used to login with. We will send you a link to reset your password.
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 ">
-        <Controller
-          control={control}
-          name="email"
-          render={({ field }) => (
-            <TextInput {...field}
-              placeholder='example@gmail.com'
-              label="Email" autoComplete="off" error={errors.email?.message} />
-          )}
-        />
-      </div>
+      <form onSubmit={handleSubmit(onForgotPasswordFormSubmit)} className="space-y-6">
+        <div className="space-y-4">
+          <Controller
+            control={control}
+            name="email"
+            render={({ field }) => (
+              <TextInput
+                {...field}
+                placeholder="example@gmail.com"
+                label="Email"
+                autoComplete="off"
+                error={errors.email?.message}
+              />
+            )}
+          />
+        </div>
 
-      <Button loading={isPending} className="w-full mt-10" type="submit">
-        Send reset Link
-      </Button>
-    </form>
+        <Button loading={isPending} className="w-full" type="submit">
+          Send Reset Link
+        </Button>
+
+        {/* Back to Login Link */}
+        <div className="text-center">
+          <p className="text-neutral-darkGrey text-sm">
+            Remember your password?{' '}
+            <Link href={ROUTES.LOGIN} className="text-primary-blue font-semibold hover:underline">
+              Back to Login
+            </Link>
+          </p>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -288,7 +288,7 @@ export default {
     // eslint-disable-next-line
     require('tailwindcss-animate'),
 
-    plugin(function({ addUtilities }) {
+    plugin(function ({ addUtilities }) {
       const newUtilities = {
         '.hide-number-arrows': {
           /* Hide the arrows in most modern browsers */

@@ -1,4 +1,10 @@
 export const ROUTES = {
+  // Auth routes
+  LOGIN: '/login',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
+
+  // Dashboard routes
   DASHBOARD: '/dashboard',
   FACE_UPLOAD: `/dashboard/face-upload`,
   FISCAL_REPORT: '/dashboard/fiscal-report',
