@@ -1,0 +1,139 @@
+import React, { useMemo } from 'react';
+import Input from '@/components/molecules/input';
+import { FormField } from '@/components/ui/form';
+import { LeadSchemaType } from '@/schema/lead-schema';
+import { useFormContext } from 'react-hook-form';
+
+import { Label } from '@/components/ui/label';
+import DatePicker from '@/components/atoms/date-picker';
+import countryList from 'react-select-country-list';
+import SelectWithCommand from '@/components/molecules/select-with-command';
+import { useGetVisa } from '@/query/get-visa';
+
+const PassportDetailsStep = () => {
+  const {
+    control,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useFormContext<LeadSchemaType>();
+
+  const countries = useMemo(
+    () =>
+      countryList()
+        .getData()
+        .map((country) => {
+          return { label: country.label, value: country.label };
+        }),
+    [],
+  );
+
+  const { data: visas } = useGetVisa();
+
+  const visaOptions = useMemo(() => {
+    if (!!visas?.length) {
+      return visas.map((visa) => {
+        return {
+          label: visa.visaType,
+          value: visa.visaType,
+        };
+      });
+    }
+  }, [visas]);
+
+  setValue('hasVisitedStep', true);
+  return (
+    <div className="space-y-5">
+      <div className="flex items-center gap-5">
+        <FormField
+          control={control}
+          name="country"
+          render={({ field }) => (
+            <SelectWithCommand
+              options={countries || []}
+              value={field.value}
+              label="Country"
+              onSelect={(val) => field.onChange(val)}
+            />
+          )}
+        />
+        <FormField
+          control={control}
+          name="passportNo"
+          render={({ field }) => (
+            <Input label={'Passport number'} className="flex-1" {...field} error={errors.passportNo?.message} />
+          )}
+        />
+      </div>
+      <div className="flex items-center gap-5">
+        <FormField
+          control={control}
+          name="issueDate"
+          render={({ field }) => (
+            <div className=" flex flex-col gap-2 flex-1">
+              <Label className="text-b3-b font-semibold">Issue Date</Label>
+              <DatePicker
+                mode="single"
+                selected={!!field.value ? new Date(field.value) : undefined}
+                onSelect={(date) => {
+                  field.onChange(date);
+                }}
+                error={errors.issueDate?.message}
+              />
+            </div>
+          )}
+        />
+        <FormField
+          control={control}
+          name="expiryDate"
+          render={({ field }) => (
+            <div className=" flex flex-col gap-2 flex-1">
+              <Label className="text-b3-b font-semibold">Expiry Date</Label>
+              <DatePicker
+                mode="single"
+                selected={!!field.value ? new Date(field.value) : undefined}
+                error={errors.expiryDate?.message}
+                onSelect={(date) => {
+                  field.onChange(new Date(date as Date).toISOString());
+                }}
+              />
+            </div>
+          )}
+        />
+      </div>
+      <div className="flex items-center gap-5">
+        <FormField
+          control={control}
+          name="visa"
+          render={({ field }) => (
+            <SelectWithCommand
+              options={visaOptions || []}
+              value={field.value}
+              label="Visa"
+              error={errors.visa?.message}
+            />
+          )}
+        />
+        <FormField
+          control={control}
+          name="visaExpiry"
+          render={({ field }) => (
+            <div className=" flex flex-col gap-2 flex-1">
+              <Label className="text-b3-b font-semibold">Visa Expiry Date</Label>
+              <DatePicker
+                mode="single"
+                selected={!!field.value ? new Date(field.value) : undefined}
+                onSelect={(date) => {
+                  field.onChange(new Date(date as Date).toISOString());
+                }}
+                error={errors.visaExpiry?.message}
+              />
+            </div>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
+export default PassportDetailsStep;

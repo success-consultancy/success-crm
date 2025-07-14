@@ -1,0 +1,39 @@
+export interface LeadsResponseType {
+  count: number;
+  rows: ILead[];
+}
+
+export enum LeadStatusTypes {
+  New = 'New',
+  Converted = 'Converted',
+  NotConverted = 'Not Converted',
+  FollowUp = 'Follow Up',
+}
+
+export interface ILead {
+  id: number;
+  firstName: string;
+  middleName: null | string;
+  lastName: string;
+  dob: null | string;
+  email: string;
+  phone: string;
+  passport: null | number;
+  issueDate: null | string;
+  expiryDate: null | string;
+  status: LeadStatusTypes;
+  serviceType: string;
+  sourceId: null | number;
+  userId: null | number;
+  createdAt: string;
+  updatedAt: string;
+  followUpDate: null;
+  country: null | string;
+  visa: null | string;
+  visaExpiry: null | string;
+  address: null | string;
+  location: null | string;
+  occupation: null | string;
+  qualification: null | string;
+  updatedBy: null | number;
+}

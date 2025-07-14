@@ -1,0 +1,18 @@
+// this is a config file to define the character limits for form fields
+const CHARACTER_LIMITS = {
+  EMAIL: 100,
+  FIRST_NAME: 100,
+  LAST_NAME: 100,
+  OTHER_NAMES: 100,
+  PASSWORD_MIN: 6,
+  PASSWORD_MAX: 40,
+  DISCIPLE_MAKING_SERIES_CATEGORY_NAME: 100,
+  TITLE: 255,
+  EVENT_DESCRIPTION: 200,
+  DESCRIPTION: 500,
+  NOTES: 200,
+  OTHERS: 255,
+  OTHER_ROLE: 100,
+};
+
+export { CHARACTER_LIMITS };
