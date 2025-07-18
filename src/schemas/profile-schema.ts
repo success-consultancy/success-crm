@@ -11,7 +11,7 @@ export const ProfileSchema = z.object({
   lastName: z.string({ required_error: 'Last name is required.' }).min(1, { message: 'Last name is required' }),
   dob: z.string().optional(),
   role: z.string().optional(),
-  bio: z.string().optional(),
+  detail: z.string().optional(),
   address: z.string().optional(),
   qualification: z.string().optional(),
   occupation: z.string().optional(),

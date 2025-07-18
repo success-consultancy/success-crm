@@ -31,7 +31,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
       address: user?.address || '',
       email: user?.email || '',
       role: user?.roleId ? String(user.roleId) : '',
-      bio: user?.detail || '',
+      detail: user?.detail || '',
     },
     values: {
       id: user?.id ? String(user.id) : '',
@@ -41,7 +41,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
       address: user?.address || '',
       email: user?.email || '',
       role: user?.roleId ? String(user.roleId) : '',
-      bio: user?.detail || '',
+      detail: user?.detail || '',
     },
   });
 
@@ -188,10 +188,10 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
 
         <FormField
           control={control}
-          name="bio"
+          name="detail"
           render={({ field }) => (
             <>
-              <Input {...field} type="textarea" label="Bio (optional)" error={errors.bio?.message} />
+              <Input {...field} type="textarea" label="Bio (optional)" error={errors.detail?.message} />
               <span className="mt-1 text-[#757575] text-[14px]">Brief description for your profile</span>
             </>
           )}

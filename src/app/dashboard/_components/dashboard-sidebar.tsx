@@ -15,6 +15,8 @@ import Icons from '@/icons';
 import Button from '@/components/common/button';
 import useAuthStore, { AUTH_STORAGE_KEY } from '@/store/auth-store';
 import { removeAccessToken } from '@/lib/utils/auth-token';
+import { useQueryClient } from '@tanstack/react-query';
+import { GET_ME } from '@/query/get-me';
 
 type Props = {
   className?: string;
@@ -27,6 +29,7 @@ const DashboardSidebar = ({ className }: Props) => {
   const router = useRouter();
 
   const { isSidebarCollapsed, handleToggleSidebarCollapse } = useAppStateStore();
+  const queryClient = useQueryClient();
 
   return (
     <div className="relative isolate z-50">
@@ -62,8 +65,10 @@ const DashboardSidebar = ({ className }: Props) => {
             })
             removeAccessToken();
             localStorage.removeItem(AUTH_STORAGE_KEY);
-
-            router.replace('/login')
+            queryClient.invalidateQueries({
+              queryKey: [GET_ME],
+            });
+            return router.replace('/login')
           }}
           variant={'link'}
           className={cn(['flex items-center gap-4 cursor-pointer hover:bg-accent-50 px-3 py-5 text-b1-b mx-4 border-t border-primary', isSidebarCollapsed && '!px-0 mx-auto'])}

@@ -11,22 +11,6 @@ type Props = {
 };
 
 const AuthGroupLayout = ({ children }: Props) => {
-  const router = useRouter();
-  const { isLoggedIn, isLoading } = useIsLoggedIn();
-
-  useEffect(() => {
-    if (!isLoading && isLoggedIn) {
-      router.replace(ROUTES.DASHBOARD);
-    }
-  }, [isLoggedIn, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <div className="w-full flex h-screen items-center justify-center">
-        <Image src="/success-logo.png" alt="logo" height={100} width={180} />
-      </div>
-    );
-  }
 
   return (
     <div className="w-full flex h-screen">

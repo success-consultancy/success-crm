@@ -13,7 +13,7 @@ export const useGetMe = () => {
     queryFn: getUsers,
     queryKey: [GET_ME],
     refetchOnWindowFocus: false,
-    retry: 1,
+    retry: 1
   });
 };
 
