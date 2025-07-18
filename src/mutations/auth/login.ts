@@ -87,7 +87,7 @@ const updateUser = async (payload: ProfileSchemaType) => {
 
   delete payload.id;
   delete payload.role;
-  delete payload.bio;
+  delete payload.detail;
 
   const res = await api.put(url, payload);
   return res.data;
