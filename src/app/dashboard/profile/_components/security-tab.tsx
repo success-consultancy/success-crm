@@ -1,58 +1,78 @@
 'use client';
+
+import { FormField } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { PasswordChangeSchema, type PasswordChangeSchemaType } from '@/schemas/profile-schema';
-import { useUserUpdate } from '@/mutations/auth/login';
-import Button from '@/components/common/button';
-import { Label } from '@/components/ui/label';
+import { PasswordChangeSchema, PasswordChangeSchemaType } from '@/schemas/profile-schema';
 import Input from '@/components/common/input';
+import Button from '@/components/common/button';
+import { useChangePassword } from '@/mutations/auth/change-password';
 
-const PersonalDetailsTab = ({ user }: any) => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<PasswordChangeSchemaType>({
+const SecurityTab = () => {
+  const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),
+    defaultValues: {
+      oldPassword: '',
+      newPassword: '',
+      confirmPassword: '',
+    },
+    mode: 'onChange',
   });
 
-  const { mutate: updateUser } = useUserUpdate();
+  const { mutate, isPending } = useChangePassword();
+
+  const {
+    handleSubmit,
+    control,
+    formState: { errors, isValid },
+    reset,
+  } = form;
 
   const onSubmit = (data: PasswordChangeSchemaType) => {
-    //updateUser(data);
+    console.log('Submitting password change:', data);
+    mutate(data, {
+      onSuccess: () => {
+        reset();
+      },
+    });
   };
 
   return (
-    <>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="oldPassword">Old Password</Label>
-          <Input {...register('oldPassword')} id="oldPassword" type="password" />
-          {errors.oldPassword && <span className="text-red-500 text-sm">{errors.oldPassword.message}</span>}
-        </div>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      <FormField
+        control={control}
+        name="oldPassword"
+        render={({ field }) => (
+          <Input {...field} label="Old Password" type="password" error={errors.oldPassword?.message} />
+        )}
+      />
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="newPassword">New Password</Label>
-          <Input {...register('newPassword')} id="newPassword" type="password" />
-          {errors.newPassword && <span className="text-red-500 text-sm">{errors.newPassword.message}</span>}
-        </div>
+      <FormField
+        control={control}
+        name="newPassword"
+        render={({ field }) => (
+          <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />
+        )}
+      />
 
-        <div className="flex flex-col gap-2">
-          <Label htmlFor="confirmPassword">Confirm Password</Label>
-          <Input {...register('confirmPassword')} id="confirmPassword" type="password" />
-          {errors.confirmPassword && <span className="text-red-500 text-sm">{errors.confirmPassword.message}</span>}
-        </div>
+      <FormField
+        control={control}
+        name="confirmPassword"
+        render={({ field }) => (
+          <Input {...field} label="Confirm Password" type="password" error={errors.confirmPassword?.message} />
+        )}
+      />
 
-        <Button
-          type="submit"
-          className="w-[143px] ml-auto btn btn-primary mt-4"
-          disabled={Object.keys(errors).length > 0}
-        >
-          Save Changes
-        </Button>
-      </form>
-    </>
+      <Button
+        type="submit"
+        className="w-[143px] ml-auto btn btn-primary mt-4"
+        disabled={!isValid || isPending}
+        loading={isPending}
+      >
+        Save Changes
+      </Button>
+    </form>
   );
 };
 
-export default PersonalDetailsTab;
+export default SecurityTab;
