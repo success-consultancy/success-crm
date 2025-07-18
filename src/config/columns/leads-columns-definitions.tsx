@@ -8,6 +8,9 @@ import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-respon
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+
+const router = useRouter();
 
 export const LeadColumns: ColumnDef<ILead>[] = [
   {
@@ -313,7 +316,14 @@ export const LeadColumns: ColumnDef<ILead>[] = [
             </PopoverTrigger>
             <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
               <div className="flex flex-col">
-                <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                <div
+                onClick={() => 
+                {
+                  console.log(row.original.id);
+                  router.push(`/dashboard/leads/${row.original.id}/edit`)}
+
+                }
+                className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
                   <Edit strokeWidth={1.5} className="h-5 w-5" />
                   <span>Edit</span>
                 </div>

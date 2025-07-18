@@ -5,6 +5,7 @@ import {
   personalDetailsSchema,
   serviceDetailsSchema,
 } from '@/schemas/lead-schema';
+import { ILead } from '@/types/response-types/leads-response';
 
 export const getCompletedSteps = async (formData: LeadSchemaType) => {
   let completedSteps = [];
@@ -29,3 +30,11 @@ export const getCompletedSteps = async (formData: LeadSchemaType) => {
 
   return completedSteps;
 };
+
+export const transformLeadDates = (lead: ILead) => ({
+  ...lead,
+  // dob: lead.dob ? new Date(lead.dob) : undefined,
+  issueDate: lead.issueDate ? new Date(lead.issueDate) : undefined,
+  expiryDate: lead.expiryDate ? new Date(lead.expiryDate) : undefined,
+  visaExpiry: lead.visaExpiry ? new Date(lead.visaExpiry) : undefined,
+});

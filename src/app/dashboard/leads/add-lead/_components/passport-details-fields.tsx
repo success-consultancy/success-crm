@@ -52,17 +52,24 @@ const PassportDetailsStep = () => {
           render={({ field }) => (
             <SelectWithCommand
               options={countries || []}
-              value={field.value}
+              value={field.value ?? undefined} 
               label="Country"
               onSelect={(val) => field.onChange(val)}
             />
           )}
         />
-        <FormField
+        <FormField        
           control={control}
-          name="passportNo"
+          name="passport"
           render={({ field }) => (
-            <Input label={'Passport number'} className="flex-1" {...field} error={errors.passportNo?.message} />
+            <Input
+              type="number"
+              label={'Passport number'}
+              className="flex-1"
+              {...field}
+              value={field.value ?? undefined}
+              error={errors.passport?.message}
+            />
           )}
         />
       </div>
@@ -95,7 +102,7 @@ const PassportDetailsStep = () => {
                 selected={!!field.value ? new Date(field.value) : undefined}
                 error={errors.expiryDate?.message}
                 onSelect={(date) => {
-                  field.onChange(new Date(date as Date).toISOString());
+                  field.onChange(date);
                 }}
               />
             </div>
@@ -109,8 +116,9 @@ const PassportDetailsStep = () => {
           render={({ field }) => (
             <SelectWithCommand
               options={visaOptions || []}
-              value={field.value}
+              value={field.value ?? undefined}
               label="Visa"
+              onSelect={(val) => field.onChange(val)}
               error={errors.visa?.message}
             />
           )}
@@ -125,7 +133,7 @@ const PassportDetailsStep = () => {
                 mode="single"
                 selected={!!field.value ? new Date(field.value) : undefined}
                 onSelect={(date) => {
-                  field.onChange(new Date(date as Date).toISOString());
+                  field.onChange(date);
                 }}
                 error={errors.visaExpiry?.message}
               />

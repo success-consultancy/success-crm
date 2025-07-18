@@ -87,7 +87,7 @@ const ServiceDetailsStep = () => {
           render={({ field }) => (
             <SelectCommon
               options={locationOptions}
-              value={field.value}
+              value={field.value ?? undefined}
               label="Location"
               onSelect={(val) => field.onChange(val)}
             />
@@ -95,13 +95,13 @@ const ServiceDetailsStep = () => {
         />
         <FormField
           control={control}
-          name="source"
+          name="sourceId"
           render={({ field }) => (
             <SelectCommon
               options={sourceOptions || []}
-              value={field.value}
+              value={field.value?.toString()}
               label="Source"
-              onSelect={(val) => field.onChange(val)}
+              onSelect={(val) =>field.onChange(Number(val))}
             />
           )}
         />
@@ -109,14 +109,14 @@ const ServiceDetailsStep = () => {
       <div className="flex items-center gap-5">
         <FormField
           control={control}
-          name="assignedTo"
+          name="userId"
           render={({ field }) => (
             <SelectWithCommand
               options={userOptions || []}
-              value={field.value}
+              value={field.value?.toString()}
               label="Assigned to"
               placeholder="Select a assignee"
-              onSelect={(val) => field.onChange(val)}
+              onSelect={(val) => field.onChange(Number(val))}
             />
           )}
         />
