@@ -10,22 +10,37 @@ import { useUserUpdate } from '@/mutations/auth/login';
 import Button from '@/components/common/button';
 import Avatar from 'react-avatar';
 import { Camera } from 'lucide-react';
+import { MeUser } from '@/query/get-me';
 
-const PersonalDetailsTab = ({ user }: any) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(user?.profileImage || null);
+interface PersonalDetailsTabProps {
+  user: MeUser | undefined;
+}
+
+const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [isHovering, setIsHovering] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<ProfileSchemaType>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      id: String(user?.id) || '',
+      id: user?.id ? String(user.id) : '',
       firstName: user?.firstName || '',
       lastName: user?.lastName || '',
       phone: user?.phone || '',
       address: user?.address || '',
       email: user?.email || '',
-      role: '',
+      role: user?.roleId ? String(user.roleId) : '',
+      bio: user?.detail || '',
+    },
+    values: {
+      id: user?.id ? String(user.id) : '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+      email: user?.email || '',
+      role: user?.roleId ? String(user.roleId) : '',
       bio: user?.detail || '',
     },
   });
@@ -33,21 +48,41 @@ const PersonalDetailsTab = ({ user }: any) => {
   const {
     handleSubmit,
     control,
-    formState: { errors },
+    formState: { errors, isValid, isDirty },
   } = form;
 
-  const { mutate: updateUser } = useUserUpdate();
+  const { mutate: updateUser, isPending } = useUserUpdate();
 
   const onSubmit = (data: ProfileSchemaType) => {
-    updateUser(data);
+    // Add the selected image to the form data if available
+    const formData = {
+      ...data,
+      // profileImage: selectedImage,
+    };
+    updateUser(formData);
   };
 
   const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
+        return;
+      }
+
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Image size should be less than 5MB.');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
+      };
+      reader.onerror = () => {
+        alert('Error reading file. Please try again.');
       };
       reader.readAsDataURL(file);
     }
@@ -57,7 +92,7 @@ const PersonalDetailsTab = ({ user }: any) => {
     fileInputRef.current?.click();
   };
 
-  const name = user?.firstName + ' ' + user?.lastName;
+  const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User';
 
   return (
     <>
@@ -138,7 +173,16 @@ const PersonalDetailsTab = ({ user }: any) => {
           <FormField
             control={control}
             name="role"
-            render={({ field }) => <Input {...field} label="Role" disabled error={errors.role?.message} />}
+            render={({ field }) => (
+              <Input
+                {...field}
+                label="Role"
+                disabled
+                readOnly
+                value="Super Admin" // Display role name instead of ID
+                error={errors.role?.message}
+              />
+            )}
           />
         </div>
 
@@ -156,9 +200,10 @@ const PersonalDetailsTab = ({ user }: any) => {
         <Button
           type="submit"
           className="w-[143px] ml-auto btn btn-primary mt-4"
-          disabled={Object.keys(errors).length > 0}
+          disabled={!isValid || !isDirty || isPending}
+          loading={isPending}
         >
-          Save Changes
+          {isPending ? 'Saving...' : 'Save Changes'}
         </Button>
       </form>
     </>

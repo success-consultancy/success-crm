@@ -4,9 +4,10 @@ import { useToast } from '@/hooks/use-toast';
 import { saveAccessToken } from '@/lib/utils/auth-token';
 import { LoginSchemaType } from '@/schemas/auth/login-schema';
 import { ILoginResponse } from '@/types/user-type';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import qs from 'qs';
 import { ProfileSchemaType } from '@/schemas/profile-schema';
+import { GET_ME } from '@/query/get-me';
 
 interface LoginCredentials {
   email: string;
@@ -75,7 +76,6 @@ const useLoginUser = () => {
   });
 };
 
-
 /*
   ########################################################################################
   #                         Update user
@@ -95,12 +95,14 @@ const updateUser = async (payload: ProfileSchemaType) => {
 
 const useUserUpdate = () => {
   const { toast } = useToast();
+  const qc = useQueryClient();
   return useMutation({
     mutationFn: updateUser,
     onSuccess: () => {
       toast({
         title: 'User updated Successfully!',
       });
+      qc.invalidateQueries({ queryKey: [GET_ME] });
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
@@ -128,18 +130,14 @@ const useUserUpdate = () => {
 */
 const resetUserPassword = async (resetPayload: IResetUserPassword) => {
   const { params, payload } = resetPayload;
-  console.log(params, resetPayload, "hello")
+  console.log(params, resetPayload, 'hello');
   const requestPayload = { password: payload.password };
 
-  const { data }: AxiosResponse<ResetPasswordResponse> = await custom_api.post(
-    '/auth/resetpassword',
-    requestPayload,
-    {
-      headers: {
-        authorization: params.token
-      }
-    }
-  );
+  const { data }: AxiosResponse<ResetPasswordResponse> = await custom_api.post('/auth/resetpassword', requestPayload, {
+    headers: {
+      authorization: params.token,
+    },
+  });
 
   return data.payload;
 };
@@ -155,7 +153,6 @@ const useUserResetPassword = () => {
   ########################################################################################
 */
 const requestResetPassword = async (credentials: ForgotPasswordCredentials) => {
-
   const { data }: AxiosResponse<ResetPasswordResponse> = await api.post('/auth/passwordreseturl', credentials);
 
   return data.payload;
@@ -165,11 +162,5 @@ const useRequestResetPassword = () => {
   return useMutation({ mutationFn: requestResetPassword });
 };
 
-
 export type { LoginCredentials, CreateCredentials, ForgotPasswordCredentials, ResetPasswordCredentials };
-export {
-  useLoginUser,
-  useUserUpdate,
-  useUserResetPassword,
-  useRequestResetPassword
-};
+export { useLoginUser, useUserUpdate, useUserResetPassword, useRequestResetPassword };
