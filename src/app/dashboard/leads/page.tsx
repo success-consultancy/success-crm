@@ -12,9 +12,11 @@ import useSearchParams from '@/hooks/use-search-params';
 import { ButtonLink } from '@/components/common/button-link';
 import { ILead } from '@/types/response-types/leads-response';
 import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
-import { LeadColumns } from '@/app/config/columns/leads-columns-definitions';
+import { useLeadColumn } from '@/app/config/columns/leads-columns-definitions';
 import { cn } from '@/lib/cn';
 import TabSelector from '@/components/common/tab-selector';
+import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
+import Button from '@/components/common/button';
 
 // Tab Config
 const TAB_CONFIG = [
@@ -22,17 +24,30 @@ const TAB_CONFIG = [
   { key: 'new_leads', label: 'New Leads' },
   { key: 'qualified_leads', label: 'Qualified leads' },
   { key: 'disqualified_leads', label: 'Disqualified leads' },
-  { key: 'follow_up', label: 'Follow up' }
+  { key: 'follow_up', label: 'Follow up' },
 ];
 
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
+  console.log(filterParams);
+
   const { data, isLoading } = useGetLeads({
     ...filterParams,
     limit: filterParams.limit || '25',
   });
+  const { mutateAsync: deleteLead } = useDeleteLead();
+  const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
+
+  const handleDelete = (id: number) => {
+    deleteLead(id);
+  };
+
+  const handleDeleteBulk = (ids: number[]) => {
+    deleteLeadBulk(ids);
+  };
+  const LeadColumns = useLeadColumn(handleDelete);
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
 
@@ -42,6 +57,14 @@ const Leads = () => {
 
   const handleTabChange = (tabKey: string) => {
     setParams([{ name: 'tab', value: tabKey }]);
+  };
+
+  const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
+    console.log('Date range selected:', range);
+    setParams([
+      { name: 'from', value: range.from?.toISOString() || null },
+      { name: 'to', value: range.to?.toISOString() || null },
+    ]);
   };
 
   return (
@@ -59,14 +82,20 @@ const Leads = () => {
         currentPage={filterParams.page}
         searchKey="email"
         topRightSection={
+          <div className='flex'>
+            <Button variant="outline" className="mr-2">
+              Export
+            </Button>
+
           <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
             Add Lead
           </ButtonLink>
+          </div>
         }
-        tableHeaderSection={
-          <TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
-        }
+        tableHeaderSection={<TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />}
         className="bg-neutral-white !text-neutral-darkGrey"
+        onBulkDelete={handleDeleteBulk}
+        handleDateRangeApply={handleDateRangeApply}
       />
     </Container>
   );

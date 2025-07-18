@@ -53,6 +53,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       errorBorder,
       children,
       onIconClick,
+      value,
       ...props
     },
     forwardedRef,
@@ -62,6 +63,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const combinedRef = useCombinedRefs(inputRef, forwardedRef as React.MutableRefObject<HTMLInputElement>);
+
+    // Convert null values to undefined for the input element
+    const safeValue = value === null ? undefined : value;
 
     // handlers
     const handleinputFocus: React.FocusEventHandler<HTMLInputElement> = (e) => {
@@ -125,6 +129,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                   !!LeftIcon && 'pl-0',
                   !!RightIcon && 'pr-0',
                 ])}
+                value={safeValue}
                 {...props}
               />
 

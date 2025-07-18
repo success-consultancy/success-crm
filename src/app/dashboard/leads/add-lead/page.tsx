@@ -24,21 +24,27 @@ import ServiceDetailsStep from './_components/service-details-fields';
 import PersonalDetailsStep from './_components/personal-details-fields';
 import PassportDetailsStep from './_components/passport-details-fields';
 import { useAddLead } from '@/mutations/leads/add-lead';
+import { useEditLead } from '@/mutations/leads/edit-lead';
+import { useRouter } from 'next/navigation';
 
-type Props = {};
+type Props = {
+  mode: 'edit' | 'add';
+  defaultValues?: Partial<LeadSchemaType> & { id: string };
+};
 
 const page = (props: Props) => {
   return (
     <Container className="flex flex-col py-10 gap-8">
-      <AddLeadForm />
+      <AddLeadForm mode={props.mode} defaultValues={props.defaultValues} />
     </Container>
   );
 };
 
-const AddLeadForm = () => {
+const AddLeadForm = ({ mode, defaultValues }: Props) => {
   const form = useForm<LeadSchemaType>({
     resolver: zodResolver(leadFormSchema),
-  });
+    defaultValues,
+    });
 
   const { searchParams, setParam } = useSearchParams();
 
@@ -50,9 +56,12 @@ const AddLeadForm = () => {
     trigger,
   } = form;
 
-  const addLead = useAddLead();
+  const router = useRouter();
 
-  console.log(errors, getValues());
+  const addLead = useAddLead();
+  const editLead = useEditLead();
+
+  console.log({errors} );
 
   const [currentStep, setCurrentStep] = useState(searchParams.get('step') || LeadsFormSteps.PersonalDetails);
 
@@ -106,7 +115,17 @@ const AddLeadForm = () => {
       serviceType,
     } as Omit<LeadSchemaType, 'serviceType'> & { serviceType: string };
 
-    addLead.mutate(payload); // Submit logic goes here
+    if (mode === 'edit') {
+      console.log(
+      "editing"
+      );
+      
+      editLead.mutate({ ...payload, id: defaultValues?.id as string });
+      router.push('/dashboard/leads');
+    } else {
+      addLead.mutate(payload);
+      router.push('/dashboard/leads');
+    }
   };
 
   useEffect(() => {
@@ -144,11 +163,19 @@ const AddLeadForm = () => {
               )}
               <div></div>
               <div className="flex items-center gap-3">
-                <Button variant={'secondary'}>Cancel</Button>
+                <Button onClick={() => router.push('/dashboard/leads')} variant={'secondary'}>Cancel</Button>
                 {currentStep === LeadsFormSteps.ServiceDetails ? (
-                  <Button type="submit">Submit</Button>
+                  <Button type="submit">{mode === 'edit' ? 'Update' : 'Submit'}</Button>
                 ) : (
-                  <Button onClick={() => handleStepChange()}>Next</Button>
+                  <Button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleStepChange();
+                  }}
+                >
+                  Next
+                </Button>
                 )}
               </div>
             </div>

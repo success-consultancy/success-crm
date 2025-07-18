@@ -17,6 +17,8 @@ const PersonalDetailsStep = () => {
     formState: { errors },
     setValue,
     watch,
+    register,
+    getValues
   } = useFormContext<LeadSchemaType>();
 
   const { data: occupations } = useGetOccupations();
@@ -64,31 +66,31 @@ const PersonalDetailsStep = () => {
         <FormField
           control={control}
           name="firstName"
-          render={({ field }) => <Input label={'First Name*'} {...field} error={errors.firstName?.message} />}
+          render={({ field }) => <Input label={'First Name*'} {...field} value={field.value ?? undefined} error={errors.firstName?.message} />}
         />
         <FormField
           control={control}
           name="middleName"
           render={({ field }) => (
-            <Input label={'Middle Name'} {...field} error={errors.middleName?.message} optionalText />
+            <Input label={'Middle Name'} {...field} value={field.value ?? undefined} error={errors.middleName?.message} optionalText />
           )}
         />
         <FormField
           control={control}
           name="lastName"
-          render={({ field }) => <Input label={'Last Name*'} {...field} error={errors.lastName?.message} />}
+          render={({ field }) => <Input label={'Last Name*'} {...field} value={field.value ?? undefined} error={errors.lastName?.message} />}
         />
       </div>
       <div className="flex items-center gap-5">
         <FormField
           control={control}
           name="email"
-          render={({ field }) => <Input {...field} label="Email*" error={errors.email?.message} />}
+          render={({ field }) => <Input {...field} label="Email*" value={field.value ?? undefined} error={errors.email?.message} />}
         />
         <FormField
           control={control}
           name="phone"
-          render={({ field }) => <Input {...field} label="Phone*" error={errors.phone?.message} />}
+          render={({ field }) => <Input {...field} label="Phone*" value={field.value ?? undefined} error={errors.phone?.message} />}
         />
       </div>
       <div className="flex items-center gap-5 ">
@@ -112,7 +114,7 @@ const PersonalDetailsStep = () => {
           control={control}
           name="address"
           render={({ field }) => (
-            <Input label={'Address'} className="flex-1" {...field} error={errors.address?.message} optionalText />
+            <Input label={'Address'} className="flex-1" {...field} value={field.value ?? undefined} error={errors.address?.message} optionalText />
           )}
         />
       </div>
@@ -123,7 +125,7 @@ const PersonalDetailsStep = () => {
           render={({ field }) => (
             <SelectWithCommand
               options={occupationsOptions || []}
-              value={field.value}
+              value={field.value ?? undefined}
               label="Occupation"
               onSelect={(val) => field.onChange(val)}
             />
@@ -135,7 +137,7 @@ const PersonalDetailsStep = () => {
           render={({ field }) => (
             <SelectWithCommand
               options={ANZSCOOptions || []}
-              value={field.value}
+              value={field.value ?? undefined}
               label="ANZSCO"
               onSelect={(val) => field.onChange(val)}
             />
@@ -145,7 +147,7 @@ const PersonalDetailsStep = () => {
           control={control}
           name="qualification"
           render={({ field }) => (
-            <Input {...field} label="Qualification*" error={errors.qualification?.message} className="flex-1" />
+            <Input {...field} label="Qualification*" value={field.value ?? undefined} error={errors.qualification?.message} className="flex-1" />
           )}
         />
       </div>

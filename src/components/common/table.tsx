@@ -21,6 +21,10 @@ import { TableCell, TableRow } from '../ui/table';
 import TableSearchInput from './table-search';
 import { Separator } from '../ui/separator';
 import { ColumnSelector } from './table-column-selector';
+import { Trash, Trash2 } from 'lucide-react';
+import DeleteDialog from './delete.dialog';
+import { useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
+import { DateRangePicker } from './date-range.picker';
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -52,6 +56,8 @@ interface Props<TData, TValue> {
   topRightSection?: ReactNode;
   tableHeaderSection?: ReactNode;
   tableHeight?: string;
+  onBulkDelete?: (ids: number[]) => void;
+  handleDateRangeApply: (range: { from: Date | undefined; to: Date | undefined }) => void;
 }
 
 const TableComponent = <TData, TValue>({
@@ -69,6 +75,8 @@ const TableComponent = <TData, TValue>({
   topRightSection,
   tableHeaderSection,
   tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
+  onBulkDelete,
+  handleDateRangeApply,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -133,17 +141,32 @@ const TableComponent = <TData, TValue>({
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
         <div className="flex w-full items-center justify-between pb-5 gap-5">
-          <TableSearchInput
-            searchParamField={searchKey as string}
-            className="max-w-[18rem]"
-            placeholder={`Search data here`}
-          />
+          <div className="flex gap-2">
+            <TableSearchInput
+              searchParamField={searchKey as string}
+              className="max-w-[18rem]"
+              placeholder={`Search data here`}
+            />
+            <DateRangePicker onApply={handleDateRangeApply} />
+          </div>
+
           <div className="flex items-center gap-3.5">
             <ColumnSelector table={table} />
             <Separator orientation="vertical" />
             {topRightSection}
           </div>
         </div>
+        {table.getSelectedRowModel().rows.length > 0 && (
+          <DeleteDialog
+            trigger={<Trash2 />}
+            title="Delete this Lead"
+            description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+            onConfirm={async () => {
+              const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
+              onBulkDelete?.(ids);
+            }}
+          />
+        )}
 
         {tableHeaderSection}
 
