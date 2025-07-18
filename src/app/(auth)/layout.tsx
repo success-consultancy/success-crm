@@ -1,11 +1,33 @@
-import React, { ReactNode } from 'react';
+'use client';
+
+import React, { ReactNode, useEffect } from 'react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/app/config/routes';
+import { useIsLoggedIn } from '@/hooks/use-logged-in';
 
 type Props = {
   children: ReactNode;
 };
 
 const AuthGroupLayout = ({ children }: Props) => {
+  const router = useRouter();
+  const { isLoggedIn, isLoading } = useIsLoggedIn();
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn) {
+      router.replace(ROUTES.DASHBOARD);
+    }
+  }, [isLoggedIn, isLoading, router]);
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex h-screen items-center justify-center">
+        <Image src="/success-logo.png" alt="logo" height={100} width={180} />
+      </div>
+    );
+  }
+
   return (
     <div className="w-full flex h-screen">
       {/* Left side - Image sidebar (35%) */}
@@ -20,7 +42,7 @@ const AuthGroupLayout = ({ children }: Props) => {
         />
         <div className="w-full h-full bg-[#000000c2] absolute inset-0 m-auto"></div>
         <div className="absolute top-20 left-20 flex flex-col gap-10 text-white">
-          <Image src={'/success-logo.png'} alt="logo" height={100} width={180} />
+          <Image src="/success-logo.png" alt="logo" height={100} width={180} />
           <h1 className="text-h1 text-white font-bold">
             We
             <br />
@@ -36,9 +58,9 @@ const AuthGroupLayout = ({ children }: Props) => {
         <div className="w-full max-w-[424px]">
           {/* Mobile Logo */}
           <div className="flex justify-center lg:hidden mb-8">
-            <Image src={'/success-logo.png'} alt="logo" height={100} width={180} />
+            <Image src="/success-logo.png" alt="logo" height={100} width={180} />
           </div>
-          
+
           {children}
         </div>
       </main>
