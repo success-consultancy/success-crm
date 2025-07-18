@@ -9,14 +9,16 @@ import Icons from '@/icons';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '../config/routes';
 import Avatar from 'react-avatar';
+import { useGetMe } from '@/query/get-me';
 
 type Props = {
   children: ReactNode;
 };
 
 const layout = (props: Props) => {
-  const name = 'Super Administrator';
+  const { data, isLoading } = useGetMe();
   const router = useRouter();
+  const { data: user } = data || {};
 
   return (
     <ProtectedRoute>
@@ -32,16 +34,10 @@ const layout = (props: Props) => {
                   <Icons.BellIcon className="cursor-pointer" />
                 </div>
                 <div className="flex align-center gap-2 cursor-pointer" onClick={() => router.push(ROUTES.PROFILE)}>
-                  <Avatar name={name} round size="28" />
-
-                  {/* <Image
-                    src="/success-logo-mini.png"
-                    width="18"
-                    height="18"
-                    alt="success-logo"
-                    className="mr-1"
-                  /> */}
-                  <span>{name}</span>
+                  <Avatar name={user?.firstName} round size="28" />
+                  <span className="capitalize">
+                    {user?.firstName} {user?.lastName}
+                  </span>
                   <ChevronDownIcon className="w-[16px]" />
                 </div>
               </div>

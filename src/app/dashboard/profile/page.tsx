@@ -10,10 +10,10 @@ import Container from '@/components/common/container';
 import PersonalDetailsTab from './_components/personal-details-tab';
 import SecurityTab from './_components/security-tab';
 
-import { useGetUserProfile } from '@/query/get-user-profile';
 import useSearchParams from '@/hooks/use-search-params';
 
 import TabSelector from '@/components/common/tab-selector';
+import { MeUser, useGetMe } from '@/query/get-me';
 
 // Tab Config
 const TAB_CONFIG = [
@@ -22,7 +22,7 @@ const TAB_CONFIG = [
 ];
 
 const Account = () => {
-  const { data: user, isLoading } = useGetUserProfile();
+  const { data: user, isLoading } = useGetMe();
   const { searchParams, setParams } = useSearchParams();
 
   const currentTab = searchParams.get('tab') || 'personal_details';
@@ -42,7 +42,7 @@ const Account = () => {
       <div className="container bg-white py-6 rounded-xl">
         <TabSelector className="mb-4" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
-        {currentTab === 'personal_details' ? <PersonalDetailsTab user={user} /> : <SecurityTab />}
+        {currentTab === 'personal_details' ? <PersonalDetailsTab user={user?.data as MeUser} /> : <SecurityTab />}
       </div>
     </Container>
   );
