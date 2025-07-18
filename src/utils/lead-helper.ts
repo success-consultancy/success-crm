@@ -8,7 +8,7 @@ import {
 import { ILead } from '@/types/response-types/leads-response';
 
 export const getCompletedSteps = async (formData: LeadSchemaType) => {
-  let completedSteps = [];
+  const completedSteps = [];
 
   const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] = await Promise.all([
     personalDetailsSchema.safeParse(formData),

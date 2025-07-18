@@ -1,34 +1,35 @@
 'use client';
 
-import { useGetLeadById } from "@/query/get-leads";
-import AddLeadForm from "@/app/dashboard/leads/add-lead/page"; 
-import { LeadSchemaType } from "@/schemas/lead-schema";
-import { transformLeadDates } from "@/utils/lead-helper";
+import { useGetLeadById } from '@/query/get-leads';
+import { LeadSchemaType } from '@/schemas/lead-schema';
+import { transformLeadDates } from '@/utils/lead-helper';
+import AddLeadForm from '../../../add-lead/_components/add-lead-form';
 
 type Props = {
   leadId: string;
 };
 
 const EditLeadClient = ({ leadId }: Props) => {
-  const { data: leadData, isLoading } = useGetLeadById(leadId); // React Query hook
+  const { data: leadData, isLoading } = useGetLeadById(leadId);
 
   if (isLoading || !leadData) {
     return <p>Loading...</p>;
   }
-console.log({leadData});
-const leadWithParsedDates = transformLeadDates(leadData);
+  console.log({ leadData });
+  const leadWithParsedDates = transformLeadDates(leadData);
 
   return (
     <>
-    <AddLeadForm
-    mode="edit"
-    defaultValues={{
-      ...leadWithParsedDates,
-      serviceType: JSON.parse(leadData.serviceType),
-    } as unknown as LeadSchemaType}
-    />
+      <AddLeadForm
+        mode="edit"
+        defaultValues={
+          {
+            ...leadWithParsedDates,
+            serviceType: JSON.parse(leadData.serviceType),
+          } as unknown as LeadSchemaType
+        }
+      />
     </>
-
   );
 };
 
