@@ -82,14 +82,14 @@ const Leads = () => {
         currentPage={filterParams.page}
         searchKey="email"
         topRightSection={
-          <div className='flex'>
+          <div className="flex">
             <Button variant="outline" className="mr-2">
               Export
             </Button>
 
-          <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
-            Add Lead
-          </ButtonLink>
+            <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
+              Add Lead
+            </ButtonLink>
           </div>
         }
         tableHeaderSection={<TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />}

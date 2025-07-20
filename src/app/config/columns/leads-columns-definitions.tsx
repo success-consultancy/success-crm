@@ -4,7 +4,16 @@ import { useTableContext } from '@/components/providers/table-context-provider';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
@@ -13,11 +22,8 @@ import { format } from 'date-fns';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export const useLeadColumn = (
-  handleDelete: (id: number) => void
-) => {
+export const useLeadColumn = (handleDelete: (id: number) => void) => {
   const router = useRouter();
-
 
   const LeadColumns: ColumnDef<ILead>[] = [
     {
@@ -64,7 +70,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.firstName || "-"}</div>;
+        return <div className="">{row.original.firstName || '-'}</div>;
       },
       size: 160,
     },
@@ -74,7 +80,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.middleName || "-"}</div>;
+        return <div className="">{row.original.middleName || '-'}</div>;
       },
       size: 160,
     },
@@ -84,7 +90,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.lastName || "-"}</div>;
+        return <div className="">{row.original.lastName || '-'}</div>;
       },
       size: 160,
     },
@@ -94,7 +100,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.dob || "-"}</span>;
+        return <span className="w-full">{row.original.dob || '-'}</span>;
       },
       size: 128,
     },
@@ -104,7 +110,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.email || "-"}</span>;
+        return <span className="w-full">{row.original.email || '-'}</span>;
       },
       size: 216,
     },
@@ -114,7 +120,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.phone || "-"}</span>;
+        return <span className="w-full">{row.original.phone || '-'}</span>;
       },
       size: 152,
     },
@@ -124,7 +130,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.passport || "-"}</span>;
+        return <span className="w-full">{row.original.passport || '-'}</span>;
       },
       size: 140,
     },
@@ -134,7 +140,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.issueDate || "-"}</span>;
+        return <span className="w-full">{row.original.issueDate || '-'}</span>;
       },
       size: 128,
     },
@@ -144,7 +150,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.expiryDate || "-"}</span>;
+        return <span className="w-full">{row.original.expiryDate || '-'}</span>;
       },
       size: 132,
     },
@@ -154,7 +160,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.address || "-"}</span>;
+        return <span className="w-full">{row.original.address || '-'}</span>;
       },
       size: 216,
     },
@@ -164,7 +170,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.location || "-"}</span>;
+        return <span className="w-full">{row.original.location || '-'}</span>;
       },
       size: 120,
     },
@@ -174,7 +180,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.occupation || "-"}</span>;
+        return <span className="w-full">{row.original.occupation || '-'}</span>;
       },
       size: 280,
     },
@@ -184,7 +190,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.qualification || "-"}</span>;
+        return <span className="w-full">{row.original.qualification || '-'}</span>;
       },
       size: 160,
     },
@@ -194,7 +200,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.country || "-"}</span>;
+        return <span className="w-full">{row.original.country || '-'}</span>;
       },
       size: 136,
     },
@@ -204,7 +210,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.visa || "-"}</span>;
+        return <span className="w-full">{row.original.visa || '-'}</span>;
       },
       size: 216,
     },
@@ -228,7 +234,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-  
+
         const serviceType = row.original.serviceType;
         const getServiceBadge = () => {
           switch (serviceType) {
@@ -242,7 +248,7 @@ export const useLeadColumn = (
               return <span>{serviceType}</span>;
           }
         };
-  
+
         return <div className="w-full">{getServiceBadge()}</div>;
       },
       size: 176,
@@ -253,7 +259,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.sourceId || "-"}</span>;
+        return <span className="w-full">{row.original.sourceId || '-'}</span>;
       },
       size: 144,
     },
@@ -277,7 +283,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-  
+
         return <div className="w-full">Show Follow Up</div>;
       },
       size: 140,
@@ -288,7 +294,7 @@ export const useLeadColumn = (
       cell: ({ row }) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-  
+
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
@@ -304,7 +310,7 @@ export const useLeadColumn = (
               return <span>{status}</span>;
           }
         };
-  
+
         return <div className="w-full">{getStatusBadge()}</div>;
       },
       size: 152,
@@ -324,12 +330,16 @@ export const useLeadColumn = (
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
                   <div
-                  onClick={() => router.push(`/dashboard/leads/${row.original.id}/edit`)}
-                  className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                    onClick={() => router.push(`/dashboard/leads/${row.original.id}/edit`)}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+                  >
                     <Edit strokeWidth={1.5} className="h-5 w-5" />
                     <span>Edit</span>
                   </div>
-                  <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                  <div
+                    onClick={() => router.push(`/dashboard/leads/${row.original.id}/view`)}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+                  >
                     <Eye strokeWidth={1.5} className="h-5 w-5" />
                     <span>View</span>
                   </div>
@@ -341,18 +351,17 @@ export const useLeadColumn = (
                     <Mail strokeWidth={1.5} className="h-5 w-5" />
                     <span>Send Email</span>
                   </div>
-                   <DeleteDialog
-                     trigger={
-                      <div
-                      className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                  <DeleteDialog
+                    trigger={
+                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
                         <Trash strokeWidth={1.5} className="h-5 w-5" />
                         <span>Delete</span>
                       </div>
-                     }
-                     title="Delete this Lead"
-                     description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
-                     onConfirm={() => handleDelete(row.original.id)}
-                   />
+                    }
+                    title="Delete this Lead"
+                    description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+                    onConfirm={() => handleDelete(row.original.id)}
+                  />
                 </div>
               </PopoverContent>
             </Popover>
@@ -363,5 +372,4 @@ export const useLeadColumn = (
     },
   ];
   return LeadColumns;
-}
-
+};
