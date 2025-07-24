@@ -2,16 +2,21 @@
 
 import React, { useState } from 'react';
 import TitleBox from './title-box';
+import { ILead } from '@/types/response-types/leads-response';
 
-type Props = {};
-
-const noteData = {
-  note: 'Had a follow-up call with John regarding his study plans for the UK. He is interested in the January intake for a Master\'s in Business Administration. Currently preparing for IELTS and plans to take the test next month. Needs guidance on university options and scholarship opportunities. Scheduled another call for next week to discuss shortlisted universities.',
+type Props = {
+  lead: ILead;
 };
 
-const NoteSection = (props: Props) => {
+const NoteSection = ({ lead }: Props) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [note, setNote] = useState(noteData.note);
+  const [note, setNote] = useState(
+    `Follow-up notes for ${lead.firstName} ${lead.lastName}. ` +
+      `Source ID: ${lead.sourceId || 'Not specified'}. ` +
+      `Service type: ${lead.serviceType || 'Immigration services'}. ` +
+      `Current status: ${lead.status}. ` +
+      `Contact: ${lead.email}${lead.phone ? ` | ${lead.phone}` : ''}.`,
+  );
 
   return (
     <TitleBox title="Note">
@@ -26,10 +31,7 @@ const NoteSection = (props: Props) => {
             rows={3}
           />
         ) : (
-          <span
-            onClick={() => setIsEditing(true)}
-            className="text-gray-900 text-base font-medium cursor-text"
-          >
+          <span onClick={() => setIsEditing(true)} className="text-gray-900 text-base font-medium cursor-text">
             {note}
           </span>
         )}

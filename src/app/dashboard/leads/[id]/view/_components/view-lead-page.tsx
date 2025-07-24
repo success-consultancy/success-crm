@@ -9,12 +9,14 @@ import PassportVisaInfo from './passport-visa-info';
 import ServiceDetails from './service-details';
 import NoteSection from './note-section';
 import DocumentsSection from './document-section';
+import { ILead } from '@/types/response-types/leads-response';
 
 interface LeadPageContentProps {
   leadId: string;
+  lead: ILead;
 }
 
-const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
+const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId, lead }) => {
   const [activeTab, setActiveTab] = useState('overview');
 
   const tabs = [
@@ -30,13 +32,13 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
 
         <div className="mt-6">
           {activeTab === 'overview' && (
-            <div className='space-y-4'>
-              <LeadStages />
-              <PersonalDetails/>
-              <PassportVisaInfo/>
-              <ServiceDetails/>
-              <NoteSection/>
-              <DocumentsSection/>
+            <div className="space-y-4">
+              <LeadStages lead={lead} />
+              <PersonalDetails lead={lead} />
+              <PassportVisaInfo lead={lead} />
+              <ServiceDetails lead={lead} />
+              <NoteSection lead={lead} />
+              <DocumentsSection />
             </div>
           )}
           {activeTab === 'details' && <p>Lead {leadId} Details content.</p>}
