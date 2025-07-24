@@ -3,10 +3,10 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-import useToast from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { ForgotPasswordFormValues } from "@/schema/auth/forgot-password-schema";
 import { IForgotPasswordResponse } from "@/types/auth";
+import { useToastContext } from "@/context/toast-context";
 
 const forgotPassword = async (
   payload: ForgotPasswordFormValues
@@ -16,7 +16,7 @@ const forgotPassword = async (
 };
 
 const useForgotPassword = () => {
-  const { success, error } = useToast();
+  const { success, error } = useToastContext();
 
   return useMutation({
     mutationFn: forgotPassword,

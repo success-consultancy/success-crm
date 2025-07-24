@@ -3,8 +3,8 @@
 import { usePathname } from "next/navigation";
 import { Accordion } from "@/components/ui/accordion";
 import { AccordionMenuItem } from "./accordion-menu-item";
-import { SimpleMenuItem } from "./simple-menu-item";
 import { MenuItem, menuItems } from "@/constants/sidebar-menu-items";
+import SimpleMenuItem from "./simple-menu-item";
 
 const AdminSidebarMenuItems = () => {
   const pathName = usePathname();
@@ -35,14 +35,19 @@ const AdminSidebarMenuItems = () => {
         type="single"
         collapsible
         defaultValue={getDefaultOpenItem()}
-        className="w-full space-y-1"
+        className="w-full"
       >
         {menuItems.map((item, index) => {
           const isActive = isItemActive(item);
 
           if (!item.subItems && item.href) {
             return (
-              <SimpleMenuItem key={index} item={item} isActive={isActive} />
+              <SimpleMenuItem
+                key={index}
+                item={item}
+                isActive={isActive}
+                onClick={() => {}}
+              />
             );
           }
 

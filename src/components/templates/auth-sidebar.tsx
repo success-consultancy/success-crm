@@ -20,7 +20,7 @@ const AuthSidebar = (props: Props) => {
       <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
       <div className="absolute bottom-0 left-0 w-full p-6 text-white">
         <Logo />
-        <p className="mt-2 mb-5 text-2xl">
+        <p className="mt-2 mb-5 text-5xl">
           Your one-stop solution for <br /> school management.
         </p>
       </div>

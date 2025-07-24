@@ -1,27 +1,50 @@
 "use client";
 
+import type React from "react";
+import Link from "next/link";
 import { MenuItem } from "@/constants/sidebar-menu-items";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
 
 interface SimpleMenuItemProps {
   item: MenuItem;
   isActive: boolean;
+  onClick?: () => void;
 }
 
-export const SimpleMenuItem = ({ item, isActive }: SimpleMenuItemProps) => {
-  if (!item.href) return null;
+const SimpleMenuItem: React.FC<SimpleMenuItemProps> = ({
+  item,
+  isActive,
+  onClick,
+}) => {
+  const content = (
+    <>
+      {item.icon && (
+        <item.icon
+          className={cn("text-gray-800 size-6", isActive && "text-primary")}
+          size={22}
+        />
+      )}
+      <span>{item.title}</span>
+    </>
+  );
+
+  const className = `flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-gray-100 ${
+    isActive ? "bg-primary/10 text-primary" : "text-gray-700"
+  }`;
 
   return (
-    <Link
-      href={item.href}
-      className={cn(
-        "relative flex items-center p-2 gap-3 text-dark transition-colors rounded-lg",
-        isActive && "bg-[#DCF1FF] font-medium text-primary"
+    <div className="mb-2 last:mb-0">
+      {item.href && item.href !== "#" ? (
+        <Link href={item.href} className={className} onClick={onClick}>
+          {content}
+        </Link>
+      ) : (
+        <button className={`${className} w-full text-left`} onClick={onClick}>
+          {content}
+        </button>
       )}
-    >
-      <item.icon size="22" stroke={isActive ? "2" : "1"} />
-      <span className="font-medium">{item.title}</span>
-    </Link>
+    </div>
   );
 };
+
+export default SimpleMenuItem;

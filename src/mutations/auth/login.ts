@@ -2,12 +2,12 @@
 
 import { useMutation } from "@tanstack/react-query";
 
-import useToast from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { LoginFormValues } from "@/schema/auth/login-schema";
 import { ILoginResponse } from "@/types/auth";
 import { saveAccessToken } from "@/utils/auth-token";
 import { handleApiError } from "@/utils/error";
+import { useToastContext } from "@/context/toast-context";
 
 const loginUser = async (payload: LoginFormValues): Promise<ILoginResponse> => {
   const res = await api.post("/auth/login", payload);
@@ -15,7 +15,7 @@ const loginUser = async (payload: LoginFormValues): Promise<ILoginResponse> => {
 };
 
 const useLoginUser = () => {
-  const { success, error } = useToast();
+  const { success, error } = useToastContext();
 
   return useMutation({
     mutationFn: loginUser,

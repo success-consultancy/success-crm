@@ -28,13 +28,16 @@ export const AccordionMenuItem = ({
     <AccordionItem value={`item-${index}`} className="border-none">
       <AccordionTrigger
         className={cn(
-          "relative flex p-2 items-center text-dark transition-colors rounded-lg hover:no-underline [&[data-state=open]>svg]:rotate-180",
-          isActive && "bg-gray-100 text-primary font-medium"
+          "relative flex px-3 py-1 text-sm items-center transition-colors rounded-lg hover:no-underline [&[data-state=open]>svg]:rotate-180",
+          isActive && "bg-gray-100 !text-primary font-medium"
         )}
       >
-        <div className="flex items-center gap-3 flex-1">
-          <item.icon size="22" stroke={isActive ? "2" : "1"} />
-          <span className="font-medium">{item.title}</span>
+        <div className="flex items-center gap-2 flex-1">
+          {item.icon && (
+            <item.icon className="text-gray-900 size-6" size={22} />
+          )}
+
+          <span className="text-gray-700">{item.title}</span>
         </div>
       </AccordionTrigger>
       <AccordionContent className="pb-1">

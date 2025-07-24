@@ -1,4 +1,22 @@
-import { type Icon, Home2, Profile2User, Setting } from "iconsax-reactjs";
+import type React from "react";
+import {
+  LayoutGrid,
+  FileBarChart,
+  Calendar,
+  UserCheck,
+  Users,
+  GraduationCap,
+  Globe,
+  Lightbulb,
+  Scale,
+  ShieldPlus,
+  FileText,
+  Megaphone,
+  Settings,
+  LogOut,
+  ChevronDown,
+  LucideIcon,
+} from "lucide-react";
 
 export type SubMenuItem = {
   title: string;
@@ -7,7 +25,7 @@ export type SubMenuItem = {
 
 export type MenuItem = {
   title: string;
-  icon: Icon;
+  icon: LucideIcon;
   href?: string;
   subItems?: SubMenuItem[];
 };
@@ -15,62 +33,77 @@ export type MenuItem = {
 export const menuItems: MenuItem[] = [
   {
     title: "Dashboard",
-    icon: Home2,
+    icon: LayoutGrid,
     href: "/dashboard",
   },
   {
     title: "Fiscal Report",
-    icon: Profile2User,
+    icon: FileBarChart,
     href: "#",
   },
   {
     title: "Appointment Calendar",
-    icon: Profile2User,
+    icon: Calendar,
     href: "#",
   },
   {
     title: "Check-In",
-    icon: Profile2User,
+    icon: UserCheck,
     href: "#",
   },
   {
     title: "Leads",
-    icon: Profile2User,
+    icon: Users,
     href: "/leads",
   },
   {
     title: "Education Service",
-    icon: Profile2User,
+    icon: GraduationCap,
     href: "#",
   },
   {
     title: "Visa Service",
-    icon: Profile2User,
+    icon: Globe,
     href: "#",
   },
   {
     title: "Skill Assessment Service",
-    icon: Profile2User,
+    icon: Lightbulb,
     href: "#",
   },
   {
     title: "Tribunal Review",
-    icon: Profile2User,
+    icon: Scale,
+    href: "#",
+  },
+  {
+    title: "Insurance Service",
+    icon: ShieldPlus,
     href: "#",
   },
   {
     title: "Agency Agreement",
-    icon: Profile2User,
+    icon: FileText,
     href: "#",
   },
   {
     title: "News and Updates",
-    icon: Profile2User,
+    icon: Megaphone,
     href: "#",
   },
   {
     title: "Setup",
-    icon: Setting,
+    icon: Settings,
     subItems: [{ title: "Sample Route", href: "#" }],
   },
 ];
+
+export const bottomMenuItems: MenuItem[] = [
+  {
+    title: "Logout",
+    icon: LogOut,
+    href: "#",
+  },
+];
+
+export const ChevronDownIcon = ChevronDown;

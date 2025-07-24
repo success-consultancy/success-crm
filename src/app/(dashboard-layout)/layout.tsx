@@ -6,9 +6,7 @@ type Props = {
 };
 
 const layout = (props: Props) => {
-  return <ProtectedLayout>
-    {props.children}
-    </ProtectedLayout>;
+  return <ProtectedLayout>{props.children}</ProtectedLayout>;
 };
 
 export default layout;
