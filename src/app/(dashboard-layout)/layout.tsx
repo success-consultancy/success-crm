@@ -1,5 +1,5 @@
-import ProtectedLayout from "@/components/layouts/protected-layout";
 import React from "react";
+import ProtectedLayout from "@/components/layouts/protected-layout";
 
 type Props = {
   children?: React.ReactNode;

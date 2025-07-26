@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import {
   DropdownMenu,
@@ -11,9 +13,36 @@ import { ChevronDown } from "lucide-react";
 import { User, LogoutCurve, Document } from "iconsax-reactjs";
 import { useRouter } from "next/navigation";
 
-type Props = {};
+type MenuItem = {
+  label: string;
+  icon: React.ElementType;
+  href?: string;
+  onClick?: () => void;
+};
 
-const UserDropdown = (props: Props) => {
+const menuItems: MenuItem[] = [
+  {
+    label: "Account Settings",
+    icon: User,
+    href: "/dashboard/profile",
+  },
+  {
+    label: "Time Sheet",
+    icon: Document,
+    href: "/#",
+  },
+  {
+    label: "Sign Out",
+    icon: LogoutCurve,
+    onClick: () => {
+      // You can replace this with real sign-out logic
+      localStorage.clear();
+      window.location.href = "/login";
+    },
+  },
+];
+
+const UserDropdown = () => {
   const router = useRouter();
 
   const handleItemClick = (item: MenuItem) => {
@@ -38,7 +67,7 @@ const UserDropdown = (props: Props) => {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48">
-        {menuItems.map((item, index) => (
+        {menuItems.map((item) => (
           <React.Fragment key={item.label}>
             {item.label === "Sign Out" && <DropdownMenuSeparator />}
             <DropdownMenuItem
@@ -56,30 +85,3 @@ const UserDropdown = (props: Props) => {
 };
 
 export default UserDropdown;
-
-type MenuItem = {
-  label: string;
-  icon: React.ElementType;
-  href?: string;
-  onClick?: () => void;
-};
-
-const menuItems: MenuItem[] = [
-  {
-    label: "Account Settings",
-    icon: User,
-    href: "/account-settings",
-  },
-  {
-    label: "Time Sheet",
-    icon: Document,
-    href: "/profile",
-  },
-  {
-    label: "Sign Out",
-    icon: LogoutCurve,
-    onClick: () => {
-      console.log("Sign out clicked");
-    },
-  },
-];

@@ -2,13 +2,13 @@
 
 import React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 import { cn } from "@/lib/utils";
 
 interface NavItems {
   label: string;
-  href: string;
+  href: string; 
 }
 type Props = {
   navItems?: NavItems[];
@@ -17,13 +17,16 @@ type Props = {
 
 const NavigationTabs = ({ navItems, className }: Props) => {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
 
   if (!navItems || navItems.length === 0) return null;
+
+  const currentFullPath = `${pathname}?${searchParams.toString()}`;
 
   return (
     <div className={cn("flex gap-6 text-lg", className)}>
       {navItems.map((item, index) => {
-        const isActive = pathname === item.href;
+        const isActive = currentFullPath === item.href;
 
         return (
           <Link

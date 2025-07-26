@@ -3,10 +3,10 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
-import useToast from "@/hooks/use-toast";
 import { api } from "@/lib/api";
 import { SetPasswordFormValues } from "@/schema/auth/set-password-schema";
 import { ISetPasswordResponse } from "@/types/auth";
+import { useToastContext } from "@/context/toast-context";
 
 const setPassword = async (
   payload: SetPasswordFormValues & { token: string }
@@ -16,7 +16,7 @@ const setPassword = async (
 };
 
 const useSetPassword = () => {
-  const { success, error } = useToast();
+  const { success, error } = useToastContext();
 
   return useMutation({
     mutationFn: setPassword,
