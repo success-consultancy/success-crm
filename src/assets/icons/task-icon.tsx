@@ -1,5 +1,5 @@
-import { cn } from '@/lib/cn';
-import React from 'react';
+import { cn } from "@/lib/utils";
+import React from "react";
 
 type Props = {
   className?: string;
@@ -7,7 +7,13 @@ type Props = {
 
 const TaskIcon = (props: Props) => {
   return (
-    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg
+      width="40"
+      height="40"
+      viewBox="0 0 40 40"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
       <path
         fillRule="evenodd"
         clipRule="evenodd"

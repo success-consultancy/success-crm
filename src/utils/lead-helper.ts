@@ -1,15 +1,21 @@
 import { LeadsFormSteps } from "@/config/leads-form-steps";
-import { LeadSchemaType, passportDetailsSchema, personalDetailsSchema, serviceDetailsSchema } from "@/schema/lead-schema";
-
+import {
+  LeadSchemaType,
+  passportDetailsSchema,
+  personalDetailsSchema,
+  serviceDetailsSchema,
+} from "@/schema/lead-schema";
+import { ILead } from "@/types/response-types/leads-response";
 
 export const getCompletedSteps = async (formData: LeadSchemaType) => {
-  let completedSteps = [];
+  const completedSteps = [];
 
-  const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] = await Promise.all([
-    personalDetailsSchema.safeParse(formData),
-    passportDetailsSchema.safeParse(formData),
-    serviceDetailsSchema.safeParse(formData),
-  ]);
+  const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] =
+    await Promise.all([
+      personalDetailsSchema.safeParse(formData),
+      passportDetailsSchema.safeParse(formData),
+      serviceDetailsSchema.safeParse(formData),
+    ]);
 
   console.log(personalDetailsResult.error);
 
@@ -25,3 +31,11 @@ export const getCompletedSteps = async (formData: LeadSchemaType) => {
 
   return completedSteps;
 };
+
+export const transformLeadDates = (lead: ILead) => ({
+  ...lead,
+  // dob: lead.dob ? new Date(lead.dob) : undefined,
+  issueDate: lead.issueDate ? new Date(lead.issueDate) : undefined,
+  expiryDate: lead.expiryDate ? new Date(lead.expiryDate) : undefined,
+  visaExpiry: lead.visaExpiry ? new Date(lead.visaExpiry) : undefined,
+});
