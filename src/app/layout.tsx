@@ -3,7 +3,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 import TanstackProvider from "@/context/tanstack-context";
 import { ToastProvider } from "@/context/toast-context";
-import { sfProDisplay } from "@/assets/fonts";
+import { Inter } from "next/font/google";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   },
 };
 
+const inter = Inter({ subsets: ["latin"] });
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -20,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${sfProDisplay.className} antialiased`}>
+      <body className={`${inter.className} antialiased`}>
         <ToastProvider>
           <TanstackProvider>
             <NuqsAdapter>{children}</NuqsAdapter>
