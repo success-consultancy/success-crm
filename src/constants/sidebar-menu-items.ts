@@ -17,6 +17,7 @@ import {
   ChevronDown,
   LucideIcon,
 } from "lucide-react";
+import { clearTokens } from "@/utils/token";
 
 export type SubMenuItem = {
   title: string;
@@ -27,6 +28,7 @@ export type MenuItem = {
   title: string;
   icon: LucideIcon;
   href?: string;
+  onClick?: () => void;
   subItems?: SubMenuItem[];
 };
 
@@ -102,7 +104,10 @@ export const bottomMenuItems: MenuItem[] = [
   {
     title: "Logout",
     icon: LogOut,
-    href: "#",
+    onClick() {
+      clearTokens();
+      window.location.href = "/login";
+    },
   },
 ];
 

@@ -1,4 +1,5 @@
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
+import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 
 interface StageProps {
   name: string;
@@ -8,9 +9,9 @@ interface StageProps {
 
 const StageItem = ({ name, active, isFirst }: StageProps) => {
   const baseClasses =
-    "relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full";
-  const inactiveClasses = "bg-gray-100 text-gray-800";
-  const activeClasses = "bg-primary-blue text-white";
+    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
+  const inactiveClasses = 'bg-gray-100 text-gray-800';
+  const activeClasses = 'bg-primary-blue text-white';
   const pointSize = 15;
 
   const clipPathValue = isFirst
@@ -19,11 +20,7 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
 
   return (
     <div
-      className={cn(
-        baseClasses,
-        active ? activeClasses : inactiveClasses,
-        !isFirst && `-ml-[${pointSize}px]`
-      )}
+      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
       style={{ clipPath: clipPathValue }}
     >
       {name}
@@ -31,13 +28,14 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
   );
 };
 
-export const LeadStages = () => {
+type LeadStagesProps = { lead: ILead };
+export const LeadStages = ({ lead }: LeadStagesProps) => {
   const stages = [
-    { name: "New lead", active: false },
-    { name: "Negotiation", active: true },
-    { name: "Converted", active: false },
-    { name: "Not interested", active: false },
-    { name: "Follow up", active: false },
+    { name: 'New', active: lead.status === LeadStatusTypes.New },
+    { name: 'Negotiation', active: lead.status === LeadStatusTypes.Negotiation },
+    { name: 'Converted', active: lead.status === LeadStatusTypes.Converted },
+    { name: 'Not Interested', active: lead.status === LeadStatusTypes.NotInterested },
+    { name: 'Follow Up', active: lead.status === LeadStatusTypes.FollowUp },
   ];
 
   return (
@@ -60,21 +58,12 @@ export const LeadStages = () => {
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
           {stages.map((stage, index) => (
-            <StageItem
-              key={stage.name}
-              name={stage.name}
-              active={stage.active}
-              isFirst={index === 0}
-            />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
           ))}
         </div>
         <div className="flex gap-2 ml-4">
-          <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">
-            Won
-          </button>
-          <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">
-            Lost
-          </button>
+          <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
+          <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
         </div>
       </div>
     </div>

@@ -1,36 +1,71 @@
-import { Button } from "@/components/ui/button"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { ChevronDown } from "lucide-react"
+'use client';
 
-type Props = {}
+import { useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { ChevronDown } from 'lucide-react';
 
-const documentsData = [
-  {
-    name: "Visadocument_Draft.pdf",
-    size: "4.89 KB",
-    type: "PDF",
-    dateAdded: "11/08/2016",
-  },
-  {
-    name: "Document related to skill-assessment.tiff",
-    size: "12.45 MB",
-    type: "TIFF",
-    dateAdded: "24/12/2017",
-  },
-]
+type Document = {
+  name: string;
+  size: string;
+  type: string;
+  dateAdded: string;
+};
 
-const DocumentsSection = (props: Props) => {
+const DocumentsSection = () => {
+  const [documents, setDocuments] = useState<Document[]>([
+    {
+      name: 'Visadocument_Draft.pdf',
+      size: '4.89 KB',
+      type: 'PDF',
+      dateAdded: '11/08/2016',
+    },
+    {
+      name: 'Document related to skill-assessment.tiff',
+      size: '12.45 MB',
+      type: 'TIFF',
+      dateAdded: '24/12/2017',
+    },
+  ]);
+  const [uploading, setUploading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleAddDocument = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+
+    // TODO: Implement actual file upload logic here
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+
+    const newDoc: Document = {
+      name: file.name,
+      size: (file.size / 1024).toFixed(2) + ' KB',
+      type: file.type.split('/').pop()?.toUpperCase() || 'DOC',
+      dateAdded: new Date().toLocaleDateString('en-GB'),
+    };
+
+    setDocuments((prev) => [...prev, newDoc]);
+    setUploading(false);
+  };
+
   return (
     <div className="border border-[#EBEBEB] rounded-lg shadow-sm mb-6">
       <div className="border-b border-[#EBEBEB] px-6 py-3 flex items-center justify-between">
         <p className="text-base font-semibold text-gray-900">Documents</p>
-        <Button variant="link" className="text-blue-600 px-0">
-          Add document
-        </Button>
+        <div>
+          <input type="file" ref={fileInputRef} className="hidden" onChange={handleFileChange} />
+          <Button variant="link" className="text-blue-600 px-0" onClick={handleAddDocument} disabled={uploading}>
+            {uploading ? 'Uploading document…' : 'Add document'}
+          </Button>
+        </div>
       </div>
       <div className="p-0">
-        {" "}
-        {/* Removed p-6 here as table handles its own padding */}
         <Table>
           <TableHeader>
             <TableRow className="bg-gray-50">
@@ -46,7 +81,7 @@ const DocumentsSection = (props: Props) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {documentsData.map((doc, index) => (
+            {documents.map((doc, index) => (
               <TableRow key={index} className="text-neutral-darkGrey">
                 <TableCell className="text-gray-900 py-3 pl-6">{doc.name}</TableCell>
                 <TableCell className="text-gray-900 py-3">{doc.size}</TableCell>
@@ -58,7 +93,7 @@ const DocumentsSection = (props: Props) => {
         </Table>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DocumentsSection
+export default DocumentsSection;

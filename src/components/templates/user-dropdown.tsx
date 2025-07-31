@@ -1,17 +1,18 @@
-"use client";
+'use client';
 
-import React from "react";
+import React from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ChevronDown } from "lucide-react";
-import { User, LogoutCurve, Document } from "iconsax-reactjs";
-import { useRouter } from "next/navigation";
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { ChevronDown } from 'lucide-react';
+import { User, LogoutCurve, Document } from 'iconsax-reactjs';
+import { useRouter } from 'next/navigation';
+import { clearTokens } from '@/utils/token';
 
 type MenuItem = {
   label: string;
@@ -22,22 +23,21 @@ type MenuItem = {
 
 const menuItems: MenuItem[] = [
   {
-    label: "Account Settings",
+    label: 'Account Settings',
     icon: User,
-    href: "/dashboard/profile",
+    href: '/dashboard/profile',
   },
   {
-    label: "Time Sheet",
+    label: 'Time Sheet',
     icon: Document,
-    href: "/#",
+    href: '/#',
   },
   {
-    label: "Sign Out",
+    label: 'Sign Out',
     icon: LogoutCurve,
     onClick: () => {
-      // You can replace this with real sign-out logic
-      localStorage.clear();
-      window.location.href = "/login";
+      clearTokens();
+      window.location.href = '/login';
     },
   },
 ];
@@ -69,11 +69,8 @@ const UserDropdown = () => {
       <DropdownMenuContent align="end" className="w-48">
         {menuItems.map((item) => (
           <React.Fragment key={item.label}>
-            {item.label === "Sign Out" && <DropdownMenuSeparator />}
-            <DropdownMenuItem
-              onClick={() => handleItemClick(item)}
-              className="flex items-center gap-2"
-            >
+            {item.label === 'Sign Out' && <DropdownMenuSeparator />}
+            <DropdownMenuItem onClick={() => handleItemClick(item)} className="flex items-center gap-2">
               <item.icon className="w-4 h-4" />
               {item.label}
             </DropdownMenuItem>

@@ -1,17 +1,17 @@
+
 'use client';
 
 import React, { useState } from 'react';
 import TitleBox from './title-box';
+import { ILead } from "@/types/response-types/leads-response";
 
-type Props = {};
+type NoteSectionProps = { lead: ILead };
 
-const noteData = {
-  note: 'Had a follow-up call with John regarding his study plans for the UK. He is interested in the January intake for a Master\'s in Business Administration. Currently preparing for IELTS and plans to take the test next month. Needs guidance on university options and scholarship opportunities. Scheduled another call for next week to discuss shortlisted universities.',
-};
-
-const NoteSection = (props: Props) => {
+const NoteSection = ({ lead }: NoteSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [note, setNote] = useState(noteData.note);
+  const [note, setNote] = useState(
+    `Lead for ${lead.firstName} ${lead.lastName}. Status: ${lead.status || "-"}. Service: ${lead.serviceType || "-"}.`
+  );
 
   return (
     <TitleBox title="Note">
