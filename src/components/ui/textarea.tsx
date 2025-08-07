@@ -1,15 +1,15 @@
-import * as React from "react";
+import * as React from 'react';
 
-import { cn } from "@/lib/utils";
-import FormErrorMessage from "../atoms/form-error-message";
-import { Label } from "./label";
+import { cn } from '@/lib/utils';
+import FormErrorMessage from '../atoms/form-error-message';
+import { Label } from './label';
 
 function Textarea({
   className,
   error,
   label,
   ...props
-}: React.ComponentProps<"textarea"> & {
+}: React.ComponentProps<'textarea'> & {
   error?: string;
   label?: string;
   className?: string;
@@ -22,8 +22,8 @@ function Textarea({
       <textarea
         data-slot="textarea"
         className={cn(
-          "border-input focus:border-primary placeholder:text-muted-foreground aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-          className
+          'border-input focus:border-primary placeholder:text-muted-foreground aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+          className,
         )}
         {...props}
       />

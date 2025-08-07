@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useGetLeadById } from "@/query/get-leads";
-import { LeadSchemaType } from "@/schema/lead-schema";
-import AddLeadForm from "../../../add-lead/_components/add-lead-form";
-import { transformLeadDates } from "@/utils/lead-helper";
+import { useGetLeadById } from '@/query/get-leads';
+import { LeadSchemaType } from '@/schema/lead-schema';
+import AddLeadForm from '../../../add-lead/_components/add-lead-form';
+import { transformLeadDates } from '@/utils/lead-helper';
 
 type Props = {
   leadId: string;

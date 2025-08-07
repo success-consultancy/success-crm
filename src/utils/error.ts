@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios from 'axios';
 
 export interface IError {
   success: boolean;
@@ -9,8 +9,8 @@ export const handleApiError = (error: unknown): string => {
   if (axios.isAxiosError(error)) {
     const err = error.response?.data as IError;
     if (err && err.message) {
-      return err.message || "Something went wrong.";
+      return err.message || 'Something went wrong.';
     }
   }
-  return "Something went wrong.";
+  return 'Something went wrong.';
 };

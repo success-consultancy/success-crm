@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { isRouteChanged } from "@/lib/navigation/helpers";
-import useNavigationBlockerState from "./nav-store";
+import { isRouteChanged } from '@/lib/navigation/helpers';
+import useNavigationBlockerState from './nav-store';
 
 // eslint-disable-next-line
-import { useRouter as useRouterOriginal } from "next/navigation";
+import { useRouter as useRouterOriginal } from 'next/navigation';
 
 export { useRouterOriginal };
 
@@ -16,7 +16,7 @@ export function useRouter(): ReturnType<typeof useRouterOriginal> {
     push: (href, options) => {
       setTarget({
         url: href,
-        type: "push",
+        type: 'push',
       });
 
       if (isBlocked && isRouteChanged(href)) {
@@ -28,7 +28,7 @@ export function useRouter(): ReturnType<typeof useRouterOriginal> {
     replace: (href, options) => {
       setTarget({
         url: href,
-        type: "replace",
+        type: 'replace',
       });
 
       if (isBlocked && isRouteChanged(href)) {

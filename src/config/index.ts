@@ -11,21 +11,21 @@ class EnvConfig {
 
   getBaseDomain(): string {
     if (!this.baseUrl) {
-      throw new Error("Base URL is not defined in environment variables");
+      throw new Error('Base URL is not defined in environment variables');
     }
     return `${this.baseUrl}/`;
   }
 
   getApiUrl(): string {
     if (!this.backendApiUrl) {
-      throw new Error("API URL is not defined in environment variables");
+      throw new Error('API URL is not defined in environment variables');
     }
     return `${this.backendApiUrl}/`;
   }
 
   getApiKey(): string {
     if (!this.xApiKey) {
-      throw new Error("X-API-Key is not defined in environment variables");
+      throw new Error('X-API-Key is not defined in environment variables');
     }
     return this.xApiKey;
   }

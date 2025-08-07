@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { useForm, Controller } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import Link from "next/link";
+import * as React from 'react';
+import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Link from 'next/link';
 
-import { Button } from "@/components/ui/button";
-import { forgotPasswordSchema } from "./login.schema";
-import { useRequestResetPassword } from "@/mutations/auth/reset-password";
-import { ForgotPasswordFormValues } from "@/schema/auth/forgot-password-schema";
-import TextInput from "@/components/molecules/text-input";
-import { ROUTES } from "@/config/routes";
-import { useToastContext } from "@/context/toast-context";
+import { Button } from '@/components/ui/button';
+import { forgotPasswordSchema } from './login.schema';
+import { useRequestResetPassword } from '@/mutations/auth/reset-password';
+import { ForgotPasswordFormValues } from '@/schema/auth/forgot-password-schema';
+import TextInput from '@/components/molecules/text-input';
+import { ROUTES } from '@/config/routes';
+import { useToastContext } from '@/context/toast-context';
 
 const ForgotPasswordForm: React.FC = () => {
   const { mutate: userResetPassword, isPending } = useRequestResetPassword();
 
   const defaultValues: ForgotPasswordFormValues = {
-    email: "",
+    email: '',
   };
   const toast = useToastContext();
   const {
@@ -33,14 +33,13 @@ const ForgotPasswordForm: React.FC = () => {
   const onForgotPasswordFormSubmit = (data: ForgotPasswordFormValues) => {
     userResetPassword(data, {
       onSuccess: () => {
-        setValue("email", "");
-        toast.success("Password reset link sent to your email.");
+        setValue('email', '');
+        toast.success('Password reset link sent to your email.');
       },
       onError: (error: any) => {
-        let errorMessage =
-          error?.response?.data?.message || "Something went wrong.";
+        let errorMessage = error?.response?.data?.message || 'Something went wrong.';
         if (error?.response?.status === 401) {
-          errorMessage = "Email address not found.";
+          errorMessage = 'Email address not found.';
         }
         toast.error(errorMessage);
       },
@@ -53,15 +52,11 @@ const ForgotPasswordForm: React.FC = () => {
       <div className="text-center lg:text-left">
         <h2 className="text-h3 font-bold mb-2">Forgot Your Password?</h2>
         <p className="text-neutral-darkGrey text-b1">
-          Please enter the email you used to login with. We will send you a link
-          to reset your password.
+          Please enter the email you used to login with. We will send you a link to reset your password.
         </p>
       </div>
 
-      <form
-        onSubmit={handleSubmit(onForgotPasswordFormSubmit)}
-        className="space-y-6"
-      >
+      <form onSubmit={handleSubmit(onForgotPasswordFormSubmit)} className="space-y-6">
         <div className="space-y-4">
           <Controller
             control={control}
@@ -85,11 +80,8 @@ const ForgotPasswordForm: React.FC = () => {
         {/* Back to Login Link */}
         <div className="text-center">
           <p className="text-neutral-darkGrey text-sm">
-            Remember your password?{" "}
-            <Link
-              href={ROUTES.LOGIN}
-              className="text-primary-blue font-semibold hover:underline"
-            >
+            Remember your password?{' '}
+            <Link href={ROUTES.LOGIN} className="text-primary-blue font-semibold hover:underline">
               Back to Login
             </Link>
           </p>

@@ -1,7 +1,7 @@
-import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
+import axios, { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
-import config from "@/config";
-import { getTokens, clearTokens, storeTokens } from "@/utils/token";
+import config from '@/config';
+import { getTokens, clearTokens, storeTokens } from '@/utils/token';
 
 interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
   _retry?: boolean;
@@ -10,24 +10,24 @@ interface CustomAxiosRequestConfig extends InternalAxiosRequestConfig {
 const apiClient = axios.create({
   baseURL: config.getApiUrl(),
   headers: {
-    "Content-Type": "application/json",
-    "x-api-key": config.getApiKey(),
+    'Content-Type': 'application/json',
+    'x-api-key': config.getApiKey(),
   },
 });
 
 const refreshAccessToken = async (): Promise<string | null> => {
   try {
     const { refreshToken } = getTokens();
-    if (!refreshToken) throw new Error("No refresh token available");
+    if (!refreshToken) throw new Error('No refresh token available');
 
     const data = await getNewAccessToken(refreshToken);
     storeTokens(data.payload.access_token);
     return data.payload.access_token;
   } catch (error) {
-    console.error("Token refresh failed:", error);
+    console.error('Token refresh failed:', error);
     clearTokens();
-    if (typeof window !== "undefined") {
-      window.location.href = "/login";
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';
     }
     return null;
   }
@@ -41,7 +41,7 @@ apiClient.interceptors.request.use(
     }
     return config;
   },
-  (error: AxiosError) => Promise.reject(error)
+  (error: AxiosError) => Promise.reject(error),
 );
 
 apiClient.interceptors.response.use(
@@ -63,18 +63,18 @@ apiClient.interceptors.response.use(
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 // Update this function to match endpoint for refreshing tokens [API]
 export const getNewAccessToken = async (refreshToken: string) => {
   try {
-    const response = await apiClient.post("/auth/refresh", {
+    const response = await apiClient.post('/auth/refresh', {
       refresh_token: refreshToken,
     });
     return response.data;
   } catch (error) {
-    console.error("Failed to refresh access token:", error);
+    console.error('Failed to refresh access token:', error);
     throw error;
   }
 };

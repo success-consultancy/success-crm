@@ -1,6 +1,6 @@
-import React from "react";
-import CardContainer from "../atoms/card-container";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import CardContainer from '../atoms/card-container';
+import { cn } from '@/lib/utils';
 
 type Props = {
   title?: string;

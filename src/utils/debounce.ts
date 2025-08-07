@@ -1,6 +1,6 @@
 export function debounce<Args extends unknown[]>(
   func: (...args: Args) => void,
-  delay: number
+  delay: number,
 ): ((...args: Args) => void) & { cancel: () => void } {
   let timeoutId: ReturnType<typeof setTimeout>;
 

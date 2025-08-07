@@ -1,6 +1,6 @@
-import axios, { AxiosResponse } from "axios";
-import { api, custom_api } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
+import axios, { AxiosResponse } from 'axios';
+import { api, custom_api } from '@/lib/api';
+import { useMutation } from '@tanstack/react-query';
 
 interface ResetPasswordCredentials {
   password: string;
@@ -20,15 +20,11 @@ const resetUserPassword = async (resetPayload: IResetUserPassword) => {
   const { params, payload } = resetPayload;
   const requestPayload = { password: payload.password };
 
-  const { data }: AxiosResponse<ResetPasswordResponse> = await custom_api.post(
-    "/auth/resetpassword",
-    requestPayload,
-    {
-      headers: {
-        authorization: params.token,
-      },
-    }
-  );
+  const { data }: AxiosResponse<ResetPasswordResponse> = await custom_api.post('/auth/resetpassword', requestPayload, {
+    headers: {
+      authorization: params.token,
+    },
+  });
 
   return data.payload;
 };
@@ -38,10 +34,7 @@ const useUserResetPassword = () => {
 };
 
 const requestResetPassword = async (credentials: { email: string }) => {
-  const { data }: AxiosResponse<ResetPasswordResponse> = await api.post(
-    "/auth/passwordreseturl",
-    credentials
-  );
+  const { data }: AxiosResponse<ResetPasswordResponse> = await api.post('/auth/passwordreseturl', credentials);
 
   return data.payload;
 };
@@ -50,10 +43,6 @@ const useRequestResetPassword = () => {
   return useMutation({ mutationFn: requestResetPassword });
 };
 
-export type {
-  ResetPasswordCredentials,
-  ResetPasswordResponse,
-  IResetUserPassword,
-};
+export type { ResetPasswordCredentials, ResetPasswordResponse, IResetUserPassword };
 
 export { useUserResetPassword, useRequestResetPassword };

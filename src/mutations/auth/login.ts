@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { useMutation } from "@tanstack/react-query";
+import { useMutation } from '@tanstack/react-query';
 
-import { api } from "@/lib/api";
-import { LoginFormValues } from "@/schema/auth/login-schema";
-import { ILoginResponse } from "@/types/auth";
-import { saveAccessToken } from "@/utils/auth-token";
-import { handleApiError } from "@/utils/error";
-import { useToastContext } from "@/context/toast-context";
+import { api } from '@/lib/api';
+import { LoginFormValues } from '@/schema/auth/login-schema';
+import { ILoginResponse } from '@/types/auth';
+import { saveAccessToken } from '@/utils/auth-token';
+import { handleApiError } from '@/utils/error';
+import { useToastContext } from '@/context/toast-context';
 
 const loginUser = async (payload: LoginFormValues): Promise<ILoginResponse> => {
-  const res = await api.post("/auth/login", payload);
+  const res = await api.post('/auth/login', payload);
   return res.data;
 };
 
@@ -20,7 +20,7 @@ const useLoginUser = () => {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (res: ILoginResponse) => {
-      success("Login successful!");
+      success('Login successful!');
       if (res.token) {
         saveAccessToken(res.token);
       }

@@ -1,6 +1,6 @@
-import { cn } from "@/lib/utils";
-import { passwordRequirements } from "@/constants/password-criteria";
-import { X, CheckCircle } from "lucide-react";
+import { cn } from '@/lib/utils';
+import { passwordRequirements } from '@/constants/password-criteria';
+import { X, CheckCircle } from 'lucide-react';
 
 interface PasswordCriteriaProps {
   password: string;
@@ -18,12 +18,8 @@ const PasswordCriteria: React.FC<PasswordCriteriaProps> = ({ password }) => {
             <li
               key={`pass-${index}`}
               className={cn(
-                "flex items-center gap-2 transition-colors",
-                passwordEmpty
-                  ? "text-neutral-darkGrey"
-                  : regexMatch
-                  ? "text-green-600"
-                  : "text-red-500"
+                'flex items-center gap-2 transition-colors',
+                passwordEmpty ? 'text-neutral-darkGrey' : regexMatch ? 'text-green-600' : 'text-red-500',
               )}
             >
               {passwordEmpty ? (

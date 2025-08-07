@@ -1,5 +1,5 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+@import 'tailwindcss';
+@import 'tw-animate-css';
 
 @theme inline {
   /* Existing Tailwind theme starts */
@@ -196,7 +196,7 @@
   --animate-accordion-up: accordion-up 0.2s ease-out;
 
   /* Background Images */
-  --background-image-auth-background: url("/assets/bg-auth.png");
+  --background-image-auth-background: url('/assets/bg-auth.png');
 
   /* Screens */
   --breakpoint-2\.5xl: 1700px;
@@ -360,7 +360,7 @@
     }
 
     /* Hide the arrows in Firefox */
-    &[type="number"] {
+    &[type='number'] {
       -moz-appearance: textfield;
     }
   }
@@ -391,14 +391,14 @@
   body {
     @apply bg-background text-foreground;
   }
-  input[type="checkbox"],
-  input[type="radio"] {
+  input[type='checkbox'],
+  input[type='radio'] {
     appearance: none;
     background-clip: content-box;
   }
 
-  input[type="checkbox"]:checked,
-  input[type="radio"]:checked {
+  input[type='checkbox']:checked,
+  input[type='radio']:checked {
     padding: calc(0.5%);
   }
 
@@ -471,9 +471,7 @@
   background-color: rgba(0, 0, 0, 0);
 }
 .custom-scrollbar:hover::-webkit-scrollbar-thumb {
-  background-color: var(
-    --neutral-inactive-grey
-  ); /* Change the background color on hover */
+  background-color: var(--neutral-inactive-grey); /* Change the background color on hover */
 }
 .on-hover-scrollbar::-webkit-scrollbar-thumb {
   background-color: rgba(0, 0, 0, 0);
@@ -482,7 +480,7 @@
 .on-hover-scrollbar:hover::-webkit-scrollbar-thumb {
   background-color: var(--black-20); /* Change the background color on hover */
 }
-input[type="time"]::-webkit-calendar-picker-indicator {
+input[type='time']::-webkit-calendar-picker-indicator {
   background: none;
 }
 
@@ -493,22 +491,22 @@ input::-webkit-inner-spin-button {
 }
 
 /* Firefox */
-input[type="number"] {
+input[type='number'] {
   -moz-appearance: textfield;
 }
 
 /* disable time picker  */
-input[type="time"]::-webkit-calendar-picker-indicator {
+input[type='time']::-webkit-calendar-picker-indicator {
   display: none;
 }
 
-input[type="time"]::-webkit-inner-spin-button,
-input[type="time"]::-webkit-clear-button {
+input[type='time']::-webkit-inner-spin-button,
+input[type='time']::-webkit-clear-button {
   display: none;
 }
 
 .element::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   right: 0;
@@ -518,7 +516,7 @@ input[type="time"]::-webkit-clear-button {
 }
 
 .element::before {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   right: 0;

@@ -1,4 +1,4 @@
-import type React from "react";
+import type React from 'react';
 import {
   LayoutGrid,
   FileBarChart,
@@ -16,8 +16,8 @@ import {
   LogOut,
   ChevronDown,
   LucideIcon,
-} from "lucide-react";
-import { clearTokens } from "@/utils/token";
+} from 'lucide-react';
+import { clearTokens } from '@/utils/token';
 
 export type SubMenuItem = {
   title: string;
@@ -34,79 +34,79 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   {
-    title: "Dashboard",
+    title: 'Dashboard',
     icon: LayoutGrid,
-    href: "/dashboard",
+    href: '/dashboard',
   },
   {
-    title: "Fiscal Report",
+    title: 'Fiscal Report',
     icon: FileBarChart,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Appointment Calendar",
+    title: 'Appointment Calendar',
     icon: Calendar,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Check-In",
+    title: 'Check-In',
     icon: UserCheck,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Leads",
+    title: 'Leads',
     icon: Users,
-    href: "/leads",
+    href: '/leads',
   },
   {
-    title: "Education Service",
+    title: 'Education Service',
     icon: GraduationCap,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Visa Service",
+    title: 'Visa Service',
     icon: Globe,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Skill Assessment Service",
+    title: 'Skill Assessment Service',
     icon: Lightbulb,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Tribunal Review",
+    title: 'Tribunal Review',
     icon: Scale,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Insurance Service",
+    title: 'Insurance Service',
     icon: ShieldPlus,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Agency Agreement",
+    title: 'Agency Agreement',
     icon: FileText,
-    href: "#",
+    href: '#',
   },
   {
-    title: "News and Updates",
+    title: 'News and Updates',
     icon: Megaphone,
-    href: "#",
+    href: '#',
   },
   {
-    title: "Setup",
+    title: 'Setup',
     icon: Settings,
-    subItems: [{ title: "Sample Route", href: "#" }],
+    subItems: [{ title: 'Sample Route', href: '#' }],
   },
 ];
 
 export const bottomMenuItems: MenuItem[] = [
   {
-    title: "Logout",
+    title: 'Logout',
     icon: LogOut,
     onClick() {
       clearTokens();
-      window.location.href = "/login";
+      window.location.href = '/login';
     },
   },
 ];

@@ -1,19 +1,19 @@
-import type { Metadata } from "next";
-import { NuqsAdapter } from "nuqs/adapters/next/app";
+import type { Metadata } from 'next';
+import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
-import TanstackProvider from "@/context/tanstack-context";
-import { ToastProvider } from "@/context/toast-context";
-import { Inter } from "next/font/google";
-import "./globals.css";
+import TanstackProvider from '@/context/tanstack-context';
+import { ToastProvider } from '@/context/toast-context';
+import { Inter } from 'next/font/google';
+import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: "Success Platform",
-    template: "%s | Success Education & Visa Services",
+    default: 'Success Platform',
+    template: '%s | Success Education & Visa Services',
   },
 };
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,

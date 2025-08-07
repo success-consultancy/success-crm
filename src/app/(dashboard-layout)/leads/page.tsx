@@ -1,32 +1,29 @@
-"use client";
+'use client';
 
-import { Plus } from "lucide-react";
-import React, { useState } from "react";
-import { ColumnDef } from "@tanstack/react-table";
-import useSearchParams from "@/hooks/use-search-params";
-import { ILead } from "@/types/response-types/leads-response";
-import { LEADS_FILTER_PARAMS, useGetLeads } from "@/query/get-leads";
-import {
-  useDeleteLead,
-  useDeleteLeadBulk,
-} from "@/mutations/leads/delete-lead";
-import { useLeadColumn } from "@/config/columns/leads-columns-definitions";
-import Container from "@/components/atoms/container";
-import Portal from "@/components/atoms/portal";
-import TableComponent from "@/components/organisms/table";
-import { PortalIds } from "@/config/portal";
-import Button from "@/components/atoms/button";
-import { ButtonLink } from "@/components/atoms/button-link";
-import { ROUTES } from "@/config/routes";
-import TabSelector from "@/components/atoms/tab-selector";
+import { Plus } from 'lucide-react';
+import React, { useState } from 'react';
+import { ColumnDef } from '@tanstack/react-table';
+import useSearchParams from '@/hooks/use-search-params';
+import { ILead } from '@/types/response-types/leads-response';
+import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
+import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
+import { useLeadColumn } from '@/config/columns/leads-columns-definitions';
+import Container from '@/components/atoms/container';
+import Portal from '@/components/atoms/portal';
+import TableComponent from '@/components/organisms/table';
+import { PortalIds } from '@/config/portal';
+import Button from '@/components/atoms/button';
+import { ButtonLink } from '@/components/atoms/button-link';
+import { ROUTES } from '@/config/routes';
+import TabSelector from '@/components/atoms/tab-selector';
 
 // Tab Config
 const TAB_CONFIG = [
-  { key: "all_leads", label: "All Leads" },
-  { key: "new_leads", label: "New Leads" },
-  { key: "qualified_leads", label: "Qualified leads" },
-  { key: "disqualified_leads", label: "Disqualified leads" },
-  { key: "follow_up", label: "Follow up" },
+  { key: 'all_leads', label: 'All Leads' },
+  { key: 'new_leads', label: 'New Leads' },
+  { key: 'qualified_leads', label: 'Qualified leads' },
+  { key: 'disqualified_leads', label: 'Disqualified leads' },
+  { key: 'follow_up', label: 'Follow up' },
 ];
 
 const Leads = () => {
@@ -37,7 +34,7 @@ const Leads = () => {
 
   const { data, isLoading } = useGetLeads({
     ...filterParams,
-    limit: filterParams.limit || "25",
+    limit: filterParams.limit || '25',
   });
   const { mutateAsync: deleteLead } = useDeleteLead();
   const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
@@ -51,25 +48,21 @@ const Leads = () => {
   };
   const LeadColumns = useLeadColumn(handleDelete);
 
-  const [visibleColumns, setVisibleColumns] =
-    useState<ColumnDef<ILead>[]>(LeadColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
 
   const { searchParams, setParams } = useSearchParams();
 
-  const currentTab = searchParams.get("tab") || "all_leads";
+  const currentTab = searchParams.get('tab') || 'all_leads';
 
   const handleTabChange = (tabKey: string) => {
-    setParams([{ name: "tab", value: tabKey }]);
+    setParams([{ name: 'tab', value: tabKey }]);
   };
 
-  const handleDateRangeApply = (range: {
-    from: Date | undefined;
-    to: Date | undefined;
-  }) => {
-    console.log("Date range selected:", range);
+  const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
+    console.log('Date range selected:', range);
     setParams([
-      { name: "from", value: range.from?.toISOString() || null },
-      { name: "to", value: range.to?.toISOString() || null },
+      { name: 'from', value: range.from?.toISOString() || null },
+      { name: 'to', value: range.to?.toISOString() || null },
     ]);
   };
 
@@ -98,13 +91,7 @@ const Leads = () => {
             </ButtonLink>
           </div>
         }
-        tableHeaderSection={
-          <TabSelector
-            activeTab={currentTab}
-            onTabChange={handleTabChange}
-            tabs={TAB_CONFIG}
-          />
-        }
+        tableHeaderSection={<TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />}
         className="bg-neutral-white !text-neutral-darkGrey"
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}

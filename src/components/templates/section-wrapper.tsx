@@ -1,5 +1,5 @@
-import { cn } from "@/lib/utils";
-import { ReactNode } from "react";
+import { cn } from '@/lib/utils';
+import { ReactNode } from 'react';
 
 type Props = {
   className?: string;
@@ -8,14 +8,9 @@ type Props = {
   children: ReactNode;
 };
 
-const SectionWrapper = ({
-  className,
-  title,
-  children,
-  rightSection,
-}: Props) => {
+const SectionWrapper = ({ className, title, children, rightSection }: Props) => {
   return (
-    <div className={cn(["rounded-lg border", className])}>
+    <div className={cn(['rounded-lg border', className])}>
       <div className="py-3 px-6 border-b text-base font-bold flex items-center justify-between">
         <span>{title}</span>
         {rightSection}

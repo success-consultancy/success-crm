@@ -44,9 +44,7 @@ const IndividualStep = ({
   currentStep: string;
   completedSteps: LeadsFormSteps[];
 }) => {
-
   const { searchParams, setParam } = useSearchParams();
-
 
   return (
     <div

@@ -1,10 +1,10 @@
-"use client";
+'use client';
 
-import { usePathname } from "next/navigation";
-import { Accordion } from "@/components/ui/accordion";
-import { AccordionMenuItem } from "./accordion-menu-item";
-import { MenuItem, menuItems } from "@/constants/sidebar-menu-items";
-import SimpleMenuItem from "./simple-menu-item";
+import { usePathname } from 'next/navigation';
+import { Accordion } from '@/components/ui/accordion';
+import { AccordionMenuItem } from './accordion-menu-item';
+import { MenuItem, menuItems } from '@/constants/sidebar-menu-items';
+import SimpleMenuItem from './simple-menu-item';
 
 const AdminSidebarMenuItems = () => {
   const pathName = usePathname();
@@ -31,36 +31,16 @@ const AdminSidebarMenuItems = () => {
 
   return (
     <div className="">
-      <Accordion
-        type="single"
-        collapsible
-        defaultValue={getDefaultOpenItem()}
-        className="w-full"
-      >
+      <Accordion type="single" collapsible defaultValue={getDefaultOpenItem()} className="w-full">
         {menuItems.map((item, index) => {
           const isActive = isItemActive(item);
 
           if (!item.subItems && item.href) {
-            return (
-              <SimpleMenuItem
-                key={index}
-                item={item}
-                isActive={isActive}
-                onClick={() => {}}
-              />
-            );
+            return <SimpleMenuItem key={index} item={item} isActive={isActive} onClick={() => {}} />;
           }
 
           if (item.subItems) {
-            return (
-              <AccordionMenuItem
-                key={index}
-                item={item}
-                index={index}
-                isActive={isActive}
-                pathName={pathName}
-              />
-            );
+            return <AccordionMenuItem key={index} item={item} index={index} isActive={isActive} pathName={pathName} />;
           }
 
           return null;

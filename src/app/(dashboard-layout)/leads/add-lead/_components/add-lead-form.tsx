@@ -1,34 +1,30 @@
-"use client";
+'use client';
 
-import { Form } from "@/components/ui/form";
+import { Form } from '@/components/ui/form';
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { FormProvider, useForm } from "react-hook-form";
-import useSearchParams from "@/hooks/use-search-params";
+import { FormProvider, useForm } from 'react-hook-form';
+import useSearchParams from '@/hooks/use-search-params';
 
-import { useAddLead } from "@/mutations/leads/add-lead";
-import { useRouter } from "next/navigation";
-import PersonalDetailsStep from "./personal-details-fields";
-import PassportDetailsStep from "./passport-details-fields";
-import ServiceDetailsStep from "./service-details-fields";
-import { useEditLead } from "@/mutations/leads/edit-lead";
-import { LeadsFormSteps } from "@/config/leads-form-steps";
-import Portal from "@/components/atoms/portal";
-import FormSteps from "@/components/molecules/form-steps";
-import Button from "@/components/atoms/button";
-import { PortalIds } from "@/config/portal";
-import leadFormSchema, {
-  LeadSchemaType,
-  passportDetailsSchema,
-  personalDetailsSchema,
-} from "@/schema/lead-schema";
-import { getCompletedSteps } from "@/utils/lead-helper";
+import { useAddLead } from '@/mutations/leads/add-lead';
+import { useRouter } from 'next/navigation';
+import PersonalDetailsStep from './personal-details-fields';
+import PassportDetailsStep from './passport-details-fields';
+import ServiceDetailsStep from './service-details-fields';
+import { useEditLead } from '@/mutations/leads/edit-lead';
+import { LeadsFormSteps } from '@/config/leads-form-steps';
+import Portal from '@/components/atoms/portal';
+import FormSteps from '@/components/molecules/form-steps';
+import Button from '@/components/atoms/button';
+import { PortalIds } from '@/config/portal';
+import leadFormSchema, { LeadSchemaType, passportDetailsSchema, personalDetailsSchema } from '@/schema/lead-schema';
+import { getCompletedSteps } from '@/utils/lead-helper';
 
 type Props = {
-  mode: "edit" | "add";
+  mode: 'edit' | 'add';
   defaultValues?: Partial<LeadSchemaType & { id: number }>;
 };
 
@@ -55,9 +51,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
 
   console.log({ errors });
 
-  const [currentStep, setCurrentStep] = useState(
-    searchParams.get("step") || LeadsFormSteps.PersonalDetails
-  );
+  const [currentStep, setCurrentStep] = useState(searchParams.get('step') || LeadsFormSteps.PersonalDetails);
 
   const [completedSteps, setCompletedSteps] = useState<LeadsFormSteps[]>([]);
 
@@ -82,10 +76,10 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       setCompletedSteps(completed);
 
       if (currentStep === LeadsFormSteps.PersonalDetails) {
-        setParam("step", LeadsFormSteps.PassportAndVisa);
+        setParam('step', LeadsFormSteps.PassportAndVisa);
         setCurrentStep(LeadsFormSteps.PassportAndVisa);
       } else if (currentStep === LeadsFormSteps.PassportAndVisa) {
-        setParam("step", LeadsFormSteps.ServiceDetails);
+        setParam('step', LeadsFormSteps.ServiceDetails);
         setCurrentStep(LeadsFormSteps.ServiceDetails);
       }
     }
@@ -93,10 +87,10 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
 
   const handlePrevStep = () => {
     if (currentStep === LeadsFormSteps.ServiceDetails) {
-      setParam("step", LeadsFormSteps.PassportAndVisa);
+      setParam('step', LeadsFormSteps.PassportAndVisa);
       setCurrentStep(LeadsFormSteps.PassportAndVisa);
     } else if (currentStep === LeadsFormSteps.PassportAndVisa) {
-      setParam("step", LeadsFormSteps.PersonalDetails);
+      setParam('step', LeadsFormSteps.PersonalDetails);
       setCurrentStep(LeadsFormSteps.PersonalDetails);
     }
   };
@@ -107,22 +101,22 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     const payload = {
       ...data,
       serviceType,
-    } as Omit<LeadSchemaType, "serviceType"> & { serviceType: string };
+    } as Omit<LeadSchemaType, 'serviceType'> & { serviceType: string };
 
-    if (mode === "edit") {
-      console.log("editing");
+    if (mode === 'edit') {
+      console.log('editing');
 
       editLead.mutate({ ...payload, id: defaultValues?.id as number });
-      router.push("/leads");
+      router.push('/leads');
     } else {
       addLead.mutate(payload);
-      router.push("/leads");
+      router.push('/leads');
     }
   };
 
   useEffect(() => {
-    if (searchParams.get("step")) {
-      setCurrentStep(searchParams.get("step") as string);
+    if (searchParams.get('step')) {
+      setCurrentStep(searchParams.get('step') as string);
     }
   }, [searchParams]);
 
@@ -140,42 +134,26 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       </div>
       <div className="w-full bg-neutral-white rounded-2xl flex flex-col gap-6 pb-5">
         <div className=" py-3 border-b border-b-stroke-divider flex items-center gap-2 px-6">
-          <span className="text-h5 font-bold text-content-heading">
-            {currentStep}
-          </span>
+          <span className="text-h5 font-bold text-content-heading">{currentStep}</span>
         </div>
         <FormProvider {...form}>
-          <form
-            className="flex flex-col gap-5 px-6"
-            onSubmit={form.handleSubmit(onSubmit)}
-          >
-            {currentStep === LeadsFormSteps.PersonalDetails && (
-              <PersonalDetailsStep />
-            )}
-            {currentStep === LeadsFormSteps.PassportAndVisa && (
-              <PassportDetailsStep />
-            )}
-            {currentStep === LeadsFormSteps.ServiceDetails && (
-              <ServiceDetailsStep />
-            )}
+          <form className="flex flex-col gap-5 px-6" onSubmit={form.handleSubmit(onSubmit)}>
+            {currentStep === LeadsFormSteps.PersonalDetails && <PersonalDetailsStep />}
+            {currentStep === LeadsFormSteps.PassportAndVisa && <PassportDetailsStep />}
+            {currentStep === LeadsFormSteps.ServiceDetails && <ServiceDetailsStep />}
             <div className="flex items-center justify-between pt-2">
               {currentStep !== LeadsFormSteps.PersonalDetails && (
-                <Button variant={"ghost"} onClick={() => handlePrevStep()}>
+                <Button variant={'ghost'} onClick={() => handlePrevStep()}>
                   Back
                 </Button>
               )}
               <div></div>
               <div className="flex items-center gap-3">
-                <Button
-                  onClick={() => router.push("/leads")}
-                  variant={"secondary"}
-                >
+                <Button onClick={() => router.push('/leads')} variant={'secondary'}>
                   Cancel
                 </Button>
                 {currentStep === LeadsFormSteps.ServiceDetails ? (
-                  <Button type="submit">
-                    {mode === "edit" ? "Update" : "Submit"}
-                  </Button>
+                  <Button type="submit">{mode === 'edit' ? 'Update' : 'Submit'}</Button>
                 ) : (
                   <Button
                     type="button"

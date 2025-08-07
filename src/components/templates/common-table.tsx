@@ -1,22 +1,8 @@
-import React from "react";
-import {
-  ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import TableSkeleton from "@/components/organisms/table-skeleton";
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import React from 'react';
+import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
+import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Props<T> = {
   columns: ColumnDef<T, unknown>[];
@@ -45,17 +31,9 @@ const CommonTable = <T,>({ columns, data, isLoading }: Props<T>) => {
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-14">
                 {headerGroup.headers.map((header) => (
-                  <TableHead
-                    key={header.id}
-                    className={header.column.id === "select" ? "w-12" : ""}
-                  >
+                  <TableHead key={header.id} className={header.column.id === 'select' ? 'w-12' : ''}>
                     <span className="text-b2b">
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
                     </span>
                   </TableHead>
                 ))}
@@ -67,18 +45,9 @@ const CommonTable = <T,>({ columns, data, isLoading }: Props<T>) => {
               <TableSkeleton count={columns.length} />
             ) : (
               table.getRowModel().rows.map((row) => (
-                <TableRow
-                  className="h-14"
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
+                <TableRow className="h-14" key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
               ))

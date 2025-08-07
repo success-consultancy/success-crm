@@ -1,5 +1,5 @@
 export const useLocalStorage = () => {
-  const isBrowser = typeof window !== "undefined";
+  const isBrowser = typeof window !== 'undefined';
 
   const setItem = (key: string, value: unknown): void => {
     if (isBrowser) {

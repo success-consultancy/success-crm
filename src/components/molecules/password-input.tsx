@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
 // External Packages
-import React, { forwardRef, useState } from "react";
-import { Eye, EyeSlash } from "iconsax-reactjs";
+import React, { forwardRef, useState } from 'react';
+import { Eye, EyeSlash } from 'iconsax-reactjs';
 
 // UI Components
-import FormErrorMessage from "../atoms/form-error-message";
-import { Label } from "../ui/label";
-import { Input } from "../ui/input";
+import FormErrorMessage from '../atoms/form-error-message';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
 
 // Utilities
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   id?: string;
@@ -19,8 +19,8 @@ type Props = React.InputHTMLAttributes<HTMLInputElement> & {
 };
 
 const PasswordInput = forwardRef<HTMLInputElement, Props>(
-  ({ label = "Password", id, error, required, className, ...rest }, ref) => {
-    const inputId = id || "password-input";
+  ({ label = 'Password', id, error, required, className, ...rest }, ref) => {
+    const inputId = id || 'password-input';
     const [showPassword, setShowPassword] = useState(false);
 
     return (
@@ -37,12 +37,9 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
             id={inputId}
             ref={ref}
             required={required}
-            type={showPassword ? "text" : "password"}
+            type={showPassword ? 'text' : 'password'}
             {...rest}
-            className={cn(
-              "w-full mt-2 rounded-md border px-3 py-2 pr-10 focus:border-primary",
-              className
-            )}
+            className={cn('w-full mt-2 rounded-md border px-3 py-2 pr-10 focus:border-primary', className)}
           />
           <button
             type="button"
@@ -57,9 +54,9 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
         <FormErrorMessage message={error} />
       </div>
     );
-  }
+  },
 );
 
-PasswordInput.displayName = "PasswordInput";
+PasswordInput.displayName = 'PasswordInput';
 
 export default PasswordInput;

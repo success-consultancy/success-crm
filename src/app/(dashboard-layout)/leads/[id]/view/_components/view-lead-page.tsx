@@ -1,27 +1,26 @@
-"use client";
+'use client';
 
-import React, { useState } from "react";
-import TabsMenu from "./navigation-tabs";
-import { LeadStages } from "./lead-stages";
-import PersonalDetails from "./personal-details";
-import PassportVisaInfo from "./passport-visa-info";
-import ServiceDetails from "./service-details";
-import NoteSection from "./note-section";
-import DocumentsSection from "./document-section";
-import Container from "@/components/atoms/container";
-import { useGetLeadById } from "@/query/get-leads";
+import React, { useState } from 'react';
+import TabsMenu from './navigation-tabs';
+import { LeadStages } from './lead-stages';
+import PersonalDetails from './personal-details';
+import PassportVisaInfo from './passport-visa-info';
+import ServiceDetails from './service-details';
+import NoteSection from './note-section';
+import DocumentsSection from './document-section';
+import Container from '@/components/atoms/container';
+import { useGetLeadById } from '@/query/get-leads';
 
 interface LeadPageContentProps {
   leadId: string;
 }
 
-
 const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
-  const [activeTab, setActiveTab] = useState("overview");
+  const [activeTab, setActiveTab] = useState('overview');
   const tabs = [
-    { label: "Overview", value: "overview" },
-    { label: "Details", value: "details" },
-    { label: "Activity", value: "activity" },
+    { label: 'Overview', value: 'overview' },
+    { label: 'Details', value: 'details' },
+    { label: 'Activity', value: 'activity' },
   ];
   const { data: lead, isLoading, isError } = useGetLeadById(leadId);
 
@@ -38,7 +37,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
         <TabsMenu items={tabs} active={activeTab} onChange={setActiveTab} />
 
         <div className="mt-6">
-          {activeTab === "overview" && (
+          {activeTab === 'overview' && (
             <div className="space-y-4">
               <LeadStages lead={lead} />
               <PersonalDetails lead={lead} />
@@ -48,8 +47,8 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
               <DocumentsSection />
             </div>
           )}
-          {activeTab === "details" && <p>Lead {leadId} Details content.</p>}
-          {activeTab === "activity" && <p>Lead {leadId} Activity content.</p>}
+          {activeTab === 'details' && <p>Lead {leadId} Details content.</p>}
+          {activeTab === 'activity' && <p>Lead {leadId} Activity content.</p>}
         </div>
       </div>
     </Container>

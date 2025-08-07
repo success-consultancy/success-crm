@@ -1,5 +1,5 @@
-import Link from "next/link";
-import React from "react";
+import Link from 'next/link';
+import React from 'react';
 interface Props {
   className?: string;
   isLoader?: boolean;
@@ -7,16 +7,9 @@ interface Props {
 
 const Logo = ({ className, isLoader }: Props) => {
   return (
-    <Link href={isLoader ? "#" : "/"} className={className}>
+    <Link href={isLoader ? '#' : '/'} className={className}>
       {/* Logo SVG */}
-      <svg
-        id="logo-86"
-        width={30}
-        height={30}
-        viewBox="0 0 40 40"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-      >
+      <svg id="logo-86" width={30} height={30} viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path
           fillRule="evenodd"
           clipRule="evenodd"

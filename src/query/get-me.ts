@@ -1,10 +1,10 @@
-import { api } from "@/lib/api";
-import { useQuery } from "@tanstack/react-query";
+import { api } from '@/lib/api';
+import { useQuery } from '@tanstack/react-query';
 
-export const GET_ME = "get-me";
+export const GET_ME = 'get-me';
 
 const getUsers = async () => {
-  const res = await api.get("/user/me");
+  const res = await api.get('/user/me');
   return res.data as MeResponse;
 };
 

@@ -1,25 +1,25 @@
-"use client";
+'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
-import { SearchNormal1 } from "iconsax-reactjs";
-import { useQueryState } from "nuqs";
+import React, { useEffect, useMemo, useState } from 'react';
+import { SearchNormal1 } from 'iconsax-reactjs';
+import { useQueryState } from 'nuqs';
 
-import { Input } from "../ui/input";
-import { debounce } from "@/utils/debounce";
-import { cn } from "@/lib/utils";
+import { Input } from '../ui/input';
+import { debounce } from '@/utils/debounce';
+import { cn } from '@/lib/utils';
 
 interface SearchBarProps {
   queryKey?: string;
   className?: string;
 }
 
-const SearchBar = ({ queryKey = "query", className }: SearchBarProps) => {
+const SearchBar = ({ queryKey = 'query', className }: SearchBarProps) => {
   const [query, setQuery] = useQueryState(queryKey);
-  const [inputValue, setInputValue] = useState(query || "");
+  const [inputValue, setInputValue] = useState(query || '');
 
   // Sync initial query to local input state
   useEffect(() => {
-    setInputValue(query || "");
+    setInputValue(query || '');
   }, [query]);
 
   // Debounced version of setQuery
@@ -28,7 +28,7 @@ const SearchBar = ({ queryKey = "query", className }: SearchBarProps) => {
       debounce((value: string) => {
         setQuery(value);
       }, 500),
-    [setQuery]
+    [setQuery],
   );
 
   useEffect(() => {
@@ -38,7 +38,7 @@ const SearchBar = ({ queryKey = "query", className }: SearchBarProps) => {
   }, [debouncedSetQuery]);
 
   return (
-    <div className={cn("relative w-full max-w-xs", className)}>
+    <div className={cn('relative w-full max-w-xs', className)}>
       <Input
         type="text"
         value={inputValue}

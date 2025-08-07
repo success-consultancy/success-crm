@@ -1,18 +1,12 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ArrowDown2 } from "iconsax-reactjs";
-import { useController } from "react-hook-form";
-import type { Control, FieldPath, FieldValues } from "react-hook-form";
-import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowDown2 } from 'iconsax-reactjs';
+import { useController } from 'react-hook-form';
+import type { Control, FieldPath, FieldValues } from 'react-hook-form';
+import { Label } from '@/components/ui/label';
 
 export type ObjType = {
   label: string;
@@ -36,7 +30,7 @@ const SelectField = <T extends FieldValues>({
   label,
   control,
   options,
-  placeholder = "Select an option",
+  placeholder = 'Select an option',
   disabled = false,
   required = false,
   icon = <ArrowDown2 className="size-5 shrink-0 opacity-50" />,
@@ -49,21 +43,17 @@ const SelectField = <T extends FieldValues>({
     name,
     control,
     rules: {
-      required: required ? "This field is required" : false,
+      required: required ? 'This field is required' : false,
     },
   });
 
   return (
-    <div className={`flex flex-col gap-2 w-full ${className || ""}`}>
+    <div className={`flex flex-col gap-2 w-full ${className || ''}`}>
       <Label htmlFor={name} className="font-medium">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
-      <Select
-        disabled={disabled}
-        onValueChange={field.onChange}
-        value={field.value || ""}
-      >
+      <Select disabled={disabled} onValueChange={field.onChange} value={field.value || ''}>
         <SelectTrigger className="w-full" id={name}>
           <div className="flex items-center gap-2">
             <SelectValue placeholder={placeholder} />

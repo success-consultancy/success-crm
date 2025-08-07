@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React, { useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
-import PageLoader from "../molecules/page-loader";
-import AdminSidebar from "../templates/admin-sidebar";
-import AdminHeader from "../templates/admin-header";
+import PageLoader from '../molecules/page-loader';
+import AdminSidebar from '../templates/admin-sidebar';
+import AdminHeader from '../templates/admin-header';
 
-import { useGetMe } from "@/query/get-me";
-import { ROUTES } from "@/config/routes";
+import { useGetMe } from '@/query/get-me';
+import { ROUTES } from '@/config/routes';
 
 type Props = {
   children?: React.ReactNode;
@@ -41,9 +41,7 @@ const ProtectedLayout = ({ children }: Props) => {
           <AdminHeader />
         </div>
 
-        <div className="ml-64 grow bg-bg-blue-extra-light overflow-y-auto flex flex-col">
-          {children}
-        </div>
+        <div className="ml-64 grow bg-bg-blue-extra-light overflow-y-auto flex flex-col">{children}</div>
       </div>
     </div>
   );

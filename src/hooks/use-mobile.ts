@@ -1,4 +1,4 @@
-import * as React from "react";
+import * as React from 'react';
 
 export function useIsMobile(isMessagesPage: boolean = false) {
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(false);
@@ -8,9 +8,9 @@ export function useIsMobile(isMessagesPage: boolean = false) {
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
-    mql.addEventListener("change", onChange);
+    mql.addEventListener('change', onChange);
     setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
-    return () => mql.removeEventListener("change", onChange);
+    return () => mql.removeEventListener('change', onChange);
   }, [MOBILE_BREAKPOINT]);
 
   return !!isMobile;

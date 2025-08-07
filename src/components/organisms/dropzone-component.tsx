@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { useCallback } from "react";
-import { useDropzone } from "react-dropzone";
-import { cn } from "@/lib/utils";
+import React, { useCallback } from 'react';
+import { useDropzone } from 'react-dropzone';
+import { cn } from '@/lib/utils';
 
 interface DropzoneProps {
   onDrop: (files: File[]) => void;
@@ -25,15 +25,12 @@ const Dropzone: React.FC<DropzoneProps> = ({
     (acceptedFiles: File[]) => {
       onDrop(acceptedFiles);
     },
-    [onDrop]
+    [onDrop],
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: handleDrop,
-    accept: acceptedFileTypes?.reduce(
-      (acc, type) => ({ ...acc, [type]: [] }),
-      {} as Record<string, string[]>
-    ),
+    accept: acceptedFileTypes?.reduce((acc, type) => ({ ...acc, [type]: [] }), {} as Record<string, string[]>),
     multiple,
   });
 
@@ -43,22 +40,16 @@ const Dropzone: React.FC<DropzoneProps> = ({
       <div
         {...getRootProps()}
         className={cn(
-          "border border-dashed border-gray-400 p-4 rounded-md cursor-pointer text-center transition-colors hover:border-primary",
-          isDragActive && "border-primary bg-gray-100",
-          className
+          'border border-dashed border-gray-400 p-4 rounded-md cursor-pointer text-center transition-colors hover:border-primary',
+          isDragActive && 'border-primary bg-gray-100',
+          className,
         )}
       >
         <input {...getInputProps()} />
         {isDragActive ? (
-          <p className="text-sm text-muted-foreground">
-            Drop the files here...
-          </p>
+          <p className="text-sm text-muted-foreground">Drop the files here...</p>
         ) : (
-          children || (
-            <p className="text-sm text-muted-foreground">
-              Drag & drop some files here, or click to select
-            </p>
-          )
+          children || <p className="text-sm text-muted-foreground">Drag & drop some files here, or click to select</p>
         )}
       </div>
     </div>

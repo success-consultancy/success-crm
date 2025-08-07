@@ -5,16 +5,13 @@
  * @param refreshToken - The refresh token to store.
  */
 
-export const storeTokens = (
-  accessToken?: string,
-  refreshToken?: string
-): void => {
-  if (typeof window !== "undefined") {
+export const storeTokens = (accessToken?: string, refreshToken?: string): void => {
+  if (typeof window !== 'undefined') {
     if (accessToken) {
-      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem('accessToken', accessToken);
     }
     if (refreshToken) {
-      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem('refreshToken', refreshToken);
     }
   }
 };
@@ -29,10 +26,10 @@ export const getTokens = (): {
   accessToken: string | null;
   refreshToken: string | null;
 } => {
-  if (typeof window !== "undefined") {
+  if (typeof window !== 'undefined') {
     return {
-      accessToken: localStorage.getItem("accessToken"),
-      refreshToken: localStorage.getItem("refreshToken"),
+      accessToken: localStorage.getItem('accessToken'),
+      refreshToken: localStorage.getItem('refreshToken'),
     };
   }
   return {
@@ -45,8 +42,8 @@ export const getTokens = (): {
  * Clears authentication tokens from localStorage.
  */
 export const clearTokens = (): void => {
-  if (typeof window !== "undefined") {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
   }
 };

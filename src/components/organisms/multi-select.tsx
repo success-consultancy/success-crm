@@ -1,24 +1,14 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { X, Check } from "lucide-react";
-import { ArrowDown2 } from "iconsax-reactjs";
+import * as React from 'react';
+import { X, Check } from 'lucide-react';
+import { ArrowDown2 } from 'iconsax-reactjs';
 
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandItem,
-  CommandList,
-} from "@/components/ui/command";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
+import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
 export type Option = {
   label: string;
@@ -44,10 +34,10 @@ export function MultiSelect({
   options,
   selected,
   onChange,
-  placeholder = "Select options",
+  placeholder = 'Select options',
   className,
   badgeClassName,
-  emptyText = "No options found.",
+  emptyText = 'No options found.',
   error,
   onBlur,
   disabled = false,
@@ -84,28 +74,19 @@ export function MultiSelect({
             aria-expanded={open}
             aria-invalid={!!error}
             className={cn(
-              "w-full justify-between border rounded-md border-gray-300 flex items-center px-3 cursor-pointer",
-              error && "border-red-500",
-              disabled && "opacity-50 cursor-not-allowed",
+              'w-full justify-between border rounded-md border-gray-300 flex items-center px-3 cursor-pointer',
+              error && 'border-red-500',
+              disabled && 'opacity-50 cursor-not-allowed',
               className,
             )}
             onClick={() => !disabled && setOpen(!open)}
           >
             <div className="flex items-center mt-1 flex-wrap gap-1">
-              {selected.length === 0 && (
-                <span className="text-muted-foreground">{placeholder}</span>
-              )}
+              {selected.length === 0 && <span className="text-muted-foreground">{placeholder}</span>}
               {selected.map((value) => {
                 const option = options.find((opt) => opt.value === value);
                 return (
-                  <Badge
-                    key={value}
-                    variant="secondary"
-                    className={cn(
-                      "mr-1 mb-1 gap-1 pr-0.5 pl-2",
-                      badgeClassName,
-                    )}
-                  >
+                  <Badge key={value} variant="secondary" className={cn('mr-1 mb-1 gap-1 pr-0.5 pl-2', badgeClassName)}>
                     {option?.label}
                     <Button
                       variant="ghost"
@@ -129,11 +110,7 @@ export function MultiSelect({
             {icon}
           </div>
         </PopoverTrigger>
-        <PopoverContent
-          className="w-full p-0"
-          align="start"
-          onCloseAutoFocus={(e) => e.preventDefault()}
-        >
+        <PopoverContent className="w-full p-0" align="start" onCloseAutoFocus={(e) => e.preventDefault()}>
           <Command>
             <CommandList>
               <CommandEmpty>{emptyText}</CommandEmpty>
@@ -146,17 +123,12 @@ export function MultiSelect({
                       value={option.value}
                       disabled={option.disabled}
                       onSelect={() => handleSelect(option.value)}
-                      className={cn(
-                        "flex items-center gap-2",
-                        option.disabled && "cursor-not-allowed opacity-60",
-                      )}
+                      className={cn('flex items-center gap-2', option.disabled && 'cursor-not-allowed opacity-60')}
                     >
                       <div
                         className={cn(
-                          "flex h-4 w-4 items-center justify-center rounded-sm border border-primary",
-                          isSelected
-                            ? "bg-primary text-primary-foreground"
-                            : "opacity-50",
+                          'flex h-4 w-4 items-center justify-center rounded-sm border border-primary',
+                          isSelected ? 'bg-primary text-primary-foreground' : 'opacity-50',
                         )}
                       >
                         {isSelected && <Check className="h-3 w-3" />}

@@ -1,11 +1,5 @@
-import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Button } from '@/components/ui/button';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const TaskFilter = ({
   taskType,
@@ -26,10 +20,7 @@ const TaskFilter = ({
     <div className="flex items-center justify-between gap-2 py-4 border-b px-3">
       <div className="flex gap-2">
         {superAdmin && (
-          <Select
-            value={taskType}
-            onValueChange={(value) => setTaskType(value)}
-          >
+          <Select value={taskType} onValueChange={(value) => setTaskType(value)}>
             <SelectTrigger className="w-[140px]">
               <SelectValue placeholder="Type: My tasks" />
             </SelectTrigger>
@@ -41,10 +32,7 @@ const TaskFilter = ({
             </SelectContent>
           </Select>
         )}
-        <Select
-          value={taskStatus}
-          onValueChange={(value) => setTaskStatus(value)}
-        >
+        <Select value={taskStatus} onValueChange={(value) => setTaskStatus(value)}>
           <SelectTrigger className="w-[160px]">
             <SelectValue placeholder="Status: Upcoming" />
           </SelectTrigger>
@@ -54,11 +42,7 @@ const TaskFilter = ({
           </SelectContent>
         </Select>
       </div>
-      <Button
-        onClick={openAddTaskForm}
-        size="sm"
-        className="bg-primary text-white"
-      >
+      <Button onClick={openAddTaskForm} size="sm" className="bg-primary text-white">
         <span className="mr-1">+</span> Add task
       </Button>
     </div>

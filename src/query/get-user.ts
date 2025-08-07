@@ -1,11 +1,11 @@
-import { api } from "@/lib/api";
-import { IUser } from "@/types/leads/leads-types";
-import { useQuery } from "@tanstack/react-query";
+import { api } from '@/lib/api';
+import { IUser } from '@/types/leads/leads-types';
+import { useQuery } from '@tanstack/react-query';
 
-export const GET_USERS = "get-users";
+export const GET_USERS = 'get-users';
 
 const getUsers = async () => {
-  const res = await api.get("/user");
+  const res = await api.get('/user');
   return res.data as IUser[];
 };
 

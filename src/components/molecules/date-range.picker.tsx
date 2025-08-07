@@ -1,18 +1,14 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { format } from "date-fns";
-import { ChevronDown, ChevronUp } from "lucide-react";
+import * as React from 'react';
+import { format } from 'date-fns';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 
-import { Button } from "@/components/ui/button";
-import {
-  Popover,
-  PopoverTrigger,
-  PopoverContent,
-} from "@/components/ui/popover";
+import { Button } from '@/components/ui/button';
+import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 // import DatePicker from "../ui/date-picker";
-import useSearchParams from "@/hooks/use-search-params";
-import DatePicker from "../atoms/date-picker";
+import useSearchParams from '@/hooks/use-search-params';
+import DatePicker from '../atoms/date-picker';
 
 export function DateRangePicker({
   onApply,
@@ -32,8 +28,8 @@ export function DateRangePicker({
 
   const handleCancel = () => {
     setParams([
-      { name: "from", value: null },
-      { name: "to", value: null },
+      { name: 'from', value: null },
+      { name: 'to', value: null },
     ]);
     setFrom(undefined);
     setTo(undefined);
@@ -43,18 +39,9 @@ export function DateRangePicker({
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button
-          variant="outline"
-          className="min-w-[180px] min-h-[44px] justify-between"
-        >
-          {from && to
-            ? `${format(from, "dd/MM/yyyy")} - ${format(to, "dd/MM/yyyy")}`
-            : "Date range"}
-          {open ? (
-            <ChevronUp className="ml-2 h-4 w-4" />
-          ) : (
-            <ChevronDown className="ml-2 h-4 w-4" />
-          )}
+        <Button variant="outline" className="min-w-[180px] min-h-[44px] justify-between">
+          {from && to ? `${format(from, 'dd/MM/yyyy')} - ${format(to, 'dd/MM/yyyy')}` : 'Date range'}
+          {open ? <ChevronUp className="ml-2 h-4 w-4" /> : <ChevronDown className="ml-2 h-4 w-4" />}
         </Button>
       </PopoverTrigger>
 

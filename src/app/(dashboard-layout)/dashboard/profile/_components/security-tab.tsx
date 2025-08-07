@@ -8,7 +8,6 @@ import { useChangePassword } from '@/mutations/auth/change-password';
 import Input from '@/components/molecules/input';
 import Button from '@/components/atoms/button';
 
-
 const SecurityTab = () => {
   const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),

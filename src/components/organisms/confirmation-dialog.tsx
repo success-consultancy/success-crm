@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Button } from "@/components/ui/button";
-import DialogWrapper from "./dialog-wrapper";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import DialogWrapper from './dialog-wrapper';
 
 type ConfirmationDialogProps = {
   isOpen: boolean;
@@ -21,19 +21,14 @@ const ConfirmationDialog = ({
   setIsOpen,
   title,
   message,
-  confirmText = "Confirm",
-  cancelText = "Cancel",
+  confirmText = 'Confirm',
+  cancelText = 'Cancel',
   onConfirm,
   onCancel,
   loading = false,
 }: ConfirmationDialogProps) => {
   return (
-    <DialogWrapper
-      title={title}
-      isOpen={isOpen}
-      setIsOpen={setIsOpen}
-      canClose={false}
-    >
+    <DialogWrapper title={title} isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
       <div className="text-gray-700 text-lg mb-6">{message}</div>
 
       <div className="flex justify-end gap-2">

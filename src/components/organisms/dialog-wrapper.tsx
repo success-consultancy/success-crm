@@ -1,6 +1,6 @@
-"use client";
+'use client';
 
-import type React from "react";
+import type React from 'react';
 
 import {
   Dialog,
@@ -9,9 +9,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
+} from '@/components/ui/dialog';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { cn } from '@/lib/utils';
 
 type Props = {
   title: string;
@@ -38,16 +38,11 @@ const DialogWrapper = (props: Props) => {
             e.stopPropagation();
           }
         }}
-        className={cn(
-          "w-[calc(100vw-10px)] xl:min-w-[650px] !rounded-3xl p-2 z-50",
-          props.className
-        )}
+        className={cn('w-[calc(100vw-10px)] xl:min-w-[650px] !rounded-3xl p-2 z-50', props.className)}
       >
         <DialogHeader className="px-4 md:px-6 pt-4 md:pt-6">
           <DialogTitle className="text-2xl md:!text-h3 text-left font-medium pr-5">
-            {props.title.length > 100
-              ? props.title.slice(0, 100) + "..."
-              : props.title}
+            {props.title.length > 100 ? props.title.slice(0, 100) + '...' : props.title}
           </DialogTitle>
           <DialogDescription></DialogDescription>
         </DialogHeader>

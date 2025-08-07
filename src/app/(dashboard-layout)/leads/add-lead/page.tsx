@@ -1,5 +1,5 @@
-import Container from "@/components/atoms/container";
-import AddLeadForm from "./_components/add-lead-form";
+import Container from '@/components/atoms/container';
+import AddLeadForm from './_components/add-lead-form';
 
 const page = () => {
   return (

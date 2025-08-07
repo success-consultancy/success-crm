@@ -1,5 +1,5 @@
-import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
 export type SidebarStore = {
   isOpen: boolean;
@@ -13,10 +13,10 @@ export const useSidebarStore = create<SidebarStore>()(
       toggleSidebar: () => set((state) => ({ isOpen: !state.isOpen })),
     }),
     {
-      name: "sidebar-store",
+      name: 'sidebar-store',
       partialize: (state) => ({
         isOpen: state.isOpen,
       }),
-    }
-  )
+    },
+  ),
 );

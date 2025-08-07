@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import Link from "next/link";
-import { usePathname, useSearchParams } from "next/navigation";
+import React from 'react';
+import Link from 'next/link';
+import { usePathname, useSearchParams } from 'next/navigation';
 
-import { cn } from "@/lib/utils";
+import { cn } from '@/lib/utils';
 
 interface NavItems {
   label: string;
-  href: string; 
+  href: string;
 }
 type Props = {
   navItems?: NavItems[];
@@ -24,7 +24,7 @@ const NavigationTabs = ({ navItems, className }: Props) => {
   const currentFullPath = `${pathname}?${searchParams.toString()}`;
 
   return (
-    <div className={cn("flex gap-6 text-lg", className)}>
+    <div className={cn('flex gap-6 text-lg', className)}>
       {navItems.map((item, index) => {
         const isActive = currentFullPath === item.href;
 
@@ -33,15 +33,15 @@ const NavigationTabs = ({ navItems, className }: Props) => {
             key={index}
             href={item.href}
             className={cn(
-              "group relative inline-block py-2 font-medium text-gray-700",
-              isActive ? "text-primary" : "hover:text-primary"
+              'group relative inline-block py-2 font-medium text-gray-700',
+              isActive ? 'text-primary' : 'hover:text-primary',
             )}
           >
             <span>{item.label}</span>
             <span
               className={cn(
-                "absolute left-0 -bottom-0.5 h-[3px] w-full transform bg-primary transition-transform duration-300 ease-in-out",
-                isActive ? "scale-x-100" : "scale-x-0"
+                'absolute left-0 -bottom-0.5 h-[3px] w-full transform bg-primary transition-transform duration-300 ease-in-out',
+                isActive ? 'scale-x-100' : 'scale-x-0',
               )}
             />
           </Link>

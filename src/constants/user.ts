@@ -1,6 +1,6 @@
 enum TokenExpiredEnum {
-  ForgotPassword = "ForgotPassword",
-  OnBoardingInvitation = "OnBoardingInvitation",
+  ForgotPassword = 'ForgotPassword',
+  OnBoardingInvitation = 'OnBoardingInvitation',
 }
 
 export { TokenExpiredEnum };

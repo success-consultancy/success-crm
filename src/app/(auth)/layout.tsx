@@ -1,8 +1,8 @@
-"use client";
+'use client';
 
-import React, { ReactNode, useEffect } from "react";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import React, { ReactNode, useEffect } from 'react';
+import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 type Props = {
   children: ReactNode;
@@ -39,12 +39,7 @@ const AuthGroupLayout = ({ children }: Props) => {
         <div className="w-full max-w-[424px]">
           {/* Mobile Logo */}
           <div className="flex justify-center lg:hidden mb-8">
-            <Image
-              src="/success-logo.png"
-              alt="logo"
-              height={100}
-              width={180}
-            />
+            <Image src="/success-logo.png" alt="logo" height={100} width={180} />
           </div>
 
           {children}

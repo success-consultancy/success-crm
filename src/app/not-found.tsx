@@ -1,4 +1,4 @@
-import IssuePage from "@/components/templates/issue-page";
+import IssuePage from '@/components/templates/issue-page';
 
 const page = () => {
   return (

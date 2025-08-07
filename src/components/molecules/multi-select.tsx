@@ -30,7 +30,7 @@ const MultiSelect = ({ value = [], ...props }: Props) => {
       <Label className="text-b3-b font-semibold">{props.label}</Label>
       <Popover>
         <PopoverTrigger className="w-full text-sm h-10 px-3 py-2 border rounded-md" asChild>
-          <div className={cn("flex items-center gap-3 w-full", props?.error && "border border-red-400")}>
+          <div className={cn('flex items-center gap-3 w-full', props?.error && 'border border-red-400')}>
             <span className="grow text-left">
               {selected?.length > 0 ? `${selected.length} items selected` : props.placeholder || 'Select items'}
             </span>
@@ -73,7 +73,7 @@ const MultiSelect = ({ value = [], ...props }: Props) => {
         </PopoverContent>
       </Popover>
       {props.error && <span className="text-primary-red">{props.error}</span>}
-    </div >
+    </div>
   );
 };
 

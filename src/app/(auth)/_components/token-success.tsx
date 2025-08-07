@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React from "react";
-import { cn } from "@/lib/utils";
+import React from 'react';
+import { cn } from '@/lib/utils';
 // import Icons from '@/components/icons';
 
 type Props = {
@@ -21,8 +21,8 @@ const TokenSuccess = (props: Props) => {
           New Token Request <br /> Succeed
         </h5>
         <p className="text-b1 text-center text-content-body mt-4">
-          You request will be queued for the approval. It may take <br /> some
-          3-4 business days. You can only request one per time.
+          You request will be queued for the approval. It may take <br /> some 3-4 business days. You can only request
+          one per time.
         </p>
       </div>
     </div>

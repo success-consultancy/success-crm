@@ -1,4 +1,4 @@
-import { create } from "zustand";
+import { create } from 'zustand';
 
 type HeaderStore = {
   title: string;
@@ -6,6 +6,6 @@ type HeaderStore = {
 };
 
 export const useHeaderStore = create<HeaderStore>((set) => ({
-  title: "Dashboard",
+  title: 'Dashboard',
   setTitle: (title) => set({ title }),
 }));

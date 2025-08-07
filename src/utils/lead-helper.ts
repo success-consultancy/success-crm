@@ -1,21 +1,20 @@
-import { LeadsFormSteps } from "@/config/leads-form-steps";
+import { LeadsFormSteps } from '@/config/leads-form-steps';
 import {
   LeadSchemaType,
   passportDetailsSchema,
   personalDetailsSchema,
   serviceDetailsSchema,
-} from "@/schema/lead-schema";
-import { ILead } from "@/types/response-types/leads-response";
+} from '@/schema/lead-schema';
+import { ILead } from '@/types/response-types/leads-response';
 
 export const getCompletedSteps = async (formData: LeadSchemaType) => {
   const completedSteps = [];
 
-  const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] =
-    await Promise.all([
-      personalDetailsSchema.safeParse(formData),
-      passportDetailsSchema.safeParse(formData),
-      serviceDetailsSchema.safeParse(formData),
-    ]);
+  const [personalDetailsResult, passportDetailsResult, serviceDetailsResult] = await Promise.all([
+    personalDetailsSchema.safeParse(formData),
+    passportDetailsSchema.safeParse(formData),
+    serviceDetailsSchema.safeParse(formData),
+  ]);
 
   console.log(personalDetailsResult.error);
 

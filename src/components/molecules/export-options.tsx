@@ -1,14 +1,9 @@
-"use client";
-import React from "react";
-import { Grid3X3, FileText, Printer } from "lucide-react";
+'use client';
+import React from 'react';
+import { Grid3X3, FileText, Printer } from 'lucide-react';
 
-import { Button } from "../ui/button";
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from "@/components/ui/tooltip";
+import { Button } from '../ui/button';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '@/components/ui/tooltip';
 
 type Props = {
   onCsvClick?: () => void;
@@ -17,12 +12,7 @@ type Props = {
   onPdfClick?: () => void;
 };
 
-const ExportOptions = ({
-  onCsvClick,
-  onPrintClick,
-  onExcelClick,
-  onPdfClick,
-}: Props) => {
+const ExportOptions = ({ onCsvClick, onPrintClick, onExcelClick, onPdfClick }: Props) => {
   return (
     <TooltipProvider>
       <div className="flex gap-2">
@@ -37,11 +27,7 @@ const ExportOptions = ({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              className="!p-1 !h-8"
-              variant="ghost"
-              onClick={onPrintClick}
-            >
+            <Button className="!p-1 !h-8" variant="ghost" onClick={onPrintClick}>
               <Printer />
             </Button>
           </TooltipTrigger>
@@ -50,11 +36,7 @@ const ExportOptions = ({
 
         <Tooltip>
           <TooltipTrigger asChild>
-            <Button
-              className="!p-1 !h-8"
-              variant="ghost"
-              onClick={onExcelClick}
-            >
+            <Button className="!p-1 !h-8" variant="ghost" onClick={onExcelClick}>
               <Grid3X3 />
             </Button>
           </TooltipTrigger>

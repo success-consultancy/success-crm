@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import * as React from "react";
-import { format } from "date-fns";
-import { PopoverAnchor, PopoverArrow } from "@radix-ui/react-popover";
+import * as React from 'react';
+import { format } from 'date-fns';
+import { PopoverAnchor, PopoverArrow } from '@radix-ui/react-popover';
 
-import { cn } from "@/lib/utils";
-import Input from "@/components/molecules/input";
-import { Popover, PopoverContent } from "@/components/ui/popover";
-import { DATE_FORMATS } from "@/config/date-formats";
-import { CalendarIcon } from "lucide-react";
-import Button from "@/components/atoms/button";
-import { Calendar, CalendarProps } from "../ui/calendar";
+import { cn } from '@/lib/utils';
+import Input from '@/components/molecules/input';
+import { Popover, PopoverContent } from '@/components/ui/popover';
+import { DATE_FORMATS } from '@/config/date-formats';
+import { CalendarIcon } from 'lucide-react';
+import Button from '@/components/atoms/button';
+import { Calendar, CalendarProps } from '../ui/calendar';
 
 export type DateValidationRules = {
   disabledDates?: {
@@ -73,13 +73,13 @@ const DatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <>
-      <div className={cn(["", className])}>
+      <div className={cn(['', className])}>
         <Popover modal={true} open={show} onOpenChange={setShow}>
           <PopoverAnchor>
             <Input
               label={label}
               value={FORMATTED_DATE}
-              placeholder={placeholder || "Pick a Date"}
+              placeholder={placeholder || 'Pick a Date'}
               RightIcon={CalendarIcon}
               readOnly
               errorBorder={!!error}
@@ -90,10 +90,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
             />
           </PopoverAnchor>
 
-          <PopoverContent
-            className="p-4 bg-neutral-white w-[21.875rem]"
-            align="start"
-          >
+          <PopoverContent className="p-4 bg-neutral-white w-[21.875rem]" align="start">
             <PopoverArrow className="fill-white-100  stroke-white-100" />
             <Calendar {...calenderProps} />
             <div className="flex justify-end gap-1">
@@ -107,9 +104,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
           </PopoverContent>
         </Popover>
 
-        {error && (
-          <div className="text-b1 mt-1 text-state-error-base">{error}</div>
-        )}
+        {error && <div className="text-b1 mt-1 text-state-error-base">{error}</div>}
       </div>
     </>
   );

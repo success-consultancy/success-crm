@@ -1,7 +1,7 @@
-"use client";
-import { ErrorSVG } from "@/assets/images";
-import IssuePage from "@/components/templates/issue-page";
-import Image from "next/image";
+'use client';
+import { ErrorSVG } from '@/assets/images';
+import IssuePage from '@/components/templates/issue-page';
+import Image from 'next/image';
 
 const page = () => {
   return (

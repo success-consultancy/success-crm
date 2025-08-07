@@ -1,11 +1,11 @@
-import { Metadata } from "next";
+import { Metadata } from 'next';
 
-import ResetPasswordForm from "./reset-password.form";
-import React from "react";
+import ResetPasswordForm from './reset-password.form';
+import React from 'react';
 
 export const metadata: Metadata = {
-  title: "Reset Password",
-  description: "Reset your account password",
+  title: 'Reset Password',
+  description: 'Reset your account password',
 };
 
 export default async function ResetPasswordPage() {

@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import React, { createContext, useContext } from "react";
-import toast, { Toaster, ToastOptions } from "react-hot-toast";
+import React, { createContext, useContext } from 'react';
+import toast, { Toaster, ToastOptions } from 'react-hot-toast';
 
 type ToastContextType = {
   success: (message: string, options?: ToastOptions) => string;
@@ -14,7 +14,7 @@ type ToastContextType = {
       loading: string;
       success: string | ((data: T) => string);
       error: string | ((error: any) => string);
-    }
+    },
   ) => Promise<T>;
 };
 
@@ -43,7 +43,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
       loading: string;
       success: string | ((data: T) => string);
       error: string | ((error: any) => string);
-    }
+    },
   ) => {
     return toast.promise(promiseToResolve, options);
   };
@@ -78,7 +78,7 @@ export const ToastProvider = ({ children }: { children: React.ReactNode }) => {
 export const useToastContext = () => {
   const context = useContext(ToastContext);
   if (context === undefined) {
-    throw new Error("useToastContext must be used within a ToastProvider");
+    throw new Error('useToastContext must be used within a ToastProvider');
   }
   return context;
 };

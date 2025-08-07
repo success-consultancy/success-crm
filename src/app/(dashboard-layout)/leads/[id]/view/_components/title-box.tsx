@@ -1,9 +1,9 @@
-import React from 'react'
+import React from 'react';
 
 type Props = {
-  title: string
-  children: React.ReactNode
-}
+  title: string;
+  children: React.ReactNode;
+};
 
 const TitleBox = ({ title, children }: Props) => {
   return (
@@ -12,11 +12,9 @@ const TitleBox = ({ title, children }: Props) => {
         <p className="text-xl font-bold">{title}</p>
       </div>
 
-      <div className="p-6">
-        {children}
-      </div>
+      <div className="p-6">{children}</div>
     </div>
-  )
-}
+  );
+};
 
-export default TitleBox
+export default TitleBox;

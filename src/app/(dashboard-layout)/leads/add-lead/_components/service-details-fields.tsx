@@ -1,23 +1,23 @@
-import React, { useMemo } from "react";
-import { FormField } from "@/components/ui/form";
-import { LeadSchemaType } from "@/schema/lead-schema";
-import { useFormContext } from "react-hook-form";
+import React, { useMemo } from 'react';
+import { FormField } from '@/components/ui/form';
+import { LeadSchemaType } from '@/schema/lead-schema';
+import { useFormContext } from 'react-hook-form';
 
-import { Label } from "@/components/ui/label";
-import TinyEditor from "@/components/organisms/text-editor";
-import SelectCommon from "@/components/molecules/select-common";
-import FileUploader from "@/components/organisms/file-uploader";
-import MultiSelect from "@/components/molecules/multi-select";
-import { Location, Services } from "@/constants/lead-constants";
-import { useGetSource } from "@/query/get-source";
-import { useGetUsers } from "@/query/get-user";
-import SelectWithCommand from "@/components/molecules/select-with-command";
+import { Label } from '@/components/ui/label';
+import TinyEditor from '@/components/organisms/text-editor';
+import SelectCommon from '@/components/molecules/select-common';
+import FileUploader from '@/components/organisms/file-uploader';
+import MultiSelect from '@/components/molecules/multi-select';
+import { Location, Services } from '@/constants/lead-constants';
+import { useGetSource } from '@/query/get-source';
+import { useGetUsers } from '@/query/get-user';
+import SelectWithCommand from '@/components/molecules/select-with-command';
 
 const STATUS_OPTIONS = [
-  { value: "New", label: "New" },
-  { value: "Converted", label: "Converted" },
-  { value: "Not Converted", label: "Not Converted" },
-  { value: "Follow Up", label: "Follow Up" },
+  { value: 'New', label: 'New' },
+  { value: 'Converted', label: 'Converted' },
+  { value: 'Not Converted', label: 'Not Converted' },
+  { value: 'Follow Up', label: 'Follow Up' },
 ];
 
 const ServiceDetailsStep = () => {
@@ -47,7 +47,7 @@ const ServiceDetailsStep = () => {
       return sources?.map((source) => {
         return {
           label: source.name,
-          value: "" + source.id,
+          value: '' + source.id,
         };
       });
     }
@@ -59,8 +59,8 @@ const ServiceDetailsStep = () => {
     if (users) {
       return users?.map((user) => {
         return {
-          label: user.firstName + "" + user.lastName,
-          value: "" + user.id,
+          label: user.firstName + '' + user.lastName,
+          value: '' + user.id,
         };
       });
     }
@@ -142,7 +142,7 @@ const ServiceDetailsStep = () => {
 
       <div className="space-y-1">
         <Label className="text-b3-b font-semibold">Documents</Label>
-        <FileUploader maxFileSize={20} acceptedFiles={["PDF"]} />
+        <FileUploader maxFileSize={20} acceptedFiles={['PDF']} />
       </div>
     </div>
   );

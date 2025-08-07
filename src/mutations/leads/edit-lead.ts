@@ -1,14 +1,14 @@
-import { api } from "@/lib/api";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/constants/query-keys";
-import { toast } from "@/hooks/use-toast";
-import { LeadSchemaType } from "@/schema/lead-schema";
+import { api } from '@/lib/api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { QUERY_KEYS } from '@/constants/query-keys';
+import { toast } from '@/hooks/use-toast';
+import { LeadSchemaType } from '@/schema/lead-schema';
 
 const editLead = async (
-  payload: Omit<LeadSchemaType, "serviceType"> & {
+  payload: Omit<LeadSchemaType, 'serviceType'> & {
     serviceType: string;
     id: number;
-  }
+  },
 ) => {
   const { hasVisitedStep, id, ...filteredPayload } = payload;
   const res = await api.put(`/lead/${id}`, filteredPayload);
@@ -26,8 +26,8 @@ export const useEditLead = () => {
     },
     onError: () => {
       toast({
-        title: "Error!",
-        description: "Something went wrong",
+        title: 'Error!',
+        description: 'Something went wrong',
       });
     },
   });

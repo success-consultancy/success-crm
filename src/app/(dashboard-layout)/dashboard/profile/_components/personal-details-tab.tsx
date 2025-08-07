@@ -1,17 +1,17 @@
-"use client";
-import type React from "react";
-import { useState, useRef } from "react";
-import { FormField } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+'use client';
+import type React from 'react';
+import { useState, useRef } from 'react';
+import { FormField } from '@/components/ui/form';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 
-import { Camera } from "lucide-react";
-import { MeUser } from "@/query/get-me";
-import { ProfileSchema, ProfileSchemaType } from "@/schema/profile-schema";
-import { useUserUpdate } from "@/mutations/auth/profile-update";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Input from "@/components/molecules/input";
-import Button from "@/components/atoms/button";
+import { Camera } from 'lucide-react';
+import { MeUser } from '@/query/get-me';
+import { ProfileSchema, ProfileSchemaType } from '@/schema/profile-schema';
+import { useUserUpdate } from '@/mutations/auth/profile-update';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import Input from '@/components/molecules/input';
+import Button from '@/components/atoms/button';
 
 interface PersonalDetailsTabProps {
   user: MeUser | undefined;
@@ -25,24 +25,24 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
   const form = useForm<ProfileSchemaType>({
     resolver: zodResolver(ProfileSchema),
     defaultValues: {
-      id: user?.id ? String(user.id) : "",
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      phone: user?.phone || "",
-      address: user?.address || "",
-      email: user?.email || "",
-      role: user?.roleId ? String(user.roleId) : "",
-      detail: user?.detail || "",
+      id: user?.id ? String(user.id) : '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+      email: user?.email || '',
+      role: user?.roleId ? String(user.roleId) : '',
+      detail: user?.detail || '',
     },
     values: {
-      id: user?.id ? String(user.id) : "",
-      firstName: user?.firstName || "",
-      lastName: user?.lastName || "",
-      phone: user?.phone || "",
-      address: user?.address || "",
-      email: user?.email || "",
-      role: user?.roleId ? String(user.roleId) : "",
-      detail: user?.detail || "",
+      id: user?.id ? String(user.id) : '',
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+      email: user?.email || '',
+      role: user?.roleId ? String(user.roleId) : '',
+      detail: user?.detail || '',
     },
   });
 
@@ -67,14 +67,14 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
     const file = event.target.files?.[0];
     if (file) {
       // Validate file type
-      if (!file.type.startsWith("image/")) {
-        alert("Please select a valid image file.");
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file.');
         return;
       }
 
       // Validate file size (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        alert("Image size should be less than 5MB.");
+        alert('Image size should be less than 5MB.');
         return;
       }
 
@@ -83,7 +83,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
         setSelectedImage(e.target?.result as string);
       };
       reader.onerror = () => {
-        alert("Error reading file. Please try again.");
+        alert('Error reading file. Please try again.');
       };
       reader.readAsDataURL(file);
     }
@@ -93,8 +93,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
     fileInputRef.current?.click();
   };
 
-  const name =
-    `${user?.firstName || ""} ${user?.lastName || ""}`.trim() || "User";
+  const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User';
 
   return (
     <>
@@ -106,31 +105,21 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           onClick={handleAvatarClick}
         >
           {/* Hidden file input */}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            onChange={handleImageSelect}
-            className="hidden"
-          />
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
 
           {/* Avatar container with consistent sizing */}
           <div className="relative w-[88px] h-[88px] rounded-full overflow-hidden">
             {selectedImage ? (
-              <img
-                src={selectedImage || "/placeholder.svg"}
-                alt="Profile"
-                className="w-full h-full object-cover"
-              />
+              <img src={selectedImage || '/placeholder.svg'} alt="Profile" className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full">
                 <Avatar className="w-full h-full">
-                  <AvatarImage src={selectedImage || "/placeholder.svg"} />
+                  <AvatarImage src={selectedImage || '/placeholder.svg'} />
                   <AvatarFallback>
                     {name
-                      .split(" ")
+                      .split(' ')
                       .map((n) => n.charAt(0).toUpperCase())
-                      .join("") || "U"}
+                      .join('') || 'U'}
                   </AvatarFallback>
                 </Avatar>
               </div>
@@ -142,7 +131,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
                 absolute inset-0 bg-black bg-opacity-50 rounded-full 
                 flex flex-col items-center justify-center text-white text-sm
                 transition-opacity duration-200
-                ${isHovering ? "opacity-100" : "opacity-0"}
+                ${isHovering ? 'opacity-100' : 'opacity-0'}
               `}
             >
               <Camera className="w-6 h-6 mb-1" />
@@ -157,32 +146,17 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
         </div>
       </div>
 
-      <form
-        onSubmit={form.handleSubmit(onSubmit)}
-        className="flex flex-col gap-3"
-      >
+      <form onSubmit={form.handleSubmit(onSubmit)} className="flex flex-col gap-3">
         <div className="flex items-start gap-5">
           <FormField
             control={control}
             name="firstName"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="First Name"
-                error={errors.firstName?.message}
-              />
-            )}
+            render={({ field }) => <Input {...field} label="First Name" error={errors.firstName?.message} />}
           />
           <FormField
             control={control}
             name="lastName"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Last Name"
-                error={errors.lastName?.message}
-              />
-            )}
+            render={({ field }) => <Input {...field} label="Last Name" error={errors.lastName?.message} />}
           />
         </div>
 
@@ -190,24 +164,12 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           <FormField
             control={control}
             name="phone"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Phone number"
-                error={errors.phone?.message}
-              />
-            )}
+            render={({ field }) => <Input {...field} label="Phone number" error={errors.phone?.message} />}
           />
           <FormField
             control={control}
             name="address"
-            render={({ field }) => (
-              <Input
-                {...field}
-                label="Address"
-                error={errors.address?.message}
-              />
-            )}
+            render={({ field }) => <Input {...field} label="Address" error={errors.address?.message} />}
           />
         </div>
 
@@ -215,9 +177,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           <FormField
             control={control}
             name="email"
-            render={({ field }) => (
-              <Input {...field} label="Email*" error={errors.email?.message} />
-            )}
+            render={({ field }) => <Input {...field} label="Email*" error={errors.email?.message} />}
           />
           <FormField
             control={control}
@@ -240,15 +200,8 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           name="detail"
           render={({ field }) => (
             <>
-              <Input
-                {...field}
-                type="textarea"
-                label="Bio (optional)"
-                error={errors.detail?.message}
-              />
-              <span className="mt-1 text-[#757575] text-[14px]">
-                Brief description for your profile
-              </span>
+              <Input {...field} type="textarea" label="Bio (optional)" error={errors.detail?.message} />
+              <span className="mt-1 text-[#757575] text-[14px]">Brief description for your profile</span>
             </>
           )}
         />
@@ -259,7 +212,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           disabled={!isValid || !isDirty || isPending}
           loading={isPending}
         >
-          {isPending ? "Saving..." : "Save Changes"}
+          {isPending ? 'Saving...' : 'Save Changes'}
         </Button>
       </form>
     </>

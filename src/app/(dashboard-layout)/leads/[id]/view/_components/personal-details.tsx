@@ -1,5 +1,5 @@
-import TitleBox from "./title-box";
-import { ILead } from "@/types/response-types/leads-response";
+import TitleBox from './title-box';
+import { ILead } from '@/types/response-types/leads-response';
 
 type PersonalDetailsProps = { lead: ILead };
 
@@ -13,7 +13,7 @@ const PersonalDetails = ({ lead }: PersonalDetailsProps) => {
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Middle name</span>
-          <span className="text-gray-900 text-base font-medium">{lead.middleName || "-"}</span>
+          <span className="text-gray-900 text-base font-medium">{lead.middleName || '-'}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Last name</span>
@@ -25,23 +25,25 @@ const PersonalDetails = ({ lead }: PersonalDetailsProps) => {
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Phone number</span>
-          <span className="text-gray-900 text-base font-medium">{lead.phone || "-"}</span>
+          <span className="text-gray-900 text-base font-medium">{lead.phone || '-'}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Birth date</span>
-          <span className="text-gray-900 text-base font-medium">{lead.dob ? new Date(lead.dob).toLocaleDateString() : "-"}</span>
+          <span className="text-gray-900 text-base font-medium">
+            {lead.dob ? new Date(lead.dob).toLocaleDateString() : '-'}
+          </span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Address</span>
-          <span className="text-gray-900 text-base font-medium">{lead.address || "-"}</span>
+          <span className="text-gray-900 text-base font-medium">{lead.address || '-'}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Occupation</span>
-          <span className="text-gray-900 text-base font-medium">{lead.occupation || "-"}</span>
+          <span className="text-gray-900 text-base font-medium">{lead.occupation || '-'}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Qualification</span>
-          <span className="text-gray-900 text-base font-medium">{lead.qualification || "-"}</span>
+          <span className="text-gray-900 text-base font-medium">{lead.qualification || '-'}</span>
         </div>
       </div>
     </TitleBox>

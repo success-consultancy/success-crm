@@ -1,14 +1,14 @@
-import React, { useMemo } from "react";
-import Input from "@/components/molecules/input";
-import { FormField } from "@/components/ui/form";
-import { LeadSchemaType } from "@/schema/lead-schema";
-import { useFormContext } from "react-hook-form";
+import React, { useMemo } from 'react';
+import Input from '@/components/molecules/input';
+import { FormField } from '@/components/ui/form';
+import { LeadSchemaType } from '@/schema/lead-schema';
+import { useFormContext } from 'react-hook-form';
 
-import { Label } from "@/components/ui/label";
-import DatePicker from "@/components/atoms/date-picker";
-import countryList from "react-select-country-list";
-import SelectWithCommand from "@/components/molecules/select-with-command";
-import { useGetVisa } from "@/query/get-visa";
+import { Label } from '@/components/ui/label';
+import DatePicker from '@/components/atoms/date-picker';
+import countryList from 'react-select-country-list';
+import SelectWithCommand from '@/components/molecules/select-with-command';
+import { useGetVisa } from '@/query/get-visa';
 
 const PassportDetailsStep = () => {
   const {
@@ -25,7 +25,7 @@ const PassportDetailsStep = () => {
         .map((country) => {
           return { label: country.label, value: country.label };
         }),
-    []
+    [],
   );
 
   const { data: visas } = useGetVisa();
@@ -41,7 +41,7 @@ const PassportDetailsStep = () => {
     }
   }, [visas]);
 
-  setValue("hasVisitedStep", true);
+  setValue('hasVisitedStep', true);
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5">
@@ -63,7 +63,7 @@ const PassportDetailsStep = () => {
           render={({ field }) => (
             <Input
               type="number"
-              label={"Passport number"}
+              label={'Passport number'}
               className="flex-1"
               {...field}
               value={field.value ?? undefined}
@@ -127,9 +127,7 @@ const PassportDetailsStep = () => {
           name="visaExpiry"
           render={({ field }) => (
             <div className=" flex flex-col gap-2 flex-1">
-              <Label className="text-b3-b font-semibold">
-                Visa Expiry Date
-              </Label>
+              <Label className="text-b3-b font-semibold">Visa Expiry Date</Label>
               <DatePicker
                 mode="single"
                 selected={!!field.value ? new Date(field.value) : undefined}

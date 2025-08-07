@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import React from "react";
-import { Button } from "@/components/ui/button";
+import React from 'react';
+import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Edit, Eye, More, Trash } from "iconsax-reactjs";
+} from '@/components/ui/dropdown-menu';
+import { Edit, Eye, More, Trash } from 'iconsax-reactjs';
 
 type Props = {
   onView?: () => void;

@@ -1,7 +1,7 @@
-import React from "react";
+import React from 'react';
 
-import { TableCell, TableRow } from "@/components/ui/table";
-import { Skeleton } from "@/components/ui/skeleton";
+import { TableCell, TableRow } from '@/components/ui/table';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const TableSkeleton = ({ count } = { count: 15 }) => {
   const pageSize = 10;
