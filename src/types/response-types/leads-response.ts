@@ -8,6 +8,7 @@ export enum LeadStatusTypes {
   Negotiation = 'Negotiation',
   Converted = 'Converted',
   NotInterested = 'Not Interested',
+  NotConverted = 'Not Converted',
   FollowUp = 'Follow Up',
 }
 
