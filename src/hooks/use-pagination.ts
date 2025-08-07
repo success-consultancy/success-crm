@@ -1,4 +1,3 @@
-// eslint-disable-next-line
 import { useRouter, usePathname } from 'next/navigation';
 
 import useSearchParams from './use-search-params';

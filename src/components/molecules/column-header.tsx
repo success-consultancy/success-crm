@@ -37,8 +37,6 @@ const ColumnHeader = (props: Props) => {
         },
       ]);
     }
-
-    //eslint-disable-next-line
   }, [sortingState, searchParams]);
 
   const handleArrowClick = () => {

@@ -1,15 +1,9 @@
-import Button from "@/components/atoms/button";
-import SectionWrapper from "@/components/templates/section-wrapper";
-import Stage from "@/components/templates/stage";
+import Button from '@/components/atoms/button';
+import SectionWrapper from '@/components/templates/section-wrapper';
+import Stage from '@/components/templates/stage';
 
 const LeadStages = () => {
-  const leadsStages = [
-    "New lead",
-    "Negotiation",
-    "Converted",
-    "Not converted",
-    "Follow up",
-  ];
+  const leadsStages = ['New lead', 'Negotiation', 'Converted', 'Not converted', 'Follow up'];
   return (
     <SectionWrapper title="Lead Stages">
       <div className="space-y-3">
@@ -31,12 +25,13 @@ const LeadStages = () => {
                 isActive={idx == 0}
                 isFirst={idx == 0}
                 isLast={idx == leadsStages.length - 1}
+                key={idx}
               />
             ))}
           </div>
           <div className="flex items-center gap-2">
             <Button variant="success">Won</Button>
-            <Button variant={"destructive"}>Lost</Button>
+            <Button variant={'destructive'}>Lost</Button>
           </div>
         </div>
       </div>

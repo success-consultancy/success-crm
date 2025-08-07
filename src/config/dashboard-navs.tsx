@@ -1,7 +1,7 @@
 import { DashboardTitle, SidebarNavItem, SubNavTitle } from '@/types/sidebar-type';
 import { ROUTES } from './routes';
 
-import Icons from '@/icons';
+import Icons from '@/assets/icons';
 
 export const NAVIGATION_LIST: SidebarNavItem[] = [
   {

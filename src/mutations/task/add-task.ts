@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { api } from '@/lib/api';
-import { TaskSchemaType } from '@/schemas/task-schema';
+import { TaskSchemaType } from '@/schema/task-schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const addTask = async (payload: TaskSchemaType) => {

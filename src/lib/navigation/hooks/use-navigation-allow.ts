@@ -1,6 +1,5 @@
 'use client';
 
-//eslint-disable-next-line
 import { useRouter } from 'next/navigation';
 
 import useNavigationBlockerState from '../nav-store';

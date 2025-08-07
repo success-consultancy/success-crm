@@ -1,56 +1,42 @@
-import ColumnHeader from "@/components/molecules/column-header";
-import { useTableContext } from "@/components/molecules/table-context-provider";
-import DeleteDialog from "@/components/organisms/delete.dialog";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
+import ColumnHeader from '@/components/molecules/column-header';
+import { useTableContext } from '@/components/molecules/table-context-provider';
+import DeleteDialog from '@/components/organisms/delete.dialog';
+import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Skeleton } from "@/components/ui/skeleton";
-import {
-  LeadStatusTypes,
-  type ILead,
-} from "@/types/response-types/leads-response";
-import type { ColumnDef } from "@tanstack/react-table";
-import { format } from "date-fns";
-import {
-  Edit,
-  EllipsisVertical,
-  Eye,
-  Mail,
-  MessageCircle,
-  Minus,
-  Trash,
-} from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Skeleton } from '@/components/ui/skeleton';
+import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
+import type { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export const useLeadColumn = (handleDelete: (id: number) => void) => {
   const router = useRouter();
 
   const LeadColumns: ColumnDef<ILead>[] = [
     {
-      id: "select",
+      id: 'select',
       header: ({ table }) => (
         <div className="w-full h-full flex items-center justify-center">
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && "indeterminate")
-            }
-            onCheckedChange={(value: boolean) => {
-              if (table.getIsSomePageRowsSelected()) {
-                table.toggleAllPageRowsSelected(false);
-              } else table.toggleAllPageRowsSelected(!!value);
-            }}
-            aria-label="Select all"
-            icon={table.getIsSomePageRowsSelected() ? Minus : undefined}
-          />
+          <div className="relative">
+            <Checkbox
+              checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+              onCheckedChange={(value: boolean) => {
+                if (table.getIsSomePageRowsSelected()) {
+                  table.toggleAllPageRowsSelected(false);
+                } else table.toggleAllPageRowsSelected(!!value);
+              }}
+              aria-label="Select all"
+            />
+            {table.getIsSomePageRowsSelected() && (
+              <Minus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-3 w-3" />
+            )}
+          </div>
         </div>
       ),
-      cell: ({ row, table }) => (
+      cell: ({ row }) => (
         <div className="w-full h-full flex items-center justify-center">
           <Checkbox
             checked={row.getIsSelected()}
@@ -62,9 +48,9 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 40,
     },
     {
-      id: "lead-id",
+      id: 'lead-id',
       header: () => <ColumnHeader title="ID" keyParam="id" className="h-10" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return <span className="max-w-10">{row.original.id}</span>;
@@ -73,208 +59,185 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 80,
     },
     {
-      id: "lead-first-name",
+      id: 'lead-first-name',
       header: () => <ColumnHeader title="First name" keyParam="firstName" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.firstName || "-"}</div>;
+        return <div className="">{row.original.firstName || '-'}</div>;
       },
       size: 160,
     },
     {
-      id: "lead-middle-name",
+      id: 'lead-middle-name',
       header: () => <ColumnHeader title="Middle name" keyParam="middleName" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.middleName || "-"}</div>;
+        return <div className="">{row.original.middleName || '-'}</div>;
       },
       size: 160,
     },
     {
-      id: "lead-last-name",
+      id: 'lead-last-name',
       header: () => <ColumnHeader title="Last name" keyParam="lastName" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <div className="">{row.original.lastName || "-"}</div>;
+        return <div className="">{row.original.lastName || '-'}</div>;
       },
       size: 160,
     },
     {
-      id: "lead-birth-date",
+      id: 'lead-birth-date',
       header: () => <ColumnHeader title="Birth date" keyParam="dob" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.dob || "-"}</span>;
+        return <span className="w-full">{row.original.dob || '-'}</span>;
       },
       size: 128,
     },
     {
-      id: "lead-email",
+      id: 'lead-email',
       header: () => <ColumnHeader title="Email" keyParam="email" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.email || "-"}</span>;
+        return <span className="w-full">{row.original.email || '-'}</span>;
       },
       size: 216,
     },
     {
-      id: "lead-phone",
+      id: 'lead-phone',
       header: () => <ColumnHeader title="Phone" keyParam="phone" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.phone || "-"}</span>;
+        return <span className="w-full">{row.original.phone || '-'}</span>;
       },
       size: 152,
     },
     {
-      id: "passport-no",
+      id: 'passport-no',
       header: () => <ColumnHeader title="Passport no." keyParam="passportNo" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.passport || "-"}</span>;
+        return <span className="w-full">{row.original.passport || '-'}</span>;
       },
       size: 140,
     },
     {
-      id: "issue-date",
+      id: 'issue-date',
       header: () => <ColumnHeader title="Issue date" keyParam="issueDate" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.issueDate || "-"}</span>;
+        return <span className="w-full">{row.original.issueDate || '-'}</span>;
       },
       size: 128,
     },
     {
-      id: "expiry-date",
+      id: 'expiry-date',
       header: () => <ColumnHeader title="Expiry date" keyParam="expiryDate" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.expiryDate || "-"}</span>;
+        return <span className="w-full">{row.original.expiryDate || '-'}</span>;
       },
       size: 132,
     },
     {
-      id: "address",
+      id: 'address',
       header: () => <ColumnHeader title="Address" keyParam="address" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.address || "-"}</span>;
+        return <span className="w-full">{row.original.address || '-'}</span>;
       },
       size: 216,
     },
     {
-      id: "location",
+      id: 'location',
       header: () => <ColumnHeader title="Location" keyParam="location" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.location || "-"}</span>;
+        return <span className="w-full">{row.original.location || '-'}</span>;
       },
       size: 120,
     },
     {
-      id: "occupation",
+      id: 'occupation',
       header: () => <ColumnHeader title="Occupation" keyParam="occupation" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.occupation || "-"}</span>;
+        return <span className="w-full">{row.original.occupation || '-'}</span>;
       },
       size: 280,
     },
     {
-      id: "qualification",
-      header: () => (
-        <ColumnHeader title="Qualification" keyParam="qualification" />
-      ),
-      cell: ({ row }) => {
+      id: 'qualification',
+      header: () => <ColumnHeader title="Qualification" keyParam="qualification" />,
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return (
-          <span className="w-full">{row.original.qualification || "-"}</span>
-        );
+        return <span className="w-full">{row.original.qualification || '-'}</span>;
       },
       size: 160,
     },
     {
-      id: "country",
+      id: 'country',
       header: () => <ColumnHeader title="Country" keyParam="country" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.country || "-"}</span>;
+        return <span className="w-full">{row.original.country || '-'}</span>;
       },
       size: 136,
     },
     {
-      id: "visa",
+      id: 'visa',
       header: () => <ColumnHeader title="Visa" keyParam="visa" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.visa || "-"}</span>;
+        return <span className="w-full">{row.original.visa || '-'}</span>;
       },
       size: 216,
     },
     {
-      id: "visa-expiry",
+      id: 'visa-expiry',
       header: () => <ColumnHeader title="Visa expiry" keyParam="visaExpiry" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         return (
           <span className="w-full">
-            {row.original.visaExpiry
-              ? format(
-                  new Date(row.original.visaExpiry as string),
-                  "dd/MM/yyyy"
-                )
-              : "-"}
+            {row.original.visaExpiry ? format(new Date(row.original.visaExpiry as string), 'dd/MM/yyyy') : '-'}
           </span>
         );
       },
       size: 132,
     },
     {
-      id: "service-type",
-      header: () => (
-        <ColumnHeader title="Service type" keyParam="serviceType" />
-      ),
-      cell: ({ row }) => {
+      id: 'service-type',
+      header: () => <ColumnHeader title="Service type" keyParam="serviceType" />,
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const serviceType = row.original.serviceType;
         const getServiceBadge = () => {
           switch (serviceType) {
-            case "Education":
-              return (
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                  Education
-                </Badge>
-              );
-            case "Visa":
-              return (
-                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                  Visa
-                </Badge>
-              );
-            case "Skill Assessment":
-              return (
-                <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">
-                  Skill Assessment
-                </Badge>
-              );
+            case 'Education':
+              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Education</Badge>;
+            case 'Visa':
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Visa</Badge>;
+            case 'Skill Assessment':
+              return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Skill Assessment</Badge>;
             default:
               return <span>{serviceType}</span>;
           }
@@ -285,19 +248,19 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 176,
     },
     {
-      id: "source",
+      id: 'source',
       header: () => <ColumnHeader title="Source" keyParam="source" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.sourceId || "-"}</span>;
+        return <span className="w-full">{row.original.sourceId || '-'}</span>;
       },
       size: 144,
     },
     {
-      id: "assigned-to",
+      id: 'assigned-to',
       header: () => <ColumnHeader title="Assigned to" keyParam="assignedTo" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         return (
@@ -309,9 +272,9 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 160,
     },
     {
-      id: "follow-up",
+      id: 'follow-up',
       header: () => <ColumnHeader title="Follow up" keyParam="followUp" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
@@ -320,9 +283,9 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 140,
     },
     {
-      id: "status",
+      id: 'status',
       header: () => <ColumnHeader title="Status" keyParam="status" />,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
@@ -330,29 +293,13 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
         const getStatusBadge = () => {
           switch (status) {
             case LeadStatusTypes.New:
-              return (
-                <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                  New
-                </Badge>
-              );
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
             case LeadStatusTypes.Converted:
-              return (
-                <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
-                  Completed
-                </Badge>
-              );
+              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
             case LeadStatusTypes.NotConverted:
-              return (
-                <Badge className="bg-red-100 text-red-800 hover:bg-red-100">
-                  Not Converted
-                </Badge>
-              );
+              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
             case LeadStatusTypes.FollowUp:
-              return (
-                <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                  Follow Up
-                </Badge>
-              );
+              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
             default:
               return <span>{status}</span>;
           }
@@ -363,9 +310,9 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       size: 152,
     },
     {
-      id: "lead-actions",
+      id: 'lead-actions',
       header: () => <span className="sr-only">Actions</span>,
-      cell: ({ row }) => {
+      cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-8 h-6" />;
         return (
@@ -377,18 +324,14 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
                   <div
-                    onClick={() =>
-                      router.push(`/leads/${row.original.id}/edit`)
-                    }
+                    onClick={() => router.push(`/leads/${row.original.id}/edit`)}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Edit strokeWidth={1.5} className="h-5 w-5" />
                     <span>Edit</span>
                   </div>
                   <div
-                    onClick={() =>
-                      router.push(`/leads/${row.original.id}/view`)
-                    }
+                    onClick={() => router.push(`/leads/${row.original.id}/view`)}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Eye strokeWidth={1.5} className="h-5 w-5" />

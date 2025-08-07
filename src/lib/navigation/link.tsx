@@ -1,7 +1,6 @@
 'use client';
 
 import React from 'react';
-//eslint-disable-next-line
 import NextLink, { LinkProps as ILinkProps } from 'next/link';
 
 import { isRouteChanged } from './helpers';

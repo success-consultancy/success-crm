@@ -63,7 +63,6 @@ api.interceptors.response.use(
           }
 
           return api(originalConfig as AxiosRequestConfig<unknown>);
-          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (_error: any) {
           // if expired token clear auth states , It triggers redirect to login page
           if (_error?.response?.status === 401) {
