@@ -120,7 +120,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 onBlur={handleinputBlur}
                 ref={combinedRef}
                 className={cn([
-                  'border-none px-2 focus:outline-none',
+                  'border-none px-2 focus:outline-none !bg-transparent',
                   classNames?.input,
                   !!LeftIcon && 'pl-0',
                   !!RightIcon && 'pr-0',
