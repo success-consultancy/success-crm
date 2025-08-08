@@ -19,7 +19,6 @@ export const ProfileSchema = z.object({
 });
 
 export const PasswordChangeSchema = z.object({
-  oldPassword: z.string().min(1, { message: 'Old password is required' }),
   newPassword: z.string().min(1, { message: 'New password is required' }),
   confirmPassword: z.string().min(1, { message: 'Confirm password is required' }),
 });

@@ -13,6 +13,7 @@ import { ChevronDown } from 'lucide-react';
 import { User, LogoutCurve, Document } from 'iconsax-reactjs';
 import { useRouter } from 'next/navigation';
 import { clearTokens } from '@/utils/token';
+import useAuthStore from '@/store/auth-store';
 
 type MenuItem = {
   label: string;
@@ -44,6 +45,7 @@ const menuItems: MenuItem[] = [
 
 const UserDropdown = () => {
   const router = useRouter();
+  const { profile } = useAuthStore();
 
   const handleItemClick = (item: MenuItem) => {
     if (item.onClick) {
@@ -52,6 +54,11 @@ const UserDropdown = () => {
       router.push(item.href);
     }
   };
+  const fullName = profile?.firstName + ' ' + profile?.lastName;
+  const avatarName = fullName
+    .split(' ')
+    .map((name) => name[0])
+    .join('');
 
   return (
     <DropdownMenu>
@@ -59,9 +66,10 @@ const UserDropdown = () => {
         <div className="flex items-center gap-2 cursor-pointer select-none">
           <Avatar className="w-8 h-8">
             <AvatarImage src="/avatar-placeholder.png" alt="User" />
-            <AvatarFallback>JD</AvatarFallback>
+            <AvatarFallback>{avatarName}</AvatarFallback>
           </Avatar>
-          <span className="text-sm font-medium leading-none">John Doe</span>
+
+          <span className="text-sm font-medium leading-none">{fullName}</span>
           <ChevronDown className="w-4 h-4" />
         </div>
       </DropdownMenuTrigger>

@@ -12,7 +12,6 @@ const SecurityTab = () => {
   const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),
     defaultValues: {
-      oldPassword: '',
       newPassword: '',
       confirmPassword: '',
     },
@@ -39,14 +38,6 @@ const SecurityTab = () => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-      <FormField
-        control={control}
-        name="oldPassword"
-        render={({ field }) => (
-          <Input {...field} label="Old Password" type="password" error={errors.oldPassword?.message} />
-        )}
-      />
-
       <FormField
         control={control}
         name="newPassword"
