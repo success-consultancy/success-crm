@@ -1,8 +1,8 @@
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from '@/hooks/use-toast';
 import { LeadSchemaType } from '@/schema/lead-schema';
+import { toast } from '@/hooks/use-toast';
 
 const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {

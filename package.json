@@ -35,6 +35,8 @@
     "@tanstack/react-query": "^5.81.5",
     "@tanstack/react-table": "^8.21.3",
     "@tinymce/tinymce-react": "^6.2.1",
+    "@types/lodash": "^4.17.20",
+    "@types/react-select-country-list": "^2.2.3",
     "axios": "^1.10.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
