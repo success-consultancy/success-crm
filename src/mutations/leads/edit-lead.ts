@@ -21,7 +21,8 @@ export const useEditLead = () => {
     mutationFn: editLead,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
       });
     },
     onError: () => {

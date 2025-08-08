@@ -23,6 +23,8 @@ const STATUS_OPTIONS = [
 const ServiceDetailsStep = () => {
   const {
     control,
+    setValue: setLead,
+
     formState: { errors },
   } = useFormContext<LeadSchemaType>();
 
@@ -65,6 +67,7 @@ const ServiceDetailsStep = () => {
       });
     }
   }, [users]);
+
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5">
@@ -142,7 +145,16 @@ const ServiceDetailsStep = () => {
 
       <div className="space-y-1">
         <Label className="text-b3-b font-semibold">Documents</Label>
-        <FileUploader maxFileSize={20} acceptedFiles={['PDF']} />
+        <FileUploader
+          onUploadComplete={(urls) => {
+            console.log('Uploaded URLs:', urls);
+
+            setLead('files', [urls[0]], { shouldValidate: true });
+          }}
+          type="lead"
+          maxFileSize={20}
+          acceptedFiles={['PDF']}
+        />
       </div>
     </div>
   );

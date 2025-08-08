@@ -28,6 +28,7 @@ export interface ILead {
   sourceId: null | number;
   userId: null | number;
   createdAt: string;
+  deletedAt: null | string;
   updatedAt: string;
   followUpDate: null;
   country: null | string;
@@ -38,4 +39,5 @@ export interface ILead {
   occupation: null | string;
   qualification: null | string;
   updatedBy: null | number;
+  files: string[];
 }

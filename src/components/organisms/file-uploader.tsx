@@ -3,8 +3,11 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { CloudUpload, File, X, CheckCircle, AlertCircle } from 'lucide-react';
+import axios from 'axios';
+import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
 
 type Props = {
+  type: string;
   maxFileSize: number; // in MB
   acceptedFiles: string[];
   onUploadComplete?: (fileUrls: string[]) => void;
@@ -55,37 +58,53 @@ const FileUploader = (props: Props) => {
     setIsUploading(true);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
+      const fileUploadUrl = FILE_UPLOAD_URL;
+      let remoteFileUrl = null;
+      if (file instanceof Blob) {
+        const fileName = file.name;
 
-      const response = await fetch('https://3lbqul2ps1.execute-api.us-east-1.amazonaws.com/Prod/fileUpload', {
-        method: 'POST',
-        body: formData,
-      });
+        // Step 1: Get upload URL and fields
+        const uploadResponse = await axios.post(fileUploadUrl, {
+          name: fileName,
+          folder: `${TENANT}/${props.type || 'agreement'}`,
+        });
 
-      if (response.ok) {
-        // Handle success
-        const data = await response.json();
-        setFiles((prev) => prev.map((f) => (f.file.name === file.name ? { ...f, status: 'success' } : f)));
+        const responseBody = uploadResponse.data;
+        const formData = new FormData();
 
-        // Call the onUploadComplete callback if provided
-        if (props.onUploadComplete && data.fileUrl) {
-          props.onUploadComplete([data.fileUrl]);
+        Object.keys(responseBody.fields).forEach((key) => {
+          formData.append(key, responseBody.fields[key]);
+        });
+        formData.append('file', file);
+
+        const uploadURL = responseBody.url;
+        remoteFileUrl = responseBody.fileUrl;
+
+        // Step 2: Upload the file
+        const response = await axios.post(uploadURL, formData);
+
+        if (uploadResponse.status === 200 || response.status === 204) {
+          // Handle success
+          setFiles((prev) => prev.map((f) => (f.file.name === file.name ? { ...f, status: 'success' } : f)));
+
+          // Call the onUploadComplete callback if provided
+          if (props.onUploadComplete && remoteFileUrl) {
+            props.onUploadComplete([remoteFileUrl]);
+          }
+        } else {
+          // Handle error
+          setFiles((prev) =>
+            prev.map((f) =>
+              f.file.name === file.name
+                ? {
+                    ...f,
+                    status: 'error',
+                    errorMessage: 'Failed to upload file',
+                  }
+                : f,
+            ),
+          );
         }
-      } else {
-        // Handle error
-        const errorData = await response.json();
-        setFiles((prev) =>
-          prev.map((f) =>
-            f.file.name === file.name
-              ? {
-                  ...f,
-                  status: 'error',
-                  errorMessage: errorData.message || 'Failed to upload file',
-                }
-              : f,
-          ),
-        );
       }
     } catch (error) {
       console.error('Error uploading file:', error);

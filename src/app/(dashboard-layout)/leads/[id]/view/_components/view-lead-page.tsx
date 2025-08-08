@@ -19,8 +19,9 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const tabs = [
     { label: 'Overview', value: 'overview' },
-    { label: 'Details', value: 'details' },
-    { label: 'Activity', value: 'activity' },
+    { label: 'Transition', value: 'transition' },
+    { label: 'History', value: 'history' },
+    { label: 'Follow-up', value: 'follow-up' },
   ];
   const { data: lead, isLoading, isError } = useGetLeadById(leadId);
 
@@ -44,11 +45,12 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
               <PassportVisaInfo lead={lead} />
               <ServiceDetails lead={lead} />
               <NoteSection lead={lead} />
-              <DocumentsSection />
+              <DocumentsSection lead={lead} />
             </div>
           )}
-          {activeTab === 'details' && <p>Lead {leadId} Details content.</p>}
-          {activeTab === 'activity' && <p>Lead {leadId} Activity content.</p>}
+          {activeTab === 'transition' && <p>Lead {leadId} Transition content.</p>}
+          {activeTab === 'history' && <p>Lead {leadId} History content.</p>}
+          {activeTab === 'follow-up' && <p>Lead {leadId} Follow-up content.</p>}
         </div>
       </div>
     </Container>
