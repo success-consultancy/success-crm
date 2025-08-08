@@ -16,6 +16,7 @@ export const ProfileSchema = z.object({
   qualification: z.string().optional(),
   occupation: z.string().optional(),
   anzsco: z.string().optional(),
+  profileUrl: z.string().optional(),
 });
 
 export const PasswordChangeSchema = z.object({

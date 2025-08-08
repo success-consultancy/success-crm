@@ -1,6 +1,6 @@
 'use client';
 import type React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FormField } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -12,13 +12,15 @@ import { useUserUpdate } from '@/mutations/auth/profile-update';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Input from '@/components/molecules/input';
 import Button from '@/components/atoms/button';
+import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
+import axios from 'axios';
 
 interface PersonalDetailsTabProps {
   user: MeUser | undefined;
 }
 
 const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImage, setSelectedImage] = useState<string | null>(user?.profileUrl || null);
   const [isHovering, setIsHovering] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -63,29 +65,51 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
     updateUser(formData);
   };
 
-  const handleImageSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (file) {
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        alert('Please select a valid image file.');
-        return;
-      }
+    try {
+      const fileUploadUrl = FILE_UPLOAD_URL;
+      let remoteFileUrl = null;
+      if (file instanceof Blob) {
+        const fileName = file.name;
 
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        alert('Image size should be less than 5MB.');
-        return;
-      }
+        // Step 1: Get upload URL and fields
+        const uploadResponse = await axios.post(fileUploadUrl, {
+          name: fileName,
+          folder: `${TENANT}/${user?.firstName}`,
+        });
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setSelectedImage(e.target?.result as string);
-      };
-      reader.onerror = () => {
-        alert('Error reading file. Please try again.');
-      };
-      reader.readAsDataURL(file);
+        const responseBody = uploadResponse.data;
+        const formData = new FormData();
+
+        Object.keys(responseBody.fields).forEach((key) => {
+          formData.append(key, responseBody.fields[key]);
+        });
+        formData.append('file', file);
+
+        const uploadURL = responseBody.url;
+        remoteFileUrl = responseBody.fileUrl;
+
+        // Step 2: Upload the file
+        const response = await axios.post(uploadURL, formData);
+
+        if (uploadResponse.status === 200 || response.status === 204) {
+          // Handle success
+          updateUser({
+            id: user?.id ? String(user.id) : '',
+            firstName: user?.firstName || '',
+            lastName: user?.lastName || '',
+            phone: user?.phone || '',
+            address: user?.address || '',
+            email: user?.email || '',
+            role: user?.roleId ? String(user.roleId) : '',
+            detail: user?.detail || '',
+            profileUrl: remoteFileUrl, // Add the uploaded image URL
+          });
+        }
+      }
+    } catch (error) {
+      console.error('Error uploading file:', error);
     }
   };
 
@@ -94,6 +118,13 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
   };
 
   const name = `${user?.firstName || ''} ${user?.lastName || ''}`.trim() || 'User';
+
+  useEffect(() => {
+    // Set the initial selected image from user profile URL
+    if (user?.profileUrl) {
+      setSelectedImage(user.profileUrl);
+    }
+  }, [user?.profileUrl]);
 
   return (
     <>
@@ -105,7 +136,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           onClick={handleAvatarClick}
         >
           {/* Hidden file input */}
-          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleImageSelect} className="hidden" />
+          <input ref={fileInputRef} type="file" accept="image/*" onChange={handleFileUpload} className="hidden" />
 
           {/* Avatar container with consistent sizing */}
           <div className="relative w-[88px] h-[88px] rounded-full overflow-hidden">
