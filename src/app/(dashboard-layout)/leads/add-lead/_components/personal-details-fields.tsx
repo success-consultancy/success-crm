@@ -161,7 +161,7 @@ const PersonalDetailsStep = () => {
           render={({ field }) => (
             <Input
               {...field}
-              label="Qualification*"
+              label="Qualification"
               error={errors.qualification?.message}
               className="flex-1"
               value={field.value ?? undefined}

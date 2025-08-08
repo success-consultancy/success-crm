@@ -31,6 +31,7 @@ export interface IUser {
   password: string;
   updatedBy: number;
   hideColumn: HideColumn;
+  branchId: string;
   createdAt: string;
   updatedAt: string;
   deletedAt: null;
