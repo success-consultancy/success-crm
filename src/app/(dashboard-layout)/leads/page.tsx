@@ -98,7 +98,9 @@ const Leads = () => {
             </ButtonLink>
           </div>
         }
-        tableHeaderSection={<TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />}
+        tableHeaderSection={
+          <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
+        }
         className="bg-neutral-white !text-neutral-darkGrey"
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}

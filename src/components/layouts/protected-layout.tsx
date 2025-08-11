@@ -37,11 +37,11 @@ const ProtectedLayout = ({ children }: Props) => {
       <AdminSidebar />
 
       <div className="flex flex-col grow overflow-hidden">
-        <div className="w-full bg-white py-3 px-6 flex items-center justify-between sticky top-0 z-10">
+        <div className="w-full bg-white px-6 flex items-center justify-between sticky top-0 z-10">
           <AdminHeader />
         </div>
 
-        <div className="ml-64 grow bg-bg-blue-extra-light overflow-y-auto flex flex-col">{children}</div>
+        <div className="ml-64 grow bg-blue-extra-light overflow-y-auto flex flex-col">{children}</div>
       </div>
     </div>
   );
