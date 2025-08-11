@@ -120,6 +120,12 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     }
   }, [searchParams]);
 
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues]);
+
   return (
     <Form {...form}>
       <Portal rootId={PortalIds.DashboardHeader}>

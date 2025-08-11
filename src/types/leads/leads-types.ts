@@ -37,3 +37,5 @@ export interface HideColumn {
   skillAssessmentService?: string[];
   visaService?: string[];
 }
+
+export type ServiceType = 'Education' | 'Health Insurance' | 'Skill Assessment' | 'Visa' | 'Tribunal' | 'Other';

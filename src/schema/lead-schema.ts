@@ -22,7 +22,7 @@ export const passportDetailsSchema = z.object({
   expiryDate: z.date().nullable().optional(),
   visa: z.string().nullable().optional(),
   visaExpiry: z.date().nullable().optional(),
-  hasVisitedStep: z.boolean(),
+  hasVisitedStep: z.boolean().optional(),
 });
 
 export const serviceDetailsSchema = z.object({
