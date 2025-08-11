@@ -37,32 +37,39 @@ const SecurityTab = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
-      <FormField
-        control={control}
-        name="newPassword"
-        render={({ field }) => (
-          <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />
-        )}
-      />
+    <>
+      <h3 className="text-b3-b text-content-heading font-bold mb-[2px]">Edit Password</h3>
+      <p className="text-neutral-dark-grey text-b1 mb-6">
+        Your new password must be different from your previous used passwords.
+      </p>
 
-      <FormField
-        control={control}
-        name="confirmPassword"
-        render={({ field }) => (
-          <Input {...field} label="Confirm Password" type="password" error={errors.confirmPassword?.message} />
-        )}
-      />
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <FormField
+          control={control}
+          name="newPassword"
+          render={({ field }) => (
+            <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />
+          )}
+        />
 
-      <Button
-        type="submit"
-        className="w-[143px] ml-auto btn btn-primary mt-4"
-        disabled={!isValid || isPending}
-        loading={isPending}
-      >
-        Save Changes
-      </Button>
-    </form>
+        <FormField
+          control={control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <Input {...field} label="Confirm Password" type="password" error={errors.confirmPassword?.message} />
+          )}
+        />
+
+        <Button
+          type="submit"
+          className="w-[143px] ml-auto btn btn-primary mt-4"
+          disabled={!isValid || isPending}
+          loading={isPending}
+        >
+          Save Changes
+        </Button>
+      </form>
+    </>
   );
 };
 

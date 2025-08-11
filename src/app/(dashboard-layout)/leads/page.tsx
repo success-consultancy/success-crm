@@ -18,19 +18,17 @@ import { ROUTES } from '@/config/routes';
 import TabSelector from '@/components/atoms/tab-selector';
 
 // Tab Config
-const TAB_CONFIG = [
+let TAB_CONFIG = [
   { key: 'all_leads', label: 'All Leads' },
   { key: 'new_leads', label: 'New Leads' },
   { key: 'qualified_leads', label: 'Qualified leads' },
   { key: 'disqualified_leads', label: 'Disqualified leads' },
   { key: 'follow_up', label: 'Follow up' },
 ];
-
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
-  console.log(filterParams);
 
   const { data, isLoading } = useGetLeads({
     ...filterParams,
@@ -65,6 +63,15 @@ const Leads = () => {
       { name: 'to', value: range.to?.toISOString() || null },
     ]);
   };
+
+  if (data?.count) {
+    TAB_CONFIG = TAB_CONFIG.map((tab) => {
+      if (tab.key === currentTab && tab.key === 'all_leads') {
+        return { ...tab, count: data.count };
+      }
+      return tab;
+    });
+  }
 
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">

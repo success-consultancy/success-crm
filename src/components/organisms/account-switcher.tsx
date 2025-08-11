@@ -54,7 +54,6 @@ const SidebarLogo = () => {
                 const selectedBranch = profile?.branchId === item?.id;
                 return (
                   <React.Fragment key={item.name}>
-                    {item.name === 'Sign Out' && <DropdownMenuSeparator />}
                     <DropdownMenuItem
                       onClick={() => handleItemClick(item)}
                       className="flex items-center justify-between gap-2"
@@ -65,6 +64,13 @@ const SidebarLogo = () => {
                   </React.Fragment>
                 );
               })}
+
+            <DropdownMenuItem
+              onClick={() => handleItemClick({ id: undefined })}
+              className="flex items-center justify-between gap-2"
+            >
+              All Branches
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
