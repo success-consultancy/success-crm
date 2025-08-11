@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -229,21 +230,36 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
-        const serviceType = row.original.serviceType;
-        const getServiceBadge = () => {
-          switch (serviceType) {
+        let serviceType: string | string[] = row.original.serviceType;
+
+        try {
+          if (typeof serviceType === 'string') {
+            serviceType = JSON.parse(serviceType);
+          }
+        } catch (e) {
+          serviceType = [];
+        }
+
+        const getServiceBadge = (type: ServiceType) => {
+          switch (type) {
             case 'Education':
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Education</Badge>;
+              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{type}</Badge>;
             case 'Visa':
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Visa</Badge>;
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{type}</Badge>;
             case 'Skill Assessment':
-              return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">Skill Assessment</Badge>;
+              return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">{type}</Badge>;
+            case 'Health Insurance':
+              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{type}</Badge>;
             default:
-              return <span>{serviceType}</span>;
+              return <span>{type}</span>;
           }
         };
 
-        return <div className="w-full">{getServiceBadge()}</div>;
+        return (
+          <div className="flex gap-1 flex-wrap">
+            {Array.isArray(serviceType) && serviceType.map((type) => getServiceBadge(type as ServiceType))}
+          </div>
+        );
       },
       size: 176,
     },
