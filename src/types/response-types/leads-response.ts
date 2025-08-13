@@ -40,4 +40,11 @@ export interface ILead {
   qualification: null | string;
   updatedBy: null | number;
   files: string[];
+  user: {
+    firstName: string;
+    lastName: string;
+  };
+  source: {
+    name: string;
+  };
 }

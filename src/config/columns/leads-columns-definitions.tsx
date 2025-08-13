@@ -10,7 +10,7 @@ import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash } from 'lucide-react';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export const useLeadColumn = (handleDelete: (id: number) => void) => {
@@ -54,7 +54,11 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
-        return <span className="max-w-10">{row.original.id}</span>;
+        return (
+          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/leads/${row.original.id}/view`)}>
+            {row.original.id}
+          </span>
+        );
       },
       enableSorting: true,
       size: 80,
@@ -269,7 +273,7 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.sourceId || '-'}</span>;
+        return <span className="w-full">{row.original?.source?.name || '-'}</span>;
       },
       size: 144,
     },
@@ -281,7 +285,10 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         return (
           <div className="flex items-center gap-2">
-            <span>Assigned To</span>
+            <span>
+              {row.original?.user?.firstName}
+              {row.original?.user?.lastName}
+            </span>
           </div>
         );
       },
@@ -363,9 +370,9 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
                   </div>
                   <DeleteDialog
                     trigger={
-                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
-                        <Trash strokeWidth={1.5} className="h-5 w-5" />
-                        <span>Delete</span>
+                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
+                        <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+                        <span>Delete Lead</span>
                       </div>
                     }
                     title="Delete this Lead"
