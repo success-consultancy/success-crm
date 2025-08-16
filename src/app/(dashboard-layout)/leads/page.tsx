@@ -16,6 +16,7 @@ import Button from '@/components/atoms/button';
 import { ButtonLink } from '@/components/atoms/button-link';
 import { ROUTES } from '@/config/routes';
 import TabSelector from '@/components/atoms/tab-selector';
+import { useExportLeads } from '@/mutations/leads/export-lead';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -36,6 +37,7 @@ const Leads = () => {
   });
   const { mutateAsync: deleteLead } = useDeleteLead();
   const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
+  const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
 
   const handleDelete = (id: number) => {
     deleteLead(id);
@@ -89,7 +91,7 @@ const Leads = () => {
         searchKey="email"
         topRightSection={
           <div className="flex">
-            <Button variant="outline" className="mr-2">
+            <Button variant="outline" className="mr-2" onClick={() => exportLeads()} loading={isExporting}>
               Export
             </Button>
 
