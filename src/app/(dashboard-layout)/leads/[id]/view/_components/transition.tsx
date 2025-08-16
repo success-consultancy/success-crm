@@ -195,7 +195,7 @@ const Transition = ({ lead }: { lead: ILead }) => {
             </div>
             {getClient(service.clientKey).map((client) => {
               return (
-                <div className="bg-[#F2F4F7] m-4 flex flex-col gap-2">
+                <div key={client?.id} className="bg-[#F2F4F7] m-4 flex flex-col gap-2">
                   <p>ID:{client?.id}</p>
                   <p className="text-c1 text-neutral-dark-grey">
                     Moved by {client?.UpdatedByUser?.firstName}
