@@ -10,6 +10,7 @@ import NoteSection from './note-section';
 import DocumentsSection from './document-section';
 import Container from '@/components/atoms/container';
 import { useGetLeadById } from '@/query/get-leads';
+import Transition from './transition';
 
 interface LeadPageContentProps {
   leadId: string;
@@ -48,7 +49,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
               <DocumentsSection lead={lead} />
             </div>
           )}
-          {activeTab === 'transition' && <p>Lead {leadId} Transition content.</p>}
+          {activeTab === 'transition' && <Transition lead={lead} />}
           {activeTab === 'history' && <p>Lead {leadId} History content.</p>}
           {activeTab === 'follow-up' && <p>Lead {leadId} Follow-up content.</p>}
         </div>
