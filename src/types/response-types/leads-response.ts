@@ -38,6 +38,8 @@ export interface ILead {
   location: null | string;
   occupation: null | string;
   qualification: null | string;
+  note: null | string;
+  anzsco: null | string;
   updatedBy: null | number;
   files: string[];
   user: {
@@ -46,5 +48,17 @@ export interface ILead {
   };
   source: {
     name: string;
+  };
+  clientIds: {
+    students: ILead[];
+    visaApplicants: ILead[];
+    skillAssessments: ILead[];
+    insuranceApplicants: ILead[];
+    tribunalReviews: ILead[];
+  };
+  UpdatedByUser?: {
+    firstName: string;
+    lastName: string;
+    id: string;
   };
 }

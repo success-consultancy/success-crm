@@ -3,7 +3,6 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { LeadSchemaType } from '@/schema/lead-schema';
 import { toast } from '@/hooks/use-toast';
-import { IpVersion } from 'zod';
 
 const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {
@@ -34,32 +33,3 @@ export const useEditLead = () => {
     },
   });
 };
-type IPayload = {
-  studentId?: string;
-  visaApplicantId?: string;
-  insuranceApplicantId?: string;
-  skillAssessmentId?: string;
-  tribunalReviewId?: string;
-};
-
-export const updateLeadClient = async (leadId: string, payload: IPayload) => {
-  const res = await api.put(`/lead/updateClient/${leadId}`, payload);
-};
-// export const useUpdateLeadClient = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: updateLeadClient,
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({
-//         predicate: (query) =>
-//           query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
-//       });
-//     },
-//     onError: () => {
-//       toast({
-//         title: 'Error!',
-//         description: 'Something went wrong',
-//       });
-//     },
-//   });
-// };
