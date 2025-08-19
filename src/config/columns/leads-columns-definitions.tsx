@@ -247,15 +247,31 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
         const getServiceBadge = (type: ServiceType) => {
           switch (type) {
             case 'Education':
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{type}</Badge>;
+              return (
+                <Badge key={type} className="bg-green-100 text-green-800 hover:bg-green-100">
+                  {type}
+                </Badge>
+              );
             case 'Visa':
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{type}</Badge>;
+              return (
+                <Badge key={type} className="bg-blue-100 text-blue-800 hover:bg-blue-100">
+                  {type}
+                </Badge>
+              );
             case 'Skill Assessment':
-              return <Badge className="bg-orange-100 text-orange-800 hover:bg-orange-100">{type}</Badge>;
+              return (
+                <Badge key={type} className="bg-orange-100 text-orange-800 hover:bg-orange-100">
+                  {type}
+                </Badge>
+              );
             case 'Health Insurance':
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{type}</Badge>;
+              return (
+                <Badge key={type} className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+                  {type}
+                </Badge>
+              );
             default:
-              return <span>{type}</span>;
+              return <span key={type}>{type}</span>;
           }
         };
 
