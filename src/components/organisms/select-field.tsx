@@ -73,3 +73,4 @@ const SelectField = <T extends FieldValues>({
 };
 
 export default SelectField;
+export type { SelectFieldProps };
