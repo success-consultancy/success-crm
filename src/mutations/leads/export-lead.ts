@@ -3,14 +3,13 @@ import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
-const exportLeads = async () => {
-  const res = await api.get('/lead/export');
+const exportLeads = async (queryParams: any) => {
+  const res = await api.get('/lead/export', { params: queryParams });
   downloadFile(res.data, 'leads.csv', 'text/csv;charset=utf-8;');
   toast.success('Leads exported successfully!');
 };
 
 export interface UseExportLeadsOptions {
-  filename?: string;
   onSuccess?: () => void;
   onError?: (error: Error) => void;
 }
@@ -19,8 +18,7 @@ export const useExportLeads = (options: UseExportLeadsOptions = {}) => {
   const { onSuccess, onError } = options;
 
   return useMutation({
-    mutationFn: () => exportLeads(),
-    onSuccess,
+    mutationFn: exportLeads,
     onError,
   });
 };

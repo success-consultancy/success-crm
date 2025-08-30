@@ -91,7 +91,7 @@ const Leads = () => {
         searchKey="email"
         topRightSection={
           <div className="flex">
-            <Button variant="outline" className="mr-2" onClick={() => exportLeads()} loading={isExporting}>
+            <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>
 
