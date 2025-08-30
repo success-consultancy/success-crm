@@ -1,11 +1,13 @@
 import ColumnHeader from '@/components/molecules/column-header';
 import { useTableContext } from '@/components/molecules/table-context-provider';
 import DeleteDialog from '@/components/organisms/delete.dialog';
+import EmailDialog from '@/components/organisms/email.dialog';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Skeleton } from '@/components/ui/skeleton';
+import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -13,7 +15,10 @@ import { format } from 'date-fns';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-export const useLeadColumn = (handleDelete: (id: number) => void) => {
+export const useLeadColumn = (
+  handleDelete: (id: number) => void,
+  handleSendEmail: (payload: SendEmailSchemaType) => void,
+) => {
   const router = useRouter();
 
   const LeadColumns: ColumnDef<ILead>[] = [
@@ -364,10 +369,17 @@ export const useLeadColumn = (handleDelete: (id: number) => void) => {
                     <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
                     <span>Send SMS</span>
                   </div>
-                  <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
-                    <Mail strokeWidth={1.5} className="h-5 w-5" />
-                    <span>Send Email</span>
-                  </div>
+                  <EmailDialog
+                    trigger={
+                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                        <Mail strokeWidth={1.5} className="h-5 w-5" />
+                        <span>Send Email</span>
+                      </div>
+                    }
+                    recipientsCount={1}
+                    onSend={handleSendEmail}
+                    recipients={[{ email: row.original.email }]}
+                  />
                   <DeleteDialog
                     trigger={
                       <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
