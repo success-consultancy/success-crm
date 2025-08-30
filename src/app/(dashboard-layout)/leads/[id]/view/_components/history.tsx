@@ -14,7 +14,7 @@ export const History = ({ lead }: { lead: ILead }) => {
 
   const logs = data?.map((lead: ILead) => {
     const type = lead.version_type ? VERSION_TYPES[lead.version_type as keyof typeof VERSION_TYPES] : 'Unknown';
-    let changes = null;
+    const changes = null;
 
     if (lead.version_type === 2) {
       //   changes = getChangedFields(lead.dataValues, lead._previousDataValues);
