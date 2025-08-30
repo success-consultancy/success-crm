@@ -10,8 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CheckCheck, ChevronDown } from 'lucide-react';
-import { useGetBranches } from '@/query/get-branches';
+import { CheckCheck, ChevronDown, EditIcon } from 'lucide-react';
+import { useGetBranchById, useGetBranches } from '@/query/get-branches';
 import useAuthStore from '@/store/auth-store';
 import { IUser } from '@/types/user-type';
 import { queryClient } from '@/context/tanstack-context';
@@ -24,7 +24,7 @@ import Button from '../atoms/button';
 import { FormField } from '../ui/form';
 import Input from '../molecules/input';
 import branchSchema, { BranchSchemaType } from '@/schema/branch-schema';
-import { useAddBranch } from '@/mutations/branch/add-branch';
+import { useAddBranch, useUpdateBranch } from '@/mutations/branch/add-branch';
 import SelectField from './select-field';
 import { TIMEZONES } from '@/constants/timezones';
 
@@ -32,6 +32,7 @@ const SidebarLogo = () => {
   const { data: branches, isLoading } = useGetBranches();
   const { setProfile, profile } = useAuthStore();
   const [isOpen, setIsOpen] = React.useState(false);
+  const [isEditOpen, setIsEditOpen] = React.useState(false);
 
   const handleItemClick = (item: any) => {
     setProfile({
@@ -73,11 +74,24 @@ const SidebarLogo = () => {
                 return (
                   <React.Fragment key={item.name}>
                     <DropdownMenuItem
-                      onClick={() => handleItemClick(item)}
-                      className="flex items-center justify-between gap-2"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        setIsEditOpen(true);
+                        handleItemClick(item);
+                      }}
+                      className="flex items-center justify-between gap-2 cursor-pointer"
                     >
                       {item.name}
                       {selectedBranch && <CheckCheck size={20} />}
+                      <EditIcon
+                        size={20}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setIsEditOpen(true);
+                        }}
+                      />
                     </DropdownMenuItem>
                   </React.Fragment>
                 );
@@ -100,9 +114,17 @@ const SidebarLogo = () => {
               Create new branch
             </DropdownMenuItem>
 
-            <DialogWrapper title="Create new branch" isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
-              <CreateBranchDialog setIsOpen={setIsOpen} />
-            </DialogWrapper>
+            {isEditOpen && (
+              <DialogWrapper title="Edit branch" isOpen={isEditOpen} setIsOpen={setIsEditOpen} canClose={false}>
+                <CreateBranchDialog setIsOpen={setIsEditOpen} id={profile?.branchId} />
+              </DialogWrapper>
+            )}
+
+            {isOpen && (
+              <DialogWrapper title="Create new branch" isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
+                <CreateBranchDialog setIsOpen={setIsOpen} />
+              </DialogWrapper>
+            )}
           </DropdownMenuContent>
         </DropdownMenu>
       ) : (
@@ -115,29 +137,57 @@ const SidebarLogo = () => {
 };
 
 // Branch name, country, city, timezone, phone number input
-const CreateBranchDialog = ({ setIsOpen }: { setIsOpen: React.Dispatch<React.SetStateAction<boolean>> }) => {
+const CreateBranchDialog = ({
+  setIsOpen,
+  id,
+}: {
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  id?: string;
+}) => {
+  const { data: branch, isLoading } = useGetBranchById(id || '');
+
   const form = useForm<BranchSchemaType>({
     resolver: zodResolver(branchSchema),
-    // defaultValues,
+    values: {
+      name: branch?.name || '',
+      country: branch?.country || '',
+      city: branch?.city || '',
+      timezone: branch?.timezone || '',
+      phone: branch?.phone || '',
+    },
   });
 
   const { mutate: addBranch, isPending } = useAddBranch();
+  const { mutate: updateBranch, isPending: isUpdatePending } = useUpdateBranch();
 
   const {
     handleSubmit,
     control,
     formState: { errors },
-    getValues,
-    trigger,
   } = form;
 
   const handleFormSubmit = (data: BranchSchemaType) => {
-    addBranch(data, {
-      onSuccess: () => {
-        setIsOpen(false);
-      },
-    });
+    if (id) {
+      updateBranch(
+        { ...data, id },
+        {
+          onSuccess: () => {
+            setIsOpen(false);
+          },
+        },
+      );
+    } else {
+      addBranch(data, {
+        onSuccess: () => {
+          setIsOpen(false);
+        },
+      });
+    }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <>
@@ -171,15 +221,6 @@ const CreateBranchDialog = ({ setIsOpen }: { setIsOpen: React.Dispatch<React.Set
           )}
         />
 
-        {/* replace timezone with select timezone */}
-
-        {/* <FormField
-          control={control}
-          name="timezone"
-          render={({ field }) => (
-            <Input label={'Timezone'} placeholder="Select timezone" {...field} error={errors.timezone?.message} />
-          )}
-        /> */}
         <FormField
           control={control}
           name="timezone"
@@ -207,8 +248,8 @@ const CreateBranchDialog = ({ setIsOpen }: { setIsOpen: React.Dispatch<React.Set
           <Button onClick={() => setIsOpen(false)} variant={'secondary'}>
             Cancel
           </Button>
-          <Button type="button" onClick={handleSubmit(handleFormSubmit)} loading={isPending}>
-            Create Branch
+          <Button type="button" onClick={handleSubmit(handleFormSubmit)} loading={isPending || isUpdatePending}>
+            {id ? 'Update Branch' : 'Create Branch'}
           </Button>
         </div>
       </div>
