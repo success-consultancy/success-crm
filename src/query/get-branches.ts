@@ -28,6 +28,7 @@ export const useGetBranchById = (id: string) => {
     queryKey: [QUERY_KEYS.GET_BRANCHES, id],
     refetchOnWindowFocus: false,
     retry: 1,
+    enabled: !!id,
   });
 };
 

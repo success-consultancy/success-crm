@@ -5,7 +5,7 @@ export const branchSchema = z.object({
   country: z.string({ required_error: 'Country is required.' }),
   city: z.string({ required_error: 'City is required.' }),
   timezone: z.string({ required_error: 'Timezone is required.' }),
-  phone: z.string({ required_error: 'Phone number is required.' }),
+  phone: z.string({ required_error: 'Phone number is required.' }).trim(),
 });
 
 export type BranchSchemaType = z.infer<typeof branchSchema>;

@@ -27,9 +27,6 @@ export const useAddBranch = () => {
       });
       toast.success('Branch added successfully!');
     },
-    onError: () => {
-      toast.error('Failed to add branch!');
-    },
   });
 };
 
@@ -53,9 +50,6 @@ export const useUpdateBranch = () => {
         queryKey: [QUERY_KEYS.GET_BRANCHES],
       });
       toast.success('Branch updated successfully!');
-    },
-    onError: () => {
-      toast.error('Failed to update branch!');
     },
   });
 };

@@ -17,25 +17,28 @@ import { IUser } from '@/types/user-type';
 import { queryClient } from '@/context/tanstack-context';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import DialogWrapper from './dialog-wrapper';
-import TextInput from '../molecules/text-input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../atoms/button';
-import { FormField } from '../ui/form';
+import { FormField, FormItem, FormLabel } from '../ui/form';
 import Input from '../molecules/input';
 import branchSchema, { BranchSchemaType } from '@/schema/branch-schema';
 import { useAddBranch, useUpdateBranch } from '@/mutations/branch/add-branch';
 import SelectField from './select-field';
 import { TIMEZONES } from '@/constants/timezones';
 import { PhoneNumberInput } from '../molecules/phone-number-input';
+import { SUPER_ADMIN_ROLE } from '@/constants/global';
+import { CountryDropdown } from './country-dropdown';
+import toast from 'react-hot-toast';
 
 const SidebarLogo = () => {
   const { data: branches, isLoading } = useGetBranches();
   const { setProfile, profile } = useAuthStore();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
+  const [branchId, setBranchId] = React.useState(profile?.branchId || '');
 
-  const handleItemClick = (item: any) => {
+  const handleBranchSwitch = (item: any) => {
     setProfile({
       ...profile,
       branchId: item?.id,
@@ -48,11 +51,11 @@ const SidebarLogo = () => {
 
   const hasBranches = Array.isArray(branches) && branches.length > 0;
 
-  const SUPER_ADMIN = profile?.id === 1;
+  const IS_SUPER_ADMIN = profile?.id === SUPER_ADMIN_ROLE;
 
   return (
     <div className="py-3 mb-4">
-      {SUPER_ADMIN ? (
+      {IS_SUPER_ADMIN ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <div className="flex items-center gap-2 cursor-pointer select-none">
@@ -73,32 +76,29 @@ const SidebarLogo = () => {
               branches?.map((item) => {
                 const selectedBranch = profile?.branchId === item?.id;
                 return (
-                  <React.Fragment key={item.name}>
+                  <div key={item.name} className="flex items-center justify-between gap-2 cursor-pointer">
                     <DropdownMenuItem
                       onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        setIsEditOpen(true);
-                        handleItemClick(item);
+                        handleBranchSwitch(item);
                       }}
-                      className="flex items-center justify-between gap-2 cursor-pointer"
+                      className="flex w-full items-center justify-between gap-2 cursor-pointer"
                     >
                       {item.name}
                       {selectedBranch && <CheckCheck size={20} />}
-                      <EditIcon
-                        size={20}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setIsEditOpen(true);
-                        }}
-                      />
                     </DropdownMenuItem>
-                  </React.Fragment>
+                    <EditIcon
+                      size={20}
+                      className="z-10"
+                      onClick={(e) => {
+                        setIsEditOpen(true);
+                        setBranchId(item.id);
+                      }}
+                    />
+                  </div>
                 );
               })}
             <DropdownMenuItem
-              onClick={() => handleItemClick({ id: undefined })}
+              onClick={() => handleBranchSwitch({ id: undefined })} // switch to all branches
               className="flex items-center justify-between gap-2"
             >
               All Branches
@@ -117,13 +117,13 @@ const SidebarLogo = () => {
 
             {isEditOpen && (
               <DialogWrapper title="Edit branch" isOpen={isEditOpen} setIsOpen={setIsEditOpen} canClose={false}>
-                <CreateBranchDialog setIsOpen={setIsEditOpen} id={profile?.branchId} />
+                <BranchDialog setIsOpen={setIsEditOpen} id={branchId} />
               </DialogWrapper>
             )}
 
             {isOpen && (
               <DialogWrapper title="Create new branch" isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
-                <CreateBranchDialog setIsOpen={setIsOpen} />
+                <BranchDialog setIsOpen={setIsOpen} />
               </DialogWrapper>
             )}
           </DropdownMenuContent>
@@ -137,14 +137,7 @@ const SidebarLogo = () => {
   );
 };
 
-// Branch name, country, city, timezone, phone number input
-const CreateBranchDialog = ({
-  setIsOpen,
-  id,
-}: {
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  id?: string;
-}) => {
+const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetStateAction<boolean>>; id?: string }) => {
   const { data: branch, isLoading } = useGetBranchById(id || '');
 
   const form = useForm<BranchSchemaType>({
@@ -165,6 +158,7 @@ const CreateBranchDialog = ({
     handleSubmit,
     control,
     formState: { errors },
+    setError,
   } = form;
 
   const handleFormSubmit = (data: BranchSchemaType) => {
@@ -175,12 +169,32 @@ const CreateBranchDialog = ({
           onSuccess: () => {
             setIsOpen(false);
           },
+          onError: (err: any) => {
+            if (err?.response?.data?.errors) {
+              Object.entries(err.response.data.errors).forEach(([key, value]) => {
+                setError(key as keyof BranchSchemaType, { message: value as string });
+              });
+            }
+
+            const message = err?.response?.data?.message || err?.message;
+            toast.error(message || 'Failed to update branch');
+          },
         },
       );
     } else {
       addBranch(data, {
         onSuccess: () => {
           setIsOpen(false);
+        },
+        onError: (err: any) => {
+          if (err?.response?.data?.errors) {
+            Object.entries(err.response.data.errors).forEach(([key, value]) => {
+              setError(key as keyof BranchSchemaType, { message: value as string });
+            });
+          }
+
+          const message = err?.response?.data?.message || err?.message;
+          toast.error(message || 'Failed to add branch');
         },
       });
     }
@@ -205,11 +219,13 @@ const CreateBranchDialog = ({
           control={control}
           name="country"
           render={({ field }) => (
-            <Input
-              label={'Country'}
-              placeholder="Select a country"
-              {...field}
-              // error={errors.country?.message}
+            <CountryDropdown
+              label="Country"
+              placeholder="Country"
+              defaultValue={field.value}
+              onChange={(country) => {
+                field.onChange(country.alpha3);
+              }}
             />
           )}
         />
@@ -241,9 +257,9 @@ const CreateBranchDialog = ({
           name="phone"
           render={({ field }) => (
             <PhoneNumberInput
+              {...field}
               label={'Phone'}
               placeholder="Enter phone number"
-              {...field}
               error={errors.phone?.message}
             />
           )}
