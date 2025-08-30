@@ -27,6 +27,7 @@ import branchSchema, { BranchSchemaType } from '@/schema/branch-schema';
 import { useAddBranch, useUpdateBranch } from '@/mutations/branch/add-branch';
 import SelectField from './select-field';
 import { TIMEZONES } from '@/constants/timezones';
+import { PhoneNumberInput } from '../molecules/phone-number-input';
 
 const SidebarLogo = () => {
   const { data: branches, isLoading } = useGetBranches();
@@ -231,7 +232,6 @@ const CreateBranchDialog = ({
               control={control}
               options={TIMEZONES}
               placeholder="Select timezone"
-              // error={errors.timezone?.message}
             />
           )}
         />
@@ -240,7 +240,12 @@ const CreateBranchDialog = ({
           control={control}
           name="phone"
           render={({ field }) => (
-            <Input label={'Phone'} placeholder="Enter phone number" {...field} error={errors.phone?.message} />
+            <PhoneNumberInput
+              label={'Phone'}
+              placeholder="Enter phone number"
+              {...field}
+              error={errors.phone?.message}
+            />
           )}
         />
 
