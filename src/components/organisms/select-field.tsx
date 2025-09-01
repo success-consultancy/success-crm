@@ -49,7 +49,7 @@ const SelectField = <T extends FieldValues>({
 
   return (
     <div className={`flex flex-col gap-2 w-full ${className || ''}`}>
-      <Label htmlFor={name} className="font-medium">
+      <Label htmlFor={name} className="text-b3-b font-semibold">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
@@ -73,3 +73,4 @@ const SelectField = <T extends FieldValues>({
 };
 
 export default SelectField;
+export type { SelectFieldProps };

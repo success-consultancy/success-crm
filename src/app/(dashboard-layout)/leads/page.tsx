@@ -18,21 +18,20 @@ import { ROUTES } from '@/config/routes';
 import TabSelector from '@/components/atoms/tab-selector';
 import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
+import { useExportLeads } from '@/mutations/leads/export-lead';
 
 // Tab Config
-const TAB_CONFIG = [
+let TAB_CONFIG = [
   { key: 'all_leads', label: 'All Leads' },
   { key: 'new_leads', label: 'New Leads' },
   { key: 'qualified_leads', label: 'Qualified leads' },
   { key: 'disqualified_leads', label: 'Disqualified leads' },
   { key: 'follow_up', label: 'Follow up' },
 ];
-
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
-  console.log(filterParams);
 
   const { data, isLoading } = useGetLeads({
     ...filterParams,
@@ -41,6 +40,7 @@ const Leads = () => {
   const { mutateAsync: deleteLead } = useDeleteLead();
   const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
+  const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
 
   const handleDelete = (id: number) => {
     deleteLead(id);
@@ -74,6 +74,15 @@ const Leads = () => {
     ]);
   };
 
+  if (data?.count) {
+    TAB_CONFIG = TAB_CONFIG.map((tab) => {
+      if (tab.key === currentTab && tab.key === 'all_leads') {
+        return { ...tab, count: data.count };
+      }
+      return tab;
+    });
+  }
+
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -90,7 +99,7 @@ const Leads = () => {
         searchKey="email"
         topRightSection={
           <div className="flex">
-            <Button variant="outline" className="mr-2">
+            <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>
 
@@ -99,7 +108,9 @@ const Leads = () => {
             </ButtonLink>
           </div>
         }
-        tableHeaderSection={<TabSelector activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />}
+        tableHeaderSection={
+          <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
+        }
         className="bg-neutral-white !text-neutral-darkGrey"
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}

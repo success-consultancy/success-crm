@@ -103,6 +103,13 @@ export default {
         Sm: 'var(--Radius-Sm)',
       },
       fontSize: {
+        b40px600: [
+          '0.875rem', //14px
+          {
+            lineHeight: '1.4',
+            fontWeight: '600',
+          },
+        ],
         // *=========== HEADINGS START ===========
         h1: [
           '2rem',

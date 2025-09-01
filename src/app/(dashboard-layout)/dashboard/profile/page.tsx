@@ -31,12 +31,12 @@ const Account = () => {
   if (isLoading) return <div>Loading...</div>;
 
   return (
-    <Container className="flex flex-col py-4 max-h-full overflow-hidden w-full">
+    <Container className="flex flex-col max-h-full overflow-hidden w-full !p-6 m-4 rounded-2xl">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Account Settings</h3>
       </Portal>
 
-      <div className="container bg-white py-6 rounded-xl">
+      <div className="container bg-white rounded-xl py-2 px-4">
         <TabSelector className="mb-4" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
         {currentTab === 'personal_details' ? <PersonalDetailsTab user={user?.data as MeUser} /> : <SecurityTab />}

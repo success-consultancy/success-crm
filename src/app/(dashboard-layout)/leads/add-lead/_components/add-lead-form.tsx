@@ -22,6 +22,7 @@ import Button from '@/components/atoms/button';
 import { PortalIds } from '@/config/portal';
 import leadFormSchema, { LeadSchemaType, passportDetailsSchema, personalDetailsSchema } from '@/schema/lead-schema';
 import { getCompletedSteps } from '@/utils/lead-helper';
+import toast from 'react-hot-toast';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -42,14 +43,13 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     formState: { errors },
     getValues,
     trigger,
+    setError,
   } = form;
 
   const router = useRouter();
 
   const addLead = useAddLead();
   const editLead = useEditLead();
-
-  console.log({ errors });
 
   const [currentStep, setCurrentStep] = useState(searchParams.get('step') || LeadsFormSteps.PersonalDetails);
 
@@ -104,13 +104,52 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     } as Omit<LeadSchemaType, 'serviceType'> & { serviceType: string };
 
     if (mode === 'edit') {
-      console.log('editing');
+      editLead.mutate(
+        { ...payload, id: defaultValues?.id as number },
+        {
+          onSuccess: () => {
+            toast.success('Lead updated successfully');
+            router.push('/leads');
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message;
 
-      editLead.mutate({ ...payload, id: defaultValues?.id as number });
-      router.push('/leads');
+            if (error?.response?.data?.errors) {
+              Object.entries(error?.response?.data?.errors).forEach(([key, value]) => {
+                setError(key as any, {
+                  type: 'manual',
+                  message: value as string,
+                });
+              });
+            }
+
+            toast.error(message || 'Failed to update lead');
+          },
+        },
+      );
     } else {
-      addLead.mutate(payload);
-      router.push('/leads');
+      addLead.mutate(payload, {
+        onSuccess: () => {
+          toast.success('Lead added successfully');
+          router.push('/leads');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+          console.log({
+            errors: error?.response?.data?.errors,
+          });
+          if (error?.response?.data?.errors) {
+            Object.entries(error?.response?.data?.errors).forEach(([key, value]) => {
+              setError(key as any, {
+                type: 'manual',
+                message: value as string,
+              });
+            });
+          }
+
+          toast.error(message || 'Failed to add lead');
+        },
+      });
     }
   };
 

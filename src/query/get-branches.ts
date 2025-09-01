@@ -1,7 +1,7 @@
 import { api } from '@/lib/api';
 import { useQuery } from '@tanstack/react-query';
 
-export const GET_BRANCHES = 'get-branches';
+import { QUERY_KEYS } from '@/constants/query-keys';
 
 const getBranches = async () => {
   const { data } = await api.get('/branch');
@@ -11,9 +11,24 @@ const getBranches = async () => {
 export const useGetBranches = () => {
   return useQuery({
     queryFn: getBranches,
-    queryKey: [GET_BRANCHES],
+    queryKey: [QUERY_KEYS.GET_BRANCHES],
     refetchOnWindowFocus: false,
     retry: 1,
+  });
+};
+
+const getBranchById = async (id: string) => {
+  const { data } = await api.get(`/branch/${id}`);
+  return data?.data as Branch;
+};
+
+export const useGetBranchById = (id: string) => {
+  return useQuery({
+    queryFn: () => getBranchById(id),
+    queryKey: [QUERY_KEYS.GET_BRANCHES, id],
+    refetchOnWindowFocus: false,
+    retry: 1,
+    enabled: !!id,
   });
 };
 
@@ -26,6 +41,10 @@ interface BranchResponse {
 export interface Branch {
   id: string;
   name: string;
+  country: string;
+  city: string;
+  timezone: string;
+  phone: string;
   createdAt: string;
   updatedAt: string;
 }
