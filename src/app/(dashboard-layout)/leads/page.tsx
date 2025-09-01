@@ -16,6 +16,8 @@ import Button from '@/components/atoms/button';
 import { ButtonLink } from '@/components/atoms/button-link';
 import { ROUTES } from '@/config/routes';
 import TabSelector from '@/components/atoms/tab-selector';
+import { useSendEmail } from '@/mutations/email-sms/email';
+import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
 
 // Tab Config
@@ -37,6 +39,7 @@ const Leads = () => {
   });
   const { mutateAsync: deleteLead } = useDeleteLead();
   const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
+  const { mutateAsync: sendEmail } = useSendEmail();
   const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
 
   const handleDelete = (id: number) => {
@@ -46,7 +49,12 @@ const Leads = () => {
   const handleDeleteBulk = (ids: number[]) => {
     deleteLeadBulk(ids);
   };
-  const LeadColumns = useLeadColumn(handleDelete);
+
+  const handleSendEmail = (payload: SendEmailSchemaType) => {
+    sendEmail(payload);
+  };
+
+  const LeadColumns = useLeadColumn(handleDelete, handleSendEmail);
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
 
@@ -106,6 +114,7 @@ const Leads = () => {
         className="bg-neutral-white !text-neutral-darkGrey"
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}
+        onSendEmail={handleSendEmail}
       />
     </Container>
   );

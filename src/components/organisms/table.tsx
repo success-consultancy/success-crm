@@ -22,8 +22,10 @@ import { cn } from '@/lib/utils';
 import Pagination from '../molecules/pagination-component';
 import { ColumnSelector } from '../molecules/table-column-selector';
 import DeleteDialog from './delete.dialog';
-import { Trash2 } from 'lucide-react';
+import EmailDialog from './email.dialog';
+import { Mail, Trash2 } from 'lucide-react';
 import { DateRangePicker } from '../molecules/date-range.picker';
+import { SendEmailSchemaType } from '@/schema/send-email-schema';
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -56,6 +58,7 @@ interface Props<TData, TValue> {
   tableHeaderSection?: ReactNode;
   tableHeight?: string;
   onBulkDelete?: (ids: number[]) => void;
+  onSendEmail?: (payload: SendEmailSchemaType) => void;
   handleDateRangeApply: (range: { from: Date | undefined; to: Date | undefined }) => void;
 }
 
@@ -76,6 +79,7 @@ const TableComponent = <TData, TValue>({
   tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
   onBulkDelete,
   handleDateRangeApply,
+  onSendEmail,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -156,15 +160,27 @@ const TableComponent = <TData, TValue>({
           </div>
         </div>
         {table.getSelectedRowModel().rows.length > 0 && (
-          <DeleteDialog
-            trigger={<Trash2 />}
-            title="Delete this Lead"
-            description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
-            onConfirm={async () => {
-              const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
-              onBulkDelete?.(ids);
-            }}
-          />
+          <div className="flex items-center gap-3">
+            {onSendEmail && (
+              <EmailDialog
+                trigger={<Mail className="cursor-pointer" />}
+                recipientsCount={table.getSelectedRowModel().rows.length}
+                onSend={onSendEmail}
+                recipients={table.getSelectedRowModel().rows.map((row) => ({
+                  email: (row as any).original.email,
+                }))}
+              />
+            )}
+            <DeleteDialog
+              trigger={<Trash2 />}
+              title="Delete this Lead"
+              description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+              onConfirm={async () => {
+                const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
+                onBulkDelete?.(ids);
+              }}
+            />
+          </div>
         )}
 
         {tableHeaderSection}

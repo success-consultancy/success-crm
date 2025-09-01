@@ -20,17 +20,26 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
   const handleAddDocument = () => {
     setIsUploaderOpen(true);
   };
-  useEffect(() => {
-    const { createdAt, updatedAt, deletedAt, ...rest } = leadData;
+
+  const handleDocumentUpload = (urls: string[]) => {
+    const updatedFiles = [...(leadData?.files || []), urls[0]];
+    setLeadData({ ...leadData, files: updatedFiles });
+
+    // Update lead when document is added
+    const { createdAt, updatedAt, deletedAt, clientIds, ...rest } = leadData;
     const payload = {
       ...rest,
       id: lead.id,
       hasVisitedStep: true,
+      files: updatedFiles,
     } as Omit<LeadSchemaType, 'serviceType'> & { serviceType: string; id: number; hasVisitedStep: boolean };
+
     editLead.mutate({
       ...payload,
     });
-  }, [leadData]);
+
+    setIsUploaderOpen(false);
+  };
 
   return (
     <div className="border border-[#EBEBEB] rounded-lg shadow-sm mb-6">
@@ -47,10 +56,7 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
                 <DialogTitle>Upload Document</DialogTitle>
               </DialogHeader>
               <FileUploader
-                onUploadComplete={(urls) => {
-                  setLeadData({ ...leadData, files: [...(leadData?.files || []), urls[0]] });
-                  setIsUploaderOpen(false);
-                }}
+                onUploadComplete={handleDocumentUpload}
                 type="lead"
                 maxFileSize={20}
                 acceptedFiles={['PDF']}

@@ -9,9 +9,10 @@ const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {
     serviceType: string;
     id: number;
+    branchId?: string;
   },
 ) => {
-  const { hasVisitedStep, id, ...filteredPayload } = payload;
+  const { hasVisitedStep, branchId, id, ...filteredPayload } = payload;
   const res = await api.put(`/lead/${id}`, filteredPayload);
   return res.data;
 };

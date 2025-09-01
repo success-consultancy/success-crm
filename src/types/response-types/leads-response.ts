@@ -61,4 +61,5 @@ export interface ILead {
     lastName: string;
     id: string;
   };
+  version_type?: number;
 }
