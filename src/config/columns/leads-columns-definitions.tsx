@@ -55,6 +55,17 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
+      id: 'lead-createdAt',
+      cell: function Cell({ row }) {
+        const tableCtx = useTableContext();
+        if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
+        return <span className="max-w-10 ">{new Date(row.original.createdAt).toLocaleDateString()}</span>;
+      },
+      enableSorting: true,
+      size: 120,
+      meta: { isVisible: true },
+    },
+    {
       id: 'lead-id',
       header: () => <ColumnHeader title="ID" keyParam="id" className="h-10" />,
       cell: function Cell({ row }) {
