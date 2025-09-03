@@ -25,26 +25,57 @@ export function ColumnSelector<TData>({
   const getDefaultSelected = (): Set<string> => {
     if (typeof window === 'undefined') return new Set<string>();
 
+    // Always get the default columns that should be visible
+    const defaultVisible = new Set(
+      allColumns
+        .filter((col) => {
+          const meta = (col.columnDef as any).meta;
+          return meta?.isVisible === true; // Only show columns explicitly marked as visible
+        })
+        .map((col) => col.id),
+    );
+
     try {
       const stored = localStorage.getItem(storageKey);
       if (stored) {
-        return new Set(JSON.parse(stored) as string[]);
+        // Merge saved preferences with default columns
+        const savedColumns = new Set(JSON.parse(stored) as string[]);
+        return new Set([...defaultVisible, ...savedColumns]);
       }
     } catch (e) {
       console.error('Error reading from localStorage:', e);
     }
 
-    return new Set(allColumns.filter((col) => col.getIsVisible()).map((col) => col.id));
+    // If no stored data, return only the default columns
+    return defaultVisible;
   };
 
   const [selected, setSelected] = useState<Set<string>>(getDefaultSelected);
 
-  // Apply stored visibility to the table on mount
+  // Initialize selected state by merging default columns with saved preferences
   useEffect(() => {
-    allColumns.forEach((col) => {
-      col.toggleVisibility(selected.has(col.id));
-    });
-  }, [table]); // Run once after table is initialized
+    if (typeof window !== 'undefined' && allColumns.length > 0) {
+      // Always get the default columns that should be visible
+      const defaultVisible = new Set(
+        allColumns
+          .filter((col) => {
+            const meta = (col.columnDef as any).meta;
+            return meta?.isVisible === true;
+          })
+          .map((col) => col.id),
+      );
+
+      const stored = localStorage.getItem(storageKey);
+      if (stored) {
+        // Merge saved preferences with default columns
+        const savedColumns = new Set(JSON.parse(stored) as string[]);
+        setSelected(new Set([...defaultVisible, ...savedColumns]));
+      } else {
+        // If no stored data, use only default columns
+        setSelected(defaultVisible);
+      }
+    }
+  }, [table, storageKey, allColumns.length]); // Run when table is ready
 
   const handleApply = () => {
     allColumns.forEach((col) => {
@@ -98,7 +129,7 @@ export function ColumnSelector<TData>({
                           });
                         }}
                         id={`option-${column.id}`}
-                        className="data-[state=checked]:text-white"
+                        className="data-[state=checked]:!bg-blue-600 data-[state=checked]:!border-blue-600 data-[state=checked]:!text-white data-[state=checked]:[&_svg]:!text-white data-[state=checked]:[&_svg]:!fill-white data-[state=checked]:[&_svg]:!stroke-white"
                       />
                       <label htmlFor={`option-${column.id}`} className="cursor-pointer flex-1">
                         {columnName}

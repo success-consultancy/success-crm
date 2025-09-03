@@ -85,6 +85,41 @@ const TableComponent = <TData, TValue>({
 
   const [rowSelection, setRowSelection] = useState({});
   const [columnSizing, setColumnSizing] = useState({});
+  const [columnVisibility, setColumnVisibility] = useState({});
+
+  // Initialize column visibility by merging default columns with saved preferences
+  React.useEffect(() => {
+    if (columns && columns.length > 0) {
+      // Always get the default columns that should be visible
+      const defaultVisible = new Set(
+        columns.filter((column) => (column as any).meta?.isVisible === true).map((column) => (column as any).id),
+      );
+
+      // Check for saved preferences in localStorage
+      let savedColumns = new Set<string>();
+      if (typeof window !== 'undefined') {
+        try {
+          const stored = localStorage.getItem('column-visibility');
+          if (stored) {
+            savedColumns = new Set(JSON.parse(stored) as string[]);
+          }
+        } catch (e) {
+          console.error('Error reading column visibility from localStorage:', e);
+        }
+      }
+
+      // Merge default columns with saved preferences
+      const mergedVisible = new Set([...defaultVisible, ...savedColumns]);
+
+      // Set visibility for all columns
+      const initialVisibility: Record<string, boolean> = {};
+      columns.forEach((column) => {
+        const columnId = (column as any).id;
+        initialVisibility[columnId] = mergedVisible.has(columnId);
+      });
+      setColumnVisibility(initialVisibility);
+    }
+  }, [columns]);
 
   const _currentPage = currentPage ? Number.parseInt(`${currentPage}`) : 1;
 
@@ -121,8 +156,10 @@ const TableComponent = <TData, TValue>({
     state: {
       rowSelection,
       columnSizing,
+      columnVisibility,
     },
     onColumnSizingChange: setColumnSizing,
+    onColumnVisibilityChange: setColumnVisibility,
     enableColumnResizing: true,
     columnResizeMode: 'onChange',
     defaultColumn: {

@@ -52,6 +52,7 @@ export const useLeadColumn = (
         </div>
       ),
       size: 40,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-id',
@@ -67,6 +68,7 @@ export const useLeadColumn = (
       },
       enableSorting: true,
       size: 80,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-first-name',
@@ -77,6 +79,7 @@ export const useLeadColumn = (
         return <div className="">{row.original.firstName || '-'}</div>;
       },
       size: 160,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-middle-name',
@@ -87,6 +90,7 @@ export const useLeadColumn = (
         return <div className="">{row.original.middleName || '-'}</div>;
       },
       size: 160,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-last-name',
@@ -97,6 +101,7 @@ export const useLeadColumn = (
         return <div className="">{row.original.lastName || '-'}</div>;
       },
       size: 160,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-birth-date',
@@ -107,6 +112,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.dob || '-'}</span>;
       },
       size: 128,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-email',
@@ -117,6 +123,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.email || '-'}</span>;
       },
       size: 216,
+      meta: { isVisible: true },
     },
     {
       id: 'lead-phone',
@@ -127,6 +134,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.phone || '-'}</span>;
       },
       size: 152,
+      meta: { isVisible: true },
     },
     {
       id: 'passport-no',
@@ -137,6 +145,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.passport || '-'}</span>;
       },
       size: 140,
+      meta: { isVisible: false },
     },
     {
       id: 'issue-date',
@@ -147,6 +156,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.issueDate || '-'}</span>;
       },
       size: 128,
+      meta: { isVisible: false },
     },
     {
       id: 'expiry-date',
@@ -157,6 +167,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.expiryDate || '-'}</span>;
       },
       size: 132,
+      meta: { isVisible: false },
     },
     {
       id: 'address',
@@ -167,6 +178,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.address || '-'}</span>;
       },
       size: 216,
+      meta: { isVisible: false },
     },
     {
       id: 'location',
@@ -177,6 +189,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.location || '-'}</span>;
       },
       size: 120,
+      meta: { isVisible: false },
     },
     {
       id: 'occupation',
@@ -187,6 +200,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.occupation || '-'}</span>;
       },
       size: 280,
+      meta: { isVisible: false },
     },
     {
       id: 'qualification',
@@ -197,6 +211,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.qualification || '-'}</span>;
       },
       size: 160,
+      meta: { isVisible: false },
     },
     {
       id: 'country',
@@ -207,6 +222,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.country || '-'}</span>;
       },
       size: 136,
+      meta: { isVisible: false },
     },
     {
       id: 'visa',
@@ -217,6 +233,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.visa || '-'}</span>;
       },
       size: 216,
+      meta: { isVisible: false },
     },
     {
       id: 'visa-expiry',
@@ -231,6 +248,7 @@ export const useLeadColumn = (
         );
       },
       size: 132,
+      meta: { isVisible: false },
     },
     {
       id: 'service-type',
@@ -287,6 +305,7 @@ export const useLeadColumn = (
         );
       },
       size: 176,
+      meta: { isVisible: false },
     },
     {
       id: 'source',
@@ -297,6 +316,7 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original?.source?.name || '-'}</span>;
       },
       size: 144,
+      meta: { isVisible: false },
     },
     {
       id: 'assigned-to',
@@ -314,6 +334,7 @@ export const useLeadColumn = (
         );
       },
       size: 160,
+      meta: { isVisible: false },
     },
     {
       id: 'follow-up',
@@ -325,6 +346,7 @@ export const useLeadColumn = (
         return <div className="w-full">Show Follow Up</div>;
       },
       size: 140,
+      meta: { isVisible: false },
     },
     {
       id: 'status',
@@ -352,6 +374,7 @@ export const useLeadColumn = (
         return <div className="w-full">{getStatusBadge()}</div>;
       },
       size: 152,
+      meta: { isVisible: false },
     },
     {
       id: 'lead-actions',
@@ -414,6 +437,7 @@ export const useLeadColumn = (
         );
       },
       size: 64,
+      meta: { isVisible: true },
     },
   ];
   return LeadColumns;
