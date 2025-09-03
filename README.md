@@ -2,4 +2,5 @@
 
 # Features
 - leads
+    - history
 - branches
