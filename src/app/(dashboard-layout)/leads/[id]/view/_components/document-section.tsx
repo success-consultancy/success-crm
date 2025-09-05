@@ -22,7 +22,7 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
   };
 
   const handleDocumentUpload = (urls: string[]) => {
-    const updatedFiles = [...(leadData?.files || []), urls[0]];
+    const updatedFiles = [...(leadData?.files || []), ...urls];
     setLeadData({ ...leadData, files: updatedFiles });
 
     // Update lead when document is added
