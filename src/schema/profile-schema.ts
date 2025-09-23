@@ -2,13 +2,13 @@ import { z } from 'zod';
 
 export const ProfileSchema = z.object({
   id: z.string().optional(),
-  email: z.string({ required_error: 'Email is required.' }).email({ message: 'Invalid email address' }),
+  email: z.string({ error: 'Email is required.' }).email({ message: 'Invalid email address' }),
   phone: z
-    .string({ required_error: 'Phone number is required.' })
+    .string({ error: 'Phone number is required.' })
     .min(10, { message: 'Phone number must be at least 10 characters' }),
-  firstName: z.string({ required_error: 'First name is required.' }).min(1, { message: 'First name is required' }),
+  firstName: z.string({ error: 'First name is required.' }).min(1, { message: 'First name is required' }),
   middleName: z.string().optional(),
-  lastName: z.string({ required_error: 'Last name is required.' }).min(1, { message: 'Last name is required' }),
+  lastName: z.string({ error: 'Last name is required.' }).min(1, { message: 'Last name is required' }),
   dob: z.string().optional(),
   role: z.string().optional(),
   detail: z.string().optional(),

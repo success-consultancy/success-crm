@@ -3,17 +3,17 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import TanstackProvider from '@/context/tanstack-context';
 import { ToastProvider } from '@/context/toast-context';
-import { Inter } from 'next/font/google';
+import { Inter_Tight } from 'next/font/google';
 import './globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Success Platform',
+    default: 'Success Education & Visa Services',
     template: '%s | Success Education & Visa Services',
   },
 };
 
-const inter = Inter({ subsets: ['latin'] });
+const inter = Inter_Tight({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,
