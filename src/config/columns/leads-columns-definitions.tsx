@@ -12,7 +12,7 @@ import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
-import { format } from 'date-fns';
+import { format, formatDate } from 'date-fns';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -399,7 +399,12 @@ export const useLeadColumn = (
           <div className="flex justify-center">
             <Popover>
               <PopoverTrigger>
-                <EllipsisVertical className="h-5 w-5 text-muted-foreground" />
+                <Button
+                  variant="ghost"
+                  className="h-5 w-5 rounded-full"
+                  iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
+                  iconLeftClassName="mr-0"
+                />
               </PopoverTrigger>
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
