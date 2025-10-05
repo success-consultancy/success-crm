@@ -3,6 +3,7 @@ import { useTableContext } from '@/components/molecules/table-context-provider';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import EmailDialog from '@/components/organisms/email.dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -12,7 +13,7 @@ import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash, Trash2 } from 'lucide-react';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export const useLeadColumn = (
@@ -51,11 +52,12 @@ export const useLeadColumn = (
           />
         </div>
       ),
-      size: 40,
-      meta: { isVisible: true },
+      size: 52,
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 0 },
     },
     {
       id: 'lead-createdAt',
+      header: () => <ColumnHeader title="Created At" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
@@ -63,7 +65,7 @@ export const useLeadColumn = (
       },
       enableSorting: true,
       size: 120,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 40 },
     },
     {
       id: 'lead-id',
@@ -79,7 +81,7 @@ export const useLeadColumn = (
       },
       enableSorting: true,
       size: 80,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 160 },
     },
     {
       id: 'lead-first-name',
@@ -389,15 +391,16 @@ export const useLeadColumn = (
     },
     {
       id: 'lead-actions',
-      header: () => <span className="sr-only">Actions</span>,
+      header: () => <Plus className="h-5 w-5 mx-auto" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-8 h-6" />;
         return (
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <Popover>
               <PopoverTrigger>
-                <EllipsisVertical className="h-5 w-5 text-muted-foreground" />
+                <Button variant="ghost" className="h-5 w-5 rounded-full" iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
+                iconLeftClassName='mr-0' />
               </PopoverTrigger>
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
@@ -448,7 +451,7 @@ export const useLeadColumn = (
         );
       },
       size: 64,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'right', stickyRight: 0 },
     },
   ];
   return LeadColumns;

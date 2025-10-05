@@ -173,6 +173,11 @@ const TableComponent = <TData, TValue>({
   // Calculate total table width based on column sizes
   const totalTableWidth = React.useMemo(() => {
     return table.getAllColumns().reduce((acc, column) => {
+      const meta = column.columnDef?.meta as any;
+      if (!meta?.isVisible) {
+        return acc;
+      }
+
       return acc + column.getSize();
     }, 0);
   }, [table]);
@@ -237,7 +242,7 @@ const TableComponent = <TData, TValue>({
                     '*:text-[.875rem] *:px-3 *:py-2 *:text-neutral-darkGrey *:align-middle',
                     'first:*:pl-2 last:*:pr-2 px-4 py-2',
                     '*:text-left',
-                    '*:align-middle *:[&:has([role=checkbox])]:pr-0',
+                    '*:align-middle',
                   ])}
                   key={headerGroup.id}
                 >
@@ -274,11 +279,11 @@ const TableComponent = <TData, TValue>({
               {table.getRowModel().rows.map((row, idx) => (
                 <tr
                   className={cn([
-                    'group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-b1 text-content-body',
+                    'group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-neutral-dark-grey',
                     '*:px-4 *:py-2.5',
-                    'first:*:pl-2 last:*:pr-2 px-4 py-2',
+                    'px-4 py-2',
                     '*:text-left select-none',
-                    '*:align-middle *:[&:has([role=checkbox])]:pr-0',
+                    '*:align-middle',
                     'last:border-none',
                   ])}
                   key={idx}
@@ -286,7 +291,7 @@ const TableComponent = <TData, TValue>({
                   {row.getVisibleCells().map((cell, i) => (
                     <td
                       className={cn([
-                        'first:pl-2 last:pr-2 py-2 align-middle text-neutral-darkGrey [&:has([role=checkbox])]:pr-0 last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap',
+                        'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap',
                       ])}
                       key={cell.id}
                       style={{
