@@ -24,8 +24,7 @@ import { FormField, FormItem, FormLabel } from '../ui/form';
 import Input from '../molecules/input';
 import branchSchema, { BranchSchemaType } from '@/schema/branch-schema';
 import { useAddBranch, useUpdateBranch } from '@/mutations/branch/add-branch';
-import SelectField from './select-field';
-import { TIMEZONES } from '@/constants/timezones';
+import TimezoneSelect from './timezone-select';
 import { PhoneNumberInput } from '../molecules/phone-number-input';
 import { SUPER_ADMIN_ROLE } from '@/constants/global';
 import { CountryDropdown } from './country-dropdown';
@@ -242,11 +241,10 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
           control={control}
           name="timezone"
           render={({ field }) => (
-            <SelectField
+            <TimezoneSelect
               name="timezone"
               label="Timezone"
               control={control}
-              options={TIMEZONES}
               placeholder="Select timezone"
             />
           )}
