@@ -3,6 +3,7 @@ import { useTableContext } from '@/components/molecules/table-context-provider';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import EmailDialog from '@/components/organisms/email.dialog';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -51,11 +52,12 @@ export const useLeadColumn = (
           />
         </div>
       ),
-      size: 40,
-      meta: { isVisible: true },
+      size: 52,
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 0 },
     },
     {
       id: 'lead-createdAt',
+      header: () => <ColumnHeader title="Created At" keyParam="createdAt" className="h-10" />,
       header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -64,7 +66,7 @@ export const useLeadColumn = (
       },
       enableSorting: true,
       size: 120,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 40 },
     },
     {
       id: 'lead-id',
@@ -80,7 +82,7 @@ export const useLeadColumn = (
       },
       enableSorting: true,
       size: 80,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'left', stickyLeft: 160 },
     },
     {
       id: 'lead-first-name',
@@ -390,12 +392,12 @@ export const useLeadColumn = (
     },
     {
       id: 'lead-actions',
-      header: () => <span className="sr-only">Actions</span>,
+      header: () => <Plus className="h-5 w-5 mx-auto" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-8 h-6" />;
         return (
-          <div className="flex justify-end">
+          <div className="flex justify-center">
             <Popover>
               <PopoverTrigger>
                 <EllipsisVertical className="h-5 w-5 text-muted-foreground" />
@@ -449,7 +451,7 @@ export const useLeadColumn = (
         );
       },
       size: 64,
-      meta: { isVisible: true },
+      meta: { isVisible: true, sticky: 'right', stickyRight: 0 },
     },
   ];
   return LeadColumns;

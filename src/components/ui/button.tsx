@@ -40,6 +40,8 @@ export type ButtonProps = React.ComponentProps<'button'> &
     loadingText?: string;
     iconLeft?: React.ReactNode;
     iconRight?: React.ReactNode;
+    iconLeftClassName?: string;
+    iconRightClassName?: string;
   };
 
 function Button({
@@ -51,6 +53,8 @@ function Button({
   loadingText,
   iconLeft,
   iconRight,
+  iconLeftClassName,
+  iconRightClassName,
   ...props
 }: ButtonProps) {
   const Comp = asChild ? Slot : 'button';
@@ -69,9 +73,9 @@ function Button({
         </>
       ) : (
         <>
-          {iconLeft && <span className="mr-1">{iconLeft}</span>}
+          {iconLeft && <span className={cn("mr-1", iconLeftClassName)}>{iconLeft}</span>}
           {props.children}
-          {iconRight && <span className="ml-1">{iconRight}</span>}
+          {iconRight && <span className={cn("ml-1", iconRightClassName)}>{iconRight}</span>}
         </>
       )}
     </Comp>

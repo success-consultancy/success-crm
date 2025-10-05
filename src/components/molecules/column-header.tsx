@@ -68,7 +68,7 @@ const ColumnHeader = (props: Props) => {
                 <ArrowUp className={cn(['h-4 w-4', sortingState === 'desc' && 'rotate-180'])} strokeWidth={2} />
               )}
             </TooltipTrigger>
-            <TooltipContent side="bottom" sideOffset={20} className="text-b2-b bg-white-100">
+            <TooltipContent side="bottom" sideOffset={20} className="text-b2-b text-white">
               <span>
                 Sort {sortingState === 'asc' ? 'descending' : 'ascending'} by {props.title}
               </span>
