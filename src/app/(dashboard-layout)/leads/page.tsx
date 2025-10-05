@@ -35,6 +35,7 @@ const Leads = () => {
 
   const { data, isLoading } = useGetLeads({
     ...filterParams,
+    q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
   });
   const { mutateAsync: deleteLead } = useDeleteLead();
@@ -67,7 +68,6 @@ const Leads = () => {
   };
 
   const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
-    console.log('Date range selected:', range);
     setParams([
       { name: 'from', value: range.from?.toISOString() || null },
       { name: 'to', value: range.to?.toISOString() || null },
