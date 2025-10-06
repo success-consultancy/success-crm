@@ -12,8 +12,8 @@ import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
-import { format, formatDate } from 'date-fns';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Trash2 } from 'lucide-react';
+import { format } from 'date-fns';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
 export const useLeadColumn = (
@@ -57,7 +57,6 @@ export const useLeadColumn = (
     },
     {
       id: 'lead-createdAt',
-      header: () => <ColumnHeader title="Created At" keyParam="createdAt" className="h-10" />,
       header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
