@@ -97,6 +97,11 @@ const Leads = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        columnPinning={{
+          left: ['select', 'lead-createdAt', 'lead-id'],
+          right: ['lead-actions'],
+        }}
+
         topRightSection={
           <div className="flex">
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>

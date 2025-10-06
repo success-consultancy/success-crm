@@ -57,7 +57,7 @@ export const useLeadColumn = (
     },
     {
       id: 'lead-createdAt',
-      header: () => <ColumnHeader title="Created At" keyParam="createdAt" className="h-10" />,
+      header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;

@@ -1,10 +1,12 @@
 'use client';
 
-import React, { type Dispatch, type ReactNode, type SetStateAction, useState } from 'react';
+import React, { CSSProperties, type Dispatch, type ReactNode, type SetStateAction, useState } from 'react';
 
 import {
+  Column,
   type ColumnDef,
   type PaginationState,
+  TableState,
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
@@ -60,6 +62,7 @@ interface Props<TData, TValue> {
   onBulkDelete?: (ids: number[]) => void;
   onSendEmail?: (payload: SendEmailSchemaType) => void;
   handleDateRangeApply: (range: { from: Date | undefined; to: Date | undefined }) => void;
+  columnPinning?: TableState['columnPinning'];
 }
 
 const TableComponent = <TData, TValue>({
@@ -80,6 +83,7 @@ const TableComponent = <TData, TValue>({
   onBulkDelete,
   handleDateRangeApply,
   onSendEmail,
+  columnPinning,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -157,6 +161,7 @@ const TableComponent = <TData, TValue>({
       rowSelection,
       columnSizing,
       columnVisibility,
+      columnPinning,
     },
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
@@ -182,6 +187,35 @@ const TableComponent = <TData, TValue>({
     }, 0);
   }, [table]);
 
+  
+//important styles to make sticky column pinning
+const getCommonPinningStyles = <T,>(column: Column<T>, isHeaderColumn?: boolean): CSSProperties => {
+  const isPinned = column.getIsPinned();
+
+  // pinned shadow style
+  const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
+  const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
+
+  const boxShadow = isPinned
+    ? isLastLeftPinnedColumn
+      ? `-2px 0 2px -2px #D9E2E8 inset`
+      : isFirstRightPinnedColumn
+        ? `2px 0 2px -2px #D9E2E8 inset`
+        : undefined
+    : undefined;
+  
+    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'var(--white-100)') : undefined;
+
+  return {
+    boxShadow,
+    left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
+    right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
+    position: isPinned ? 'sticky' : 'relative',
+    width: column.getSize(),
+    zIndex: isPinned ? 1 : 0,
+    backgroundColor,
+  };
+}
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
@@ -254,6 +288,7 @@ const TableComponent = <TData, TValue>({
                         width: `${header.getSize()}px`,
                         minWidth: `${header.getSize()}px`,
                         maxWidth: `${header.getSize()}px`,
+                        ...getCommonPinningStyles(header.column, true),
                       }}
                       className="py-0 select-none leading-[150%] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
@@ -298,6 +333,7 @@ const TableComponent = <TData, TValue>({
                         width: `${cell.column.getSize()}px`,
                         minWidth: `${cell.column.getSize()}px`,
                         maxWidth: `${cell.column.getSize()}px`,
+                        ...getCommonPinningStyles(cell.column),
                       }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
