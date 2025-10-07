@@ -22,13 +22,14 @@ import { useExportLeads } from '@/mutations/leads/export-lead';
 
 // Tab Config
 let TAB_CONFIG = [
-  { key: 'all_leads', label: 'All Leads' },
-  { key: 'new_leads', label: 'New Leads' },
-  { key: 'qualified_leads', label: 'Qualified leads' },
-  { key: 'disqualified_leads', label: 'Disqualified leads' },
-  { key: 'follow_up', label: 'Follow up' },
+  { key: 'all_students', label: 'All Students' },
+  { key: 'in_progress', label: 'In Progress' },
+  { key: 'offer_and_payment', label: 'Offer and Payment' },
+  { key: 'coe_received', label: 'COE Received' },
+  { key: 'closed', label: 'Closed' },
 ];
-const Leads = () => {
+
+const EducationServicePage = () => {
   const { getSearchParamsObject } = useSearchParams();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
@@ -61,7 +62,7 @@ const Leads = () => {
 
   const { searchParams, setParams } = useSearchParams();
 
-  const currentTab = searchParams.get('tab') || 'all_leads';
+  const currentTab = searchParams.get('tab') || 'all_students';
 
   const handleTabChange = (tabKey: string) => {
     setParams([{ name: 'tab', value: tabKey }]);
@@ -76,7 +77,7 @@ const Leads = () => {
 
   if (data?.count) {
     TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === 'all_leads') {
+      if (tab.key === currentTab && tab.key === 'all_students') {
         return { ...tab, count: data.count };
       }
       return tab;
@@ -86,7 +87,7 @@ const Leads = () => {
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h5 text-content-heading font-bold">Leads</h3>
+        <h3 className="text-h5 text-content-heading font-bold">Education Services</h3>
       </Portal>
       <TableComponent
         data={data?.rows as ILead[]}
@@ -107,8 +108,8 @@ const Leads = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
-              Add Lead
+            <ButtonLink href={ROUTES.ADD_EDUCATION_SERVICE} LeftIcon={Plus}>
+              Add Education Service
             </ButtonLink>
           </div>
         }
@@ -124,4 +125,4 @@ const Leads = () => {
   );
 };
 
-export default Leads;
+export default EducationServicePage;

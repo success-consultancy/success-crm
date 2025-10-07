@@ -1,10 +1,10 @@
+'use client';
+
 import { Button } from '@/components/ui/button';
 import { Form, FormField } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import { ArrowLeft } from 'lucide-react';
 import { DatePicker } from '../organisms/date-picker';
-import { Controller } from 'react-hook-form';
-import { Input } from '../ui/input';
 import TextInput from '../molecules/text-input';
 
 const TaskForm = ({
@@ -52,24 +52,17 @@ const TaskForm = ({
               <FormField
                 control={control}
                 name="dueDate"
-                defaultValue={isEditMode ? new Date(form.getValues('dueDate')) : undefined}
                 render={({ field }) => (
                   <div className="space-y-2">
                     <Label htmlFor="date" className="">
                       Date
                     </Label>
-                    <Controller
-                      name="date"
-                      control={form.control}
-                      render={({ field }) => (
-                        <DatePicker
-                          value={field.value}
-                          onChange={field.onChange}
-                          placeholder="Select date"
-                          className="h-12 text-b2 w-full"
-                          disablePastDates={true}
-                        />
-                      )}
+                    <DatePicker
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Select date"
+                      className="h-12 text-b2 w-full"
+                      disablePastDates={true}
                     />
                   </div>
                 )}

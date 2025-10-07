@@ -14,7 +14,7 @@ export type ObjType = {
   value: string;
 };
 
-interface SelectFieldProps<T extends FieldValues> {
+export interface SelectFieldProps<T extends FieldValues> {
   name: FieldPath<T>;
   label: string;
   control: Control<T>;
