@@ -12,7 +12,7 @@ import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
-import { format } from 'date-fns';
+import { format, formatDate } from 'date-fns';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
@@ -61,7 +61,7 @@ export const useLeadColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
-        return <span className="max-w-10 ">{new Date(row.original.createdAt).toLocaleDateString()}</span>;
+        return <span className="max-w-10 text-left">{formatDate(row.original.createdAt, 'yyyy-MM-dd')}</span>;
       },
       enableSorting: true,
       size: 120,
@@ -399,8 +399,12 @@ export const useLeadColumn = (
           <div className="flex justify-center">
             <Popover>
               <PopoverTrigger>
-                <Button variant="ghost" className="h-5 w-5 rounded-full" iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
-                iconLeftClassName='mr-0' />
+                <Button
+                  variant="ghost"
+                  className="h-5 w-5 rounded-full"
+                  iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
+                  iconLeftClassName="mr-0"
+                />
               </PopoverTrigger>
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">

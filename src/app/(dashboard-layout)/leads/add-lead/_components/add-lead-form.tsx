@@ -2,11 +2,10 @@
 
 import { Form } from '@/components/ui/form';
 
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import { FormProvider, useForm } from 'react-hook-form';
+import { FormProvider, useForm, type SubmitHandler } from 'react-hook-form';
 import useSearchParams from '@/hooks/use-search-params';
 
 import { useAddLead } from '@/mutations/leads/add-lead';
@@ -20,7 +19,11 @@ import Portal from '@/components/atoms/portal';
 import FormSteps from '@/components/molecules/form-steps';
 import Button from '@/components/atoms/button';
 import { PortalIds } from '@/config/portal';
-import leadFormSchema, { LeadSchemaType, passportDetailsSchema, personalDetailsSchema } from '@/schema/lead-schema';
+import leadFormSchema, {
+  type LeadSchemaType,
+  passportDetailsSchema,
+  personalDetailsSchema,
+} from '@/schema/lead-schema';
 import { getCompletedSteps } from '@/utils/lead-helper';
 import toast from 'react-hot-toast';
 
@@ -31,7 +34,7 @@ type Props = {
 
 const AddLeadForm = ({ mode, defaultValues }: Props) => {
   const form = useForm<LeadSchemaType>({
-    resolver: zodResolver(leadFormSchema),
+    resolver: zodResolver(leadFormSchema) as any,
     defaultValues,
   });
 
@@ -95,7 +98,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     }
   };
 
-  const onSubmit = (data: LeadSchemaType) => {
+  const onSubmit: SubmitHandler<LeadSchemaType> = (data) => {
     const serviceType = JSON.stringify(data.serviceType);
 
     const payload = {

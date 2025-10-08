@@ -508,6 +508,10 @@ input[type='time']::-webkit-clear-button {
   display: none;
 }
 
+body{
+  letter-spacing: 0.15px;
+}
+
 .element::after {
   content: '';
   position: absolute;
@@ -538,3 +542,4 @@ input[type='time']::-webkit-clear-button {
     opacity: 1;
   }
 }
+
