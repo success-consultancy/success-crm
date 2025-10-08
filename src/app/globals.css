@@ -431,6 +431,9 @@
   .chevonDownTranstion {
     @apply w-5 h-5 transition-all duration-500;
   }
+  .tox-tinymce {
+    height: 250px !important;
+  }
 
   @keyframes scrollUp {
     from {
