@@ -1,6 +1,6 @@
 'use client';
 
-import { format, isPast } from 'date-fns';
+import { format, isPast, isFuture, startOfDay } from 'date-fns';
 import { Calendar as CalendarIcon } from 'iconsax-reactjs';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -42,10 +42,22 @@ export function DatePicker({
   timeValue = '10:30:00',
   onTimeChange,
   disablePastDates = false,
+  disableFutureDates = false,
   error,
   timeId = 'time-picker',
 }: DatePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+
+  // <CHANGE> Fixed the disabled logic to properly disable past or future dates
+  const getDisabledDates = (date: Date) => {
+    const today = startOfDay(new Date());
+    const checkDate = startOfDay(date);
+
+    if (disablePastDates && checkDate < today) return true;
+    if (disableFutureDates && checkDate > today) return true;
+
+    return false;
+  };
 
   return (
     <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
@@ -85,12 +97,11 @@ export function DatePicker({
                   setIsCalendarOpen(false);
                 }
               }}
-              // disabled={(date) => isPast(date)}
+              disabled={getDisabledDates}
             />
           </PopoverContent>
         </Popover>
       </div>
-
       {needTime && (
         <div className="flex !w-[100px] flex-col gap-3 flex-1">
           <Input

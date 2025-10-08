@@ -18,9 +18,6 @@ export function Calendar11() {
         selected={dateRange}
         onSelect={setDateRange}
         numberOfMonths={2}
-        startMonth={new Date(2025, 5, 1)}
-        endMonth={new Date(2025, 6, 31)}
-        disableNavigation
         className="rounded-lg border shadow-sm"
       />
     </div>

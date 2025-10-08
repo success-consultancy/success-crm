@@ -9,6 +9,7 @@ import FeeStructure from './fee-structure';
 import Accounts from './accounts';
 import Misc from './misc';
 import StepperTabs from './stepper-tabs';
+import { NewStudentType } from '@/schema/education-service/new-student.schema';
 
 const MultiStepFormContent = () => {
   const [step, setStep] = useQueryState('step', {
@@ -20,7 +21,7 @@ const MultiStepFormContent = () => {
   const currentStep = Number.parseInt(step);
 
   const validateCurrentStep = async () => {
-    let fieldsToValidate: string[] = [];
+    let fieldsToValidate: (keyof NewStudentType)[] = [];
 
     switch (currentStep) {
       case 1:
@@ -62,7 +63,7 @@ const MultiStepFormContent = () => {
         return true;
     }
 
-    return await trigger(fieldsToValidate as never);
+    return await trigger(fieldsToValidate);
   };
 
   const nextStep = async () => {

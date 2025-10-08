@@ -4,10 +4,8 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import EducationServicePage from './_components/education-service-page';
 
-export const metadata = (): Metadata => {
-  return {
-    title: 'Education Service',
-  };
+export const metadata: Metadata = {
+  title: 'Education Service',
 };
 
 const Page = () => {

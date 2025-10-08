@@ -39,7 +39,7 @@ const PersonalDetails = () => {
                   onChange={field.onChange}
                   placeholder="Pick a date"
                   className={cn('h-12 text-b2 w-full')}
-                  disablePastDates={false}
+                  disableFutureDates={true}
                 />
               )}
             />
@@ -75,7 +75,6 @@ const PersonalDetails = () => {
                   onChange={field.onChange}
                   placeholder="Pick a date"
                   className="h-12 text-b2 w-full"
-                  disablePastDates={true}
                   error={!!errors.passportIssueDate?.message}
                 />
               )}
@@ -96,7 +95,6 @@ const PersonalDetails = () => {
                   onChange={field.onChange}
                   placeholder="Pick a date"
                   className="h-12 text-b2 w-full"
-                  disablePastDates={true}
                   error={!!errors.passportExpiryDate?.message}
                 />
               )}
