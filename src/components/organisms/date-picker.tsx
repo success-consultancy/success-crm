@@ -8,6 +8,8 @@ import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
 
+// NOTE : Gopal is using this date picker //
+
 interface DatePickerProps {
   value?: Date;
   onChange: (date: Date | undefined) => void;
@@ -26,6 +28,7 @@ interface DatePickerProps {
   onTimeChange?: (time: string) => void;
   timeLabel?: string;
   timeId?: string;
+  error?: boolean;
 }
 
 export function DatePicker({
@@ -39,6 +42,7 @@ export function DatePicker({
   timeValue = '10:30:00',
   onTimeChange,
   disablePastDates = false,
+  error,
   timeId = 'time-picker',
 }: DatePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -53,6 +57,7 @@ export function DatePicker({
                 'w-full border border-gray-300 rounded-md flex items-center justify-between px-3 py-2 text-b2 cursor-pointer',
                 !value && 'text-muted-foreground',
                 disabled && 'opacity-50 cursor-not-allowed',
+                error && 'border-red-500',
                 className,
               )}
               role="button"
@@ -73,6 +78,7 @@ export function DatePicker({
             <Calendar
               mode="single"
               selected={value}
+              captionLayout="dropdown"
               onSelect={(date) => {
                 onChange(date);
                 if (date) {

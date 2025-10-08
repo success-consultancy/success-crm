@@ -18,6 +18,8 @@ export const ROUTES = {
 
   ADD_LEAD: '/leads/add-lead',
 
+  ADD_EDUCATION_SERVICE: '/education-service/add',
+
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',
   OCCUPATION: '/dashboard/occupation',

@@ -7,13 +7,14 @@ import { ArrowDown2 } from 'iconsax-reactjs';
 import { useController } from 'react-hook-form';
 import type { Control, FieldPath, FieldValues } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
+import { cn } from '@/lib/utils';
 
 export type ObjType = {
   label: string;
   value: string;
 };
 
-interface SelectFieldProps<T extends FieldValues> {
+export interface SelectFieldProps<T extends FieldValues> {
   name: FieldPath<T>;
   label: string;
   control: Control<T>;
@@ -48,13 +49,13 @@ const SelectField = <T extends FieldValues>({
   });
 
   return (
-    <div className={`flex flex-col gap-2 w-full ${className || ''}`}>
-      <Label htmlFor={name} className="text-b3-b font-semibold">
+    <div className={`flex flex-col gap-1 -mt-1 w-full ${className || ''}`}>
+      <Label htmlFor={name} className="font-medium text-sm">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Select disabled={disabled} onValueChange={field.onChange} value={field.value || ''}>
-        <SelectTrigger className="w-full" id={name}>
+        <SelectTrigger className={cn('w-full !h-10', error && 'border-red-500')} id={name}>
           <div className="flex items-center gap-2">
             <SelectValue placeholder={placeholder} />
           </div>
@@ -73,4 +74,3 @@ const SelectField = <T extends FieldValues>({
 };
 
 export default SelectField;
-export type { SelectFieldProps };
