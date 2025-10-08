@@ -3,6 +3,55 @@ import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
 import { useGetLeadLog } from '@/query/get-leads';
 import { ILead } from '@/types/response-types/leads-response';
+import { useState } from 'react';
+import Button from '@/components/atoms/button';
+
+type LeadHistoryItem = {
+  versionId: string;
+  versionType: number;
+  versionTypeName: string;
+  timestamp: string;
+  formattedDate: string;
+  formattedTime: string;
+  updatedBy: string;
+  changes: Array<{
+    field: string;
+    fieldDisplayName: string;
+    oldValue: string;
+    newValue: string;
+    description: string;
+  }>;
+  changeCount: number;
+  isInitialVersion: boolean;
+  summaryDescriptions: string[];
+};
+
+const ExpandableDescriptions = ({ descriptions }: { descriptions: string[] }) => {
+  const [showAll, setShowAll] = useState(false);
+
+  if (descriptions.length === 0) return null;
+
+  const shouldShowMoreButton = descriptions.length > 3;
+  const displayedDescriptions = showAll ? descriptions : descriptions.slice(0, 3);
+
+  return (
+    <div className="mt-2 space-y-1">
+      {displayedDescriptions.map((description, idx) => (
+        <p key={idx} className="text-sm text-gray-600">
+          {description}
+        </p>
+      ))}
+
+      {shouldShowMoreButton && (
+        <div className="pt-2">
+          <Button variant="outline" size="sm" onClick={() => setShowAll(!showAll)} className="text-xs h-7 px-2">
+            {showAll ? 'Show Less' : `Show More (${descriptions.length - 3} more)`}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+};
 
 export const History = ({ lead }: { lead: ILead }) => {
   const { data } = useGetLeadLog(lead.id.toString());
@@ -12,37 +61,26 @@ export const History = ({ lead }: { lead: ILead }) => {
     3: 'Deleted',
   };
 
-  const logs = data?.map((lead: ILead) => {
-    const type = lead.version_type ? VERSION_TYPES[lead.version_type as keyof typeof VERSION_TYPES] : 'Unknown';
-    const changes = null;
-
-    if (lead.version_type === 2) {
-      //   changes = getChangedFields(lead.dataValues, lead._previousDataValues);
-    }
-
-    return {
-      type,
-      timestamp: lead.updatedAt,
-      updatedBy: lead.updatedBy,
-      updatedByUser: lead.UpdatedByUser,
-      changes,
-    };
-  });
+  const logs: LeadHistoryItem[] = (data as unknown as LeadHistoryItem[]) || [];
 
   return (
     <CardContainer className="w-full">
       <h2 className="text-lg font-semibold mb-4">Lead history</h2>
       <div className="space-y-6">
         {logs?.map((log, i) => (
-          <div key={log.timestamp} className="relative pl-6">
+          <div key={log.versionId} className="relative pl-6">
             {/* Timeline dot */}
             <span className={cn('absolute left-0 top-2 h-3 w-3 rounded-full', 'bg-sky-500')} />
             <div>
-              <p className="text-b1-b">Lead {log.type}</p>
+              <p className="text-b1-b">Lead {log.versionTypeName}</p>
               <p className="text-b1 text-neutral-light-grey mt-1">
-                by {log.updatedByUser?.firstName} {log.updatedByUser?.lastName},{' '}
-                {new Date(log.timestamp).toLocaleString()}
+                by {log.updatedBy}, {log.formattedDate}, {log.formattedTime}
               </p>
+
+              {/* Show summary descriptions for updates */}
+              {log.versionType === 2 && log.summaryDescriptions.length > 0 && (
+                <ExpandableDescriptions descriptions={log.summaryDescriptions} />
+              )}
             </div>
 
             {i < logs.length - 1 && <Separator className="absolute left-[5px] top-6 h-full w-[1px] bg-gray-300" />}

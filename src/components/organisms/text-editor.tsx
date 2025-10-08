@@ -10,7 +10,9 @@ const Editor = dynamic(() => import('@tinymce/tinymce-react').then((mod) => mod.
 export default function TinyEditor() {
   return (
     <Editor
-      apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+      licenseKey={'gpl'}
+      tinymceScriptSrc={'https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.1.2/tinymce.min.js'}
+      // apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
       init={{
         plugins: [
           // Core editing features
@@ -51,7 +53,7 @@ export default function TinyEditor() {
         ],
         resize: false,
       }}
-      initialValue="Welcome to TinyMCE!"
+      initialValue=""
     />
   );
 }
