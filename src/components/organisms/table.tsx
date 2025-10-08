@@ -204,7 +204,7 @@ const getCommonPinningStyles = <T,>(column: Column<T>, isHeaderColumn?: boolean)
         : undefined
     : undefined;
   
-    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'var(--white-100)') : undefined;
+    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'white') : undefined;
 
   return {
     boxShadow,
