@@ -71,7 +71,9 @@ const EmailDialog: React.FC<EmailDialogProps> = ({
           <div>
             <div className="sr-only">Email body</div>
             <Editor
-              apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+              licenseKey={'gpl'}
+              tinymceScriptSrc={'https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.1.2/tinymce.min.js'}
+              // apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
               onEditorChange={(content) => setBody(content)}
               init={{
                 height: 280,
