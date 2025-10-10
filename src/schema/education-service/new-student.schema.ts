@@ -80,3 +80,51 @@ export const newStudentSchema = z
   });
 
 export type NewStudentType = z.infer<typeof newStudentSchema>;
+
+export const educationServiceDefaultValues: NewStudentType = {
+  // Personal Details
+  firstName: '',
+  middleName: '',
+  lastName: '',
+  birthdate: new Date(),
+  email: '',
+  phoneNumber: '',
+  nationality: '',
+  address: '',
+  passportNumber: '',
+  passportIssueDate: new Date(),
+  passportExpiryDate: new Date(),
+  location: '',
+
+  // Course Information
+  universityName: '',
+  course: '',
+  universityStartDate: new Date(),
+  universityEndDate: new Date(),
+  status: '',
+
+  // Fee Structure
+  feePaymentPlan: '',
+  feeAmount: 0,
+  dueDate: new Date(),
+  invoiceNumber: '',
+  paymentStatus: '',
+  feeNotes: '',
+
+  // Accounts
+  accountPaymentPlan: '',
+  commission: 0,
+  accountAmount: 0,
+  discount: 0,
+  bonus: 0,
+  netAmount: 0,
+  accountDueDate: new Date(),
+  accountInvoiceNumber: '',
+  commissionStatus: '',
+  accountNotes: '',
+
+  // Misc
+  assignedTo: '',
+  source: '',
+  additionalNotes: '',
+};

@@ -1,7 +1,9 @@
-import React, { useEffect, useMemo } from 'react';
+'use client';
+
+import { useEffect, useMemo } from 'react';
 import Input from '@/components/molecules/input';
 import { FormField } from '@/components/ui/form';
-import { LeadSchemaType } from '@/schema/lead-schema';
+import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
 
 import { format } from 'date-fns';
@@ -43,16 +45,16 @@ const PersonalDetailsStep = () => {
   useEffect(() => {
     if (selectedOccupation) {
       const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
-      setValue('anzsco', selected?.code);
+      setValue('anzsco', selected?.code, { shouldValidate: false });
     }
-  }, [selectedOccupation]);
+  }, [selectedOccupation, occupations, setValue]);
 
   useEffect(() => {
     if (selectedANZSCO) {
       const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
-      setValue('occupation', selected?.title);
+      setValue('occupation', selected?.title, { shouldValidate: false });
     }
-  }, [selectedANZSCO]);
+  }, [selectedANZSCO, occupations, setValue]);
 
   return (
     <div className="space-y-5">
@@ -111,6 +113,7 @@ const PersonalDetailsStep = () => {
 
                   if (date) field.onChange(format(date, 'MM/dd/yyyy'));
                 }}
+                error={errors.dob?.message}
               />
             </div>
           )}
@@ -140,6 +143,7 @@ const PersonalDetailsStep = () => {
               value={field.value || undefined}
               label="Occupation"
               onSelect={(val) => field.onChange(val)}
+              error={errors.occupation?.message}
             />
           )}
         />
@@ -152,6 +156,7 @@ const PersonalDetailsStep = () => {
               value={field.value || undefined}
               label="ANZSCO"
               onSelect={(val) => field.onChange(val)}
+              error={errors.anzsco?.message}
             />
           )}
         />

@@ -1,10 +1,11 @@
 'use client';
-import MultiStepForm from './_components/multi-step-form';
+
+import { AddEducationService } from './_components/add-education-service';
 
 const Page = () => {
   return (
-    <div className="my-10">
-      <MultiStepForm />
+    <div className="p-4">
+      <AddEducationService />
     </div>
   );
 };

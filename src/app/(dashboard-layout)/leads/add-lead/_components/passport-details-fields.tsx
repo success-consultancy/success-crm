@@ -1,7 +1,9 @@
-import React, { useMemo } from 'react';
+'use client';
+
+import { useMemo } from 'react';
 import Input from '@/components/molecules/input';
 import { FormField } from '@/components/ui/form';
-import { LeadSchemaType } from '@/schema/lead-schema';
+import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
 
 import { Label } from '@/components/ui/label';
@@ -15,7 +17,6 @@ const PassportDetailsStep = () => {
     control,
     formState: { errors },
     setValue,
-    watch,
   } = useFormContext<LeadSchemaType>();
 
   const countries = useMemo(
@@ -41,7 +42,6 @@ const PassportDetailsStep = () => {
     }
   }, [visas]);
 
-  setValue('hasVisitedStep', true);
   return (
     <div className="space-y-5">
       <div className="flex items-center gap-5">
@@ -54,6 +54,7 @@ const PassportDetailsStep = () => {
               value={field.value ?? undefined}
               label="Country"
               onSelect={(val) => field.onChange(val)}
+              error={errors.country?.message}
             />
           )}
         />

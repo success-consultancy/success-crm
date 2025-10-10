@@ -33,7 +33,8 @@ const ProtectedLayout = ({ children }: Props) => {
   }
 
   return (
-    <div className="flex w-screen h-screen overflow-hidden">
+    // <div className="flex w-screen h-screen overflow-hidden">
+    <div className="flex">
       <AdminSidebar />
 
       <div className="flex flex-col grow overflow-hidden">
