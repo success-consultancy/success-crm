@@ -1,6 +1,8 @@
-import React, { useMemo } from 'react';
+'use client';
+
+import { useMemo } from 'react';
 import { FormField } from '@/components/ui/form';
-import { LeadSchemaType } from '@/schema/lead-schema';
+import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
 
 import { Label } from '@/components/ui/label';
@@ -69,8 +71,8 @@ const ServiceDetailsStep = () => {
   }, [users]);
 
   return (
-    <div className="space-y-5">
-      <div className="flex items-center gap-5">
+    <div className="space-y-5 w-full">
+      <div className="flex items-start w-full gap-5">
         <FormField
           control={control}
           name="serviceType"
@@ -89,10 +91,12 @@ const ServiceDetailsStep = () => {
           name="location"
           render={({ field }) => (
             <SelectCommon
+              triggerClassName="w-full"
               options={locationOptions}
               value={field.value || undefined}
               label="Location"
               onSelect={(val) => field.onChange(val)}
+              error={errors.location?.message}
             />
           )}
         />
@@ -101,15 +105,17 @@ const ServiceDetailsStep = () => {
           name="sourceId"
           render={({ field }) => (
             <SelectCommon
+              triggerClassName="w-full"
               options={sourceOptions || []}
               value={field.value?.toString()}
               label="Source"
               onSelect={(val) => field.onChange(Number(val))}
+              error={errors.sourceId?.message}
             />
           )}
         />
       </div>
-      <div className="flex items-center gap-5">
+      <div className="flex items-start gap-5">
         <FormField
           control={control}
           name="userId"
@@ -120,6 +126,7 @@ const ServiceDetailsStep = () => {
               label="Assigned to"
               placeholder="Select a assignee"
               onSelect={(val) => field.onChange(Number(val))}
+              error={errors.userId?.message}
             />
           )}
         />
@@ -131,6 +138,7 @@ const ServiceDetailsStep = () => {
               options={STATUS_OPTIONS}
               value={field.value}
               label="Status"
+              triggerClassName="w-full"
               onSelect={(val) => field.onChange(val)}
               error={errors.status?.message}
             />
@@ -141,6 +149,7 @@ const ServiceDetailsStep = () => {
         <Label className="text-b3-b font-semibold">Note</Label>
 
         <TinyEditor />
+        {errors.note?.message && <p className="text-sm text-red-500">{errors.note.message}</p>}
       </div>
 
       <div className="space-y-1">
@@ -149,12 +158,13 @@ const ServiceDetailsStep = () => {
           onUploadComplete={(urls) => {
             console.log('Uploaded URLs:', urls);
 
-            setLead('files', [urls[0]], { shouldValidate: true });
+            setLead('files', [urls[0]], { shouldValidate: false });
           }}
           type="lead"
           maxFileSize={20}
           acceptedFiles={['PDF']}
         />
+        {errors.files?.message && <p className="text-sm text-red-500">{errors.files.message}</p>}
       </div>
     </div>
   );
