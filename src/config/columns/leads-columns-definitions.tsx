@@ -1,4 +1,5 @@
 import ColumnHeader from '@/components/molecules/column-header';
+import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { useTableContext } from '@/components/molecules/table-context-provider';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import EmailDialog from '@/components/organisms/email.dialog';
@@ -57,11 +58,11 @@ export const useLeadColumn = (
     },
     {
       id: 'lead-createdAt',
-      header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
+      header: () => <ColumnHeader title="" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
-        return <span className="max-w-10 text-left">{formatDate(row.original.createdAt, 'yyyy-MM-dd')}</span>;
+        return <DateWithIndicator date={row.original.createdAt} className="text-left" />;
       },
       enableSorting: true,
       size: 120,

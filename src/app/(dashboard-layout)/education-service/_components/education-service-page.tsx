@@ -19,6 +19,7 @@ import TabSelector from '@/components/atoms/tab-selector';
 import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
+import { Separator } from '@/components/ui/separator';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -104,6 +105,8 @@ const EducationServicePage = () => {
         }}
         topRightSection={
           <div className="flex">
+            <Separator orientation="vertical" className="h-6 mr-[14px]" />
+
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>

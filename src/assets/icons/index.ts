@@ -17,6 +17,7 @@ import SkillAssessmentIcon from './skill-assessment-icon';
 import AppointmentCalendarIcon from './appointment-calendar-icon';
 import FileCheckIcon from './file-check-icon';
 import BellIcon from './bell-icon';
+import DotIcon from './dot-icon';
 
 const Icons = {
   AgencyAgreementIcon,
@@ -38,6 +39,7 @@ const Icons = {
   FileCheckIcon,
   TaskIcon,
   BellIcon,
+  DotIcon,
 };
 
 export default Icons;
