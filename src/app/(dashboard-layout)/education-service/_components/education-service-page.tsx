@@ -104,7 +104,7 @@ const EducationServicePage = () => {
           right: ['lead-actions'],
         }}
         topRightSection={
-          <div className="flex">
+          <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />
 
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>

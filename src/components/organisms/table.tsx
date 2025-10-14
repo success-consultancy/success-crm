@@ -205,7 +205,7 @@ const TableComponent = <TData, TValue>({
           : undefined
       : undefined;
 
-    // Don't set backgroundColor here for body cells - let CSS handle hover state
+    // For body cells, ensure white background that can be overridden by hover
     const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
 
     return {
@@ -216,8 +216,11 @@ const TableComponent = <TData, TValue>({
       width: column.getSize(),
       zIndex: isPinned ? 1 : 0,
       backgroundColor,
+      // Ensure pinned columns are always rendered on top
+      willChange: isPinned ? 'transform' : undefined,
     };
   };
+
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
@@ -303,7 +306,7 @@ const TableComponent = <TData, TValue>({
                             header.column.getIsResizing() ? 'bg-primary/50 w-1' : '',
                           ])}
                         >
-                          <div className="h-[60%] bg-border-normal w-0.5"></div>
+                          <div className="h-[60%] hover:bg-border-normal w-0.5"></div>
                         </div>
                       )}
                     </th>
@@ -315,7 +318,7 @@ const TableComponent = <TData, TValue>({
               {table.getRowModel().rows.map((row, idx) => (
                 <tr
                   className={cn([
-                    'group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-neutral-dark-grey',
+                    'group border-b border-stroke-divider transition-colors hover:bg-muted data-[state=selected]:bg-muted text-neutral-dark-grey',
                     '*:px-4 *:py-2.5',
                     'px-4 py-2',
                     '*:text-left select-none',
@@ -341,10 +344,15 @@ const TableComponent = <TData, TValue>({
                   }}
                 >
                   {row.getVisibleCells().map((cell, i) => {
+                    const isPinned = cell.column.getIsPinned();
                     return (
                       <td
                         className={cn([
-                          'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap',
+                          'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap relative',
+                          // Ensure pinned columns are always white, but can be overridden by hover
+                          isPinned && 'bg-white group-hover:bg-muted transition-colors duration-200',
+                          // Add higher z-index for pinned columns to prevent overlap issues
+                          isPinned && 'z-10',
                         ])}
                         key={cell.id}
                         style={{
