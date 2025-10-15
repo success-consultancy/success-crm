@@ -1,7 +1,7 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSearchParams from '@/hooks/use-search-params';
 import { ILead } from '@/types/response-types/leads-response';
@@ -20,6 +20,7 @@ import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
 import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/router';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -32,6 +33,7 @@ let TAB_CONFIG = [
 
 const EducationServicePage = () => {
   const { getSearchParamsObject } = useSearchParams();
+  const router = useRouter();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
 
@@ -85,6 +87,14 @@ const EducationServicePage = () => {
     });
   }
 
+  // Row click handler
+  const handleRowClick = useCallback(
+    (lead: ILead) => {
+      router.push(`/education-service/${lead.id}/view`);
+    },
+    [router],
+  );
+
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -123,6 +133,7 @@ const EducationServicePage = () => {
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
+        onRowClick={handleRowClick}
       />
     </Container>
   );
