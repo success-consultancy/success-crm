@@ -61,7 +61,7 @@ export const menuItems: MenuItem[] = [
   {
     title: 'Education Service',
     icon: GraduationCap,
-    href: '/education-service',
+    href: '/education',
   },
   {
     title: 'Visa Service',

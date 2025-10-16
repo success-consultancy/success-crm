@@ -1,29 +1,28 @@
-import ColumnHeader from '@/components/molecules/column-header';
-import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
-import { useTableContext } from '@/components/molecules/table-context-provider';
-import DeleteDialog from '@/components/organisms/delete.dialog';
-import EmailDialog from '@/components/organisms/email.dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import EmailDialog from '@/components/organisms/email.dialog';
+import ColumnHeader from '@/components/molecules/column-header';
+import DeleteDialog from '@/components/organisms/delete.dialog';
+import { useTableContext } from '@/components/molecules/table-context-provider';
 
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Skeleton } from '@/components/ui/skeleton';
-import { SendEmailSchemaType } from '@/schema/send-email-schema';
-import { ServiceType } from '@/types/leads/leads-types';
-import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
-import type { ColumnDef } from '@tanstack/react-table';
-import { format, formatDate } from 'date-fns';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { format, formatDate } from 'date-fns';
+import { Skeleton } from '@/components/ui/skeleton';
+import type { ColumnDef } from '@tanstack/react-table';
+import { SendEmailSchemaType } from '@/schema/send-email-schema';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
+import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
+import { ServiceType } from '@/types/leads/leads-types';
 
-export const useLeadColumn = (
+export const useEducationColumn = (
   handleDelete: (id: number) => void,
   handleSendEmail: (payload: SendEmailSchemaType) => void,
 ) => {
   const router = useRouter();
 
-  const LeadColumns: ColumnDef<ILead>[] = [
+  const EducationColumns: ColumnDef<IEducation>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -57,25 +56,25 @@ export const useLeadColumn = (
       meta: { isVisible: true, sticky: 'left', stickyLeft: 0 },
     },
     {
-      id: 'lead-createdAt',
-      header: () => <ColumnHeader title="" keyParam="createdAt" className="h-10" />,
+      id: 'education-createdAt',
+      header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
-        return <DateWithIndicator date={row.original.createdAt} className="text-left" />;
+        return <span className="max-w-10 text-left">{formatDate(row.original.createdAt, 'yyyy-MM-dd')}</span>;
       },
       enableSorting: true,
       size: 120,
       meta: { isVisible: true, sticky: 'left', stickyLeft: 40 },
     },
     {
-      id: 'lead-id',
+      id: 'education-id',
       header: () => <ColumnHeader title="ID" keyParam="id" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/leads/${row.original.id}/view`)}>
+          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/education/${row.original.id}/view`)}>
             {row.original.id}
           </span>
         );
@@ -85,7 +84,7 @@ export const useLeadColumn = (
       meta: { isVisible: true, sticky: 'left', stickyLeft: 160 },
     },
     {
-      id: 'lead-first-name',
+      id: 'education-first-name',
       header: () => <ColumnHeader title="First name" keyParam="firstName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -96,7 +95,7 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'lead-middle-name',
+      id: 'education-middle-name',
       header: () => <ColumnHeader title="Middle name" keyParam="middleName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -107,7 +106,7 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'lead-last-name',
+      id: 'education-last-name',
       header: () => <ColumnHeader title="Last name" keyParam="lastName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -118,7 +117,7 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'lead-birth-date',
+      id: 'education-birth-date',
       header: () => <ColumnHeader title="Birth date" keyParam="dob" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -129,7 +128,7 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'lead-email',
+      id: 'education-email',
       header: () => <ColumnHeader title="Email" keyParam="email" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -140,7 +139,7 @@ export const useLeadColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'lead-phone',
+      id: 'education-phone',
       header: () => <ColumnHeader title="Phone" keyParam="phone" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -203,28 +202,6 @@ export const useLeadColumn = (
         return <span className="w-full">{row.original.location || '-'}</span>;
       },
       size: 120,
-      meta: { isVisible: false },
-    },
-    {
-      id: 'occupation',
-      header: () => <ColumnHeader title="Occupation" keyParam="occupation" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.occupation || '-'}</span>;
-      },
-      size: 280,
-      meta: { isVisible: false },
-    },
-    {
-      id: 'qualification',
-      header: () => <ColumnHeader title="Qualification" keyParam="qualification" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.qualification || '-'}</span>;
-      },
-      size: 160,
       meta: { isVisible: false },
     },
     {
@@ -372,13 +349,13 @@ export const useLeadColumn = (
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
-            case LeadStatusTypes.New:
+            case EducationStatusTypes.New:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case LeadStatusTypes.Converted:
+            case EducationStatusTypes.Coereceived:
               return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-            case LeadStatusTypes.NotConverted:
+            case EducationStatusTypes.Withdrawn:
               return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case LeadStatusTypes.FollowUp:
+            case EducationStatusTypes.ChecklistSent:
               return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
             default:
               return <span>{status}</span>;
@@ -391,7 +368,7 @@ export const useLeadColumn = (
       meta: { isVisible: false },
     },
     {
-      id: 'lead-actions',
+      id: 'education-actions',
       header: () => <Plus className="h-5 w-5 mx-auto" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -410,17 +387,14 @@ export const useLeadColumn = (
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
                   <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/leads/${row.original.id}/edit`);
-                    }}
+                    onClick={() => router.push(`/education/${row.original.id}/edit`)}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Edit strokeWidth={1.5} className="h-5 w-5" />
                     <span>Edit</span>
                   </div>
                   <div
-                    onClick={() => router.push(`/leads/${row.original.id}/view`)}
+                    onClick={() => router.push(`/education/${row.original.id}/view`)}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Eye strokeWidth={1.5} className="h-5 w-5" />
@@ -445,11 +419,11 @@ export const useLeadColumn = (
                     trigger={
                       <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
                         <Trash2 strokeWidth={1.5} className="h-5 w-5" />
-                        <span>Delete Lead</span>
+                        <span>Delete Education</span>
                       </div>
                     }
-                    title="Delete this Lead"
-                    description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+                    title="Delete this Education"
+                    description="Are you sure you want to delete this education? Deleting this education will remove all associated data, including contacts, interactions and notes."
                     onConfirm={() => handleDelete(row.original.id)}
                   />
                 </div>
@@ -462,5 +436,5 @@ export const useLeadColumn = (
       meta: { isVisible: true, sticky: 'right', stickyRight: 0 },
     },
   ];
-  return LeadColumns;
+  return EducationColumns;
 };

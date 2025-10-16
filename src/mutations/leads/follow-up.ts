@@ -29,7 +29,7 @@ export const useUpdateFollowUp = () => {
     onSuccess: (_data, variables) => {
       success('Follow-up updated successfully.');
       // Invalidate follow-up list for this lead
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.leadId)] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
     onError: () => {
       error('Failed to update follow-up');
@@ -45,7 +45,7 @@ export const useAddFollowUp = () => {
     mutationFn: addFollowUp,
     onSuccess: (_data, variables) => {
       success('Follow-up added successfully.');
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.leadId)] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
     onError: () => {
       error('Failed to add follow-up');

@@ -61,8 +61,10 @@ interface Props<TData, TValue> {
   tableHeight?: string;
   onBulkDelete?: (ids: number[]) => void;
   onSendEmail?: (payload: SendEmailSchemaType) => void;
-  handleDateRangeApply: (range: { from: Date | undefined; to: Date | undefined }) => void;
+  handleDateRangeApply?: (range: { from: Date | undefined; to: Date | undefined }) => void;
   columnPinning?: TableState['columnPinning'];
+  showHeaderSection?: boolean;
+  showPaginationSection?: boolean;
   onRowClick?: (row: TData) => void;
 }
 
@@ -85,6 +87,8 @@ const TableComponent = <TData, TValue>({
   handleDateRangeApply,
   onSendEmail,
   columnPinning,
+  showHeaderSection = true,
+  showPaginationSection = true,
   onRowClick,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
@@ -163,7 +167,7 @@ const TableComponent = <TData, TValue>({
       rowSelection,
       columnSizing,
       columnVisibility,
-      columnPinning,
+      columnPinning: columnPinning || {},
     },
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
@@ -201,8 +205,8 @@ const TableComponent = <TData, TValue>({
       ? isLastLeftPinnedColumn
         ? `-2px 0 2px -2px #D9E2E8 inset`
         : isFirstRightPinnedColumn
-          ? `2px 0 2px -2px #D9E2E8 inset`
-          : undefined
+        ? `2px 0 2px -2px #D9E2E8 inset`
+        : undefined
       : undefined;
 
     // For body cells, ensure white background that can be overridden by hover
@@ -224,21 +228,23 @@ const TableComponent = <TData, TValue>({
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
       <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
-        <div className="flex w-full items-center justify-between pb-5 gap-5">
-          <div className="flex gap-2">
-            <TableSearchInput
-              searchParamField={searchKey as string}
-              className="max-w-[18rem]"
-              placeholder={`Search data here`}
-            />
-            <DateRangePicker onApply={handleDateRangeApply} />
-          </div>
+        {showHeaderSection && (
+          <div className="flex w-full items-center justify-between pb-5 gap-5">
+            <div className="flex gap-2">
+              <TableSearchInput
+                searchParamField={searchKey as string}
+                className="max-w-[18rem]"
+                placeholder={`Search data here`}
+              />
+              <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
+            </div>
 
-          <div className="flex items-center gap-[14px]">
-            <ColumnSelector table={table} />
-            {topRightSection}
+            <div className="flex items-center gap-[14px]">
+              <ColumnSelector table={table} />
+              {topRightSection}
+            </div>
           </div>
-        </div>
+        )}
         {table.getSelectedRowModel().rows.length > 0 && (
           <div className="flex items-center gap-3">
             {onSendEmail && (
@@ -380,36 +386,38 @@ const TableComponent = <TData, TValue>({
         </div>
 
         {/* Pagination controls - fixed at bottom */}
-        <div className="flex w-full items-center justify-end pt-5 gap-5 mt-auto">
-          <div className="text-b1 flex items-center gap-2">
-            <span>Items per page</span>
-            <Select
-              defaultValue={_offset.toString()}
-              onValueChange={(val) => {
-                setParam('limit', val);
-              }}
-            >
-              <SelectTrigger className="w-fit">
-                <SelectValue placeholder="25" />
-              </SelectTrigger>
-              <SelectContent className="max-w-fit">
-                {ITEMS_PER_PAGE_OPTIONS.map((option, idx) => (
-                  <SelectItem value={option.value} key={option.value + idx}>
-                    {option.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+        {showPaginationSection && (
+          <div className="flex w-full items-center justify-end pt-5 gap-5 mt-auto">
+            <div className="text-b1 flex items-center gap-2">
+              <span>Items per page</span>
+              <Select
+                defaultValue={_offset.toString()}
+                onValueChange={(val) => {
+                  setParam('limit', val);
+                }}
+              >
+                <SelectTrigger className="w-fit">
+                  <SelectValue placeholder="25" />
+                </SelectTrigger>
+                <SelectContent className="max-w-fit">
+                  {ITEMS_PER_PAGE_OPTIONS.map((option, idx) => (
+                    <SelectItem value={option.value} key={option.value + idx}>
+                      {option.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Pagination
+              totalItems={totalItems || 0}
+              offset={Number.parseInt(offset?.toString() as string)}
+              // since tanstack table uses 0 index for 1st page, we need to add 1 to the current page
+              currentPage={+_currentPage}
+              onNextClick={paginationMethods.goToNextPage}
+              onPreviousClick={paginationMethods.gotToPrevPage}
+            />
           </div>
-          <Pagination
-            totalItems={totalItems || 0}
-            offset={Number.parseInt(offset?.toString() as string)}
-            // since tanstack table uses 0 index for 1st page, we need to add 1 to the current page
-            currentPage={+_currentPage}
-            onNextClick={paginationMethods.goToNextPage}
-            onPreviousClick={paginationMethods.gotToPrevPage}
-          />
-        </div>
+        )}
       </div>
     </TableContextProvider>
   );

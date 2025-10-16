@@ -4,10 +4,8 @@ import { Plus } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSearchParams from '@/hooks/use-search-params';
-import { ILead } from '@/types/response-types/leads-response';
 import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
 import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
-import { useLeadColumn } from '@/config/columns/leads-columns-definitions';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import TableComponent from '@/components/organisms/table';
@@ -19,16 +17,19 @@ import TabSelector from '@/components/atoms/tab-selector';
 import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
+import { useGetEducation } from '@/query/get-education';
+import { IEducation } from '@/types/response-types/education-response';
+import { useEducationColumn } from '@/config/columns/education-columns-definitions';
 import { Separator } from '@/components/ui/separator';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // Tab Config
 let TAB_CONFIG = [
   { key: 'all_students', label: 'All Students' },
-  { key: 'in_progress', label: 'In Progress' },
-  { key: 'offer_and_payment', label: 'Offer and Payment' },
-  { key: 'coe_received', label: 'COE Received' },
-  { key: 'closed', label: 'Closed' },
+  { key: 'in_progress', label: 'In Progress' }, // New student, Checklist sent, Application Ready, Application Submitted
+  { key: 'offer_payment', label: 'Offer and Payment' }, // Offer Received, Waiting Payment, Fee Paid
+  { key: 'coe_received', label: 'CoE Received' },
+  { key: 'closed', label: 'Closed' }, // Withdrawn, Discontinued
 ];
 
 const EducationServicePage = () => {
@@ -37,7 +38,7 @@ const EducationServicePage = () => {
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
 
-  const { data, isLoading } = useGetLeads({
+  const { data, isLoading } = useGetEducation({
     ...filterParams,
     q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
@@ -59,9 +60,9 @@ const EducationServicePage = () => {
     sendEmail(payload);
   };
 
-  const LeadColumns = useLeadColumn(handleDelete, handleSendEmail);
+  const EducationColumns = useEducationColumn(handleDelete, handleSendEmail);
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IEducation>[]>(EducationColumns);
 
   const { searchParams, setParams } = useSearchParams();
 
@@ -89,8 +90,8 @@ const EducationServicePage = () => {
 
   // Row click handler
   const handleRowClick = useCallback(
-    (lead: ILead) => {
-      router.push(`/education-service/${lead.id}/view`);
+    (row: IEducation) => {
+      router.push(`/education/${row.id}/view`);
     },
     [router],
   );
@@ -101,7 +102,7 @@ const EducationServicePage = () => {
         <h3 className="text-h5 text-content-heading font-bold">Education Services</h3>
       </Portal>
       <TableComponent
-        data={data?.rows as ILead[]}
+        data={data?.rows as IEducation[]}
         columns={visibleColumns}
         skeletonColumns={visibleColumns}
         isLoading={isLoading}
