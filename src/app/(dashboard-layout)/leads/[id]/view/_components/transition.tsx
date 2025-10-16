@@ -1,12 +1,13 @@
 import Button from '@/components/atoms/button';
 import CardContainer from '@/components/atoms/card-container';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import { useAddEducation } from '@/mutations/education/add-education';
 import { useAddInsurance } from '@/mutations/insurance/add-insurance';
 import { useAddSkillAssessment } from '@/mutations/skill-assessment/add-skill-assessment';
 import { useAddTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useAddVisa } from '@/mutations/visas/add-visa';
 import { ILead } from '@/types/response-types/leads-response';
-import { FolderSymlink } from 'lucide-react';
+import { FolderSymlink, Loader2 } from 'lucide-react';
 import { useState } from 'react';
 
 const Transition = ({ lead }: { lead: ILead }) => {
@@ -49,6 +50,9 @@ const Transition = ({ lead }: { lead: ILead }) => {
       clientKey: 'tribunalReviews',
     },
   ]);
+
+  const [isConfirmationOpen, setIsConfirmationOpen] = useState(false);
+  const [selectedServiceId, setSelectedServiceId] = useState<string | null>(null);
 
   // Function to get client count for a service
   const getClientCount = (clientKey: keyof ILead['clientIds']) => {
@@ -182,6 +186,26 @@ const Transition = ({ lead }: { lead: ILead }) => {
     }
   };
 
+  const handleConfirmMove = () => {
+    if (selectedServiceId) {
+      handleMove(selectedServiceId);
+      setSelectedServiceId(null);
+      setIsConfirmationOpen(false);
+    }
+  };
+
+  const handleCancelMove = () => {
+    setSelectedServiceId(null);
+    setIsConfirmationOpen(false);
+  };
+  // TODO: Add pending state based on mutation service
+  const isPending =
+    addVisa.isPending ||
+    addSkillAssessment.isPending ||
+    addEducation.isPending ||
+    addInsurance.isPending ||
+    addTribunalReview.isPending;
+
   return (
     <>
       <div className="flex gap-4 overflow-x-auto p-4">
@@ -195,7 +219,7 @@ const Transition = ({ lead }: { lead: ILead }) => {
             </div>
             {getClient(service.clientKey).map((client) => {
               return (
-                <div key={client?.id} className="bg-[#F2F4F7] m-4 flex flex-col gap-2">
+                <div key={client?.id} className="bg-[#F2F4F7] mb-4 flex flex-col gap-2 p-3 rounded-md">
                   <p>ID:{client?.id}</p>
                   <p className="text-c1 text-neutral-dark-grey">
                     Moved by {client?.UpdatedByUser?.firstName}
@@ -205,16 +229,38 @@ const Transition = ({ lead }: { lead: ILead }) => {
                 </div>
               );
             })}
-            <div
-              className="cursor-pointer text-b1-b text-neutral-light-grey border border-dashed rounded-md p-2 text-center flex gap-2"
-              onClick={() => handleMove(service.id)}
-            >
-              <FolderSymlink size={18} />
-              Move here
-            </div>
+
+            {isPending ? (
+              <div className="cursor-pointer flex items-center justify-center text-b1-b text-neutral-light-grey border border-dashed rounded-md p-2 text-center gap-2">
+                <Loader2 size={20} />
+              </div>
+            ) : (
+              <div
+                className="cursor-pointer text-b1-b text-neutral-light-grey border border-dashed rounded-md p-2 text-center flex gap-2"
+                onClick={() => {
+                  setSelectedServiceId(service.id);
+                  setIsConfirmationOpen(true);
+                }}
+              >
+                <FolderSymlink size={18} />
+                Move here
+              </div>
+            )}
           </CardContainer>
         ))}
       </div>
+
+      <ConfirmationDialog
+        isOpen={isConfirmationOpen}
+        setIsOpen={setIsConfirmationOpen}
+        title="Confirm Move"
+        message={`Are you sure you want to move this lead to ${services.find((s) => s.id === selectedServiceId)?.title}?`}
+        confirmText="Move"
+        cancelText="Cancel"
+        onConfirm={handleConfirmMove}
+        onCancel={handleCancelMove}
+        loading={isPending}
+      />
     </>
   );
 };

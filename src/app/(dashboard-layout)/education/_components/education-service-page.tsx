@@ -1,13 +1,11 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSearchParams from '@/hooks/use-search-params';
-import { ILead } from '@/types/response-types/leads-response';
 import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
 import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
-import { useLeadColumn } from '@/config/columns/leads-columns-definitions';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import TableComponent from '@/components/organisms/table';
@@ -22,6 +20,8 @@ import { useExportLeads } from '@/mutations/leads/export-lead';
 import { useGetEducation } from '@/query/get-education';
 import { IEducation } from '@/types/response-types/education-response';
 import { useEducationColumn } from '@/config/columns/education-columns-definitions';
+import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/navigation';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -34,6 +34,7 @@ let TAB_CONFIG = [
 
 const EducationServicePage = () => {
   const { getSearchParamsObject } = useSearchParams();
+  const router = useRouter();
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
 
@@ -87,6 +88,14 @@ const EducationServicePage = () => {
     });
   }
 
+  // Row click handler
+  const handleRowClick = useCallback(
+    (row: IEducation) => {
+      router.push(`/education/${row.id}/view`);
+    },
+    [router],
+  );
+
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -106,7 +115,9 @@ const EducationServicePage = () => {
           right: ['lead-actions'],
         }}
         topRightSection={
-          <div className="flex">
+          <div className="flex items-center">
+            <Separator orientation="vertical" className="h-6 mr-[14px]" />
+
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>
@@ -123,6 +134,7 @@ const EducationServicePage = () => {
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
+        onRowClick={handleRowClick}
       />
     </Container>
   );

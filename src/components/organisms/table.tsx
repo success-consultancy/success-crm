@@ -65,6 +65,7 @@ interface Props<TData, TValue> {
   columnPinning?: TableState['columnPinning'];
   showHeaderSection?: boolean;
   showPaginationSection?: boolean;
+  onRowClick?: (row: TData) => void;
 }
 
 const TableComponent = <TData, TValue>({
@@ -88,6 +89,7 @@ const TableComponent = <TData, TValue>({
   columnPinning,
   showHeaderSection = true,
   showPaginationSection = true,
+  onRowClick,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -193,8 +195,6 @@ const TableComponent = <TData, TValue>({
 
   //important styles to make sticky column pinning
   const getCommonPinningStyles = <T,>(column: Column<T>, isHeaderColumn?: boolean): CSSProperties => {
-    if (!column) return {};
-
     const isPinned = column.getIsPinned();
 
     // pinned shadow style
@@ -209,7 +209,8 @@ const TableComponent = <TData, TValue>({
         : undefined
       : undefined;
 
-    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'white') : undefined;
+    // For body cells, ensure white background that can be overridden by hover
+    const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
 
     return {
       boxShadow,
@@ -219,20 +220,10 @@ const TableComponent = <TData, TValue>({
       width: column.getSize(),
       zIndex: isPinned ? 1 : 0,
       backgroundColor,
+      // Ensure pinned columns are always rendered on top
+      willChange: isPinned ? 'transform' : undefined,
     };
   };
-  // Early return if columns are not properly initialized
-  if (!columns || columns.length === 0) {
-    return (
-      <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
-        <div
-          className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}
-        >
-          <div className="flex items-center justify-center h-32 text-gray-500">No columns available</div>
-        </div>
-      </TableContextProvider>
-    );
-  }
 
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
@@ -248,9 +239,8 @@ const TableComponent = <TData, TValue>({
               <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
             </div>
 
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-[14px]">
               <ColumnSelector table={table} />
-              <Separator orientation="vertical" />
               {topRightSection}
             </div>
           </div>
@@ -322,7 +312,7 @@ const TableComponent = <TData, TValue>({
                             header.column.getIsResizing() ? 'bg-primary/50 w-1' : '',
                           ])}
                         >
-                          <div className="h-[60%] bg-border-normal w-0.5"></div>
+                          <div className="h-[60%] hover:bg-border-normal w-0.5"></div>
                         </div>
                       )}
                     </th>
@@ -334,31 +324,54 @@ const TableComponent = <TData, TValue>({
               {table.getRowModel().rows.map((row, idx) => (
                 <tr
                   className={cn([
-                    'group border-b border-stroke-divider transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted text-neutral-dark-grey',
+                    'group border-b border-stroke-divider transition-colors hover:bg-muted data-[state=selected]:bg-muted text-neutral-dark-grey',
                     '*:px-4 *:py-2.5',
                     'px-4 py-2',
                     '*:text-left select-none',
                     '*:align-middle',
                     'last:border-none',
+                    onRowClick && 'cursor-pointer',
                   ])}
                   key={idx}
+                  onClick={(e) => {
+                    // Don't trigger row click if clicking on a button, checkbox, or link
+                    const target = e.target as HTMLElement;
+                    const isInteractiveElement =
+                      target.tagName === 'BUTTON' ||
+                      target.tagName === 'INPUT' ||
+                      target.tagName === 'A' ||
+                      target.closest('button') ||
+                      target.closest('input') ||
+                      target.closest('a');
+
+                    if (!isInteractiveElement && onRowClick) {
+                      onRowClick(row.original);
+                    }
+                  }}
                 >
-                  {row.getVisibleCells().map((cell, i) => (
-                    <td
-                      className={cn([
-                        'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap',
-                      ])}
-                      key={cell.id}
-                      style={{
-                        width: `${cell.column.getSize()}px`,
-                        minWidth: `${cell.column.getSize()}px`,
-                        maxWidth: `${cell.column.getSize()}px`,
-                        ...getCommonPinningStyles(cell.column),
-                      }}
-                    >
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </td>
-                  ))}
+                  {row.getVisibleCells().map((cell, i) => {
+                    const isPinned = cell.column.getIsPinned();
+                    return (
+                      <td
+                        className={cn([
+                          'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap relative',
+                          // Ensure pinned columns are always white, but can be overridden by hover
+                          isPinned && 'bg-white group-hover:bg-muted transition-colors duration-200',
+                          // Add higher z-index for pinned columns to prevent overlap issues
+                          isPinned && 'z-10',
+                        ])}
+                        key={cell.id}
+                        style={{
+                          width: `${cell.column.getSize()}px`,
+                          minWidth: `${cell.column.getSize()}px`,
+                          maxWidth: `${cell.column.getSize()}px`,
+                          ...getCommonPinningStyles(cell.column),
+                        }}
+                      >
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    );
+                  })}
                 </tr>
               ))}
               {!skeletonColumns && isLoading && (

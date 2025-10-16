@@ -1,11 +1,12 @@
 'use client';
 
 import { Plus } from 'lucide-react';
-import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import React, { useCallback, useMemo, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSearchParams from '@/hooks/use-search-params';
 import { ILead } from '@/types/response-types/leads-response';
-import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
+import { LEADS_FILTER_PARAMS, useGetLeads, useGetLeads as useLeads } from '@/query/get-leads';
 import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
 import { useLeadColumn } from '@/config/columns/leads-columns-definitions';
 import Container from '@/components/atoms/container';
@@ -19,25 +20,40 @@ import TabSelector from '@/components/atoms/tab-selector';
 import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
+import { Separator } from '@/components/ui/separator';
 
 // Tab Config
-let TAB_CONFIG = [
+const TAB_CONFIG = [
   { key: 'all_leads', label: 'All Leads' },
   { key: 'new_leads', label: 'New Leads' },
   { key: 'qualified_leads', label: 'Qualified leads' },
   { key: 'disqualified_leads', label: 'Disqualified leads' },
   { key: 'follow_up', label: 'Follow up' },
 ];
+
 const Leads = () => {
   const { getSearchParamsObject } = useSearchParams();
+  const router = useRouter();
 
+  // Get filter params from URL
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
 
+  // Fetch leads data
   const { data, isLoading } = useGetLeads({
     ...filterParams,
     q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
   });
+
+  // Row click handler
+  const handleRowClick = useCallback(
+    (lead: ILead) => {
+      router.push(`/leads/${lead.id}/view`);
+    },
+    [router],
+  );
+
+  // Mutations
   const { mutateAsync: deleteLead } = useDeleteLead();
   const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
@@ -74,15 +90,6 @@ const Leads = () => {
     ]);
   };
 
-  if (data?.count) {
-    TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === 'all_leads') {
-        return { ...tab, count: data.count };
-      }
-      return tab;
-    });
-  }
-
   return (
     <Container className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -101,13 +108,12 @@ const Leads = () => {
           left: ['select', 'lead-createdAt', 'lead-id'],
           right: ['lead-actions'],
         }}
-
         topRightSection={
-          <div className="flex">
+          <div className="flex items-center">
+            <Separator orientation="vertical" className="h-6 mr-[14px]" />
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>
-
             <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
               Add Lead
             </ButtonLink>
@@ -120,6 +126,7 @@ const Leads = () => {
         onBulkDelete={handleDeleteBulk}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
+        onRowClick={handleRowClick}
       />
     </Container>
   );
