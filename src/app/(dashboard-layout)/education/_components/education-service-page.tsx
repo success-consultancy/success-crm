@@ -97,7 +97,7 @@ const EducationServicePage = () => {
   );
 
   return (
-    <Container className="flex flex-col py-4 max-h-full overflow-hidden">
+    <Container className="flex flex-col max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Education Services</h3>
       </Portal>

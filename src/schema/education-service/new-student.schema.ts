@@ -1,37 +1,37 @@
 import { z } from 'zod';
 
-export const newStudentSchema = z
+export const educationServiceSchema = z
   .object({
     // Personal Details
     firstName: z.string().min(1, 'First name is required').max(50, 'First name is too long'),
     middleName: z.string().max(50, 'Middle name is too long').optional(),
     lastName: z.string().min(1, 'Last name is required').max(50, 'Last name is too long'),
-    birthdate: z.date({ required_error: 'Please select an available date' }),
+    dob: z.date({ error: 'Please select an available date' }), // Updated from birthdate
     email: z.string().email('Invalid email address').min(5, 'Email is required').max(100, 'Email is too long'),
-    phoneNumber: z.string().min(7, 'Phone number is too short').max(15, 'Phone number is too long'),
+    phone: z.string().min(7, 'Phone number is too short').max(15, 'Phone number is too long'), // Updated from phoneNumber
     nationality: z.string().min(2, 'Nationality is required').max(50, 'Nationality is too long'),
     address: z.string().min(5, 'Address is required').max(200, 'Address is too long'),
-    passportNumber: z.string().min(5, 'Passport number is too short').max(20, 'Passport number is too long'),
-    passportIssueDate: z.date({ required_error: 'Please select an available date' }),
-    passportExpiryDate: z.date({ required_error: 'Please select an available date' }),
+    passport: z.string().min(5, 'Passport number is too short').max(20, 'Passport number is too long'), // Updated from passportNumber
+    issueDate: z.date({ error: 'Please select an available date' }), // Updated from passportIssueDate
+    expiryDate: z.date({ error: 'Please select an available date' }), // Updated from passportExpiryDate
     location: z.string().min(2, 'Location is required').max(100, 'Location is too long'),
 
     // Course Information
     universityName: z.string().min(2, 'University name is required').max(100, 'University name is too long'),
     course: z.string().min(2, 'Course is required').max(100, 'Course is too long'),
-    universityStartDate: z.date({ required_error: 'Please select an available date' }),
-    universityEndDate: z.date({ required_error: 'Please select an available date' }),
+    startDate: z.date({ error: 'Please select an available date' }), // Updated from universityStartDate
+    endDate: z.date({ error: 'Please select an available date' }), // Updated from universityEndDate
     status: z.string().min(2, 'Status is required').max(50, 'Status is too long'),
 
     // Fee Structure
     feePaymentPlan: z.string().min(2, 'Fee payment plan is required').max(50, 'Fee payment plan is too long'),
     feeAmount: z
-      .number({ required_error: 'Fee amount must be a number' })
+      .number({ error: 'Fee amount must be a number' })
       .min(0, 'Fee amount must be at least 0')
       .max(1000000, 'Fee amount is too high'),
-    dueDate: z.date({ required_error: 'Please select an available date' }),
-    invoiceNumber: z.string().min(1, 'Invoice number is required').max(50, 'Invoice number is too long'),
-    paymentStatus: z.string().min(2, 'Payment status is required').max(50, 'Payment status is too long'),
+    feeDueDate: z.date({ error: 'Please select an available date' }), // Updated from dueDate
+    invoiceNo: z.string().min(1, 'Invoice number is required').max(50, 'Invoice number is too long'), // Updated from invoiceNumber
+    invoiceStatus: z.string().min(2, 'Payment status is required').max(50, 'Payment status is too long'), // Updated from paymentStatus
     feeNotes: z.string().max(500, 'Fee notes are too long').optional(),
 
     // Accounts
@@ -39,29 +39,29 @@ export const newStudentSchema = z
       .string()
       .min(2, 'Account payment plan is required')
       .max(50, 'Account payment plan is too long'),
-    commission: z
-      .number({ required_error: 'Commission must be a number' })
+    commissionAmount: z
+      .number({ error: 'Commission must be a number' })
       .min(0, 'Commission must be at least 0')
-      .max(100000, 'Commission is too high'),
+      .max(100000, 'Commission is too high'), // Updated from commission
     accountAmount: z
-      .number({ required_error: 'Amount must be a number' })
+      .number({ error: 'Amount must be a number' })
       .min(0, 'Amount must be at least 0')
       .max(1000000, 'Amount is too high'),
     discount: z
-      .number({ required_error: 'Discount must be a number' })
+      .number({ error: 'Discount must be a number' })
       .min(0, 'Discount must be at least 0')
       .max(100000, 'Discount is too high')
       .optional(),
     bonus: z
-      .number({ required_error: 'Bonus must be a number' })
+      .number({ error: 'Bonus must be a number' })
       .min(0, 'Bonus must be at least 0')
       .max(100000, 'Bonus is too high')
       .optional(),
     netAmount: z
-      .number({ required_error: 'Net amount must be a number' })
+      .number({ error: 'Net amount must be a number' })
       .min(0, 'Net amount must be at least 0')
       .max(1000000, 'Net amount is too high'),
-    accountDueDate: z.date({ required_error: 'Please select an available date' }),
+    accountDueDate: z.date({ error: 'Please select an available date' }),
     accountInvoiceNumber: z
       .string()
       .min(1, 'Account invoice number is required')
@@ -70,50 +70,51 @@ export const newStudentSchema = z
     accountNotes: z.string().max(500, 'Account notes are too long').optional(),
 
     // Misc
-    assignedTo: z.string().min(2, 'Assigned to is required').max(50, 'Assigned to is too long'),
-    source: z.string().min(2, 'Source is required').max(50, 'Source is too long'),
-    additionalNotes: z.string().max(1000, 'Additional notes are too long').optional(),
+    userId: z.string().min(1, 'Assigned to is required').max(50, 'Assigned to is too long'), // Updated from assignedTo
+    sourceId: z.string().min(1, 'Source is required').max(50, 'Source is too long'), // Updated from source
+    remarks: z.string().max(1000, 'Additional notes are too long').optional(), // Updated from additionalNotes
   })
-  .refine((data) => data.passportExpiryDate > data.passportIssueDate, {
+  .refine((data) => data.expiryDate > data.issueDate, {
+    // Updated field names in refinement
     message: 'Passport expiry date must be after issue date',
-    path: ['passportExpiryDate'],
+    path: ['expiryDate'],
   });
 
-export type NewStudentType = z.infer<typeof newStudentSchema>;
+export type EducationServiceType = z.infer<typeof educationServiceSchema>;
 
-export const educationServiceDefaultValues: NewStudentType = {
+export const educationServiceDefaultValues: EducationServiceType = {
   // Personal Details
   firstName: '',
   middleName: '',
   lastName: '',
-  birthdate: new Date(),
+  dob: new Date(),
   email: '',
-  phoneNumber: '',
+  phone: '',
   nationality: '',
   address: '',
-  passportNumber: '',
-  passportIssueDate: new Date(),
-  passportExpiryDate: new Date(),
+  passport: '',
+  issueDate: new Date(),
+  expiryDate: new Date(),
   location: '',
 
   // Course Information
   universityName: '',
   course: '',
-  universityStartDate: new Date(),
-  universityEndDate: new Date(),
+  startDate: new Date(),
+  endDate: new Date(),
   status: '',
 
   // Fee Structure
   feePaymentPlan: '',
   feeAmount: 0,
-  dueDate: new Date(),
-  invoiceNumber: '',
-  paymentStatus: '',
+  feeDueDate: new Date(),
+  invoiceNo: '',
+  invoiceStatus: '',
   feeNotes: '',
 
   // Accounts
   accountPaymentPlan: '',
-  commission: 0,
+  commissionAmount: 0,
   accountAmount: 0,
   discount: 0,
   bonus: 0,
@@ -124,7 +125,7 @@ export const educationServiceDefaultValues: NewStudentType = {
   accountNotes: '',
 
   // Misc
-  assignedTo: '',
-  source: '',
-  additionalNotes: '',
+  userId: '',
+  sourceId: '',
+  remarks: '',
 };

@@ -26,7 +26,7 @@ export function FormAccordion({
       value={value}
       className={cn('bg-white rounded-lg border border-neutral-200 overflow-hidden', className)}
     >
-      <AccordionTrigger className={cn('text-[16px] font-semibold px-6 py-4 border-neutral-200', triggerClassName)}>
+      <AccordionTrigger className={cn('text-[18px] font-semibold px-6 py-4 border-neutral-200', triggerClassName)}>
         {title}
       </AccordionTrigger>
 
