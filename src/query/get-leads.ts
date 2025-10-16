@@ -66,14 +66,14 @@ export const useGetLeadLog = (id: string) => {
   });
 };
 
-const getLeadFollowUp = async (id: string) => {
-  const res = await api.get(`/follow-up/get/${id}`);
+const getFollowUp = async (id: string, type: string) => {
+  const res = await api.get(`/follow-up/get/${id}?type=${type}`);
   return res.data as ILead[];
 };
 
-export const useGetFollowUp = (id: string) => {
+export const useGetFollowUp = (id: string, type: string) => {
   return useQuery({
-    queryFn: () => getLeadFollowUp(id),
+    queryFn: () => getFollowUp(id, type),
     queryKey: [QUERY_KEYS.GET_FOLLOW_UP, id],
     refetchOnWindowFocus: false,
   });

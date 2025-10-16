@@ -3,7 +3,7 @@ import { z } from 'zod';
 export const forgotPasswordSchema = z.object({
   email: z
     .string({
-      error: 'Email is required',
+      required_error: 'Email is required',
     })
     .email('Invalid email address'),
 });
