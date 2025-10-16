@@ -1,8 +1,8 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion } from '@/components/ui/accordion';
 import {
   educationServiceDefaultValues,
-  newStudentSchema,
-  NewStudentType,
+  educationServiceSchema,
+  EducationServiceType,
 } from '@/schema/education-service/new-student.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -18,10 +18,12 @@ import SelectField from '@/components/organisms/select-field';
 import { Editor } from '@tinymce/tinymce-react';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
+import { useAddEducationService } from '@/mutations/education/add-education';
+import toast from 'react-hot-toast';
 
 export function AddEducationService() {
-  const form = useForm<NewStudentType>({
-    resolver: zodResolver(newStudentSchema),
+  const form = useForm<EducationServiceType>({
+    resolver: zodResolver(educationServiceSchema),
     defaultValues: educationServiceDefaultValues,
     mode: 'onBlur',
   });
@@ -38,13 +40,21 @@ export function AddEducationService() {
   const handleEditorChange = (content: string) => {
     setValue('feeNotes', content, { shouldValidate: true });
   };
-
-  const submitHandler = (data: NewStudentType) => {
-    console.log(data);
+  const { mutate, isPending } = useAddEducationService();
+  const submitHandler = (data: EducationServiceType) => {
+    mutate(
+      { payload: data },
+      {
+        onSuccess: () => {
+          toast.success('Student added successfully');
+          form.reset();
+        },
+      },
+    );
   };
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
-      <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1']}>
+      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
           <div className="grid grid-cols-3 gap-6">
@@ -56,11 +66,11 @@ export function AddEducationService() {
                 Birth Date
               </Label>
               <Controller
-                name="birthdate"
+                name="dob"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    error={!!errors.birthdate?.message}
+                    error={!!errors.dob?.message}
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
@@ -70,10 +80,10 @@ export function AddEducationService() {
                   />
                 )}
               />
-              <FormErrorMessage message={errors.birthdate?.message} />
+              <FormErrorMessage message={errors.dob?.message} />
             </div>
             <TextInput type="email" label="Email" {...register('email')} error={errors.email?.message} />
-            <TextInput label="Phone Number" {...register('phoneNumber')} error={errors.phoneNumber?.message} />
+            <TextInput label="Phone Number" {...register('phone')} error={errors.phone?.message} />
             <TextInput label="Nationality" {...register('nationality')} error={errors.nationality?.message} />
             <SelectField
               control={control}
@@ -86,14 +96,14 @@ export function AddEducationService() {
               ]}
               placeholder="Select option"
             />
-            <TextInput label="Passport Number" {...register('passportNumber')} error={errors.passportNumber?.message} />
+            <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
               <Label className="text-b2" htmlFor="passport-issue-date">
                 Passport Issue Date
               </Label>
               <Controller
-                name="passportIssueDate"
+                name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
@@ -102,18 +112,18 @@ export function AddEducationService() {
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.passportIssueDate?.message}
+                    error={!!errors.issueDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.passportIssueDate?.message} />
+              <FormErrorMessage message={errors.issueDate?.message} />
             </div>
             <div className="space-y-2">
               <Label className="text-b2" htmlFor="passport-expiry-date">
                 Passport Expiry Date
               </Label>
               <Controller
-                name="passportExpiryDate"
+                name="expiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
@@ -122,20 +132,20 @@ export function AddEducationService() {
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.passportExpiryDate?.message}
+                    error={!!errors.expiryDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.passportExpiryDate?.message} />
+              <FormErrorMessage message={errors.expiryDate?.message} />
             </div>
             <SelectField
               control={control}
               name="location"
               label="Location"
               options={[
-                { label: 'Location 1', value: 'location-1' },
-                { label: 'Location 2', value: 'location-2' },
-                { label: 'Location 3', value: 'location-3' },
+                { label: 'On Shore', value: 'on-shore' },
+                { label: 'Off Shore', value: 'off-shore' },
+                { label: 'Other', value: 'other' },
               ]}
               placeholder="Select option"
             />
@@ -159,7 +169,7 @@ export function AddEducationService() {
                   University Start Date
                 </Label>
                 <Controller
-                  name="universityStartDate"
+                  name="startDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -169,18 +179,18 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.universityStartDate?.message}
+                      error={!!errors.startDate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.universityStartDate?.message} />
+                <FormErrorMessage message={errors.startDate?.message} />
               </div>
               <div className="space-y-2">
                 <Label className="text-b2" htmlFor="universityEndDate">
                   University End Date
                 </Label>
                 <Controller
-                  name="universityEndDate"
+                  name="endDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -190,11 +200,11 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.universityEndDate?.message}
+                      error={!!errors.endDate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.universityEndDate?.message} />
+                <FormErrorMessage message={errors.endDate?.message} />
               </div>
               <SelectField
                 control={control}
@@ -240,7 +250,7 @@ export function AddEducationService() {
                   Payment Due Date
                 </Label>
                 <Controller
-                  name="dueDate"
+                  name="feeDueDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -250,16 +260,16 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.dueDate?.message}
+                      error={!!errors.feeDueDate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.dueDate?.message} />
+                <FormErrorMessage message={errors.feeDueDate?.message} />
               </div>
-              <TextInput label="Invoice Number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
+              <TextInput label="Invoice Number" {...register('invoiceNo')} error={errors.invoiceNo?.message} />
               <SelectField
                 control={control}
-                name="paymentStatus"
+                name="invoiceStatus"
                 label="Payment Status"
                 options={[
                   { label: 'Paid', value: 'paid' },
@@ -313,8 +323,8 @@ export function AddEducationService() {
               <TextInput
                 label="Commission"
                 type="number"
-                {...register('commission', { valueAsNumber: true })}
-                error={errors.commission?.message}
+                {...register('commissionAmount', { valueAsNumber: true })}
+                error={errors.commissionAmount?.message}
               />
               <TextInput
                 label="Account Amount"
@@ -395,19 +405,19 @@ export function AddEducationService() {
           <div className="grid grid-cols-2 gap-6">
             <SelectField
               control={control}
-              name="assignedTo"
+              name="userId"
               label="Assigned To"
               options={[
-                { label: 'John Doe', value: 'john-doe' },
-                { label: 'Jane Smith', value: 'jane-smith' },
-                { label: 'Mike Johnson', value: 'mike-johnson' },
-                { label: 'Sarah Wilson', value: 'sarah-wilson' },
+                { label: 'John Doe', value: '1' },
+                { label: 'Jane Smith', value: '2' },
+                { label: 'Mike Johnson', value: '3' },
+                { label: 'Sarah Wilson', value: '4' },
               ]}
               placeholder="Select assignee"
             />
             <SelectField
               control={control}
-              name="source"
+              name="sourceId"
               label="Source"
               options={[
                 { label: 'Website', value: 'website' },
@@ -419,18 +429,14 @@ export function AddEducationService() {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <TextInput
-                label="Additional Notes (Optional)"
-                {...register('additionalNotes')}
-                error={errors.additionalNotes?.message}
-              />
+              <TextInput label="Additional Notes (Optional)" {...register('remarks')} error={errors.remarks?.message} />
             </div>
           </div>
         </FormAccordion>
       </Accordion>
 
       <div className="flex justify-start mt-6">
-        <Button type="submit" variant="primary">
+        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
         <Button type="button" variant="outline" className="ml-3">

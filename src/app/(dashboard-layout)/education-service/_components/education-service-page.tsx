@@ -20,7 +20,7 @@ import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
 import { Separator } from '@/components/ui/separator';
-import { useRouter } from 'next/router';
+import { useRouter } from 'next/navigation';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -96,7 +96,7 @@ const EducationServicePage = () => {
   );
 
   return (
-    <Container className="flex flex-col py-4 max-h-full overflow-hidden">
+    <Container className="flex flex-col max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Education Services</h3>
       </Portal>
