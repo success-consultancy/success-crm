@@ -20,8 +20,8 @@ import { useExportLeads } from '@/mutations/leads/export-lead';
 import { useGetEducation } from '@/query/get-education';
 import { IEducation } from '@/types/response-types/education-response';
 import { useEducationColumn } from '@/config/columns/education-columns-definitions';
-import { Separator } from '@/components/ui/separator';
 import { useRouter } from 'next/navigation';
+import { Separator } from '@/components/ui/separator';
 
 // Tab Config
 let TAB_CONFIG = [

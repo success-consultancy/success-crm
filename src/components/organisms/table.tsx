@@ -63,9 +63,9 @@ interface Props<TData, TValue> {
   onSendEmail?: (payload: SendEmailSchemaType) => void;
   handleDateRangeApply?: (range: { from: Date | undefined; to: Date | undefined }) => void;
   columnPinning?: TableState['columnPinning'];
+  onRowClick?: (row: TData) => void;
   showHeaderSection?: boolean;
   showPaginationSection?: boolean;
-  onRowClick?: (row: TData) => void;
 }
 
 const TableComponent = <TData, TValue>({
@@ -195,6 +195,8 @@ const TableComponent = <TData, TValue>({
 
   //important styles to make sticky column pinning
   const getCommonPinningStyles = <T,>(column: Column<T>, isHeaderColumn?: boolean): CSSProperties => {
+    if (!column) return {};
+
     const isPinned = column.getIsPinned();
 
     // pinned shadow style
@@ -209,8 +211,7 @@ const TableComponent = <TData, TValue>({
         : undefined
       : undefined;
 
-    // For body cells, ensure white background that can be overridden by hover
-    const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
+    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'white') : undefined;
 
     return {
       boxShadow,
@@ -220,10 +221,20 @@ const TableComponent = <TData, TValue>({
       width: column.getSize(),
       zIndex: isPinned ? 1 : 0,
       backgroundColor,
-      // Ensure pinned columns are always rendered on top
-      willChange: isPinned ? 'transform' : undefined,
     };
   };
+  // Early return if columns are not properly initialized
+  if (!columns || columns.length === 0) {
+    return (
+      <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
+        <div
+          className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}
+        >
+          <div className="flex items-center justify-center h-32 text-gray-500">No columns available</div>
+        </div>
+      </TableContextProvider>
+    );
+  }
 
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
@@ -239,8 +250,9 @@ const TableComponent = <TData, TValue>({
               <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
             </div>
 
-            <div className="flex items-center gap-[14px]">
+            <div className="flex items-center gap-3.5">
               <ColumnSelector table={table} />
+              <Separator orientation="vertical" />
               {topRightSection}
             </div>
           </div>
