@@ -40,11 +40,11 @@ const getStatusColor = (status: FollowUp['status']) => {
   }
 };
 
-export default function FollowUpList({ lead }: { lead: ILead }) {
+export default function FollowUpList({ id }: { id: string }) {
   const addFollowUp = useAddFollowUp();
   const updateFollowUp = useUpdateFollowUp();
-  const deleteFollowUp = useDeleteFollowUp(lead.id);
-  const { data: followUp } = useGetFollowUp(lead.id.toString(), 'lead');
+  const deleteFollowUp = useDeleteFollowUp(id);
+  const { data: followUp } = useGetFollowUp(id, 'student');
   const [formData, setFormData] = React.useState<{
     date: Date | null;
     time: string;
@@ -134,8 +134,8 @@ export default function FollowUpList({ lead }: { lead: ILead }) {
       date: formData?.date ? formData.date?.toString() : '',
       time: formData.time,
       note: formData.note || null,
-      followableId: lead.id,
-      followableType: 'lead',
+      followableId: Number(id),
+      followableType: 'student',
     });
     // Reset form
     setFormData({
@@ -178,8 +178,8 @@ export default function FollowUpList({ lead }: { lead: ILead }) {
       date: editData.date ? editData.date.toString() : '',
       time: editData.time,
       note: editData.note || null,
-      followableId: lead.id,
-      followableType: 'lead',
+      followableId: Number(id),
+      followableType: 'student',
     });
     setEditDialogOpen(false);
     setEditData({ id: null, date: null, time: '', note: '' });

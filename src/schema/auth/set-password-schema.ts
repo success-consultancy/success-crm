@@ -4,7 +4,7 @@ export const setPasswordSchema = z
   .object({
     password: z
       .string({
-        error: 'Password is required',
+        required_error: 'Password is required',
       })
       .min(8, 'Password must be at least 8 characters long')
       .max(64, 'Password must not exceed 64 characters')
@@ -14,7 +14,7 @@ export const setPasswordSchema = z
       .regex(/[@$!%*?&]/, 'Password must contain at least one special character'),
     confirmPassword: z
       .string({
-        error: 'Confirm Password is required',
+        required_error: 'Confirm Password is required',
       })
       .min(8, 'Confirm Password must be at least 8 characters long')
       .max(64, 'Confirm Password must not exceed 64 characters'),
