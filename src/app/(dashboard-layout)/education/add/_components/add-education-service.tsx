@@ -312,11 +312,6 @@ export function AddEducationService({ userId }: Props) {
                 ]}
                 placeholder="Select payment status"
               />
-              <TextInput
-                label="Updated By"
-                {...register('courseFee.updatedBy')}
-                error={errors.courseFee?.updatedBy?.message}
-              />
             </div>
             <div className="mt-6">
               <Label className="text-b2 mb-2" htmlFor="courseFee.note">
