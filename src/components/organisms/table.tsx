@@ -90,8 +90,6 @@ const TableComponent = <TData, TValue>({
   showHeaderSection = true,
   showPaginationSection = true,
   onRowClick,
-  showHeaderSection = true,
-  showPaginationSection = true,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
