@@ -88,10 +88,9 @@ const EducationServicePage = () => {
     });
   }
 
-  // Row click handler
   const handleRowClick = useCallback(
-    (row: IEducation) => {
-      router.push(`/education/${row.id}/view`);
+    (education: IEducation) => {
+      router.push(`/education-service/${education.id}/view`);
     },
     [router],
   );

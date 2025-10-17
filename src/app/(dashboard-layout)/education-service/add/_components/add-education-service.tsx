@@ -1,8 +1,8 @@
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
+import { Accordion } from '@/components/ui/accordion';
 import {
   educationServiceDefaultValues,
-  newStudentSchema,
-  NewStudentType,
+  educationServiceSchema,
+  EducationServiceType,
 } from '@/schema/education-service/new-student.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -18,13 +18,27 @@ import SelectField from '@/components/organisms/select-field';
 import { Editor } from '@tinymce/tinymce-react';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
+import { useAddEducationService } from '@/mutations/education/add-education';
+import toast from 'react-hot-toast';
+import { useGetSource } from '@/query/get-source';
+import { useGetUniversity } from '@/query/get-university';
+import ComboboxField from '@/components/organisms/combobox-field';
+import { useGetCourse } from '@/query/get-course';
+import { useEffect } from 'react';
 
-export function AddEducationService() {
-  const form = useForm<NewStudentType>({
-    resolver: zodResolver(newStudentSchema),
+interface Props {
+  userId: number | undefined;
+}
+
+export function AddEducationService({ userId }: Props) {
+  const form = useForm<EducationServiceType>({
+    resolver: zodResolver(educationServiceSchema),
     defaultValues: educationServiceDefaultValues,
     mode: 'onBlur',
   });
+
+  const { data: sourceData, isLoading: sourceLoading } = useGetSource();
+  const { data: universityData, isLoading: universityLoading } = useGetUniversity();
 
   const {
     register,
@@ -34,17 +48,41 @@ export function AddEducationService() {
     formState: { errors },
   } = form;
 
-  const feeNotes = watch('feeNotes');
+  const remarks = watch('remarks');
+
+  useEffect(() => {
+    form.setValue('courseFee.accounts.updatedBy', userId?.toString() || '', { shouldValidate: true });
+    form.setValue('courseFee.updatedBy', userId?.toString() || '', { shouldValidate: true });
+    return () => {
+      form.setValue('courseFee.accounts.updatedBy', '', { shouldValidate: true });
+      form.setValue('courseFee.updatedBy', '', { shouldValidate: true });
+    };
+  }, [userId]);
+
+  const universityId = form.watch('universityId');
+  const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
+
   const handleEditorChange = (content: string) => {
-    setValue('feeNotes', content, { shouldValidate: true });
+    setValue('remarks', content, { shouldValidate: true });
   };
 
-  const submitHandler = (data: NewStudentType) => {
+  const { mutate, isPending } = useAddEducationService();
+  const submitHandler = (data: EducationServiceType) => {
     console.log(data);
+    mutate(
+      { payload: data },
+      {
+        onSuccess: () => {
+          toast.success('Student added successfully');
+          form.reset();
+        },
+      },
+    );
   };
+
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
-      <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1']}>
+      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
           <div className="grid grid-cols-3 gap-6">
@@ -52,15 +90,15 @@ export function AddEducationService() {
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="birth-date">
+              <Label className="text-b2" htmlFor="dob">
                 Birth Date
               </Label>
               <Controller
-                name="birthdate"
+                name="dob"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    error={!!errors.birthdate?.message}
+                    error={!!errors.dob?.message}
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
@@ -70,30 +108,19 @@ export function AddEducationService() {
                   />
                 )}
               />
-              <FormErrorMessage message={errors.birthdate?.message} />
+              <FormErrorMessage message={errors.dob?.message} />
             </div>
             <TextInput type="email" label="Email" {...register('email')} error={errors.email?.message} />
-            <TextInput label="Phone Number" {...register('phoneNumber')} error={errors.phoneNumber?.message} />
-            <TextInput label="Nationality" {...register('nationality')} error={errors.nationality?.message} />
-            <SelectField
-              control={control}
-              name="address"
-              label="Address"
-              options={[
-                { label: 'Address 1', value: 'address-1' },
-                { label: 'Address 2', value: 'address-2' },
-                { label: 'Address 3', value: 'address-3' },
-              ]}
-              placeholder="Select option"
-            />
-            <TextInput label="Passport Number" {...register('passportNumber')} error={errors.passportNumber?.message} />
+            <TextInput label="Phone Number" {...register('phone')} error={errors.phone?.message} />
+            <TextInput label="Country" {...register('country')} error={errors.country?.message} />
+            <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="passport-issue-date">
+              <Label className="text-b2" htmlFor="issueDate">
                 Passport Issue Date
               </Label>
               <Controller
-                name="passportIssueDate"
+                name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
@@ -102,18 +129,18 @@ export function AddEducationService() {
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.passportIssueDate?.message}
+                    error={!!errors.issueDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.passportIssueDate?.message} />
+              <FormErrorMessage message={errors.issueDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="passport-expiry-date">
+              <Label className="text-b2" htmlFor="expiryDate">
                 Passport Expiry Date
               </Label>
               <Controller
-                name="passportExpiryDate"
+                name="expiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
@@ -122,22 +149,21 @@ export function AddEducationService() {
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.passportExpiryDate?.message}
+                    error={!!errors.expiryDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.passportExpiryDate?.message} />
+              <FormErrorMessage message={errors.expiryDate?.message} />
             </div>
             <SelectField
               control={control}
               name="location"
               label="Location"
               options={[
-                { label: 'Location 1', value: 'location-1' },
-                { label: 'Location 2', value: 'location-2' },
-                { label: 'Location 3', value: 'location-3' },
+                { label: 'Onshore', value: 'Onshore' },
+                { label: 'Offshore', value: 'Offshore' },
               ]}
-              placeholder="Select option"
+              placeholder="Select location"
             />
           </div>
         </FormAccordion>
@@ -146,20 +172,38 @@ export function AddEducationService() {
         <FormAccordion value="item-2" title="Course Information">
           <>
             <div className="grid grid-cols-2 gap-6">
-              <TextInput
-                label="University Name"
-                {...register('universityName')}
-                error={errors.universityName?.message}
+              <ComboboxField
+                control={control}
+                name="universityId"
+                label="University"
+                options={
+                  universityData?.map((university) => ({
+                    label: university.name,
+                    value: university.id.toString(),
+                  })) || []
+                }
+                placeholder="Select university"
               />
-              <TextInput label="Course" {...register('course')} error={errors.course?.message} />
+              <ComboboxField
+                control={control}
+                name="courseId"
+                label="Course"
+                options={
+                  courseData?.map((course) => ({
+                    label: course.name,
+                    value: course.id.toString(),
+                  })) || []
+                }
+                placeholder="Select course"
+              />
             </div>
             <div className="grid grid-cols-3 gap-6 mt-6">
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="universityStartDate">
-                  University Start Date
+                <Label className="text-b2" htmlFor="startDate">
+                  Start Date
                 </Label>
                 <Controller
-                  name="universityStartDate"
+                  name="startDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -169,18 +213,18 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.universityStartDate?.message}
+                      error={!!errors.startDate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.universityStartDate?.message} />
+                <FormErrorMessage message={errors.startDate?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="universityEndDate">
-                  University End Date
+                <Label className="text-b2" htmlFor="endDate">
+                  End Date
                 </Label>
                 <Controller
-                  name="universityEndDate"
+                  name="endDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -190,21 +234,21 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.universityEndDate?.message}
+                      error={!!errors.endDate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.universityEndDate?.message} />
+                <FormErrorMessage message={errors.endDate?.message} />
               </div>
               <SelectField
                 control={control}
                 name="status"
                 label="Status"
                 options={[
-                  { label: 'Active', value: 'active' },
-                  { label: 'Pending', value: 'pending' },
-                  { label: 'Completed', value: 'completed' },
-                  { label: 'Suspended', value: 'suspended' },
+                  { label: 'Consultation', value: 'Consultation' },
+                  { label: 'Application', value: 'Application' },
+                  { label: 'Enrolled', value: 'Enrolled' },
+                  { label: 'Completed', value: 'Completed' },
                 ]}
                 placeholder="Select status"
               />
@@ -216,31 +260,24 @@ export function AddEducationService() {
         <FormAccordion value="item-3" title="Fee Structure">
           <>
             <div className="grid grid-cols-3 gap-6">
-              <SelectField
-                control={control}
-                name="feePaymentPlan"
-                label="Fee Payment Plan"
-                options={[
-                  { label: 'Monthly', value: 'monthly' },
-                  { label: 'Quarterly', value: 'quarterly' },
-                  { label: 'Annually', value: 'annually' },
-                  { label: 'One-time', value: 'one-time' },
-                ]}
-                placeholder="Select payment plan"
+              <TextInput
+                label="Plan Name"
+                {...register('courseFee.planname')}
+                error={errors.courseFee?.planname?.message}
               />
               <TextInput
-                label="Fee Amount"
+                label="Amount"
                 type="number"
-                {...register('feeAmount', { valueAsNumber: true })}
-                error={errors.feeAmount?.message}
+                {...register('courseFee.amount', { valueAsNumber: true })}
+                error={errors.courseFee?.amount?.message}
               />
 
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="dueDate">
-                  Payment Due Date
+                <Label className="text-b2" htmlFor="courseFee.duedate">
+                  Due Date
                 </Label>
                 <Controller
-                  name="dueDate"
+                  name="courseFee.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -250,33 +287,37 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.dueDate?.message}
+                      error={!!errors.courseFee?.duedate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.dueDate?.message} />
+                <FormErrorMessage message={errors.courseFee?.duedate?.message} />
               </div>
-              <TextInput label="Invoice Number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
+              <TextInput
+                label="Invoice Number"
+                {...register('courseFee.invoicenumber')}
+                error={errors.courseFee?.invoicenumber?.message}
+              />
               <SelectField
                 control={control}
-                name="paymentStatus"
+                name="courseFee.status"
                 label="Payment Status"
                 options={[
-                  { label: 'Paid', value: 'paid' },
-                  { label: 'Pending', value: 'pending' },
-                  { label: 'Overdue', value: 'overdue' },
-                  { label: 'Cancelled', value: 'cancelled' },
+                  { label: 'Pending', value: 'Pending' },
+                  { label: 'Paid', value: 'Paid' },
+                  { label: 'Overdue', value: 'Overdue' },
+                  { label: 'Cancelled', value: 'Cancelled' },
                 ]}
                 placeholder="Select payment status"
               />
             </div>
             <div className="mt-6">
-              <Label className="text-b2 mb-2" htmlFor="feeNotes">
+              <Label className="text-b2 mb-2" htmlFor="courseFee.note">
                 Fee Notes
               </Label>
               <Editor
                 apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
-                value={feeNotes}
+                value={remarks}
                 onEditorChange={handleEditorChange}
                 init={{
                   height: 300,
@@ -288,7 +329,7 @@ export function AddEducationService() {
                   branding: false,
                 }}
               />
-              {errors.feeNotes && <FormErrorMessage message={errors.feeNotes.message} />}
+              {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
             </div>
           </>
         </FormAccordion>
@@ -296,57 +337,23 @@ export function AddEducationService() {
         {/* Accounts */}
         <FormAccordion value="item-4" title="Accounts">
           <>
-            {' '}
             <div className="grid grid-cols-3 gap-6">
-              <SelectField
-                control={control}
-                name="accountPaymentPlan"
-                label="Account Payment Plan"
-                options={[
-                  { label: 'Monthly', value: 'monthly' },
-                  { label: 'Quarterly', value: 'quarterly' },
-                  { label: 'Annually', value: 'annually' },
-                  { label: 'One-time', value: 'one-time' },
-                ]}
-                placeholder="Select payment plan"
+              <TextInput
+                label="Plan Name"
+                {...register('courseFee.accounts.planname')}
+                error={errors.courseFee?.accounts?.planname?.message}
               />
               <TextInput
-                label="Commission"
-                type="number"
-                {...register('commission', { valueAsNumber: true })}
-                error={errors.commission?.message}
+                label="Amount"
+                {...register('courseFee.accounts.amount')}
+                error={errors.courseFee?.accounts?.amount?.message}
               />
-              <TextInput
-                label="Account Amount"
-                type="number"
-                {...register('accountAmount', { valueAsNumber: true })}
-                error={errors.accountAmount?.message}
-              />
-              <TextInput
-                label="Discount (Optional)"
-                type="number"
-                {...register('discount', { valueAsNumber: true })}
-                error={errors.discount?.message}
-              />
-              <TextInput
-                label="Bonus (Optional)"
-                type="number"
-                {...register('bonus', { valueAsNumber: true })}
-                error={errors.bonus?.message}
-              />
-              <TextInput
-                label="Net Amount"
-                type="number"
-                {...register('netAmount', { valueAsNumber: true })}
-                error={errors.netAmount?.message}
-              />
-
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="accountDueDate">
-                  Account Due Date
+                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
+                  Due Date
                 </Label>
                 <Controller
-                  name="accountDueDate"
+                  name="courseFee.accounts.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
@@ -356,35 +363,48 @@ export function AddEducationService() {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.accountDueDate?.message}
+                      error={!!errors.courseFee?.accounts?.duedate?.message}
                     />
                   )}
                 />
-                <FormErrorMessage message={errors.accountDueDate?.message} />
+                <FormErrorMessage message={errors.courseFee?.accounts?.duedate?.message} />
               </div>
               <TextInput
-                label="Account Invoice Number"
-                {...register('accountInvoiceNumber')}
-                error={errors.accountInvoiceNumber?.message}
+                label="Invoice Number"
+                {...register('courseFee.accounts.invoicenumber')}
+                error={errors.courseFee?.accounts?.invoicenumber?.message}
               />
               <SelectField
                 control={control}
-                name="commissionStatus"
-                label="Commission Status"
+                name="courseFee.accounts.status"
+                label="Status"
                 options={[
-                  { label: 'Paid', value: 'paid' },
-                  { label: 'Pending', value: 'pending' },
-                  { label: 'Processing', value: 'processing' },
-                  { label: 'Cancelled', value: 'cancelled' },
+                  { label: 'Pending', value: 'Pending' },
+                  { label: 'Paid', value: 'Paid' },
+                  { label: 'Processing', value: 'Processing' },
+                  { label: 'Cancelled', value: 'Cancelled' },
                 ]}
-                placeholder="Select commission status"
+                placeholder="Select status"
               />
-            </div>
-            <div className="mt-5">
               <TextInput
-                label="Account Notes (Optional)"
-                {...register('accountNotes')}
-                error={errors.accountNotes?.message}
+                label="Commission"
+                {...register('courseFee.accounts.comission')}
+                error={errors.courseFee?.accounts?.comission?.message}
+              />
+              <TextInput
+                label="Discount (Optional)"
+                {...register('courseFee.accounts.discount')}
+                error={errors.courseFee?.accounts?.discount?.message}
+              />
+              <TextInput
+                label="Bonus (Optional)"
+                {...register('courseFee.accounts.bonus')}
+                error={errors.courseFee?.accounts?.bonus?.message}
+              />
+              <TextInput
+                label="Net Amount"
+                {...register('courseFee.accounts.netamount')}
+                error={errors.courseFee?.accounts?.netamount?.message}
               />
             </div>
           </>
@@ -395,42 +415,37 @@ export function AddEducationService() {
           <div className="grid grid-cols-2 gap-6">
             <SelectField
               control={control}
-              name="assignedTo"
+              name="userId"
               label="Assigned To"
               options={[
-                { label: 'John Doe', value: 'john-doe' },
-                { label: 'Jane Smith', value: 'jane-smith' },
-                { label: 'Mike Johnson', value: 'mike-johnson' },
-                { label: 'Sarah Wilson', value: 'sarah-wilson' },
+                { label: 'John Doe', value: '1' },
+                { label: 'Jane Smith', value: '2' },
+                { label: 'Mike Johnson', value: '3' },
+                { label: 'Sarah Wilson', value: '4' },
               ]}
               placeholder="Select assignee"
             />
             <SelectField
               control={control}
-              name="source"
+              name="sourceId"
               label="Source"
-              options={[
-                { label: 'Website', value: 'website' },
-                { label: 'Referral', value: 'referral' },
-                { label: 'Social Media', value: 'social-media' },
-                { label: 'Advertisement', value: 'advertisement' },
-                { label: 'Walk-in', value: 'walk-in' },
-              ]}
+              options={
+                sourceData?.map((source) => ({
+                  label: source.name,
+                  value: source.id.toString(),
+                })) || []
+              }
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <TextInput
-                label="Additional Notes (Optional)"
-                {...register('additionalNotes')}
-                error={errors.additionalNotes?.message}
-              />
+              <TextInput label="Remarks (Optional)" {...register('remarks')} error={errors.remarks?.message} />
             </div>
           </div>
         </FormAccordion>
       </Accordion>
 
       <div className="flex justify-start mt-6">
-        <Button type="submit" variant="primary">
+        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
         <Button type="button" variant="outline" className="ml-3">
