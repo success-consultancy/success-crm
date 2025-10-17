@@ -1,3 +1,5 @@
+'use client';
+
 import { Accordion } from '@/components/ui/accordion';
 import {
   educationServiceDefaultValues,
@@ -18,8 +20,7 @@ import SelectField from '@/components/organisms/select-field';
 import { Editor } from '@tinymce/tinymce-react';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
-import { useAddEducationService } from '@/mutations/education/add-education';
-import toast from 'react-hot-toast';
+
 import { useGetSource } from '@/query/get-source';
 import { useGetUniversity } from '@/query/get-university';
 import ComboboxField from '@/components/organisms/combobox-field';
@@ -28,9 +29,10 @@ import { useEffect } from 'react';
 
 interface Props {
   userId: number | undefined;
+  studentId: number;
 }
 
-export function AddEducationService({ userId }: Props) {
+export function EditEducationService({ userId, studentId }: Props) {
   const form = useForm<EducationServiceType>({
     resolver: zodResolver(educationServiceSchema),
     defaultValues: educationServiceDefaultValues,
@@ -45,19 +47,18 @@ export function AddEducationService({ userId }: Props) {
     control,
     watch,
     setValue,
+    reset,
     formState: { errors },
   } = form;
 
   const remarks = watch('remarks');
 
   useEffect(() => {
-    form.setValue('courseFee.accounts.updatedBy', userId?.toString() || '', { shouldValidate: true });
-    form.setValue('courseFee.updatedBy', userId?.toString() || '', { shouldValidate: true });
-    return () => {
-      form.setValue('courseFee.accounts.updatedBy', '', { shouldValidate: true });
-      form.setValue('courseFee.updatedBy', '', { shouldValidate: true });
-    };
-  }, [userId]);
+    if (userId) {
+      setValue('courseFee.accounts.updatedBy', userId.toString(), { shouldValidate: true });
+      setValue('courseFee.updatedBy', userId.toString(), { shouldValidate: true });
+    }
+  }, [userId, setValue]);
 
   const universityId = form.watch('universityId');
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
@@ -66,17 +67,8 @@ export function AddEducationService({ userId }: Props) {
     setValue('remarks', content, { shouldValidate: true });
   };
 
-  const { mutate, isPending } = useAddEducationService();
   const submitHandler = (data: EducationServiceType) => {
-    mutate(
-      { payload: data },
-      {
-        onSuccess: () => {
-          toast.success('Student added successfully');
-          form.reset();
-        },
-      },
-    );
+    //handle update
   };
 
   return (
@@ -444,8 +436,8 @@ export function AddEducationService({ userId }: Props) {
       </Accordion>
 
       <div className="flex justify-start mt-6">
-        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
-          Add Student
+        <Button loadingText="Updating..." type="submit" variant="primary">
+          Update Data
         </Button>
         <Button type="button" variant="outline" className="ml-3">
           Cancel
