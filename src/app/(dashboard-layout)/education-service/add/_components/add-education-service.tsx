@@ -21,15 +21,24 @@ import { FormAccordion } from '@/components/organisms/form-accordion';
 import { useAddEducationService } from '@/mutations/education/add-education';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
+import { useGetUniversity } from '@/query/get-university';
+import ComboboxField from '@/components/organisms/combobox-field';
+import { useGetCourse } from '@/query/get-course';
+import { useEffect } from 'react';
 
-export function AddEducationService() {
+interface Props {
+  userId: number | undefined;
+}
+
+export function AddEducationService({ userId }: Props) {
   const form = useForm<EducationServiceType>({
     resolver: zodResolver(educationServiceSchema),
     defaultValues: educationServiceDefaultValues,
     mode: 'onBlur',
   });
 
-  const { data, isLoading } = useGetSource();
+  const { data: sourceData, isLoading: sourceLoading } = useGetSource();
+  const { data: universityData, isLoading: universityLoading } = useGetUniversity();
 
   const {
     register,
@@ -40,6 +49,21 @@ export function AddEducationService() {
   } = form;
 
   const remarks = watch('remarks');
+
+  useEffect(() => {
+    form.setValue('courseFee.accounts.updatedBy', userId?.toString() || '', { shouldValidate: true });
+    form.setValue('courseFee.updatedBy', userId?.toString() || '', { shouldValidate: true });
+    return () => {
+      form.setValue('courseFee.accounts.updatedBy', '', { shouldValidate: true });
+      form.setValue('courseFee.updatedBy', '', { shouldValidate: true });
+    };
+  }, [userId]);
+
+  console.log(errors);
+
+  const universityId = form.watch('universityId');
+  const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
+
   const handleEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
   };
@@ -150,26 +174,28 @@ export function AddEducationService() {
         <FormAccordion value="item-2" title="Course Information">
           <>
             <div className="grid grid-cols-2 gap-6">
-              <SelectField
+              <ComboboxField
                 control={control}
                 name="universityId"
                 label="University"
-                options={[
-                  { label: 'University 1', value: '1' },
-                  { label: 'University 2', value: '2' },
-                  { label: 'University 3', value: '3' },
-                ]}
+                options={
+                  universityData?.map((university) => ({
+                    label: university.name,
+                    value: university.id.toString(),
+                  })) || []
+                }
                 placeholder="Select university"
               />
-              <SelectField
+              <ComboboxField
                 control={control}
                 name="courseId"
                 label="Course"
-                options={[
-                  { label: 'Course 1', value: '1' },
-                  { label: 'Course 2', value: '2' },
-                  { label: 'Course 3', value: '3' },
-                ]}
+                options={
+                  courseData?.map((course) => ({
+                    label: course.name,
+                    value: course.id.toString(),
+                  })) || []
+                }
                 placeholder="Select course"
               />
             </div>
@@ -286,11 +312,6 @@ export function AddEducationService() {
                 ]}
                 placeholder="Select payment status"
               />
-              <TextInput
-                label="Updated By"
-                {...register('courseFee.updatedBy')}
-                error={errors.courseFee?.updatedBy?.message}
-              />
             </div>
             <div className="mt-6">
               <Label className="text-b2 mb-2" htmlFor="courseFee.note">
@@ -387,11 +408,6 @@ export function AddEducationService() {
                 {...register('courseFee.accounts.netamount')}
                 error={errors.courseFee?.accounts?.netamount?.message}
               />
-              <TextInput
-                label="Updated By"
-                {...register('courseFee.accounts.updatedBy')}
-                error={errors.courseFee?.accounts?.updatedBy?.message}
-              />
             </div>
           </>
         </FormAccordion>
@@ -415,13 +431,12 @@ export function AddEducationService() {
               control={control}
               name="sourceId"
               label="Source"
-              options={[
-                { label: 'Website', value: '1' },
-                { label: 'Referral', value: '2' },
-                { label: 'Social Media', value: '3' },
-                { label: 'Advertisement', value: '4' },
-                { label: 'Walk-in', value: '5' },
-              ]}
+              options={
+                sourceData?.map((source) => ({
+                  label: source.name,
+                  value: source.id.toString(),
+                })) || []
+              }
               placeholder="Select source"
             />
             <div className="col-span-2">
