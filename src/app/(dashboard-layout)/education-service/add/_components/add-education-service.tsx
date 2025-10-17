@@ -59,8 +59,6 @@ export function AddEducationService({ userId }: Props) {
     };
   }, [userId]);
 
-  console.log(errors);
-
   const universityId = form.watch('universityId');
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
 
