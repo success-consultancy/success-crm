@@ -1,6 +1,8 @@
-## CRM V2 
+## CRM V2
 
 # Features
+
 - leads
-    - history
+  - history
 - branches
+- education
