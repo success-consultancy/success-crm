@@ -207,11 +207,12 @@ const TableComponent = <TData, TValue>({
       ? isLastLeftPinnedColumn
         ? `-2px 0 2px -2px #D9E2E8 inset`
         : isFirstRightPinnedColumn
-        ? `2px 0 2px -2px #D9E2E8 inset`
-        : undefined
+          ? `2px 0 2px -2px #D9E2E8 inset`
+          : undefined
       : undefined;
 
-    const backgroundColor = isPinned ? (isHeaderColumn ? 'var(--component-hovered-light)' : 'white') : undefined;
+    // For body cells, ensure white background that can be overridden by hover
+    const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
 
     return {
       boxShadow,
@@ -221,6 +222,8 @@ const TableComponent = <TData, TValue>({
       width: column.getSize(),
       zIndex: isPinned ? 1 : 0,
       backgroundColor,
+      // Ensure pinned columns are always rendered on top
+      willChange: isPinned ? 'transform' : undefined,
     };
   };
   // Early return if columns are not properly initialized
@@ -249,10 +252,8 @@ const TableComponent = <TData, TValue>({
               />
               <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
             </div>
-
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-[14px]">
               <ColumnSelector table={table} />
-              <Separator orientation="vertical" />
               {topRightSection}
             </div>
           </div>

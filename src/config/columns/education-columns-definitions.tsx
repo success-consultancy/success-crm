@@ -15,6 +15,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
 import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 import { ServiceType } from '@/types/leads/leads-types';
+import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 
 export const useEducationColumn = (
   handleDelete: (id: number) => void,
@@ -57,11 +58,11 @@ export const useEducationColumn = (
     },
     {
       id: 'education-createdAt',
-      header: () => <ColumnHeader title="Created at" keyParam="createdAt" className="h-10" />,
+      header: () => <ColumnHeader title="" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
-        return <span className="max-w-10 text-left">{formatDate(row.original.createdAt, 'yyyy-MM-dd')}</span>;
+        return <DateWithIndicator date={row.original.createdAt} className="text-left" />;
       },
       enableSorting: true,
       size: 120,

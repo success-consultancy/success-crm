@@ -110,8 +110,8 @@ const EducationServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'lead-createdAt', 'lead-id'],
-          right: ['lead-actions'],
+          left: ['select', 'education-createdAt', 'education-id'],
+          right: ['education-actions'],
         }}
         topRightSection={
           <div className="flex items-center">
