@@ -90,7 +90,7 @@ const EducationServicePage = () => {
 
   const handleRowClick = useCallback(
     (education: IEducation) => {
-      router.push(`/education-service/${education.id}/view`);
+      router.push(`/education/${education.id}/view`);
     },
     [router],
   );

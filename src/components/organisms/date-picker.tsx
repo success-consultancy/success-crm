@@ -86,20 +86,22 @@ export function DatePicker({
               <CalendarIcon className="size-5 text-dark/50" />
             </div>
           </PopoverTrigger>
-          <PopoverContent className="w-auto p-0" align="start" side={side}>
-            <Calendar
-              mode="single"
-              selected={value}
-              captionLayout="dropdown"
-              onSelect={(date) => {
-                onChange(date);
-                if (date) {
-                  setIsCalendarOpen(false);
-                }
-              }}
-              disabled={getDisabledDates}
-            />
-          </PopoverContent>
+          {!disabled && (
+            <PopoverContent className="w-auto p-0" align="start" side={side}>
+              <Calendar
+                mode="single"
+                selected={value}
+                captionLayout="dropdown"
+                onSelect={(date) => {
+                  onChange(date);
+                  if (date) {
+                    setIsCalendarOpen(false);
+                  }
+                }}
+                disabled={getDisabledDates}
+              />
+            </PopoverContent>
+          )}
         </Popover>
       </div>
       {needTime && (
