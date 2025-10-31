@@ -6,3 +6,4 @@
   - history
 - branches
 - education
+   - edit, view
