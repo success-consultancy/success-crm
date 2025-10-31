@@ -25,6 +25,7 @@ import { useGetUniversity } from '@/query/get-university';
 import ComboboxField from '@/components/organisms/combobox-field';
 import { useGetCourse } from '@/query/get-course';
 import { useEffect } from 'react';
+import TinyEditor from '@/components/organisms/text-editor';
 
 interface Props {
   userId: number | undefined;
@@ -462,26 +463,12 @@ export function AddEducationService({ userId }: Props) {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <div className="mt-6">
-                <Label className="text-b2 mb-2" htmlFor="courseFee.note">
-                  Remarks
-                </Label>
-                <Editor
-                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
-                  value={remarks}
-                  onEditorChange={handleMiscEditorChange}
-                  init={{
-                    height: 300,
-                    menubar: false,
-                    toolbar:
-                      'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent',
-                    promotion: false,
-                    branding: false,
-                  }}
-                />
-                {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
-              </div>{' '}
+              <div className="w-full space-y-1" suppressHydrationWarning>
+                <Label className="text-b3-b font-semibold">Note</Label>
+
+                <TinyEditor />
+                {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+              </div>
             </div>
           </div>
         </FormAccordion>
