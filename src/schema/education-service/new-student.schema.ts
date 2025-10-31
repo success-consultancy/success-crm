@@ -149,11 +149,7 @@ export const educationServiceSchema = z
           .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid bonus amount')
           .optional(),
 
-        netamount: z
-          .string()
-          .min(1, 'Net amount is required')
-          .max(50, 'Net amount cannot exceed 50 characters')
-          .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid net amount'),
+        netamount: z.string().optional(),
 
         updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
       }),

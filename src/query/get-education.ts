@@ -3,6 +3,7 @@ import { api } from '@/lib/api';
 import { IPagination, PAGINATION_PARAMS, SortingState } from '@/types/pagination';
 import { EducationsResponseType, IEducation } from '@/types/response-types/education-response';
 import { ILead } from '@/types/response-types/leads-response';
+import { IEducationSingleResponse } from '@/types/response-types/single-education-response';
 import { useQuery } from '@tanstack/react-query';
 import QueryString from 'qs';
 import { number } from 'zod';
@@ -44,6 +45,19 @@ export const useGetEducation = (params: EducationFilterParams) => {
 const getEducationById = async (id: string) => {
   const res = await api.get(`/student/${id}`);
   return res.data as IEducation;
+};
+
+// To prevent type mismatch, new function with separate type return is created
+const getEducationDetailById = async (id: string) => {
+  const res = await api.get(`/student/${id}`);
+  return res.data as IEducationSingleResponse;
+};
+
+export const useGetEducationDetailById = (id: string) => {
+  return useQuery({
+    queryFn: () => getEducationDetailById(id),
+    queryKey: [QUERY_KEYS.GET_EDUCATION_BY_ID, id],
+  });
 };
 
 export const useGetEducationById = (id: string) => {

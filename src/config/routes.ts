@@ -18,7 +18,7 @@ export const ROUTES = {
 
   ADD_LEAD: '/leads/add-lead',
 
-  ADD_EDUCATION_SERVICE: '/education-service/add',
+  ADD_EDUCATION_SERVICE: '/education/add',
 
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',

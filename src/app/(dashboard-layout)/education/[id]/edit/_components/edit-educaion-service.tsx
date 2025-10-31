@@ -28,14 +28,14 @@ import { useGetCourse } from '@/query/get-course';
 import { useEffect } from 'react';
 
 interface Props {
-  userId: number | undefined;
-  studentId: number;
+  id?: number;
+  defaultValues?: EducationServiceType;
 }
 
-export function EditEducationService({ userId, studentId }: Props) {
+export function EditEducationService({ id: userId, defaultValues }: Props) {
   const form = useForm<EducationServiceType>({
     resolver: zodResolver(educationServiceSchema),
-    defaultValues: educationServiceDefaultValues,
+    defaultValues: defaultValues || educationServiceDefaultValues,
     mode: 'onBlur',
   });
 
@@ -61,9 +61,14 @@ export function EditEducationService({ userId, studentId }: Props) {
   }, [userId, setValue]);
 
   const universityId = form.watch('universityId');
+  console.log('universityId', universityId);
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
 
-  const handleEditorChange = (content: string) => {
+  const handleFeeStructureEditorChange = (content: string) => {
+    setValue('courseFee.note', content, { shouldValidate: true });
+  };
+
+  const handleMiscEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
   };
 
@@ -73,7 +78,11 @@ export function EditEducationService({ userId, studentId }: Props) {
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
-      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
+      <Accordion
+        type="multiple"
+        className="w-full space-y-6"
+        defaultValue={['item-1', 'item-2', 'item-3', 'item-4', 'item-5']}
+      >
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
           <div className="grid grid-cols-3 gap-6">
@@ -309,7 +318,7 @@ export function EditEducationService({ userId, studentId }: Props) {
               <Editor
                 apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
                 value={remarks}
-                onEditorChange={handleEditorChange}
+                onEditorChange={handleFeeStructureEditorChange}
                 init={{
                   height: 300,
                   menubar: false,
@@ -429,7 +438,26 @@ export function EditEducationService({ userId, studentId }: Props) {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <TextInput label="Remarks (Optional)" {...register('remarks')} error={errors.remarks?.message} />
+              <div className="mt-6">
+                <Label className="text-b2 mb-2" htmlFor="courseFee.note">
+                  Remarks
+                </Label>
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+                  value={remarks}
+                  onEditorChange={handleMiscEditorChange}
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    toolbar:
+                      'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent',
+                    promotion: false,
+                    branding: false,
+                  }}
+                />
+                {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
+              </div>{' '}
             </div>
           </div>
         </FormAccordion>

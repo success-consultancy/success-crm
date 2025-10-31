@@ -8,6 +8,7 @@ import { useController } from 'react-hook-form';
 import type { Control, FieldPath, FieldValues } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { useId } from 'react';
 
 export type ObjType = {
   label: string;
@@ -48,9 +49,11 @@ const SelectField = <T extends FieldValues>({
     },
   });
 
+  const inputId = useId();
+
   return (
-    <div className={`flex flex-col gap-1 -mt-1 w-full ${className || ''}`}>
-      <Label htmlFor={name} className="font-medium text-sm">
+    <div className={`flex flex-col gap-1 w-full ${className || ''}`}>
+      <Label htmlFor={inputId} className="font-medium text-sm text-gray-700">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>

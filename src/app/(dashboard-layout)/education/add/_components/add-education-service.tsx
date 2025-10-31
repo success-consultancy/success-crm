@@ -34,7 +34,7 @@ export function AddEducationService({ userId }: Props) {
   const form = useForm<EducationServiceType>({
     resolver: zodResolver(educationServiceSchema),
     defaultValues: educationServiceDefaultValues,
-    mode: 'onBlur',
+    mode: 'onChange',
   });
 
   const { data: sourceData, isLoading: sourceLoading } = useGetSource();
@@ -62,7 +62,11 @@ export function AddEducationService({ userId }: Props) {
   const universityId = form.watch('universityId');
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
 
-  const handleEditorChange = (content: string) => {
+  const handleFeeStructureEditorChange = (content: string) => {
+    setValue('courseFee.note', content, { shouldValidate: true });
+  };
+
+  const handleMiscEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
   };
 
@@ -78,6 +82,37 @@ export function AddEducationService({ userId }: Props) {
       },
     );
   };
+
+  const planName = watch('courseFee.planname');
+  const amount = watch('courseFee.amount');
+  const dueDate = watch('courseFee.duedate');
+  const invoiceNumber = watch('courseFee.invoicenumber');
+  const paymentStatus = watch('courseFee.status');
+
+  // FOr calculation
+  const comissionPercent = watch('courseFee.accounts.comission');
+  const discount = watch('courseFee.accounts.discount');
+  const bonus = watch('courseFee.accounts.bonus');
+
+  useEffect(() => {
+    if (!comissionPercent && !discount && !bonus) {
+      setValue('courseFee.accounts.netamount', amount.toString());
+      return;
+    }
+    const comissionAAmount = (Number(amount) * (Number(comissionPercent) || 0)) / 100;
+    const netAmount = comissionAAmount - (Number(discount) || 0) + (Number(bonus) || 0);
+    setValue('courseFee.accounts.netamount', netAmount.toString());
+  }, [amount, comissionPercent, discount, bonus, setValue]);
+
+  useEffect(() => {
+    if (userId) {
+      setValue('courseFee.accounts.planname', planName);
+      setValue('courseFee.accounts.amount', amount.toString());
+      setValue('courseFee.accounts.duedate', dueDate);
+      setValue('courseFee.accounts.invoicenumber', invoiceNumber);
+      setValue('courseFee.accounts.status', paymentStatus);
+    }
+  }, [planName, amount, dueDate, invoiceNumber, paymentStatus, setValue]);
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
@@ -317,7 +352,7 @@ export function AddEducationService({ userId }: Props) {
               <Editor
                 apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
                 value={remarks}
-                onEditorChange={handleEditorChange}
+                onEditorChange={handleFeeStructureEditorChange}
                 init={{
                   height: 300,
                   menubar: false,
@@ -337,16 +372,8 @@ export function AddEducationService({ userId }: Props) {
         <FormAccordion value="item-4" title="Accounts">
           <>
             <div className="grid grid-cols-3 gap-6">
-              <TextInput
-                label="Plan Name"
-                {...register('courseFee.accounts.planname')}
-                error={errors.courseFee?.accounts?.planname?.message}
-              />
-              <TextInput
-                label="Amount"
-                {...register('courseFee.accounts.amount')}
-                error={errors.courseFee?.accounts?.amount?.message}
-              />
+              <TextInput disabled label="Plan Name" {...register('courseFee.accounts.planname')} />
+              <TextInput label="Amount" disabled {...register('courseFee.accounts.amount')} />
               <div className="space-y-2">
                 <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
                   Due Date
@@ -362,18 +389,15 @@ export function AddEducationService({ userId }: Props) {
                       placeholder="Pick a date"
                       className="h-12 text-b2 w-full"
                       disablePastDates={true}
-                      error={!!errors.courseFee?.accounts?.duedate?.message}
+                      disabled
                     />
                   )}
                 />
                 <FormErrorMessage message={errors.courseFee?.accounts?.duedate?.message} />
               </div>
-              <TextInput
-                label="Invoice Number"
-                {...register('courseFee.accounts.invoicenumber')}
-                error={errors.courseFee?.accounts?.invoicenumber?.message}
-              />
+              <TextInput label="Invoice Number" {...register('courseFee.accounts.invoicenumber')} disabled />
               <SelectField
+                disabled
                 control={control}
                 name="courseFee.accounts.status"
                 label="Status"
@@ -386,21 +410,22 @@ export function AddEducationService({ userId }: Props) {
                 placeholder="Select status"
               />
               <TextInput
-                label="Commission"
+                label="Commission (%)"
                 {...register('courseFee.accounts.comission')}
                 error={errors.courseFee?.accounts?.comission?.message}
               />
               <TextInput
-                label="Discount (Optional)"
+                label="Discount Amount (Optional)"
                 {...register('courseFee.accounts.discount')}
                 error={errors.courseFee?.accounts?.discount?.message}
               />
               <TextInput
-                label="Bonus (Optional)"
+                label="Bonus Amount (Optional)"
                 {...register('courseFee.accounts.bonus')}
                 error={errors.courseFee?.accounts?.bonus?.message}
               />
               <TextInput
+                disabled
                 label="Net Amount"
                 {...register('courseFee.accounts.netamount')}
                 error={errors.courseFee?.accounts?.netamount?.message}
@@ -437,7 +462,26 @@ export function AddEducationService({ userId }: Props) {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <TextInput label="Remarks (Optional)" {...register('remarks')} error={errors.remarks?.message} />
+              <div className="mt-6">
+                <Label className="text-b2 mb-2" htmlFor="courseFee.note">
+                  Remarks
+                </Label>
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+                  value={remarks}
+                  onEditorChange={handleMiscEditorChange}
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    toolbar:
+                      'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent',
+                    promotion: false,
+                    branding: false,
+                  }}
+                />
+                {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
+              </div>{' '}
             </div>
           </div>
         </FormAccordion>
