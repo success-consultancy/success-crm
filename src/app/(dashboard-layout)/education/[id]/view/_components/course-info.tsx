@@ -9,12 +9,12 @@ const PassportVisaInfo = ({ education }: CourseInfoProps) => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">University name</span>
-          <span className="text-gray-900 text-base font-medium">{education.universityName || '-'}</span>
+          <span className="text-gray-900 text-base font-medium">{education?.university?.name || '-'}</span>
         </div>
 
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">Course</span>
-          <span className="text-gray-900 text-base font-medium">{education.courseName || '-'}</span>
+          <span className="text-gray-900 text-base font-medium">{education?.course?.name || '-'}</span>
         </div>
         <div className="flex flex-col">
           <span className="text-gray-800 text-sm">University start date</span>

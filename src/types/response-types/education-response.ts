@@ -56,7 +56,12 @@ export interface IEducation {
   source: {
     name: string;
   };
-
+  university: {
+    name: string;
+  };
+  course: {
+    name: string;
+  };
   UpdatedByUser?: {
     firstName: string;
     lastName: string;
