@@ -24,8 +24,11 @@ import { useGetSource } from '@/query/get-source';
 import { useGetUniversity } from '@/query/get-university';
 import ComboboxField from '@/components/organisms/combobox-field';
 import { useGetCourse } from '@/query/get-course';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import TinyEditor from '@/components/organisms/text-editor';
+import { FormField } from '@/components/ui/form';
+import SelectWithCommand from '@/components/molecules/select-with-command';
+import { useGetUsers } from '@/query/get-user';
 
 interface Props {
   userId: number | undefined;
@@ -114,6 +117,19 @@ export function AddEducationService({ userId }: Props) {
       setValue('courseFee.accounts.status', paymentStatus);
     }
   }, [planName, amount, dueDate, invoiceNumber, paymentStatus, setValue]);
+
+  const { data: users } = useGetUsers();
+
+  const userOptions = useMemo(() => {
+    if (users) {
+      return users?.map((user) => {
+        return {
+          label: user.firstName + '' + user.lastName,
+          value: '' + user.id,
+        };
+      });
+    }
+  }, [users]);
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
@@ -350,20 +366,9 @@ export function AddEducationService({ userId }: Props) {
               <Label className="text-b2 mb-2" htmlFor="courseFee.note">
                 Fee Notes
               </Label>
-              <Editor
-                apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
-                value={remarks}
-                onEditorChange={handleFeeStructureEditorChange}
-                init={{
-                  height: 300,
-                  menubar: false,
-                  toolbar:
-                    'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
-                    'alignright alignjustify | bullist numlist outdent indent',
-                  promotion: false,
-                  branding: false,
-                }}
-              />
+
+              <TinyEditor value={watch('courseFee.note')} onChange={handleFeeStructureEditorChange} />
+
               {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
             </div>
           </>
@@ -438,17 +443,19 @@ export function AddEducationService({ userId }: Props) {
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">
           <div className="grid grid-cols-2 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="userId"
-              label="Assigned To"
-              options={[
-                { label: 'John Doe', value: '1' },
-                { label: 'Jane Smith', value: '2' },
-                { label: 'Mike Johnson', value: '3' },
-                { label: 'Sarah Wilson', value: '4' },
-              ]}
-              placeholder="Select assignee"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={userOptions || []}
+                  value={field.value?.toString()}
+                  label="Assigned to"
+                  placeholder="Select a assignee"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.userId?.message}
+                />
+              )}
             />
             <SelectField
               control={control}
@@ -466,7 +473,7 @@ export function AddEducationService({ userId }: Props) {
               <div className="w-full space-y-1" suppressHydrationWarning>
                 <Label className="text-b3-b font-semibold">Note</Label>
 
-                <TinyEditor />
+                <TinyEditor value={remarks} onChange={handleMiscEditorChange} />
                 {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
               </div>
             </div>

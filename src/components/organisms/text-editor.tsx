@@ -7,12 +7,19 @@ const Editor = dynamic(() => import('@tinymce/tinymce-react').then((mod) => mod.
   ssr: false, // Disable server-side rendering for this component
 });
 
-export default function TinyEditor() {
+interface TinyEditorProps {
+  value?: string;
+  onChange?: (value: string) => void;
+}
+
+export default function TinyEditor({ value, onChange }: TinyEditorProps) {
   return (
     <Editor
       licenseKey={'gpl'}
       tinymceScriptSrc={'https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.1.2/tinymce.min.js'}
       // apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+      value={value}
+      onEditorChange={(content) => onChange?.(content)}
       init={{
         plugins: [
           // Core editing features
@@ -53,7 +60,6 @@ export default function TinyEditor() {
         ],
         resize: false,
       }}
-      initialValue=""
     />
   );
 }

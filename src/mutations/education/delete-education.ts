@@ -3,18 +3,18 @@ import { toast } from '@/hooks/use-toast';
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const deleteLead = async (id: number) => {
-  const res = await api.delete(`/lead/${id}`);
+const deleteEducation = async (id: number) => {
+  const res = await api.delete(`/student/${id}`);
   return res.data;
 };
 
-export const useDeleteLead = () => {
+export const useDeleteEducation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLead,
+    mutationFn: deleteEducation,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_EDUCATIONS],
       });
     },
     onError: () => {
@@ -26,18 +26,18 @@ export const useDeleteLead = () => {
   });
 };
 
-const deleteLeadBulk = async (ids: number[]) => {
-  const res = await api.delete(`/lead/bulk-delete`, { data: { ids } });
+const deleteEducationBulk = async (ids: number[]) => {
+  const res = await api.delete(`/student/bulk-delete`, { data: { ids } });
   return res.data;
 };
 
-export const useDeleteLeadBulk = () => {
+export const useDeleteEducationBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLeadBulk,
+    mutationFn: deleteEducationBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_EDUCATIONS],
       });
     },
     onError: () => {

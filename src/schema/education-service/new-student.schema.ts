@@ -163,7 +163,7 @@ export const educationServiceSchema = z
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 
     statusDate: z.date({
-      error: 'Status date is required',
+      required_error: 'Status date is required',
     }),
   })
   .refine((data) => data.expiryDate > data.issueDate, {

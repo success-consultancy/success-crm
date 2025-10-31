@@ -40,7 +40,7 @@ export interface IEducation {
   visaExpiry: null | string;
   address: null | string;
   location: null | string;
-  note: null | string;
+  remarks: null | string;
   anzsco: null | string;
   updatedBy: null | number;
   files: string[];

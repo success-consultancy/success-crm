@@ -22,6 +22,7 @@ import { IEducation } from '@/types/response-types/education-response';
 import { useEducationColumn } from '@/config/columns/education-columns-definitions';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
+import { useDeleteEducation, useDeleteEducationBulk } from '@/mutations/education/delete-education';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -43,17 +44,17 @@ const EducationServicePage = () => {
     q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
   });
-  const { mutateAsync: deleteLead } = useDeleteLead();
-  const { mutateAsync: deleteLeadBulk } = useDeleteLeadBulk();
+  const { mutateAsync: deleteEducation } = useDeleteEducation();
+  const { mutateAsync: deleteEducationBulk } = useDeleteEducationBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
   const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
 
   const handleDelete = (id: number) => {
-    deleteLead(id);
+    deleteEducation(id);
   };
 
   const handleDeleteBulk = (ids: number[]) => {
-    deleteLeadBulk(ids);
+    deleteEducationBulk(ids);
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {

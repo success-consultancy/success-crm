@@ -9,7 +9,7 @@ type NoteSectionProps = { education: IEducation };
 
 const NoteSection = ({ education }: NoteSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [note, setNote] = useState(education.note || '');
+  const [note, setNote] = useState(education.remarks || '');
 
   return (
     <TitleBox title="Note">

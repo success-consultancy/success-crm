@@ -388,26 +388,42 @@ export const useEducationColumn = (
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
                   <div
-                    onClick={() => router.push(`/education/${row.original.id}/edit`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/education/${row.original.id}/edit`);
+                    }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Edit strokeWidth={1.5} className="h-5 w-5" />
                     <span>Edit</span>
                   </div>
                   <div
-                    onClick={() => router.push(`/education/${row.original.id}/view`)}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/education/${row.original.id}/view`);
+                    }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Eye strokeWidth={1.5} className="h-5 w-5" />
                     <span>View</span>
                   </div>
-                  <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                  <div
+                    onClick={(e) => {
+                      e.stopPropagation();
+                    }}
+                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+                  >
                     <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
                     <span>Send SMS</span>
                   </div>
                   <EmailDialog
                     trigger={
-                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+                      >
                         <Mail strokeWidth={1.5} className="h-5 w-5" />
                         <span>Send Email</span>
                       </div>
@@ -418,7 +434,12 @@ export const useEducationColumn = (
                   />
                   <DeleteDialog
                     trigger={
-                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                        }}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
+                      >
                         <Trash2 strokeWidth={1.5} className="h-5 w-5" />
                         <span>Delete Education</span>
                       </div>

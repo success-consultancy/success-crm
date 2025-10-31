@@ -1,11 +1,8 @@
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
-import {
-  educationServiceDefaultValues,
-  educationServiceSchema,
-  EducationServiceType,
-} from '@/schema/education-service/new-student.schema';
+import { educationServiceDefaultValues } from '@/schema/education-service/new-student.schema';
+import { editEducationServiceSchema, EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -26,15 +23,18 @@ import { useGetUniversity } from '@/query/get-university';
 import ComboboxField from '@/components/organisms/combobox-field';
 import { useGetCourse } from '@/query/get-course';
 import { useEffect } from 'react';
+import { useEditEducation } from '@/mutations/education/edit-education';
+import toast from 'react-hot-toast';
+import { useParams, useRouter } from 'next/navigation';
 
 interface Props {
   id?: number;
-  defaultValues?: EducationServiceType;
+  defaultValues?: EditEducationServiceType;
 }
 
 export function EditEducationService({ id: userId, defaultValues }: Props) {
-  const form = useForm<EducationServiceType>({
-    resolver: zodResolver(educationServiceSchema),
+  const form = useForm<EditEducationServiceType>({
+    resolver: zodResolver(editEducationServiceSchema),
     defaultValues: defaultValues || educationServiceDefaultValues,
     mode: 'onBlur',
   });
@@ -61,8 +61,11 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   }, [userId, setValue]);
 
   const universityId = form.watch('universityId');
-  console.log('universityId', universityId);
+  console.log('universityId', universityId, errors);
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
+  const editEducation = useEditEducation();
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
 
   const handleFeeStructureEditorChange = (content: string) => {
     setValue('courseFee.note', content, { shouldValidate: true });
@@ -72,8 +75,22 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
     setValue('remarks', content, { shouldValidate: true });
   };
 
-  const submitHandler = (data: EducationServiceType) => {
+  const submitHandler = (data: EditEducationServiceType) => {
     //handle update
+    editEducation.mutate(
+      { ...data, id: Number(params.id) },
+      {
+        onSuccess: () => {
+          toast.success('Education updated successfully');
+          router.push('/education');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update education');
+        },
+      },
+    );
   };
 
   return (
@@ -257,7 +274,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         </FormAccordion>
 
         {/* Fee Structure */}
-        <FormAccordion value="item-3" title="Fee Structure">
+        {/* <FormAccordion value="item-3" title="Fee Structure">
           <>
             <div className="grid grid-cols-3 gap-6">
               <TextInput
@@ -332,10 +349,10 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
               {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
             </div>
           </>
-        </FormAccordion>
+        </FormAccordion> */}
 
         {/* Accounts */}
-        <FormAccordion value="item-4" title="Accounts">
+        {/* <FormAccordion value="item-4" title="Accounts">
           <>
             <div className="grid grid-cols-3 gap-6">
               <TextInput
@@ -408,7 +425,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
               />
             </div>
           </>
-        </FormAccordion>
+        </FormAccordion> */}
 
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">

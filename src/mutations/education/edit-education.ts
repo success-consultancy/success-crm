@@ -1,28 +1,23 @@
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { LeadSchemaType } from '@/schema/lead-schema';
+import { EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
 import { toast } from '@/hooks/use-toast';
 
-const editLead = async (
-  payload: Omit<LeadSchemaType, 'serviceType'> & {
-    serviceType: string;
-    id: number;
-  },
-) => {
-  const { hasVisitedStep, id, ...filteredPayload } = payload;
-  const res = await api.put(`/lead/${id}`, filteredPayload);
+const editEducation = async (payload: EditEducationServiceType & { id: number }) => {
+  const { id, courseFee, ...filteredPayload } = payload;
+  const res = await api.put(`/student/${id}`, filteredPayload);
   return res.data;
 };
 
-export const useEditLead = () => {
+export const useEditEducation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: editLead,
+    mutationFn: editEducation,
     onSuccess: () => {
       queryClient.invalidateQueries({
         predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
+          query.queryKey[0] === QUERY_KEYS.GET_EDUCATIONS || query.queryKey[0] === QUERY_KEYS.GET_EDUCATION_BY_ID,
       });
     },
     onError: () => {
