@@ -32,10 +32,10 @@ type EducationStagesProps = { education: IEducation };
 export const EducationStages = ({ education }: EducationStagesProps) => {
   const stages = [
     { name: 'New', active: education.status === EducationStatusTypes.New },
-    { name: 'Negotiation', active: education.status === EducationStatusTypes.ChecklistSent },
-    { name: 'Converted', active: education.status === EducationStatusTypes.ApplicationReady },
-    { name: 'Not Interested', active: education.status === EducationStatusTypes.ApplicaitonSubmitted },
-    { name: 'Follow Up', active: education.status === EducationStatusTypes.OfferReceived },
+    { name: 'Checklist Sent', active: education.status === EducationStatusTypes.ChecklistSent },
+    { name: 'Application Ready', active: education.status === EducationStatusTypes.ApplicationReady },
+    { name: 'Application Submitted', active: education.status === EducationStatusTypes.ApplicaitonSubmitted },
+    { name: 'Offer Received', active: education.status === EducationStatusTypes.OfferReceived },
   ];
 
   return (
