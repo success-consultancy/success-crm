@@ -25,7 +25,7 @@ const EditEducationServicePage = () => {
     email: data?.email || '',
     phone: data?.phone || '',
     country: data?.country || '',
-    passport: data?.passport || '',
+    passport: data?.passport.toString() || '',
     issueDate: data?.issueDate ? new Date(data.issueDate) : new Date(),
     expiryDate: data?.expiryDate ? new Date(data.expiryDate) : new Date(),
     location: data?.location || '',

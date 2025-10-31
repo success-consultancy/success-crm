@@ -445,7 +445,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 <Editor
                   apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
                   value={remarks}
-                  onEditorChange={handleFeeStructureEditorChange}
+                  onEditorChange={handleMiscEditorChange}
                   init={{
                     height: 300,
                     menubar: false,

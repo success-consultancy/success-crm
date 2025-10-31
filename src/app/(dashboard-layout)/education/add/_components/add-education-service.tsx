@@ -62,7 +62,11 @@ export function AddEducationService({ userId }: Props) {
   const universityId = form.watch('universityId');
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
 
-  const handleEditorChange = (content: string) => {
+  const handleFeeStructureEditorChange = (content: string) => {
+    setValue('courseFee.note', content, { shouldValidate: true });
+  };
+
+  const handleMiscEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
   };
 
@@ -84,6 +88,21 @@ export function AddEducationService({ userId }: Props) {
   const dueDate = watch('courseFee.duedate');
   const invoiceNumber = watch('courseFee.invoicenumber');
   const paymentStatus = watch('courseFee.status');
+
+  // FOr calculation
+  const comissionPercent = watch('courseFee.accounts.comission');
+  const discount = watch('courseFee.accounts.discount');
+  const bonus = watch('courseFee.accounts.bonus');
+
+  useEffect(() => {
+    if (!comissionPercent && !discount && !bonus) {
+      setValue('courseFee.accounts.netamount', amount.toString());
+      return;
+    }
+    const comissionAAmount = (Number(amount) * (Number(comissionPercent) || 0)) / 100;
+    const netAmount = comissionAAmount - (Number(discount) || 0) + (Number(bonus) || 0);
+    setValue('courseFee.accounts.netamount', netAmount.toString());
+  }, [amount, comissionPercent, discount, bonus, setValue]);
 
   useEffect(() => {
     if (userId) {
@@ -333,7 +352,7 @@ export function AddEducationService({ userId }: Props) {
               <Editor
                 apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
                 value={remarks}
-                onEditorChange={handleEditorChange}
+                onEditorChange={handleFeeStructureEditorChange}
                 init={{
                   height: 300,
                   menubar: false,
@@ -391,21 +410,22 @@ export function AddEducationService({ userId }: Props) {
                 placeholder="Select status"
               />
               <TextInput
-                label="Commission"
+                label="Commission (%)"
                 {...register('courseFee.accounts.comission')}
                 error={errors.courseFee?.accounts?.comission?.message}
               />
               <TextInput
-                label="Discount (Optional)"
+                label="Discount Amount (Optional)"
                 {...register('courseFee.accounts.discount')}
                 error={errors.courseFee?.accounts?.discount?.message}
               />
               <TextInput
-                label="Bonus (Optional)"
+                label="Bonus Amount (Optional)"
                 {...register('courseFee.accounts.bonus')}
                 error={errors.courseFee?.accounts?.bonus?.message}
               />
               <TextInput
+                disabled
                 label="Net Amount"
                 {...register('courseFee.accounts.netamount')}
                 error={errors.courseFee?.accounts?.netamount?.message}
@@ -442,7 +462,26 @@ export function AddEducationService({ userId }: Props) {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <TextInput label="Remarks (Optional)" {...register('remarks')} error={errors.remarks?.message} />
+              <div className="mt-6">
+                <Label className="text-b2 mb-2" htmlFor="courseFee.note">
+                  Remarks
+                </Label>
+                <Editor
+                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
+                  value={remarks}
+                  onEditorChange={handleMiscEditorChange}
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    toolbar:
+                      'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
+                      'alignright alignjustify | bullist numlist outdent indent',
+                    promotion: false,
+                    branding: false,
+                  }}
+                />
+                {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
+              </div>{' '}
             </div>
           </div>
         </FormAccordion>
