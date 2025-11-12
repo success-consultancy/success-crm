@@ -11,7 +11,7 @@ const AdminSidebarMenuItems = () => {
 
   const isItemActive = (item: MenuItem) => {
     if (item.href) {
-      return pathName === item.href;
+      return pathName.includes(item.href);
     }
     if (item.subItems) {
       return item.subItems.some((subItem) => pathName === subItem.href);

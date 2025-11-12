@@ -17,6 +17,16 @@ const ColumnHeader = (props: Props) => {
   const [open, setOpen] = useState(false);
   const { searchParams, setParams } = useSearchParams();
 
+  // Initialize sorting state from URL params
+  useEffect(() => {
+    const order = searchParams.get('order');
+    const orderBy = searchParams.get('order_by');
+    
+    if (order && orderBy === props.keyParam) {
+      setSortingState(order);
+    }
+  }, [searchParams, props.keyParam]);
+
   useEffect(() => {
     if (!searchParams.get('order')) {
       setSortingState(undefined);
@@ -62,7 +72,8 @@ const ColumnHeader = (props: Props) => {
     setOpen(false);
   };
 
-  const isActiveSortedHeader = sortingState && props.keyParam === searchParams.get('order_by');
+  const isActiveSortedHeader = props.keyParam === searchParams.get('order_by');
+  const isSorted = (sortingState || searchParams.get('order')) && isActiveSortedHeader;
 
   if (!props.title) return null;
 
@@ -75,7 +86,7 @@ const ColumnHeader = (props: Props) => {
             <ArrowUp
               className={cn([
                 'h-4 w-4 mr-1',
-                isActiveSortedHeader ? 'block' : 'hidden',
+                isSorted ? 'block' : 'hidden',
                 sortingState === 'desc' && 'rotate-180',
               ])}
               strokeWidth={2}
