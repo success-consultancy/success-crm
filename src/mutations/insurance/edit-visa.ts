@@ -2,7 +2,7 @@ import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { LeadSchemaType } from '@/schema/lead-schema';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 
 const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {
@@ -26,9 +26,8 @@ export const useEditLead = () => {
       });
     },
     onError: () => {
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong',
+      toast("Error!", {
+        description: "Something went wrong",
       });
     },
   });

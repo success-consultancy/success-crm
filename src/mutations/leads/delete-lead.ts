@@ -1,7 +1,8 @@
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from '@/hooks/use-toast';
+import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+
 
 const deleteLead = async (id: number) => {
   const res = await api.delete(`/lead/${id}`);
@@ -18,10 +19,9 @@ export const useDeleteLead = () => {
       });
     },
     onError: () => {
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong',
-      });
+      toast("Error!", {
+          description: "Something went wrong",
+        })
     },
   });
 };
@@ -41,10 +41,9 @@ export const useDeleteLeadBulk = () => {
       });
     },
     onError: () => {
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong',
-      });
+      toast("Error!", {
+          description: "Something went wrong",
+        })
     },
   });
 };

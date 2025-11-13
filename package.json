@@ -7,7 +7,7 @@
     "dev-turbo": "next dev --turbopack",
     "build": "next build",
     "start": "next start -p 3001",
-    "lint": "next lint",
+    "lint": "eslint .",
     "prepare": "husky",
     "format": "prettier --write ."
   },
@@ -47,13 +47,13 @@
     "iconsax-reactjs": "^0.0.8",
     "lodash": "^4.17.21",
     "lucide-react": "^0.525.0",
-    "next": "15.3.4",
+    "next": "^16.0.3",
     "nuqs": "^2.4.3",
     "qs": "^6.14.0",
-    "react": "^19.0.0",
+    "react": "^19.2.0",
     "react-circle-flags": "^0.0.23",
     "react-day-picker": "^9.10.0",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.0",
     "react-dropzone": "^14.3.8",
     "react-hook-form": "^7.63.0",
     "react-hot-toast": "^2.5.2",
@@ -64,22 +64,26 @@
     "sharp": "^0.34.5",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.1",
+    "tailwindcss-animate": "^1.0.7",
     "zod": "^4.1.9",
     "zustand": "^5.0.6"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/qs": "^6.14.0",
-    "@types/react": "^19",
-    "@types/react-dom": "^19",
+    "@types/react": "19.2.4",
+    "@types/react-dom": "19.2.3",
     "@types/react-window": "^1.8.8",
     "eslint": "^9",
-    "eslint-config-next": "15.3.4",
+    "eslint-config-next": "16.0.3",
     "husky": "^9.1.7",
     "tailwindcss": "^4",
     "tw-animate-css": "^1.3.4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "@types/react": "19.2.4",
+    "@types/react-dom": "19.2.3"
   }
 }

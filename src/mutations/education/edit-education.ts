@@ -2,7 +2,7 @@ import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
-import { toast } from '@/hooks/use-toast';
+import {toast} from 'sonner';
 
 const editEducation = async (payload: EditEducationServiceType & { id: number }) => {
   const { id, courseFee, ...filteredPayload } = payload;
@@ -21,9 +21,8 @@ export const useEditEducation = () => {
       });
     },
     onError: () => {
-      toast({
-        title: 'Error!',
-        description: 'Something went wrong',
+      toast("Error!", {
+        description: "Something went wrong",
       });
     },
   });
