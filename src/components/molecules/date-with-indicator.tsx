@@ -10,18 +10,18 @@ interface DateWithIndicatorProps {
 
 // Color palette for each month (12 distinct colors)
 const MONTH_COLORS = [
-  'text-red-500', // January
-  'text-pink-500', // February
-  'text-purple-500', // March
-  'text-indigo-500', // April
-  'text-blue-500', // May
-  'text-cyan-500', // June
-  'text-teal-500', // July
-  'text-green-500', // August
-  'text-lime-500', // September
-  'text-yellow-500', // October
-  'text-orange-500', // November
-  'text-rose-500', // December
+  '#EF7722', // January
+  '#DF2E38', // February
+  '#A56C47', // March
+  '#3674B5', // April
+  '#A459D1', // May
+  '#2CD3E1', // June
+  '#F266AB', // July
+  '#57564F', // August
+  '#FCC61D', // September
+  '#03A791', // October
+  '#87A922', // November
+  '#2192FF', // December
 ];
 
 export const DateWithIndicator = ({ date, format = 'MMM yyyy', className }: DateWithIndicatorProps) => {
@@ -31,7 +31,7 @@ export const DateWithIndicator = ({ date, format = 'MMM yyyy', className }: Date
 
   return (
     <span className={cn('inline-flex items-center', className)}>
-      <DotIcon className={cn('inline-block mr-2', dotColor)} />
+      <DotIcon className={cn('inline-block mr-2')} style={{color: dotColor}} />
       <span className="ml-0.5">{formatDate(dateObj, format)}</span>
     </span>
   );
