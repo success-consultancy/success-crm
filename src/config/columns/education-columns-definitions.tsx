@@ -183,17 +183,7 @@ export const useEducationColumn = (
       size: 132,
       meta: { isVisible: false },
     },
-    {
-      id: 'address',
-      header: () => <ColumnHeader title="Address" keyParam="address" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.address || '-'}</span>;
-      },
-      size: 216,
-      meta: { isVisible: false },
-    },
+
     {
       id: 'location',
       header: () => <ColumnHeader title="Location" keyParam="location" />,
@@ -216,89 +206,7 @@ export const useEducationColumn = (
       size: 136,
       meta: { isVisible: false },
     },
-    {
-      id: 'visa',
-      header: () => <ColumnHeader title="Visa" keyParam="visa" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.visa || '-'}</span>;
-      },
-      size: 216,
-      meta: { isVisible: false },
-    },
-    {
-      id: 'visa-expiry',
-      header: () => <ColumnHeader title="Visa expiry" keyParam="visaExpiry" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return (
-          <span className="w-full">
-            {row.original.visaExpiry ? format(new Date(row.original.visaExpiry as string), 'dd/MM/yyyy') : '-'}
-          </span>
-        );
-      },
-      size: 132,
-      meta: { isVisible: false },
-    },
-    {
-      id: 'service-type',
-      header: () => <ColumnHeader title="Service type" keyParam="serviceType" />,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
-        let serviceType: string | string[] = row.original.serviceType;
-
-        try {
-          if (typeof serviceType === 'string') {
-            serviceType = JSON.parse(serviceType);
-          }
-        } catch (e) {
-          serviceType = [];
-        }
-
-        const getServiceBadge = (type: ServiceType) => {
-          switch (type) {
-            case 'Education':
-              return (
-                <Badge key={type} className="bg-green-100 text-green-800 hover:bg-green-100">
-                  {type}
-                </Badge>
-              );
-            case 'Visa':
-              return (
-                <Badge key={type} className="bg-blue-100 text-blue-800 hover:bg-blue-100">
-                  {type}
-                </Badge>
-              );
-            case 'Skill Assessment':
-              return (
-                <Badge key={type} className="bg-orange-100 text-orange-800 hover:bg-orange-100">
-                  {type}
-                </Badge>
-              );
-            case 'Health Insurance':
-              return (
-                <Badge key={type} className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-                  {type}
-                </Badge>
-              );
-            default:
-              return <span key={type}>{type}</span>;
-          }
-        };
-
-        return (
-          <div className="flex gap-1 flex-wrap">
-            {Array.isArray(serviceType) && serviceType.map((type) => getServiceBadge(type as ServiceType))}
-          </div>
-        );
-      },
-      size: 176,
-      meta: { isVisible: false },
-    },
     {
       id: 'source',
       header: () => <ColumnHeader title="Source" keyParam="source" />,
