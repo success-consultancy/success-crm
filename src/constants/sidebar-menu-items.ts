@@ -18,6 +18,7 @@ import {
   LucideIcon,
 } from 'lucide-react';
 import { clearTokens } from '@/utils/token';
+import { DashboardTitle } from '@/types/sidebar-type';
 
 export type SubMenuItem = {
   title: string;
@@ -34,69 +35,69 @@ export type MenuItem = {
 
 export const menuItems: MenuItem[] = [
   {
-    title: 'Dashboard',
+    title: DashboardTitle.Dashboard,
     icon: LayoutGrid,
     href: '/dashboard',
   },
   {
-    title: 'Fiscal Report',
+    title: DashboardTitle.FiscalReport,
     icon: FileBarChart,
     href: '#',
   },
   {
-    title: 'Appointment Calendar',
+    title: DashboardTitle.AppointmentCalendar,
     icon: Calendar,
     href: '#',
   },
   {
-    title: 'Check-In',
+    title: DashboardTitle.CheckIn,
     icon: UserCheck,
     href: '#',
   },
   {
-    title: 'Leads',
+    title: DashboardTitle.Leads,
     icon: Users,
     href: '/leads',
   },
   {
-    title: 'Education Service',
+    title: DashboardTitle.EducationService,
     icon: GraduationCap,
     href: '/education',
   },
   {
-    title: 'Visa Service',
+    title: DashboardTitle.VisaService,
     icon: Globe,
     href: '#',
   },
   {
-    title: 'Skill Assessment Service',
+    title: DashboardTitle.SkillAssessmentService,
     icon: Lightbulb,
     href: '#',
   },
   {
-    title: 'Tribunal Review',
+    title: DashboardTitle.TribunalReview,
     icon: Scale,
     href: '#',
   },
   {
-    title: 'Insurance Service',
+    title: DashboardTitle.InsuranceService,
     icon: ShieldPlus,
     href: '#',
   },
   {
-    title: 'Agency Agreement',
+    title: DashboardTitle.AgencyAgreement,
     icon: FileText,
     href: '#',
   },
   {
-    title: 'News and Updates',
+    title: DashboardTitle.NewsAndUpdates,
     icon: Megaphone,
     href: '#',
   },
   {
-    title: 'Setup',
+    title: DashboardTitle.Setup,
     icon: Settings,
-    subItems: [{ title: 'Sample Route', href: '#' }],
+    subItems: [{ title: 'Users', href: '#' }, { title: 'Employees', href: '#' }],
   },
 ];
 

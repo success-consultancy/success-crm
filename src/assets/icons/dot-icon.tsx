@@ -15,7 +15,7 @@ const DotIcon = (props: Props) => {
       xmlns="http://www.w3.org/2000/svg"
       className={cn([props.className])}
     >
-      <circle cx="4" cy="4" r="4" fill="#EF7722" />
+      <circle cx="4" cy="4" r="4" fill="currentColor" />
     </svg>
   );
 };
