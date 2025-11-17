@@ -66,7 +66,7 @@ export const menuItems: MenuItem[] = [
   {
     title: 'Visa Service',
     icon: Globe,
-    href: '#',
+    href: '/visa',
   },
   {
     title: 'Skill Assessment Service',

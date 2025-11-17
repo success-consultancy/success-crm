@@ -20,6 +20,8 @@ export const ROUTES = {
 
   ADD_EDUCATION_SERVICE: '/education/add',
 
+  ADD_VISA_SERVICE: '/visa/add',
+
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',
   OCCUPATION: '/dashboard/occupation',
