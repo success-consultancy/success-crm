@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import EducationPageContent from './_components/view-education-page';
 import { useParams } from 'next/navigation';
+
+import VisaPageContent from './_components/view-visa-page';
 
 const ViewEducationPage = () => {
   const params = useParams<{ id: string }>();
-  const educationId = params.id;
-  return <EducationPageContent studentId={educationId} />;
+  const studentId = params.id;
+  return <VisaPageContent studentId={studentId} />;
 };
 
 export default ViewEducationPage;

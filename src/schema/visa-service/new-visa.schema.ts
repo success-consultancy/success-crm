@@ -31,6 +31,8 @@ export const newVisaServiceSchema = z.object({
 
   location: nullableString(),
 
+  // Visa Information
+
   visaSubmitted: nullableString(),
 
   visaGranted: nullableString(),
@@ -63,7 +65,14 @@ export const newVisaServiceSchema = z.object({
 
   remarks: nullableString(),
 
-  sourceId: nullableNumber(),
+  sourceId: z
+    .union([z.string(), z.number()])
+    .nullable()
+    .optional()
+    .transform((val) => {
+      if (val === null || val === undefined || val === '') return null;
+      return Number(val);
+    }),
 
   invoiceNumber: nullableString(),
 
@@ -76,9 +85,13 @@ export const newVisaServiceSchema = z.object({
   assignedDate: z.date().nullable().optional(),
 
   updatedBy: nullableNumber(),
+
+  // sponsorName: nullableString(),
+  // sponsorEmail: nullableString(),
+  // sponsorPhone: nullableString(),
 });
 
-export type NewVisaServiceType = z.infer<typeof newVisaServiceSchema>;
+export type NewVisaServiceType = z.input<typeof newVisaServiceSchema>;
 
 export const newVisaServiceDefaultValues: NewVisaServiceType = {
   files: null,

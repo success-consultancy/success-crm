@@ -67,7 +67,7 @@ export function AddVisaService({ userId }: Props) {
   const submitHandler = (data: NewVisaServiceType) => {
     // The schema already expects strings for date fields, so we can pass data as-is
     mutate(
-      { payload: data },
+      { payload: { ...data, sourceId: Number(data.sourceId) } },
       {
         onSuccess: () => {
           toast.success('Visa applicant added successfully');
@@ -283,9 +283,14 @@ export function AddVisaService({ userId }: Props) {
               ]}
               placeholder="Select an occupation"
             />
-            <TextInput label="Sponsor name" {...register('remarks')} error={errors.remarks?.message} />
-            <TextInput type="email" label="Sponsor email" {...register('remarks')} error={errors.remarks?.message} />
-            <TextInput label="Sponsor phone" {...register('remarks')} error={errors.remarks?.message} />
+            {/* <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.remarks?.message} />
+            <TextInput
+              type="email"
+              label="Sponsor email"
+              {...register('sponsorEmail')}
+              error={errors.remarks?.message}
+            />
+            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.remarks?.message} /> */}
             <SelectField
               control={control}
               name="csaStatus"
