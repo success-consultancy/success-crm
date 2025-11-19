@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Command, CommandInput, CommandItem, CommandList } from '../ui/command';
+import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
 
 interface ColumnSelectorProps<TData> {
   table: Table<TData>;
@@ -103,11 +103,11 @@ export function ColumnSelector<TData>({
       <PopoverContent className="p-0 flex flex-col w-[17.1875rem]" align="start">
         <Command className="p-2">
           <CommandInput placeholder="Search" />
-          <CommandList>
-            <div className="max-h-[400px] h-[13.5rem] overflow-y-auto custom-scrollbar">
-              {allColumns.map((column) => {
-                const columnName = column.id
-                  .split('-')
+          <CommandList className="max-h-[400px] h-[13.5rem] overflow-y-auto custom-scrollbar">
+            <CommandEmpty>No results found.</CommandEmpty>
+            {allColumns.map((column) => {
+              const columnName = column.id
+                .split('-')
                   .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
                   .join(' ')
                   .replace('Lead ', '');
@@ -138,7 +138,6 @@ export function ColumnSelector<TData>({
                   </CommandItem>
                 );
               })}
-            </div>
           </CommandList>
         </Command>
 
