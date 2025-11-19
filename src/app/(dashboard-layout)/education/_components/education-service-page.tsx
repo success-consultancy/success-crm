@@ -109,7 +109,6 @@ const EducationServicePage = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
-        searchKey="email"
         columnPinning={{
           left: ['select', 'education-createdAt', 'education-id'],
           right: ['education-actions'],

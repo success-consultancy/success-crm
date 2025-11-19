@@ -103,7 +103,6 @@ const Leads = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
-        searchKey="email"
         columnPinning={{
           left: ['select', 'lead-createdAt', 'lead-id'],
           right: ['lead-actions'],
