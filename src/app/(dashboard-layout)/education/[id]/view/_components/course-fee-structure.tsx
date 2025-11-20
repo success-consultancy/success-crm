@@ -9,6 +9,7 @@ import useAuthStore from '@/store/auth-store';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Button from '@/components/atoms/button';
+import { FormAccordion } from '@/components/organisms/form-accordion';
 
 type CourseFeeStructureProps = {
   courseFee: IFeePlan[];
@@ -18,6 +19,7 @@ type CourseFeeStructureProps = {
   draft?: IFeePlan;
   onDraftChange?: (draft: IFeePlan) => void;
   accountsDraft?: any; // IAccounts type
+  compType?: string;
 };
 
 const CourseFeeStructure = ({
@@ -28,6 +30,7 @@ const CourseFeeStructure = ({
   draft,
   onDraftChange,
   accountsDraft,
+  compType,
 }: CourseFeeStructureProps) => {
   const CourseFeeStrucutureColumns = useFeeStuructureColumn();
 
@@ -90,10 +93,17 @@ const CourseFeeStructure = ({
   const handleCancel = () => {
     onToggleAdding?.(false);
   };
-  console.log(courseFee);
+
+  const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
+    if (type === "accordion") {
+      return <FormAccordion value="item-3" title="Fee Structure">{children}</FormAccordion>;
+    }
+    
+    return <TitleBox title="Course fee structure">{children}</TitleBox>;
+  };
 
   return (
-    <TitleBox title="Course fee structure">
+    <Comp type={compType}>
       <div className="grid grid-cols-1 gap-y-2">
         <TableComponent
           data={courseFee || []}
@@ -154,16 +164,17 @@ const CourseFeeStructure = ({
             </div>
           </div>
         )}
-        <button
+        <Button
           type="button"
           onClick={handleAddRow}
           className="text-primary flex items-center gap-1 w-fit text-sm"
           disabled={isPending}
+          variant="ghost"
         >
           <span>+ Add row</span>
-        </button>
+        </Button>
       </div>
-    </TitleBox>
+    </Comp>
   );
 };
 

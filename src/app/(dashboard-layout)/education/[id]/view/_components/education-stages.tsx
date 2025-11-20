@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
+import { Edit, Eye, MessageCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface StageProps {
   name: string;
@@ -30,6 +32,8 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
 
 type EducationStagesProps = { education: IEducation };
 export const EducationStages = ({ education }: EducationStagesProps) => {
+  const router = useRouter();
+
   const stages = [
     { name: 'New', active: education.status === EducationStatusTypes.New },
     { name: 'Checklist Sent', active: education.status === EducationStatusTypes.ChecklistSent },
@@ -40,8 +44,31 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
 
   return (
     <div className="border rounded-lg shadow-sm ">
-      <div className="border-b px-6 py-3">
+      <div className="border-b px-6 py-3 flex justify-between items-center">
         <p className="text-xl font-bold">Education stages</p>
+
+        <div className='flex gap-2'>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/education/${education.id}/edit`);
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <Edit strokeWidth={1.5} className="h-5 w-5" />
+            <span>Edit</span>
+          </div>
+
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
+            <span>Send SMS</span>
+          </div>
+        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">

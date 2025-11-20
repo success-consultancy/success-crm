@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
+import { Edit, MessageCircle } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 interface StageProps {
   name: string;
@@ -30,6 +32,7 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
 
 type LeadStagesProps = { lead: ILead };
 export const LeadStages = ({ lead }: LeadStagesProps) => {
+  const router = useRouter();
   const stages = [
     { name: 'New', active: lead.status === LeadStatusTypes.New },
     { name: 'Negotiation', active: lead.status === LeadStatusTypes.Negotiation },
@@ -40,8 +43,32 @@ export const LeadStages = ({ lead }: LeadStagesProps) => {
 
   return (
     <div className="border rounded-lg shadow-sm ">
-      <div className="border-b px-6 py-3">
+
+      <div className="border-b px-6 py-3 flex justify-between items-center">
         <p className="text-xl font-bold">Lead stages</p>
+
+        <div className='flex gap-2'>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/leads/${lead.id}/edit`);
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <Edit strokeWidth={1.5} className="h-5 w-5" />
+            <span>Edit</span>
+          </div>
+
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
+            <span>Send SMS</span>
+          </div>
+        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">

@@ -5,6 +5,7 @@ import TableComponent from '@/components/organisms/table';
 import { IAccounts } from '@/types/response-types/education-response';
 import { Input } from '@/components/ui/input';
 import { useAccountsColumn } from '@/config/columns/accounts-columns-definitions';
+import { FormAccordion } from '@/components/organisms/form-accordion';
 
 type AccountsProps = {
   courseFee: IAccounts[];
@@ -12,17 +13,25 @@ type AccountsProps = {
   isAdding?: boolean;
   draft?: IAccounts | null;
   onDraftChange?: (field: keyof IAccounts, value: string) => void;
+  compType?: 'accordion' | 'default';
 };
 
-const Accounts = ({ courseFee, studentId, isAdding = false, draft, onDraftChange }: AccountsProps) => {
+const Accounts = ({ courseFee, studentId, isAdding = false, draft, onDraftChange, compType = 'default' }: AccountsProps) => {
   const AccountsColumns = useAccountsColumn();
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
 
-  console.log(courseFee);
+
+  const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
+    if (type === "accordion") {
+      return <FormAccordion value="item-3" title="Fee Structure">{children}</FormAccordion>;
+    }
+    
+    return <TitleBox title="Course fee structure">{children}</TitleBox>;
+  };
 
   return (
-    <TitleBox title="Accounts">
+    <Comp type={compType}>
       <div className="grid grid-cols-1 gap-y-2">
         <TableComponent
           data={courseFee || []}
@@ -70,7 +79,7 @@ const Accounts = ({ courseFee, studentId, isAdding = false, draft, onDraftChange
           </div>
         )}
       </div>
-    </TitleBox>
+    </Comp>
   );
 };
 

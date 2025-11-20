@@ -22,10 +22,11 @@ import { useGetSource } from '@/query/get-source';
 import { useGetUniversity } from '@/query/get-university';
 import ComboboxField from '@/components/organisms/combobox-field';
 import { useGetCourse } from '@/query/get-course';
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEditEducation } from '@/mutations/education/edit-education';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
+import CourseFeeComponent from '../../../_components/course_fee_component';
 
 interface Props {
   id?: number;
@@ -92,6 +93,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
       },
     );
   };
+
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
@@ -273,159 +275,9 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
           </>
         </FormAccordion>
 
-        {/* Fee Structure */}
-        {/* <FormAccordion value="item-3" title="Fee Structure">
-          <>
-            <div className="grid grid-cols-3 gap-6">
-              <TextInput
-                label="Plan Name"
-                {...register('courseFee.planname')}
-                error={errors.courseFee?.planname?.message}
-              />
-              <TextInput
-                label="Amount"
-                type="number"
-                {...register('courseFee.amount', { valueAsNumber: true })}
-                error={errors.courseFee?.amount?.message}
-              />
+        {/* Fee and Accounts Structure */}
+        <CourseFeeComponent id={params.id} />
 
-              <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.duedate">
-                  Due Date
-                </Label>
-                <Controller
-                  name="courseFee.duedate"
-                  control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      side="top"
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
-                      disablePastDates={true}
-                      error={!!errors.courseFee?.duedate?.message}
-                    />
-                  )}
-                />
-                <FormErrorMessage message={errors.courseFee?.duedate?.message} />
-              </div>
-              <TextInput
-                label="Invoice Number"
-                {...register('courseFee.invoicenumber')}
-                error={errors.courseFee?.invoicenumber?.message}
-              />
-              <SelectField
-                control={control}
-                name="courseFee.status"
-                label="Payment Status"
-                options={[
-                  { label: 'Pending', value: 'Pending' },
-                  { label: 'Paid', value: 'Paid' },
-                  { label: 'Overdue', value: 'Overdue' },
-                  { label: 'Cancelled', value: 'Cancelled' },
-                ]}
-                placeholder="Select payment status"
-              />
-            </div>
-            <div className="mt-6">
-              <Label className="text-b2 mb-2" htmlFor="courseFee.note">
-                Fee Notes
-              </Label>
-              <Editor
-                apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
-                value={remarks}
-                onEditorChange={handleFeeStructureEditorChange}
-                init={{
-                  height: 300,
-                  menubar: false,
-                  toolbar:
-                    'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
-                    'alignright alignjustify | bullist numlist outdent indent',
-                  promotion: false,
-                  branding: false,
-                }}
-              />
-              {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
-            </div>
-          </>
-        </FormAccordion> */}
-
-        {/* Accounts */}
-        {/* <FormAccordion value="item-4" title="Accounts">
-          <>
-            <div className="grid grid-cols-3 gap-6">
-              <TextInput
-                label="Plan Name"
-                {...register('courseFee.accounts.planname')}
-                error={errors.courseFee?.accounts?.planname?.message}
-              />
-              <TextInput
-                label="Amount"
-                {...register('courseFee.accounts.amount')}
-                error={errors.courseFee?.accounts?.amount?.message}
-              />
-              <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                  Due Date
-                </Label>
-                <Controller
-                  name="courseFee.accounts.duedate"
-                  control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      side="top"
-                      value={field.value}
-                      onChange={field.onChange}
-                      placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
-                      disablePastDates={true}
-                      error={!!errors.courseFee?.accounts?.duedate?.message}
-                    />
-                  )}
-                />
-                <FormErrorMessage message={errors.courseFee?.accounts?.duedate?.message} />
-              </div>
-              <TextInput
-                label="Invoice Number"
-                {...register('courseFee.accounts.invoicenumber')}
-                error={errors.courseFee?.accounts?.invoicenumber?.message}
-              />
-              <SelectField
-                control={control}
-                name="courseFee.accounts.status"
-                label="Status"
-                options={[
-                  { label: 'Pending', value: 'Pending' },
-                  { label: 'Paid', value: 'Paid' },
-                  { label: 'Processing', value: 'Processing' },
-                  { label: 'Cancelled', value: 'Cancelled' },
-                ]}
-                placeholder="Select status"
-              />
-              <TextInput
-                label="Commission"
-                {...register('courseFee.accounts.comission')}
-                error={errors.courseFee?.accounts?.comission?.message}
-              />
-              <TextInput
-                label="Discount (Optional)"
-                {...register('courseFee.accounts.discount')}
-                error={errors.courseFee?.accounts?.discount?.message}
-              />
-              <TextInput
-                label="Bonus (Optional)"
-                {...register('courseFee.accounts.bonus')}
-                error={errors.courseFee?.accounts?.bonus?.message}
-              />
-              <TextInput
-                label="Net Amount"
-                {...register('courseFee.accounts.netamount')}
-                error={errors.courseFee?.accounts?.netamount?.message}
-              />
-            </div>
-          </>
-        </FormAccordion> */}
 
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">
