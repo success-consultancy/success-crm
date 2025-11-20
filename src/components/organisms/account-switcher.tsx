@@ -52,14 +52,27 @@ const SidebarLogo = () => {
 
   const IS_SUPER_ADMIN = profile?.id === SUPER_ADMIN_ROLE;
 
+  const currentBranch = branches?.find((item) => item.id === profile?.branchId);
+
+  const capitalizeFirstLetter = (str: string) => {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  };
+
   return (
-    <div className="py-3 mb-4">
+    <div className="border-b border-gray-100">
       {IS_SUPER_ADMIN ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <div className="flex items-center gap-2 cursor-pointer select-none">
-              <Image src={SuccessLogo.src} alt="logo" height={100} width={100} quality={70} className="h-12 w-auto" />
+            <div className="flex items-center gap-2 cursor-pointer select-none font-bold hover:bg-neutral-100 px-1 py-1 m-2 rounded">
+              {currentBranch ? (
+                <>
+                  <Image src={'/success-logo-mini.png'} alt="logo" height={40} width={40} quality={70} className="h-10 w-auto" />
 
+                  {capitalizeFirstLetter(currentBranch?.name || '')}
+                </>
+              ) : (
+                <Image src={SuccessLogo.src} alt="logo" height={100} width={100} quality={70} className="h-10 w-auto" />
+              )}
               <ChevronDown className="w-4 h-4" />
             </div>
           </DropdownMenuTrigger>
@@ -129,7 +142,7 @@ const SidebarLogo = () => {
         </DropdownMenu>
       ) : (
         <div className="flex items-center gap-2 cursor-pointer select-none">
-          <Image src={SuccessLogo.src} alt="logo" height={100} width={100} quality={70} className="h-12 w-auto" />
+          <Image src={'/success-logo-mini.png'} alt="logo" height={100} width={100} quality={70} className="h-12 w-auto" />
         </div>
       )}
     </div>

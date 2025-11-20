@@ -27,8 +27,8 @@ const AdminSidebar = ({ className }: Props) => {
       <div className="relative h-full w-full flex flex-col justify-between">
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-4 h-full">
-            <div className="p-3">
-              <SidebarLogo />
+            <SidebarLogo />
+            <div className="p-2">
               <AdminSidebarMenuItems />
             </div>
           </div>

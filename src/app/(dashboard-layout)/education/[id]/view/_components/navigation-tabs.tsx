@@ -25,7 +25,7 @@ const TabsMenu: React.FC<TabsMenuProps> = ({ items, active, onChange }) => {
             key={item.value}
             onClick={() => onChange(item.value)}
             className={clsx(
-              'px-3 py-2 text-sm font-medium focus:outline-none',
+              'px-3 py-2 text-sm font-medium focus:outline-none cursor-pointer',
               isActive ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-600 hover:text-blue-600',
             )}
           >

@@ -8,23 +8,23 @@ const PassportVisaInfo = ({ education }: CourseInfoProps) => {
     <TitleBox title="Course Information">
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
         <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">University name</span>
-          <span className="text-gray-900 text-base font-medium">{education?.university?.name || '-'}</span>
+          <span className="text-b3-b">University name</span>
+          <span className="text-neutral-dark-grey text-base font-medium">{education?.university?.name || '-'}</span>
         </div>
 
         <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Course</span>
-          <span className="text-gray-900 text-base font-medium">{education?.course?.name || '-'}</span>
+          <span className="text-b3-b">Course</span>
+          <span className="text-neutral-dark-grey text-base font-medium">{education?.course?.name || '-'}</span>
         </div>
         <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">University start date</span>
-          <span className="text-gray-900 text-base font-medium">
+          <span className="text-b3-b">University start date</span>
+          <span className="text-neutral-dark-grey text-base font-medium">
             {education.startDate ? new Date(education.startDate).toLocaleDateString() : '-'}
           </span>
         </div>
         <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">University end date</span>
-          <span className="text-gray-900 text-base font-medium">
+          <span className="text-b3-b">University end date</span>
+          <span className="text-neutral-dark-grey text-base font-medium">
             {education.endDate ? new Date(education.endDate).toLocaleDateString() : '-'}
           </span>
         </div>
