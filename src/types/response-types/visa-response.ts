@@ -92,3 +92,46 @@ export interface IAccounts {
   bonus: string;
   netamount: string;
 }
+
+export interface IVisaDetail {
+  id: number;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  files: any;
+  passport: number;
+  issueDate: string;
+  expiryDate: string;
+  email: string;
+  phone: string;
+  dob: string;
+  currentVisa: string;
+  occupation: string;
+  anzsco: string;
+  location: string;
+  proposedVisa: string;
+  visaSubmitted: string;
+  visaGranted: string;
+  visaExpiry: string;
+  requestedDate: string;
+  dueDate: string;
+  country: string;
+  state: string;
+  status: string;
+  statusDate: string;
+  csaStatus: string;
+  sourceId: number;
+  invoiceNumber: string;
+  payment: string;
+  paymentStatus: string;
+  remarks: string;
+  nominationLodged: string;
+  nominationDecision: string;
+  nominationStatus: string;
+  userId: number;
+  assignedDate: string;
+  updatedBy: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: any;
+}
