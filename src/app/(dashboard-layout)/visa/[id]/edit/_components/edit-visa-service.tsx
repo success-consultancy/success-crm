@@ -17,7 +17,6 @@ import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
-import { useAddVisaService } from '@/mutations/visa/add-visa';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
 import { useEffect, useMemo } from 'react';
@@ -25,15 +24,18 @@ import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
+import { useEditVisa } from '@/mutations/visa/edit-visa';
 
 interface Props {
+  visaId: number;
   userId: number | undefined;
+  defaultValues: Partial<NewVisaServiceType>;
 }
 
-export function AddVisaService({ userId }: Props) {
+export function EditVisaService({ visaId, userId, defaultValues }: Props) {
   const form = useForm<NewVisaServiceType>({
     resolver: zodResolver(newVisaServiceSchema),
-    defaultValues: newVisaServiceDefaultValues,
+    defaultValues: defaultValues,
     mode: 'onChange',
   });
 
@@ -47,6 +49,7 @@ export function AddVisaService({ userId }: Props) {
     setValue,
     formState: { errors },
     handleSubmit,
+    reset,
   } = form;
 
   const remarks = watch('remarks');
@@ -59,22 +62,23 @@ export function AddVisaService({ userId }: Props) {
   }, [userId, setValue]);
 
   const handleVisaNoteChange = (content: string) => {
-    // Store visa note in remarks or a separate field if needed
     setValue('remarks', content, { shouldValidate: true });
   };
 
-  const { mutate, isPending } = useAddVisaService();
+  const { mutate, isPending } = useEditVisa();
   const submitHandler = (data: NewVisaServiceType) => {
-    // The schema already expects strings for date fields, so we can pass data as-is
     mutate(
-      { payload: { ...data, sourceId: Number(data.sourceId) } },
+      {
+        id: visaId,
+        ...data,
+        sourceId: Number(data.sourceId),
+      },
       {
         onSuccess: () => {
-          toast.success('Visa applicant added successfully');
-          form.reset();
+          toast.success('Visa applicant updated successfully');
         },
         onError: (error: any) => {
-          toast.error(error?.response?.data?.message || 'Failed to add visa applicant');
+          toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
         },
       },
     );
@@ -111,6 +115,8 @@ export function AddVisaService({ userId }: Props) {
       return undefined;
     }
   };
+
+  console.log(errors);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
@@ -571,11 +577,8 @@ export function AddVisaService({ userId }: Props) {
       </Accordion>
 
       <div className="flex justify-start mt-6">
-        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
-          Add Visa Applicant
-        </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => form.reset()}>
-          Cancel
+        <Button loading={isPending} loadingText="Updating" type="submit" variant="primary">
+          Update Visa Applicant
         </Button>
       </div>
     </form>

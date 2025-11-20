@@ -1,62 +1,31 @@
-import { IEducation } from '@/types/response-types/education-response';
+import { IVisa } from '@/types/response-types/visa-response';
 import TitleBox from './title-box';
+import { InfoField } from '@/components/atoms/info-field';
 
-type PersonalDetailsProps = { education: IEducation };
+type PersonalDetailsProps = { visa: IVisa };
 
-const PersonalDetails = ({ education }: PersonalDetailsProps) => {
+const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
   return (
     <TitleBox title="Personal details">
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">First name</span>
-          <span className="text-gray-900 text-base font-medium">{education.firstName}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Middle name</span>
-          <span className="text-gray-900 text-base font-medium">{education.middleName || '-'}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Last name</span>
-          <span className="text-gray-900 text-base font-medium">{education.lastName}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Email address</span>
-          <span className="text-gray-900 text-base font-medium">{education.email}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Phone number</span>
-          <span className="text-gray-900 text-base font-medium">{education.phone || '-'}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Birth date</span>
-          <span className="text-gray-900 text-base font-medium">
-            {education.dob ? new Date(education.dob).toLocaleDateString() : '-'}
-          </span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Nationality</span>
-          <span className="text-gray-900 text-base font-medium">{education.country || '-'}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Address</span>
-          <span className="text-gray-900 text-base font-medium">{education.address || '-'}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Passport number</span>
-          <span className="text-gray-900 text-base font-medium">{education.passport || '-'}</span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Passport Issue date</span>
-          <span className="text-gray-900 text-base font-medium">
-            {education.issueDate ? new Date(education.issueDate).toLocaleDateString() : '-'}
-          </span>
-        </div>
-        <div className="flex flex-col">
-          <span className="text-gray-800 text-sm">Passport Expiry date</span>
-          <span className="text-gray-900 text-base font-medium">
-            {education.expiryDate ? new Date(education.expiryDate).toLocaleDateString() : '-'}
-          </span>
-        </div>
+      <div className="grid grid-cols-3 gap-6">
+        <InfoField title="First name" value={visa.firstName} />
+        <InfoField title="Middle name" value={visa.middleName || 'N/A'} />
+        <InfoField title="Last name" value={visa.lastName} />
+        <InfoField title="Date of birth" value={visa.dob ? new Date(visa.dob).toLocaleDateString() : '-'} />
+        <InfoField title="Email address" value={visa.email} />
+        <InfoField title="Phone number" value={visa.phone || '-'} />
+        <InfoField title="Nationality" value={visa.country || '-'} />
+        <InfoField title="Address" value={visa.address || '-'} />
+        <InfoField title="Passport number" value={visa.passport || '-'} />
+        <InfoField
+          title="Passport issue date"
+          value={visa.issueDate ? new Date(visa.issueDate).toLocaleDateString() : '-'}
+        />
+        <InfoField
+          title="Passport expiry date"
+          value={visa.expiryDate ? new Date(visa.expiryDate).toLocaleDateString() : '-'}
+        />
+        <InfoField title="Location" value={visa.location || '-'} />
       </div>
     </TitleBox>
   );

@@ -16,6 +16,14 @@ export enum EducationStatusTypes {
   Discontinued = 'Discontinued',
 }
 
+export enum VisaStatusTypes {
+  New = 'New Applicant',
+  DocumentsCollected = 'Documents Collected',
+  ReadyToSubmit = 'Ready To Submit',
+  Submitted = 'Submitted',
+  InfoRequested = 'Info Requested',
+}
+
 export interface IEducation {
   id: number;
   firstName: string;

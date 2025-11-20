@@ -3,7 +3,7 @@ import { api } from '@/lib/api';
 import { IPagination, PAGINATION_PARAMS, SortingState } from '@/types/pagination';
 import { useQuery } from '@tanstack/react-query';
 import QueryString from 'qs';
-import { IVisa, IVisaResponseType } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail, IVisaResponseType } from '@/types/response-types/visa-response';
 
 interface VisaFilterParams extends IPagination {
   order?: string;
@@ -47,7 +47,7 @@ const getVisaById = async (id: string) => {
 // To prevent type mismatch, new function with separate type return is created
 const getVisaDetailById = async (id: string) => {
   const res = await api.get(`/visaApplicant/${id}`);
-  return res.data as IVisa;
+  return res.data as IVisaDetail;
 };
 
 export const useGetVisaDetailById = (id: string) => {

@@ -1,71 +1,80 @@
 'use client';
 
 import React from 'react';
-
 import Container from '@/components/atoms/container';
-import { EditEducationService } from './_components/edit-educaion-service';
 import { useParams } from 'next/navigation';
-import { useGetEducationById, useGetEducationDetailById } from '@/query/get-education';
+import { useGetVisaDetailById } from '@/query/get-visa';
 import PageLoader from '@/components/molecules/page-loader';
+import { EditVisaService } from './_components/edit-visa-service';
+import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
 
-const EditEducationServicePage = () => {
+const EditVisaServicePage = () => {
   const params = useParams<{ id: string }>();
-  const EditEducationServiceAny = EditEducationService as unknown as React.ComponentType<any>;
-  const { data, isLoading: educationLoading } = useGetEducationDetailById(params.id);
+  const { data, isLoading: visaLoading } = useGetVisaDetailById(params.id);
 
-  if (educationLoading) {
+  if (visaLoading) {
     return <PageLoader />;
   }
 
   const defaultValues = {
-    firstName: data?.firstName || '',
-    middleName: data?.middleName || '',
-    lastName: data?.lastName || '',
-    dob: data?.dob ? new Date(data.dob) : new Date(),
-    email: data?.email || '',
-    phone: data?.phone || '',
-    country: data?.country || '',
-    passport: data?.passport.toString() || '',
-    issueDate: data?.issueDate ? new Date(data.issueDate) : new Date(),
-    expiryDate: data?.expiryDate ? new Date(data.expiryDate) : new Date(),
-    location: data?.location || '',
-    universityId: data?.universityId.toString() || '',
-    courseId: data?.courseId.toString() || '',
-    startDate: data?.startDate ? new Date(data.startDate) : new Date(),
-    endDate: data?.endDate ? new Date(data.endDate) : new Date(),
-    status: data?.status || '',
-    courseFee: {
-      planname: '',
-      amount: 0,
-      duedate: new Date(),
-      invoicenumber: '',
-      status: '',
-      note: '',
-      updatedBy: '',
-      accounts: {
-        planname: '',
-        amount: '',
-        duedate: new Date(),
-        invoicenumber: '',
-        status: '',
-        comission: '',
-        discount: '',
-        bonus: '',
-        netamount: '',
-        updatedBy: '',
-      },
-    },
-    userId: data?.userId.toString() || '',
-    sourceId: data?.sourceId.toString() || '',
-    remarks: data?.remarks || '',
-    statusDate: data?.statusDate ? new Date(data.statusDate) : new Date(),
+    // Personal Details
+    firstName: data?.firstName || '', // "Noelani"
+    middleName: data?.middleName || '', // "Grace"
+    lastName: data?.lastName || '', // "Melissa"
+    dob: data?.dob || '', // ""
+    email: data?.email || '', // "dociqonuz@mailinator.com"
+    phone: data?.phone || '', // "Emma"
+    country: data?.country || '', // "Abel"
+    state: data?.state || '', // "Barry"
+    passport: data?.passport || '', // 1111
+    issueDate: data?.issueDate || '', // ""
+    expiryDate: data?.expiryDate || '', // ""
+    location: data?.location || '', // "Onshore"
+
+    // Visa Information
+    currentVisa: data?.currentVisa || '', // "No Visa"
+    visaExpiry: data?.visaExpiry || '', // ""
+    dueDate: data?.dueDate || '', // ""
+    proposedVisa: data?.proposedVisa || '', // "Family Visa"
+    visaStream: data?.visaStream || '', // Missing in API - empty
+    occupation: data?.occupation || '', // "Engineer"
+    anzsco: data?.anzsco || '', // ""
+    sponserName: data?.sponserName || '', // Missing in API - empty
+    sponserEmail: data?.sponserEmail || '', // Missing in API - empty
+    sponserPhone: data?.sponserPhone || '', // Missing in API - empty
+    csaStatus: data?.csaStatus || '', // "Rejected"
+    visaSubmitted: data?.visaSubmitted || '', // ""
+    visaGranted: data?.visaGranted || '', // ""
+    nominationStatus: data?.nominationStatus || '', // "Refused"
+    nominationLodged: data?.nominationLodged || '', // ""
+    nominationDecision: data?.nominationDecision || '', // ""
+    status: data?.status || '', // "Under Review"
+    statusDate: data?.statusDate || '', // ""
+    requestedDate: data?.requestedDate || '', // ""
+
+    // Accounts
+    payment: data?.payment || '', // "14"
+    invoiceNumber: data?.invoiceNumber || '', // "Autumn"
+    paymentStatus: data?.paymentStatus || '', // "Overdue"
+
+    // Misc
+    userId: Number(data?.userId) || '', // 3
+    sourceId: data?.sourceId || '', // 3
+    updatedBy: data?.updatedBy || '', // 1
+    remarks: data?.remarks || '', // "<p>Hello World</p>"
+    assignedDate: new Date(data?.assignedDate as string) || new Date(), // "2025-11-20"
+    files: data?.files || null, // null
   };
 
   return (
     <Container className="flex flex-col py-10 gap-8">
-      <EditEducationServiceAny defaultValues={defaultValues} id={Number(params.id)} />
+      <EditVisaService
+        userId={data?.userId}
+        visaId={Number(params.id)}
+        defaultValues={defaultValues as Partial<NewVisaServiceType>}
+      />
     </Container>
   );
 };
 
-export default EditEducationServicePage;
+export default EditVisaServicePage;

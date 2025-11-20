@@ -1,11 +1,12 @@
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { EditVisaServiceType } from '@/schema/visa-service/edit-visa.schema';
-import { toast } from 'sonner';
 
-const editVisa = async (payload: EditVisaServiceType & { id: number }) => {
-  const { id, courseFee, ...filteredPayload } = payload;
+import { toast } from 'sonner';
+import { newVisaServiceSchema, NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
+
+const editVisa = async (payload: NewVisaServiceType & { id: number }) => {
+  const { id, ...filteredPayload } = payload;
   const res = await api.put(`/visaApplicant/${id}`, filteredPayload);
   return res.data;
 };
