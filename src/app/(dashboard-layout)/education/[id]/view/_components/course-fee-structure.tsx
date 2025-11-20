@@ -94,14 +94,6 @@ const CourseFeeStructure = ({
     onToggleAdding?.(false);
   };
 
-  const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
-    if (type === "accordion") {
-      return <FormAccordion value="item-3" title="Fee Structure">{children}</FormAccordion>;
-    }
-    
-    return <TitleBox title="Course fee structure">{children}</TitleBox>;
-  };
-
   return (
     <Comp type={compType}>
       <div className="grid grid-cols-1 gap-y-2">
@@ -176,6 +168,14 @@ const CourseFeeStructure = ({
       </div>
     </Comp>
   );
+};
+
+const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
+  if (type === "accordion") {
+    return <FormAccordion value="item-3" title="Fee Structure">{children}</FormAccordion>;
+  }
+  
+  return <TitleBox title="Course fee structure">{children}</TitleBox>;
 };
 
 export default CourseFeeStructure;
