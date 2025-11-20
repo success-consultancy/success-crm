@@ -269,7 +269,18 @@ export function AddVisaService({ userId }: Props) {
               ]}
               placeholder="Select proposed visa type"
             />
-            <TextInput label="Visa stream" {...register('anzsco')} error={errors.anzsco?.message} />
+            <SelectField
+              control={control}
+              name="visaStream"
+              label="Visa Stream"
+              options={[
+                { label: 'Employer sponsored', value: 'Employer sponsored' },
+                { label: 'Skilled migration', value: 'Skilled migration' },
+                { label: 'Family sponsored', value: 'Family sponsored' },
+                { label: 'Other', value: 'Other' },
+              ]}
+              placeholder="Select an visaStream"
+            />
             <SelectField
               control={control}
               name="occupation"
@@ -283,14 +294,14 @@ export function AddVisaService({ userId }: Props) {
               ]}
               placeholder="Select an occupation"
             />
-            {/* <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor name" {...register('sponserName')} error={errors.remarks?.message} />
             <TextInput
               type="email"
               label="Sponsor email"
-              {...register('sponsorEmail')}
+              {...register('sponserEmail')}
               error={errors.remarks?.message}
             />
-            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.remarks?.message} /> */}
+            <TextInput label="Sponsor phone" {...register('sponserPhone')} error={errors.remarks?.message} />
             <SelectField
               control={control}
               name="csaStatus"
@@ -347,9 +358,15 @@ export function AddVisaService({ userId }: Props) {
               name="nominationStatus"
               label="Nomination status"
               options={[
+                { label: 'New', value: 'New' },
+                { label: 'Collecting docs', value: 'Collecting docs' },
+                { label: 'Ready to submit', value: 'Ready to submit' },
+                { label: 'Submitted', value: 'Submitted' },
+                { label: 'Info requested', value: 'Info requested' },
                 { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
+                { label: 'Withdrawn', value: 'Withdrawn' },
+                { label: 'Refused', value: 'Refused' },
+                { label: 'Discontinued', value: 'Discontinued' },
               ]}
               placeholder="Select a status"
             />
@@ -543,13 +560,12 @@ export function AddVisaService({ userId }: Props) {
               )}
             />
           </div>
-        </FormAccordion>
-
-        {/* Note */}
-        <FormAccordion value="item-7" title="Note">
-          <div className="w-full space-y-1" suppressHydrationWarning>
-            <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
-            {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+          <div>
+            <Label>Note</Label>
+            <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
+              <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
+              {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+            </div>
           </div>
         </FormAccordion>
       </Accordion>

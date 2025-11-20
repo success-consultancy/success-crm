@@ -13,7 +13,7 @@ export const newVisaServiceSchema = z.object({
 
   middleName: nullableString(),
 
-  passport: z.union([z.number(), z.string()]).nullable().optional(),
+  passport: z.coerce.number('Valid passport number required').nullable().optional(),
 
   issueDate: nullableString(),
 
@@ -32,7 +32,6 @@ export const newVisaServiceSchema = z.object({
   location: nullableString(),
 
   // Visa Information
-
   visaSubmitted: nullableString(),
 
   visaGranted: nullableString(),
@@ -86,9 +85,20 @@ export const newVisaServiceSchema = z.object({
 
   updatedBy: nullableNumber(),
 
-  // sponsorName: nullableString(),
-  // sponsorEmail: nullableString(),
-  // sponsorPhone: nullableString(),
+  // New fields from Joi schema
+  visaStream: nullableString(),
+
+  sponserName: nullableString(),
+
+  sponserEmail: nullableString(),
+
+  sponserPhone: nullableString(),
+
+  sbsStatus: nullableString(),
+
+  sbsSubmissionDate: nullableString(),
+
+  sbsDecisionDate: nullableString(),
 });
 
 export type NewVisaServiceType = z.input<typeof newVisaServiceSchema>;
@@ -130,4 +140,12 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   userId: null,
   assignedDate: null,
   updatedBy: null,
+  // New fields default values
+  visaStream: '',
+  sponserName: '',
+  sponserEmail: '',
+  sponserPhone: '',
+  sbsStatus: '',
+  sbsSubmissionDate: '',
+  sbsDecisionDate: '',
 };
