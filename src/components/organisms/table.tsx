@@ -230,9 +230,7 @@ const TableComponent = <TData, TValue>({
   if (!columns || columns.length === 0) {
     return (
       <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
-        <div
-          className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}
-        >
+        <div className={cn(['flex flex-col p-4 bg-white-100 rounded-xl border border-gray-50 h-full', className])}>
           <div className="flex items-center justify-center h-32 text-gray-500">No columns available</div>
         </div>
       </TableContextProvider>
@@ -241,7 +239,7 @@ const TableComponent = <TData, TValue>({
 
   return (
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
-      <div className={cn(['flex flex-col p-7 bg-white-100 rounded-xl border border-stroke-divider h-full', className])}>
+      <div className={cn(['flex flex-col p-4 bg-white-100 rounded-xl border border-gray-50 h-full', className])}>
         {showHeaderSection && (
           <div className="flex w-full items-center justify-between pb-5 gap-5">
             <div className="flex gap-2">
@@ -337,7 +335,7 @@ const TableComponent = <TData, TValue>({
               {table.getRowModel().rows.map((row, idx) => (
                 <tr
                   className={cn([
-                    'group border-b border-stroke-divider transition-colors hover:bg-muted data-[state=selected]:bg-muted text-neutral-dark-grey',
+                    'group border-b border-gray-50 transition-colors hover:bg-muted data-[state=selected]:bg-muted text-neutral-dark-grey',
                     '*:px-4 *:py-2.5',
                     'px-4 py-2',
                     '*:text-left select-none',
@@ -400,7 +398,7 @@ const TableComponent = <TData, TValue>({
 
         {/* Pagination controls - fixed at bottom */}
         {showPaginationSection && (
-          <div className="flex w-full items-center justify-end pt-5 gap-5 mt-auto">
+          <div className="flex w-full items-center justify-between pt-5 gap-5 mt-auto">
             <div className="text-b1 flex items-center gap-2">
               <span>Items per page</span>
               <Select

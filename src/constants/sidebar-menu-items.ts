@@ -97,7 +97,10 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.Setup,
     icon: Settings,
-    subItems: [{ title: 'Users', href: '#' }, { title: 'Employees', href: '#' }],
+    subItems: [
+      { title: 'Users', href: '#' },
+      { title: 'Employees', href: '#' },
+    ],
   },
 ];
 
