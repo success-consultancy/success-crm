@@ -104,7 +104,7 @@ const Leads = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         columnPinning={{
-          left: ['select', 'lead-createdAt', 'lead-id'],
+          left: ['select', 'lead-createdAt', 'lead-id', 'lead-first-name', 'lead-last-name'],
           right: ['lead-actions'],
         }}
         topRightSection={

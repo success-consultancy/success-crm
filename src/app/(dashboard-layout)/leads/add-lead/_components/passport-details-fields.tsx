@@ -7,10 +7,11 @@ import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
 
 import { Label } from '@/components/ui/label';
-import DatePicker from '@/components/atoms/date-picker';
+import { DatePicker } from '@/components/organisms/date-picker';
 import countryList from 'react-select-country-list';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetVisa } from '@/query/get-visa';
+import { format } from 'date-fns';
 
 const PassportDetailsStep = () => {
   const {
@@ -81,12 +82,12 @@ const PassportDetailsStep = () => {
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Issue Date</Label>
               <DatePicker
-                mode="single"
-                selected={!!field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  field.onChange(date);
-                }}
-                error={errors.issueDate?.message}
+                side="top"
+                value={field.value || undefined}
+                onChange={(date) => setValue('issueDate', date)}
+                placeholder="DD/MM/YYYY"
+                className="h-12 text-b2 w-full"
+                error={!!errors.issueDate?.message}
               />
             </div>
           )}
@@ -98,12 +99,12 @@ const PassportDetailsStep = () => {
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Expiry Date</Label>
               <DatePicker
-                mode="single"
-                selected={!!field.value ? new Date(field.value) : undefined}
-                error={errors.expiryDate?.message}
-                onSelect={(date) => {
-                  field.onChange(date);
-                }}
+                side="top"
+                value={field.value || undefined}
+                onChange={(date) => setValue('expiryDate', date)}
+                placeholder="DD/MM/YYYY"
+                className="h-12 text-b2 w-full"
+                error={!!errors.expiryDate?.message}
               />
             </div>
           )}
@@ -130,12 +131,12 @@ const PassportDetailsStep = () => {
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Visa Expiry Date</Label>
               <DatePicker
-                mode="single"
-                selected={!!field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  field.onChange(date);
-                }}
-                error={errors.visaExpiry?.message}
+                side="top"
+                value={field.value || undefined}
+                onChange={(date) => setValue('visaExpiry', date)}
+                placeholder="DD/MM/YYYY"
+                className="h-12 text-b2 w-full"
+                error={!!errors.visaExpiry?.message}
               />
             </div>
           )}

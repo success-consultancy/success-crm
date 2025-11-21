@@ -26,12 +26,12 @@ export const VISA_FILTER_PARAMS: Array<keyof VisaFilterParams> = [
   'to',
 ];
 
-const getVisa = async (params: VisaFilterParams) => {
+const getVisa = async (params?: VisaFilterParams) => {
   const res = await api.get('/visaApplicant?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
   return res.data as IVisaResponseType;
 };
 
-export const useGetVisa = (params: VisaFilterParams) => {
+export const useGetVisa = (params?: VisaFilterParams) => {
   return useQuery({
     queryFn: () => getVisa(params),
     queryKey: [QUERY_KEYS.GET_VISA, params],

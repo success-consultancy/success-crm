@@ -8,9 +8,9 @@ import { useFormContext } from 'react-hook-form';
 
 import { format } from 'date-fns';
 import { Label } from '@/components/ui/label';
-import DatePicker from '@/components/atoms/date-picker';
 import { useGetOccupations } from '@/query/get-occupations';
 import SelectWithCommand from '@/components/molecules/select-with-command';
+import { DatePicker } from '@/components/organisms/date-picker';
 
 const PersonalDetailsStep = () => {
   const {
@@ -106,14 +106,14 @@ const PersonalDetailsStep = () => {
             <div className=" flex flex-col gap-2 flex-1">
               <Label className="text-b3-b font-semibold">Birth Date</Label>
               <DatePicker
-                mode="single"
-                selected={!!field.value ? new Date(field.value) : undefined}
-                onSelect={(date) => {
-                  console.log(date);
-
+                side="top"
+                value={!!field.value ? new Date(field.value) : undefined}
+                onChange={(date) => {
                   if (date) field.onChange(format(date, 'MM/dd/yyyy'));
                 }}
-                error={errors.dob?.message}
+                placeholder="DD/MM/YYYY"
+                className="h-12 text-b2 w-full"
+                error={!!errors.dob?.message}
               />
             </div>
           )}

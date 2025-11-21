@@ -110,7 +110,7 @@ const EducationServicePage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         columnPinning={{
-          left: ['select', 'education-createdAt', 'education-id'],
+          left: ['select', 'education-createdAt', 'education-id', 'education-first-name', 'education-last-name'],
           right: ['education-actions'],
         }}
         topRightSection={
