@@ -64,7 +64,6 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
         {
           onSuccess: () => {
             toast.success('Lead updated successfully');
-            router.push('/leads');
           },
           onError: (error: any) => {
             const message = error?.response?.data?.message;

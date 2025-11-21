@@ -65,7 +65,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   console.log('universityId', universityId, errors);
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
   const editEducation = useEditEducation();
-  const router = useRouter();
   const params = useParams<{ id: string }>();
 
   const handleFeeStructureEditorChange = (content: string) => {
@@ -83,7 +82,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
       {
         onSuccess: () => {
           toast.success('Education updated successfully');
-          router.push('/education');
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message;
