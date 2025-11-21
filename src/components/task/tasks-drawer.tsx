@@ -147,9 +147,9 @@ export function TasksDrawer() {
   };
   return (
     <>
-      <div className="cursor-pointer" onClick={() => openModelTaskForm()}>
+      <span className="cursor-pointer w-fit" onClick={() => openModelTaskForm()}>
         <TaskIcon />
-      </div>
+      </span>
       <Sheet open={taskFormState.isOpen} onOpenChange={closeTaskForm}>
         <SheetContent side="right" className="min-w-[688px] sm:max-w-md border-l bg-white ">
           {!taskFormState.isAddMode ? (

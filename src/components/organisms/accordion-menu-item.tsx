@@ -19,7 +19,7 @@ export const AccordionMenuItem = ({ item, index, isActive, pathName }: Accordion
     <AccordionItem value={`item-${index}`} className="border-none">
       <AccordionTrigger
         className={cn(
-          'relative flex px-3 py-1 text-sm items-center transition-colors rounded-lg hover:no-underline [&[data-state=open]>svg]:rotate-180',
+          'relative flex px-3 h-11 text-sm items-center transition-colors rounded-lg hover:no-underline [&[data-state=open]>svg]:rotate-180',
           isActive && 'bg-component-active !text-primary font-medium',
         )}
       >

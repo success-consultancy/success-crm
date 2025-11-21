@@ -66,7 +66,14 @@ const SidebarLogo = () => {
             <div className="flex items-center gap-2 cursor-pointer select-none font-bold hover:bg-neutral-100 px-1 py-1 m-2 rounded">
               {currentBranch ? (
                 <>
-                  <Image src={'/success-logo-mini.png'} alt="logo" height={40} width={40} quality={70} className="h-10 w-auto" />
+                  <Image
+                    src={'/success-logo-mini.png'}
+                    alt="logo"
+                    height={40}
+                    width={40}
+                    quality={70}
+                    className="h-10 w-auto"
+                  />
 
                   {capitalizeFirstLetter(currentBranch?.name || '')}
                 </>
@@ -142,7 +149,14 @@ const SidebarLogo = () => {
         </DropdownMenu>
       ) : (
         <div className="flex items-center gap-2 cursor-pointer select-none">
-          <Image src={'/success-logo-mini.png'} alt="logo" height={100} width={100} quality={70} className="h-12 w-auto" />
+          <Image
+            src={'/success-logo-mini.png'}
+            alt="logo"
+            height={100}
+            width={100}
+            quality={70}
+            className="h-12 w-auto"
+          />
         </div>
       )}
     </div>
@@ -254,12 +268,7 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
           control={control}
           name="timezone"
           render={({ field }) => (
-            <TimezoneSelect
-              name="timezone"
-              label="Timezone"
-              control={control}
-              placeholder="Select timezone"
-            />
+            <TimezoneSelect name="timezone" label="Timezone" control={control} placeholder="Select timezone" />
           )}
         />
 

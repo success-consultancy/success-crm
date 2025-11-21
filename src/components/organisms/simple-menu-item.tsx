@@ -19,12 +19,12 @@ const SimpleMenuItem: React.FC<SimpleMenuItemProps> = ({ item, isActive, onClick
     </>
   );
 
-  const className = `flex items-center gap-4 rounded-lg px-3 py-1.5 text-sm font-medium transition-colors hover:bg-component-active ${
+  const className = `flex items-center gap-4 rounded-lg px-3 h-11 text-sm font-medium transition-colors hover:bg-component-active/40 cursor-pointer ${
     isActive ? 'bg-component-active !text-primary' : 'text-neutral-black'
   }`;
 
   return (
-    <div className="mb-2 last:mb-0">
+    <div className="last:mb-0">
       {item.href && item.href !== '#' ? (
         <Link href={item.href} className={className} onClick={onClick}>
           {content}

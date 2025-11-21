@@ -16,7 +16,7 @@ export const SubMenuItemComponent = ({ subItem, pathName }: SubMenuItemProps) =>
     <Link
       href={subItem.href}
       className={cn(
-        'relative border-l flex items-center py-1 px-[25px] transition-colors hover:bg-component-active rounded-md',
+        'relative flex items-center py-1 px-[25px] text-sm transition-colors hover:bg-component-active rounded-md',
         isSubActive ? 'text-primary font-medium bg-component-active' : 'text-neutral-black hover:text-primary',
       )}
     >
