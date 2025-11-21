@@ -90,3 +90,28 @@ export const useGetFollowUp = (id: string) => {
     refetchOnWindowFocus: false,
   });
 };
+
+
+export interface IVisaConst {
+  id: number;
+  visaType: string;
+  updatedBy: null;
+  createdAt: Date;
+  updatedAt: Date;
+  deletedAt: null;
+}
+
+export const GET_VISA_CONST = 'get-visa-const';
+
+const getVisaConst = async () => {
+  const res = await api.get('/visa');
+  return res.data as IVisaConst[];
+};
+
+export const useGetVisaConst = () => {
+  return useQuery({
+    queryKey: [GET_VISA_CONST],
+    queryFn: getVisaConst,
+    refetchOnWindowFocus: false,
+  });
+};

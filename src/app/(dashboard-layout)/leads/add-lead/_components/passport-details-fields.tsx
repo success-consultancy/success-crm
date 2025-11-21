@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import countryList from 'react-select-country-list';
 import SelectWithCommand from '@/components/molecules/select-with-command';
-import { useGetVisa } from '@/query/get-visa';
+import { useGetVisa, useGetVisaConst } from '@/query/get-visa';
 import { format } from 'date-fns';
 
 const PassportDetailsStep = () => {
@@ -30,7 +30,7 @@ const PassportDetailsStep = () => {
     [],
   );
 
-  const { data: visas } = useGetVisa();
+  const { data: visas } = useGetVisaConst();
 
   const visaOptions = useMemo(() => {
     if (!!visas?.length) {

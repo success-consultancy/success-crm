@@ -134,4 +134,9 @@ export interface IVisaDetail {
   createdAt: string;
   updatedAt: string;
   deletedAt: any;
+
+  visaStream: string;
+  sponserName: string;
+  sponserEmail: string;
+  sponserPhone: string;
 }
