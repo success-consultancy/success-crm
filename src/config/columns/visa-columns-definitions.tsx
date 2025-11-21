@@ -13,17 +13,17 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
-import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
-import { ServiceType } from '@/types/leads/leads-types';
+import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
+import { IVisa } from '@/types/response-types/visa-response';
 
-export const useEducationColumn = (
+export const useVisaColumn = (
   handleDelete: (id: number) => void,
   handleSendEmail: (payload: SendEmailSchemaType) => void,
 ) => {
   const router = useRouter();
 
-  const EducationColumns: ColumnDef<IEducation>[] = [
+  const VisaColumns: ColumnDef<IVisa>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -57,7 +57,7 @@ export const useEducationColumn = (
       meta: { isVisible: true, sticky: 'left', stickyLeft: 0 },
     },
     {
-      id: 'education-createdAt',
+      id: 'visa-createdAt',
       header: () => <ColumnHeader title="" keyParam="createdAt" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -69,13 +69,13 @@ export const useEducationColumn = (
       meta: { isVisible: true, sticky: 'left', stickyLeft: 40 },
     },
     {
-      id: 'education-id',
+      id: 'visa-id',
       header: () => <ColumnHeader title="ID" keyParam="id" className="h-10" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/education/${row.original.id}/view`)}>
+          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/visa/${row.original.id}/view`)}>
             {row.original.id}
           </span>
         );
@@ -85,7 +85,7 @@ export const useEducationColumn = (
       meta: { isVisible: true, sticky: 'left', stickyLeft: 160 },
     },
     {
-      id: 'education-first-name',
+      id: 'visa-first-name',
       header: () => <ColumnHeader title="First name" keyParam="firstName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -96,7 +96,7 @@ export const useEducationColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'education-middle-name',
+      id: 'visa-middle-name',
       header: () => <ColumnHeader title="Middle name" keyParam="middleName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -107,7 +107,7 @@ export const useEducationColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'education-last-name',
+      id: 'visa-last-name',
       header: () => <ColumnHeader title="Last name" keyParam="lastName" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -118,7 +118,7 @@ export const useEducationColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'education-birth-date',
+      id: 'visa-birth-date',
       header: () => <ColumnHeader title="Birth date" keyParam="dob" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -129,7 +129,7 @@ export const useEducationColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'education-email',
+      id: 'visa-email',
       header: () => <ColumnHeader title="Email" keyParam="email" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -140,7 +140,7 @@ export const useEducationColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'education-phone',
+      id: 'visa-phone',
       header: () => <ColumnHeader title="Phone" keyParam="phone" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -258,13 +258,13 @@ export const useEducationColumn = (
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
-            case EducationStatusTypes.New:
+            case VisaStatusTypes.NewApplicant:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case EducationStatusTypes.Coereceived:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-            case EducationStatusTypes.Withdrawn:
+            case VisaStatusTypes.Approved:
+              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>;
+            case VisaStatusTypes.Discontinued:
               return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case EducationStatusTypes.ChecklistSent:
+            case VisaStatusTypes.FollowUp:
               return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
             default:
               return <span>{status}</span>;
@@ -277,7 +277,7 @@ export const useEducationColumn = (
       meta: { isVisible: false },
     },
     {
-      id: 'education-actions',
+      id: 'visa-actions',
       header: () => <Plus className="h-5 w-5 mx-auto" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
@@ -298,7 +298,7 @@ export const useEducationColumn = (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/education/${row.original.id}/edit`);
+                      router.push(`/visa/${row.original.id}/edit`);
                     }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
@@ -308,7 +308,7 @@ export const useEducationColumn = (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/education/${row.original.id}/view`);
+                      router.push(`/visa/${row.original.id}/view`);
                     }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
@@ -349,11 +349,11 @@ export const useEducationColumn = (
                         className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
                       >
                         <Trash2 strokeWidth={1.5} className="h-5 w-5" />
-                        <span>Delete Education</span>
+                        <span>Delete visa</span>
                       </div>
                     }
-                    title="Delete this Education"
-                    description="Are you sure you want to delete this education? Deleting this education will remove all associated data, including contacts, interactions and notes."
+                    title="Delete this visa"
+                    description="Are you sure you want to delete this visa? Deleting this visa will remove all associated data, including contacts, interactions and notes."
                     onConfirm={() => handleDelete(row.original.id)}
                   />
                 </div>
@@ -366,5 +366,5 @@ export const useEducationColumn = (
       meta: { isVisible: true, sticky: 'right', stickyRight: 0 },
     },
   ];
-  return EducationColumns;
+  return VisaColumns;
 };

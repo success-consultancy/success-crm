@@ -67,7 +67,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.VisaService,
     icon: Globe,
-    href: '#',
+    href: '/visa',
   },
   {
     title: DashboardTitle.SkillAssessmentService,

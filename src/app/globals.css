@@ -508,7 +508,7 @@ input[type='time']::-webkit-clear-button {
   display: none;
 }
 
-body{
+body {
   letter-spacing: 0.15px;
 }
 
@@ -542,4 +542,3 @@ body{
     opacity: 1;
   }
 }
-

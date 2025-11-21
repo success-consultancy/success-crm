@@ -1,30 +1,23 @@
-export interface EducationsResponseType {
+export interface IVisaResponseType {
   count: number;
-  rows: IEducation[];
-}
-
-export enum EducationStatusTypes {
-  New = 'New',
-  ChecklistSent = 'Checklist Sent',
-  ApplicationReady = 'Application Ready',
-  ApplicaitonSubmitted = 'Applicaiton Submitted',
-  OfferReceived = 'Offer received',
-  WaitingPayment = 'Waiting Payment',
-  FeePaid = 'Fee Paid',
-  Coereceived = 'Coe received',
-  Withdrawn = 'Withdrawn',
-  Discontinued = 'Discontinued',
+  rows: IVisa[];
 }
 
 export enum VisaStatusTypes {
-  New = 'New Applicant',
-  DocumentsCollected = 'Documents Collected',
-  ReadyToSubmit = 'Ready To Submit',
+  NewApplicant = 'New Applicant',
+  CollectingDocs = 'Collecting Docs',
+  ReadyToSubmit = 'Ready to Submit',
   Submitted = 'Submitted',
   InfoRequested = 'Info Requested',
+  Approved = 'Approved',
+  FeePaid = 'Fee Paid',
+  Withdrawn = 'Withdrawn',
+  Refused = 'Refused',
+  Discontinued = 'Discontinued',
+  FollowUp = 'Follow Up',
 }
 
-export interface IEducation {
+export interface IVisa {
   id: number;
   firstName: string;
   middleName: null | string;
@@ -35,7 +28,7 @@ export interface IEducation {
   passport: null | number;
   issueDate: null | string;
   expiryDate: null | string;
-  status: EducationStatusTypes;
+  status: VisaStatusTypes;
   serviceType: string;
   sourceId: null | number;
   userId: null | number;
@@ -98,4 +91,47 @@ export interface IAccounts {
   discount: string;
   bonus: string;
   netamount: string;
+}
+
+export interface IVisaDetail {
+  id: number;
+  firstName: string;
+  lastName: string;
+  middleName: string;
+  files: any;
+  passport: number;
+  issueDate: string;
+  expiryDate: string;
+  email: string;
+  phone: string;
+  dob: string;
+  currentVisa: string;
+  occupation: string;
+  anzsco: string;
+  location: string;
+  proposedVisa: string;
+  visaSubmitted: string;
+  visaGranted: string;
+  visaExpiry: string;
+  requestedDate: string;
+  dueDate: string;
+  country: string;
+  state: string;
+  status: string;
+  statusDate: string;
+  csaStatus: string;
+  sourceId: number;
+  invoiceNumber: string;
+  payment: string;
+  paymentStatus: string;
+  remarks: string;
+  nominationLodged: string;
+  nominationDecision: string;
+  nominationStatus: string;
+  userId: number;
+  assignedDate: string;
+  updatedBy: number;
+  createdAt: string;
+  updatedAt: string;
+  deletedAt: any;
 }

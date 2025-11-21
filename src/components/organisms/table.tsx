@@ -207,8 +207,8 @@ const TableComponent = <TData, TValue>({
       ? isLastLeftPinnedColumn
         ? `-2px 0 2px -2px #D9E2E8 inset`
         : isFirstRightPinnedColumn
-          ? `2px 0 2px -2px #D9E2E8 inset`
-          : undefined
+        ? `2px 0 2px -2px #D9E2E8 inset`
+        : undefined
       : undefined;
 
     // For body cells, ensure white background that can be overridden by hover
