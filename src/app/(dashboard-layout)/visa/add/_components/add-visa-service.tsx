@@ -25,21 +25,13 @@ import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
+import { useGetOccupations } from '@/query/get-occupations';
 
 interface Props {
   userId: number | undefined;
 }
 
 export function AddVisaService({ userId }: Props) {
-  const form = useForm<NewVisaServiceType>({
-    resolver: zodResolver(newVisaServiceSchema),
-    defaultValues: newVisaServiceDefaultValues,
-    mode: 'onChange',
-  });
-
-  const { data: sourceData } = useGetSource();
-  const { data: users } = useGetUsers();
-
   const {
     register,
     control,
@@ -47,7 +39,50 @@ export function AddVisaService({ userId }: Props) {
     setValue,
     formState: { errors },
     handleSubmit,
-  } = form;
+    reset,
+  } = useForm<NewVisaServiceType>({
+    resolver: zodResolver(newVisaServiceSchema),
+    defaultValues: newVisaServiceDefaultValues,
+    mode: 'onChange',
+  });
+
+  const { data: sourceData } = useGetSource();
+  const { data: users } = useGetUsers();
+  const { data: occupations } = useGetOccupations();
+
+  const occupationsOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.title as string,
+        label: occupation.title as string,
+      };
+    });
+  }, [occupations]);
+
+  const ANZSCOOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.code as string,
+        label: occupation.code as string,
+      };
+    });
+  }, [occupations]);
+
+  const [selectedOccupation, selectedANZSCO] = watch(['occupation', 'anzsco']);
+
+  useEffect(() => {
+    if (selectedOccupation) {
+      const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
+      setValue('anzsco', selected?.code, { shouldValidate: false });
+    }
+  }, [selectedOccupation, occupations, setValue]);
+
+  useEffect(() => {
+    if (selectedANZSCO) {
+      const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
+      setValue('occupation', selected?.title, { shouldValidate: false });
+    }
+  }, [selectedANZSCO, occupations, setValue]);
 
   const remarks = watch('remarks');
 
@@ -71,7 +106,7 @@ export function AddVisaService({ userId }: Props) {
       {
         onSuccess: () => {
           toast.success('Visa applicant added successfully');
-          form.reset();
+          reset();
         },
         onError: (error: any) => {
           toast.error(error?.response?.data?.message || 'Failed to add visa applicant');
@@ -281,18 +316,31 @@ export function AddVisaService({ userId }: Props) {
               ]}
               placeholder="Select an visaStream"
             />
-            <SelectField
+            <FormField
               control={control}
               name="occupation"
-              label="Occupation"
-              options={[
-                { label: 'Software Developer', value: 'Software Developer' },
-                { label: 'Engineer', value: 'Engineer' },
-                { label: 'Accountant', value: 'Accountant' },
-                { label: 'Teacher', value: 'Teacher' },
-                { label: 'Nurse', value: 'Nurse' },
-              ]}
-              placeholder="Select an occupation"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={occupationsOptions || []}
+                  value={field.value || undefined}
+                  label="Occupation"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.occupation?.message}
+                />
+              )}
+            />
+            <FormField
+              control={control}
+              name="anzsco"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={ANZSCOOptions || []}
+                  value={field.value || undefined}
+                  label="ANZSCO"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.anzsco?.message}
+                />
+              )}
             />
             <TextInput label="Sponsor name" {...register('sponserName')} error={errors.remarks?.message} />
             <TextInput
@@ -574,7 +622,7 @@ export function AddVisaService({ userId }: Props) {
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Visa Applicant
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => form.reset()}>
+        <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
           Cancel
         </Button>
       </div>
