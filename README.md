@@ -7,4 +7,6 @@
 - branches
 - education
    - edit, view
+- visa
+    -edit, view
 
