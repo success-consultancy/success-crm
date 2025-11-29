@@ -1,24 +1,33 @@
-// External packages
+'use client';
+
 import React from 'react';
-import { useRouter } from 'next/navigation';
 import { LogoutCurve } from 'iconsax-reactjs';
 
+import { cn } from '@/lib/utils';
 import { clearTokens } from '@/utils/token';
+import { useSidebarStore } from '@/store/sidebar-store';
 
 const SidebarUserOptions = () => {
-  const router = useRouter();
+  const { isCollapsed } = useSidebarStore();
+
+  const handleLogout = () => {
+    clearTokens();
+    window.location.href = '/login';
+  };
+
   return (
     <div
-      className="p-4 flex items-center gap-3 cursor-pointer text-red"
       role="button"
-      onClick={() => {
-        clearTokens();
-        window.location.href = '/login';
-      }}
+      onClick={handleLogout}
+      className={cn(
+        'p-4 flex items-center transition-colors rounded-lg cursor-pointer text-red',
+        isCollapsed ? 'justify-center px-0' : 'gap-3',
+      )}
     >
-      <LogoutCurve />
-      <span>Logout</span>
+      <LogoutCurve size={22} />
+      {!isCollapsed && <span>Logout</span>}
     </div>
   );
 };
+
 export default SidebarUserOptions;

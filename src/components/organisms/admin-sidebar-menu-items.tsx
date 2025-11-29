@@ -5,48 +5,41 @@ import { Accordion } from '@/components/ui/accordion';
 import { AccordionMenuItem } from './accordion-menu-item';
 import { MenuItem, menuItems } from '@/constants/sidebar-menu-items';
 import SimpleMenuItem from './simple-menu-item';
+import { useSidebarStore } from '@/store/sidebar-store';
 
 const AdminSidebarMenuItems = () => {
   const pathName = usePathname();
+  const { isCollapsed } = useSidebarStore();
 
   const isItemActive = (item: MenuItem) => {
-    if (item.href) {
-      return pathName.includes(item.href);
-    }
-    if (item.subItems) {
-      return item.subItems.some((subItem) => pathName === subItem.href);
-    }
+    if (item.href) return pathName.includes(item.href);
+
+    if (item.subItems) return item.subItems.some((subItem) => pathName === subItem.href);
+
     return false;
   };
 
   const getDefaultOpenItem = () => {
-    const activeItemIndex = menuItems.findIndex((item) => {
-      if (item.subItems) {
-        return item.subItems.some((subItem) => pathName === subItem.href);
-      }
-      return false;
-    });
+    const activeItemIndex = menuItems.findIndex((item) => item.subItems?.some((subItem) => pathName === subItem.href));
     return activeItemIndex !== -1 ? `item-${activeItemIndex}` : undefined;
   };
 
   return (
-    <div className="">
-      <Accordion type="single" collapsible defaultValue={getDefaultOpenItem()} className="w-full">
-        {menuItems.map((item, index) => {
-          const isActive = isItemActive(item);
+    <Accordion type="single" collapsible defaultValue={getDefaultOpenItem()} className="w-full">
+      {menuItems.map((item, index) => {
+        const isActive = isItemActive(item);
 
-          if (!item.subItems && item.href) {
-            return <SimpleMenuItem key={index} item={item} isActive={isActive} onClick={() => {}} />;
-          }
+        if (!item.subItems && item.href) {
+          return <SimpleMenuItem key={index} item={item} isActive={isActive} collapsed={isCollapsed} />;
+        }
 
-          if (item.subItems) {
-            return <AccordionMenuItem key={index} item={item} index={index} isActive={isActive} pathName={pathName} />;
-          }
+        if (item.subItems && !isCollapsed) {
+          return <AccordionMenuItem key={index} item={item} index={index} isActive={isActive} pathName={pathName} />;
+        }
 
-          return null;
-        })}
-      </Accordion>
-    </div>
+        return null;
+      })}
+    </Accordion>
   );
 };
 

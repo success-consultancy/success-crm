@@ -12,11 +12,11 @@ import MiscSection from './misc-section';
 import NoteSection from './note-section';
 import Accounts from './accounts';
 
-interface EducationPageContentProps {
+interface VisaPageContentProps {
   studentId: string;
 }
 
-const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }) => {
+const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const tabs = [
     { label: 'Overview', value: 'overview' },
@@ -58,4 +58,4 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   );
 };
 
-export default EducationPageContent;
+export default VisaPageContent;
