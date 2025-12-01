@@ -44,6 +44,10 @@ export interface IVisa {
   status: string;
   statusDate: string;
   csaStatus: string;
+  source: {
+    id: number;
+    name: string;
+  };
   sourceId: number;
   invoiceNumber: string;
   payment: string;
@@ -52,6 +56,11 @@ export interface IVisa {
   nominationLodged: string;
   nominationDecision: string;
   nominationStatus: string;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
   userId: number;
   assignedDate: string;
   updatedBy: number;
