@@ -75,6 +75,8 @@ export interface IVisa {
   sponsorName: string;
   sbsTasStatus: string;
   visaStream: string;
+  startDate: string;
+  endDate: string;
 }
 
 export interface IFeePlan {
