@@ -68,6 +68,13 @@ export interface IVisa {
   createdAt: string;
   updatedAt: string;
   deletedAt: any;
+
+  // aded fields
+  sponsorPhone: string;
+  sponsorEmail: string;
+  sponsorName: string;
+  sbsTasStatus: string;
+  visaStream: string;
 }
 
 export interface IFeePlan {
