@@ -44,6 +44,7 @@ export interface IVisa {
   status: string;
   statusDate: string;
   csaStatus: string;
+  address: string;
   source: {
     id: number;
     name: string;
