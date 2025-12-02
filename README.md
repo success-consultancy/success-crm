@@ -1,7 +1,9 @@
 ## CRM V2
 
+# system feature
+- sidebar
+  
 # Features
-
 - leads
   - history
 - branches
