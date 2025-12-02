@@ -88,11 +88,11 @@ export const newVisaServiceSchema = z.object({
   // New fields from Joi schema
   visaStream: nullableString(),
 
-  sponserName: nullableString(),
+  sponsorName: nullableString(),
 
-  sponserEmail: nullableString(),
+  sponsorEmail: nullableString(),
 
-  sponserPhone: nullableString(),
+  sponsorPhone: nullableString(),
 
   sbsStatus: nullableString(),
 
@@ -142,9 +142,9 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   updatedBy: null,
   // New fields default values
   visaStream: '',
-  sponserName: '',
-  sponserEmail: '',
-  sponserPhone: '',
+  sponsorName: '',
+  sponsorEmail: '',
+  sponsorPhone: '',
   sbsStatus: '',
   sbsSubmissionDate: '',
   sbsDecisionDate: '',

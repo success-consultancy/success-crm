@@ -300,14 +300,14 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
               ]}
               placeholder="Select an occupation"
             />
-            <TextInput label="Sponsor name" {...register('sponserName')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.remarks?.message} />
             <TextInput
               type="email"
               label="Sponsor email"
-              {...register('sponserEmail')}
+              {...register('sponsorEmail')}
               error={errors.remarks?.message}
             />
-            <TextInput label="Sponsor phone" {...register('sponserPhone')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.remarks?.message} />
             <SelectField
               control={control}
               name="csaStatus"

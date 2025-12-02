@@ -39,9 +39,9 @@ const EditVisaServicePage = () => {
     visaStream: data?.visaStream || '', // Missing in API - empty
     occupation: data?.occupation || '', // "Engineer"
     anzsco: data?.anzsco || '', // ""
-    sponserName: data?.sponserName || '', // Missing in API - empty
-    sponserEmail: data?.sponserEmail || '', // Missing in API - empty
-    sponserPhone: data?.sponserPhone || '', // Missing in API - empty
+    sponsorName: data?.sponsorName || '', // Missing in API - empty
+    sponsorEmail: data?.sponsorEmail || '', // Missing in API - empty
+    sponsorPhone: data?.sponsorPhone || '', // Missing in API - empty
     csaStatus: data?.csaStatus || '', // "Rejected"
     visaSubmitted: data?.visaSubmitted || '', // ""
     visaGranted: data?.visaGranted || '', // ""
@@ -51,6 +51,9 @@ const EditVisaServicePage = () => {
     status: data?.status || '', // "Under Review"
     statusDate: data?.statusDate || '', // ""
     requestedDate: data?.requestedDate || '', // ""
+    sbsStatus: data?.sbsStatus || '', // ""
+    sbsSubmissionDate: data?.sbsSubmissionDate || '', // ""
+    sbsDecisionDate: data?.sbsDecisionDate || '', // ""
 
     // Accounts
     payment: data?.payment || '', // "14"

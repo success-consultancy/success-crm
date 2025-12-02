@@ -342,14 +342,14 @@ export function AddVisaService({ userId }: Props) {
                 />
               )}
             />
-            <TextInput label="Sponsor name" {...register('sponserName')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.sponsorName?.message} />
             <TextInput
               type="email"
               label="Sponsor email"
-              {...register('sponserEmail')}
-              error={errors.remarks?.message}
+              {...register('sponsorEmail')}
+              error={errors.sponsorEmail?.message}
             />
-            <TextInput label="Sponsor phone" {...register('sponserPhone')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.sponsorPhone?.message} />
             <SelectField
               control={control}
               name="csaStatus"

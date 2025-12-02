@@ -144,7 +144,10 @@ export interface IVisaDetail {
   deletedAt: any;
 
   visaStream: string;
-  sponserName: string;
-  sponserEmail: string;
-  sponserPhone: string;
+  sponsorName: string;
+  sponsorEmail: string;
+  sponsorPhone: string;
+  sbsStatus: string;
+  sbsSubmissionDate: string;
+  sbsDecisionDate: string;
 }
