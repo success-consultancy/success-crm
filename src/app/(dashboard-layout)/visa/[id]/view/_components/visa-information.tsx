@@ -5,24 +5,23 @@ import { InfoField } from '@/components/atoms/info-field';
 type VisaInformationProps = { visa: IVisa };
 
 const VisaInformation = ({ visa }: VisaInformationProps) => {
-  // TODO : Need to put actual data from the API
   const v = {
-    currentVisa: 'N/A', // visa.currentVisa
-    proposedVisa: 'N/A', // visa.proposedVisa
-    sponsorName: 'Unknown', // visa.sponsorName
-    sbsTasStatus: 'Not available', // visa.sbsTasStatus
-    nominationStatus: 'Not available', // visa.nominationStatus
-    status: 'Pending', // visa.status
-    visaExpiry: null, // visa.visaExpiry
-    visaStream: 'Not specified', // visa.visaStream
+    currentVisa: visa.currentVisa || 'N/A',
+    proposedVisa: visa.proposedVisa || 'N/A',
+    sponsorName: visa.sponsorName || 'Unknown',
+    sbsTasStatus: visa.sbsTasStatus || 'Not available',
+    nominationStatus: visa.nominationStatus || 'Not available',
+    status: visa.status || 'Pending',
+    visaExpiry: visa.visaExpiry || null,
+    visaStream: visa.visaStream || 'Not specified',
 
-    sponsorEmail: 'not provided', // visa.sponsorEmail
-    visaSubmitted: null, // visa.visaSubmitted
-    nominationLodged: null, // visa.nominationLodged
-    dueDate: null, // visa.dueDate
-    occupation: 'Unknown', // visa.occupation
-    sponsorPhone: 'Not provided', // visa.sponsorPhone
-    visaGranted: null, // visa.visaGranted
+    sponsorEmail: visa.sponsorEmail || 'not provided',
+    visaSubmitted: visa.visaSubmitted || null,
+    nominationLodged: visa.nominationLodged || null,
+    dueDate: visa.dueDate || null,
+    occupation: visa.occupation || 'Unknown',
+    sponsorPhone: visa.sponsorPhone || 'Not provided',
+    visaGranted: visa.visaGranted || null,
   };
 
   return (

@@ -28,7 +28,7 @@ const TaskForm = ({
 }) => {
   return (
     <div className="h-full flex flex-col">
-      <div className="flex items-center justify-between border-b ">
+      <div className="flex items-center justify-between border-b h-[60px]">
         <div className="flex items-center">
           <Button variant="ghost" size="icon" className="mr-2" onClick={handleBack}>
             <ArrowLeft className="h-4 w-4" />
@@ -71,10 +71,10 @@ const TaskForm = ({
           </div>
 
           <div className="border-t p-4 flex justify-end space-x-2">
-            <Button variant="outline" onClick={closeTaskForm}>
+            <Button variant="outline" className="rounded-full" onClick={closeTaskForm}>
               Cancel
             </Button>
-            <Button type="submit" className="bg-blue-400 hover:bg-blue-500">
+            <Button type="submit" className="bg-primary hover:bg-primary/90 rounded-full">
               {isEditMode ? 'Save Changes' : 'Create task'}
             </Button>
           </div>

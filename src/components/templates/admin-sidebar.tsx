@@ -2,6 +2,7 @@
 
 // External packages
 import React from 'react';
+import { ChevronLeft } from 'lucide-react';
 
 // Utilities and stores
 import { cn } from '@/lib/utils';
@@ -11,16 +12,20 @@ import SidebarLogo from '../organisms/account-switcher';
 
 // UI Elements
 import { ScrollArea } from '@/components/ui/scroll-area';
+import { useSidebarStore } from '@/store/sidebar-store';
 
 type Props = {
   className?: string;
 };
 
 const AdminSidebar = ({ className }: Props) => {
+  const { isCollapsed, toggleSidebar } = useSidebarStore();
+
   return (
     <aside
       className={cn(
-        'h-screen bg-white border-r border-gray-50 transition-all duration-300 ease-in-out transform fixed !w-64 z-50',
+        'h-screen bg-white border-r border-gray-50 transition-all duration-300 ease-in-out fixed z-50',
+        isCollapsed ? 'w-16' : 'w-64',
         className,
       )}
     >
@@ -28,12 +33,24 @@ const AdminSidebar = ({ className }: Props) => {
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-2 h-full">
             <SidebarLogo />
-            <div className="p-2">
+            <div className={!isCollapsed ? 'p-2' : undefined}>
               <AdminSidebarMenuItems />
             </div>
           </div>
         </ScrollArea>
+
         <SidebarUserOptions />
+
+        {/* Toggle Button */}
+        <button
+          onClick={toggleSidebar}
+          className="absolute bottom-40 right-[-12px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md transition-all hover:bg-gray-50"
+        >
+          <ChevronLeft
+            size={18}
+            className={cn('transition-transform duration-300 ease-in-out', isCollapsed && 'rotate-180')}
+          />
+        </button>
       </div>
     </aside>
   );

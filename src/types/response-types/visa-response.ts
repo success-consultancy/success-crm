@@ -20,55 +20,63 @@ export enum VisaStatusTypes {
 export interface IVisa {
   id: number;
   firstName: string;
-  middleName: null | string;
   lastName: string;
-  dob: null | string;
+  middleName: string;
+  files: any;
+  passport: number;
+  issueDate: string;
+  expiryDate: string;
   email: string;
   phone: string;
-  passport: null | number;
-  issueDate: null | string;
-  expiryDate: null | string;
-  status: VisaStatusTypes;
-  serviceType: string;
-  sourceId: null | number;
-  userId: null | number;
+  dob: string;
+  currentVisa: string;
+  occupation: string;
+  anzsco: string;
+  location: string;
+  proposedVisa: string;
+  visaSubmitted: string;
+  visaGranted: string;
+  visaExpiry: string;
+  requestedDate: string;
+  dueDate: string;
+  country: string;
+  state: string;
+  status: string;
+  statusDate: string;
+  csaStatus: string;
+  address: string;
+  source: {
+    id: number;
+    name: string;
+  };
+  sourceId: number;
+  invoiceNumber: string;
+  payment: string;
+  paymentStatus: string;
+  remarks: string;
+  nominationLodged: string;
+  nominationDecision: string;
+  nominationStatus: string;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+  userId: number;
+  assignedDate: string;
+  updatedBy: number;
   createdAt: string;
-  deletedAt: null | string;
   updatedAt: string;
-  followUpDate: null;
-  country: null | string;
-  visa: null | string;
-  visaExpiry: null | string;
-  address: null | string;
-  location: null | string;
-  remarks: null | string;
-  anzsco: null | string;
-  updatedBy: null | number;
-  files: string[];
-  courseName: string;
-  universityName: string;
+  deletedAt: any;
+
+  // aded fields
+  sponsorPhone: string;
+  sponsorEmail: string;
+  sponsorName: string;
+  sbsTasStatus: string;
+  visaStream: string;
   startDate: string;
   endDate: string;
-  course_fees: IFeePlan[];
-  user: {
-    firstName: string;
-    lastName: string;
-  };
-  source: {
-    name: string;
-  };
-  university: {
-    name: string;
-  };
-  course: {
-    name: string;
-  };
-  UpdatedByUser?: {
-    firstName: string;
-    lastName: string;
-    id: string;
-  };
-  version_type?: number;
 }
 
 export interface IFeePlan {

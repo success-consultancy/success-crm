@@ -12,7 +12,7 @@ const AuthGroupLayout = ({ children }: Props) => {
   return (
     <div className="w-full flex h-screen">
       {/* Left side - Image sidebar (35%) */}
-      <aside className="w-[35%] relative h-full lg:flex hidden">
+      <aside className="w-[25%] relative h-full lg:flex hidden">
         <Image
           src="/login-side-image.jpg"
           alt="side-image"
@@ -35,7 +35,7 @@ const AuthGroupLayout = ({ children }: Props) => {
       </aside>
 
       {/* Right side - Content (65%) */}
-      <main className="h-full w-full lg:w-[65%] flex items-center justify-center px-5">
+      <main className="h-full w-full lg:w-[75%] flex items-center justify-center px-5">
         <div className="w-full max-w-[424px]">
           {/* Mobile Logo */}
           <div className="flex justify-center lg:hidden mb-8">
