@@ -91,7 +91,6 @@ export const useGetFollowUp = (id: string) => {
   });
 };
 
-
 export interface IVisaConst {
   id: number;
   visaType: string;

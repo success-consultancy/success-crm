@@ -1,7 +1,7 @@
-import { IVisa } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
 import TitleBox from './title-box';
 
-type MiscSectionProps = { visa: IVisa };
+type MiscSectionProps = { visa: IVisaDetail };
 
 const MiscSection = ({ visa }: MiscSectionProps) => {
   return (

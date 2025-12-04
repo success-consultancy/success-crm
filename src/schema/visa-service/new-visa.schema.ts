@@ -13,7 +13,12 @@ export const newVisaServiceSchema = z.object({
 
   middleName: nullableString(),
 
-  passport: z.coerce.number('Valid passport number required').nullable().optional(),
+  passport: z.coerce
+    .number({ message: 'Valid passport number required' })
+    .int('Passport must be a number')
+    .gte(1, 'Passport must be a valid number')
+    .nullable()
+    .optional(),
 
   issueDate: nullableString(),
 
@@ -21,47 +26,45 @@ export const newVisaServiceSchema = z.object({
 
   email: z.string().email('Please enter a valid email address').min(1, 'Email is required'),
 
-  phone: nullableString(),
+  phone: z
+    .string()
+    ?.regex(/^[0-9+\-() ]*$/, 'Phone can only contain numbers and symbols')
+    .optional(),
 
   dob: nullableString(),
 
   occupation: nullableString(),
 
-  anzsco: nullableString(),
+  anzsco: z
+    .string()
+    .regex(/^\d{4}(\d{2})?$/, 'ANZSCO must be a 4-digit or 6-digit code')
+    .optional()
+    .nullable(),
 
   location: nullableString(),
 
   // Visa Information
   visaSubmitted: nullableString(),
-
   visaGranted: nullableString(),
 
   currentVisa: nullableString(),
-
   proposedVisa: nullableString(),
-
   visaExpiry: nullableString(),
 
   requestedDate: nullableString(),
-
   dueDate: nullableString(),
 
   status: nullableString(),
-
   statusDate: nullableString(),
 
   nominationLodged: nullableString(),
-
   nominationDecision: nullableString(),
-
   nominationStatus: nullableString(),
 
   country: nullableString(),
-
   state: nullableString(),
 
   csaStatus: nullableString(),
-
   remarks: nullableString(),
 
   sourceId: z
@@ -74,9 +77,7 @@ export const newVisaServiceSchema = z.object({
     }),
 
   invoiceNumber: nullableString(),
-
   payment: nullableString(),
-
   paymentStatus: nullableString(),
 
   userId: nullableNumber(),
@@ -90,14 +91,15 @@ export const newVisaServiceSchema = z.object({
 
   sponsorName: nullableString(),
 
-  sponsorEmail: nullableString(),
+  sponsorEmail: z.string().email('Please enter a valid sponsor email').optional(),
 
-  sponsorPhone: nullableString(),
-
+  sponsorPhone: z
+    .string()
+    .regex(/^[0-9+\-() ]*$/, 'Sponsor phone can only contain numbers and symbols')
+    .optional(),
   sbsStatus: nullableString(),
 
   sbsSubmissionDate: nullableString(),
-
   sbsDecisionDate: nullableString(),
 });
 

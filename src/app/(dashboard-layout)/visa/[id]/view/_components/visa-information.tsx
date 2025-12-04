@@ -1,27 +1,27 @@
-import { IVisa } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
 import TitleBox from './title-box';
 import { InfoField } from '@/components/atoms/info-field';
 
-type VisaInformationProps = { visa: IVisa };
+type VisaInformationProps = { visa: IVisaDetail };
 
 const VisaInformation = ({ visa }: VisaInformationProps) => {
   const v = {
-    currentVisa: visa.currentVisa || 'N/A',
-    proposedVisa: visa.proposedVisa || 'N/A',
-    sponsorName: visa.sponsorName || 'Unknown',
-    sbsTasStatus: visa.sbsTasStatus || 'Not available',
-    nominationStatus: visa.nominationStatus || 'Not available',
-    status: visa.status || 'Pending',
-    visaExpiry: visa.visaExpiry || null,
-    visaStream: visa.visaStream || 'Not specified',
+    currentVisa: visa.currentVisa || '-',
+    proposedVisa: visa.proposedVisa || '-',
+    sponsorName: visa.sponsorName || '-',
+    sbsTasStatus: visa.sbsStatus || '-',
+    nominationStatus: visa.nominationStatus || '-',
+    status: visa.status || '-',
+    visaExpiry: visa.visaExpiry || '-',
+    visaStream: visa.visaStream || '-',
 
-    sponsorEmail: visa.sponsorEmail || 'not provided',
-    visaSubmitted: visa.visaSubmitted || null,
-    nominationLodged: visa.nominationLodged || null,
-    dueDate: visa.dueDate || null,
-    occupation: visa.occupation || 'Unknown',
-    sponsorPhone: visa.sponsorPhone || 'Not provided',
-    visaGranted: visa.visaGranted || null,
+    sponsorEmail: visa.sponsorEmail || '-',
+    visaSubmitted: visa.visaSubmitted || '-',
+    nominationLodged: visa.nominationLodged || '-',
+    dueDate: visa.dueDate || '-',
+    occupation: visa.occupation || '-',
+    sponsorPhone: visa.sponsorPhone || '-',
+    visaGranted: visa.visaGranted || '-',
   };
 
   return (

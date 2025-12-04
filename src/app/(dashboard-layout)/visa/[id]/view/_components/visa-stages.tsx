@@ -1,5 +1,5 @@
 import { cn } from '@/lib/utils';
-import { IVisa, VisaStatusTypes } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 
 interface StageProps {
   name: string;
@@ -28,7 +28,7 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
   );
 };
 
-type VisaStagesProps = { visa: IVisa };
+type VisaStagesProps = { visa: IVisaDetail };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const stages = [

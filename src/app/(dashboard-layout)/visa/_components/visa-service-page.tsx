@@ -66,7 +66,7 @@ const VisaServicePage = () => {
 
   const { searchParams, setParams } = useSearchParams();
 
-  const currentTab = searchParams.get('tab') || 'all_students';
+  const currentTab = searchParams.get('tab') || 'all_applicants';
 
   const handleTabChange = (tabKey: string) => {
     setParams([{ name: 'tab', value: tabKey }]);
