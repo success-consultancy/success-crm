@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import TabsMenu from './navigation-tabs';
 import Container from '@/components/atoms/container';
-import { useGetVisaById } from '@/query/get-visa';
+import { useGetVisaById, useGetVisaDetailById } from '@/query/get-visa';
 import { VisaStages } from './visa-stages';
 import PersonalDetails from './personal-details';
 import VisaInformation from './visa-information';
@@ -11,6 +11,8 @@ import VisaNoteSection from './visa-note';
 import MiscSection from './misc-section';
 import NoteSection from './note-section';
 import Accounts from './accounts';
+import VisaHistoryContent from './visa-history-content';
+import VisaFollowUp from './visa-follow-up';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -24,7 +26,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
     { label: 'Follow-up', value: 'follow-up' },
   ];
 
-  const { data: visa, isLoading, isError } = useGetVisaById(studentId);
+  const { data: visa, isLoading, isError } = useGetVisaDetailById(studentId);
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
@@ -50,8 +52,8 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
               <NoteSection />
             </div>
           )}
-          {activeTab === 'history' && <div>History Content</div>}
-          {activeTab === 'follow-up' && <div>Follow-up Content</div>}
+          {activeTab === 'history' && <VisaHistoryContent />}
+          {activeTab === 'follow-up' && <VisaFollowUp />}
         </div>
       </div>
     </Container>

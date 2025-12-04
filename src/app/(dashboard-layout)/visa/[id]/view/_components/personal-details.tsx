@@ -1,8 +1,8 @@
-import { IVisa } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
 import TitleBox from './title-box';
 import { InfoField } from '@/components/atoms/info-field';
 
-type PersonalDetailsProps = { visa: IVisa };
+type PersonalDetailsProps = { visa: IVisaDetail };
 
 const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
   return (
@@ -15,7 +15,7 @@ const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
         <InfoField title="Email address" value={visa.email} />
         <InfoField title="Phone number" value={visa.phone || '-'} />
         <InfoField title="Nationality" value={visa.country || '-'} />
-        <InfoField title="Address" value={visa.address || '-'} />
+        <InfoField title="Address" value={visa.user.address || '-'} />
         <InfoField title="Passport number" value={visa.passport || '-'} />
         <InfoField
           title="Passport issue date"

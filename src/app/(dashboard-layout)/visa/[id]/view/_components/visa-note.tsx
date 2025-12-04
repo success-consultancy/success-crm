@@ -2,10 +2,10 @@
 
 import React, { useState } from 'react';
 import TitleBox from './title-box';
-import { IVisa } from '@/types/response-types/visa-response';
+import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
 
 type VisaNoteSectionProps = {
-  visa: IVisa;
+  visa: IVisaDetail;
   onNoteUpdate?: (newNote: string) => void; // Optional callback for updates
 };
 
