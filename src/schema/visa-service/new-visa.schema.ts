@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { number, z } from 'zod';
 
 // Helper to allow null or empty string (matching Joi's .allow(null, ''))
 const nullableString = () => z.string().nullable().optional();
@@ -67,20 +67,13 @@ export const newVisaServiceSchema = z.object({
   csaStatus: nullableString(),
   remarks: nullableString(),
 
-  sourceId: z
-    .union([z.string(), z.number()])
-    .nullable()
-    .optional()
-    .transform((val) => {
-      if (val === null || val === undefined || val === '') return null;
-      return Number(val);
-    }),
+  sourceId: z.number().min(1, {error : "source is required"}),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: nullableNumber(),
+  userId: number().min(1, {error: "must be assigned to someone"}),
 
   assignedDate: z.date().nullable().optional(),
 
@@ -135,11 +128,11 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   state: '',
   csaStatus: '',
   remarks: '',
-  sourceId: null,
+  sourceId: 0,
   invoiceNumber: '',
   payment: '',
   paymentStatus: '',
-  userId: null,
+  userId: 0,
   assignedDate: null,
   updatedBy: null,
   // New fields default values

@@ -1,5 +1,7 @@
 import { cn } from '@/lib/utils';
 import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
+import { useRouter } from 'next/navigation';
+import { Edit, MessageCircle } from 'lucide-react';
 
 interface StageProps {
   name: string;
@@ -31,6 +33,7 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
 type VisaStagesProps = { visa: IVisaDetail };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
+  const router = useRouter();
   const stages = [
     { name: 'New Case', active: visa.status === VisaStatusTypes.NewApplicant },
     { name: 'Documents Collected', active: visa.status === VisaStatusTypes.CollectingDocs },
@@ -41,8 +44,32 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
 
   return (
     <div className="border rounded-lg">
-      <div className="border-b px-6 py-3">
+      <div className="border-b px-6 py-3 flex justify-between">
         <p className="text-xl font-bold">Visa Stages</p>
+
+
+        <div className='flex gap-2'>
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+              router.push(`/leads/${visa.id}/edit`);
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <Edit strokeWidth={1.5} className="h-5 w-5" />
+            <span>Edit</span>
+          </div>
+
+          <div
+            onClick={(e) => {
+              e.stopPropagation();
+            }}
+            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+          >
+            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
+            <span>Send SMS</span>
+          </div>
+        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">
