@@ -3,16 +3,15 @@
 import React, { useState } from 'react';
 import TabsMenu from './navigation-tabs';
 import Container from '@/components/atoms/container';
-import { useGetVisaById, useGetVisaDetailById } from '@/query/get-visa';
+import { useGetVisaDetailById } from '@/query/get-visa';
 import { VisaStages } from './visa-stages';
 import PersonalDetails from './personal-details';
 import VisaInformation from './visa-information';
 import VisaNoteSection from './visa-note';
 import MiscSection from './misc-section';
 import NoteSection from './note-section';
-import Accounts from './accounts';
 import VisaHistoryContent from './visa-history-content';
-import VisaFollowUp from './visa-follow-up';
+import FollowUp from '@/components/organisms/follow-up';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -53,8 +52,8 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
             </div>
           )}
           {/* NOTE : Change this ID later */}
-          {activeTab === 'history' && <VisaHistoryContent visaId={'7716'} />}
-          {activeTab === 'follow-up' && <VisaFollowUp />}
+          {activeTab === 'history' && <VisaHistoryContent visaId={studentId} />}
+          {activeTab === 'follow-up' && <FollowUp followableType="visaApplicant" id={studentId} />}
         </div>
       </div>
     </Container>

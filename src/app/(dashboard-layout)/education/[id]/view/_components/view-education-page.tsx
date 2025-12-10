@@ -8,12 +8,12 @@ import CourseInfo from './course-info';
 import NoteSection from './note-section';
 import Container from '@/components/atoms/container';
 import { History } from './history';
-import FollowUpList from './follow-up';
 import { useGetEducationById } from '@/query/get-education';
 import CourseFeeStructure from './course-fee-structure';
 import Accounts from './accounts';
 import { IAccounts, IFeePlan } from '@/types/response-types/education-response';
 import MiscSection from './misc-section';
+import FollowUp from '@/components/organisms/follow-up';
 
 interface EducationPageContentProps {
   studentId: string;
@@ -267,7 +267,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
             </div>
           )}
           {activeTab === 'history' && <History id={education.id.toString()} />}
-          {activeTab === 'follow-up' && <FollowUpList id={education.id.toString()} />}
+          {activeTab === 'follow-up' && <FollowUp id={education.id.toString()} followableType="student" />}
         </div>
       </div>
     </Container>

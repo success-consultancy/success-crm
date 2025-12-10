@@ -51,7 +51,7 @@ const EditVisaServicePage = () => {
     status: data?.status || '', // "Under Review"
     statusDate: data?.statusDate || '', // ""
     requestedDate: data?.requestedDate || '', // ""
-    sbsStatus: data?.sbsStatus || '', // ""
+    sbsStatus: data?.sbsStatus || null, // ""
     sbsSubmissionDate: data?.sbsSubmissionDate || '', // ""
     sbsDecisionDate: data?.sbsDecisionDate || '', // ""
 
