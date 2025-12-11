@@ -5,7 +5,7 @@ export const QUERY_KEYS = {
   GET_EDUCATIONS: 'get-educations',
   GET_EDUCATION_BY_ID: 'get-education-by-id',
   GET_EDUCATION_LOG: 'get-education-log',
-  GET_VISA: 'get-visa',
+  GET_VISAS: 'get-visas',
   GET_VISA_BY_ID: 'get-visa-by-id',
   GET_VISA_LOG: 'get-visa-log',
   GET_TASKS: 'get-tasks',

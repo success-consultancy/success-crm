@@ -66,6 +66,8 @@ interface Props<TData, TValue> {
   onRowClick?: (row: TData) => void;
   showHeaderSection?: boolean;
   showPaginationSection?: boolean;
+  bulkDeleteTitle?: string;
+  bulkDeleteDescription?: string;
 }
 
 const TableComponent = <TData, TValue>({
@@ -90,6 +92,8 @@ const TableComponent = <TData, TValue>({
   showHeaderSection = true,
   showPaginationSection = true,
   onRowClick,
+  bulkDeleteTitle,
+  bulkDeleteDescription,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -270,8 +274,8 @@ const TableComponent = <TData, TValue>({
             )}
             <DeleteDialog
               trigger={<Trash2 />}
-              title="Delete this Lead"
-              description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+              title={bulkDeleteTitle || 'Delete Leads'}
+              description={bulkDeleteDescription || ''}
               onConfirm={async () => {
                 const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
                 onBulkDelete?.(ids);

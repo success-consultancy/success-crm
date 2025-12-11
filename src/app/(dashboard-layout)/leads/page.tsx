@@ -126,6 +126,8 @@ const Leads = () => {
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}
+        bulkDeleteTitle="Delete Leads"
+        bulkDeleteDescription="Are you sure you want to delete the selected leads? This action cannot be undone."
       />
     </Container>
   );

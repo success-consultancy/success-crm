@@ -22,6 +22,7 @@ import { useGetVisa } from '@/query/get-visa';
 import { useDeleteVisa, useDeleteVisaBulk } from '@/mutations/visa/delete-visa';
 import { IVisa } from '@/types/response-types/visa-response';
 import { useVisaColumn } from '@/config/columns/visa-columns-definitions';
+import { useExportVisaApplicants } from '@/mutations/visa/export-visa-applicants';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -46,7 +47,7 @@ const VisaServicePage = () => {
   const { mutateAsync: deleteVisa } = useDeleteVisa();
   const { mutateAsync: deleteVisaBulk } = useDeleteVisaBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
-  const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
+  const { mutateAsync: exportVisaApplicants, isPending: isExporting } = useExportVisaApplicants();
 
   const handleDelete = (id: number) => {
     deleteVisa(id);
@@ -117,7 +118,12 @@ const VisaServicePage = () => {
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />
 
-            <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
+            <Button
+              variant="outline"
+              className="mr-2"
+              onClick={() => exportVisaApplicants(filterParams)}
+              loading={isExporting}
+            >
               Export
             </Button>
 
@@ -134,6 +140,8 @@ const VisaServicePage = () => {
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}
+        bulkDeleteTitle="Delete Visa Applicants"
+        bulkDeleteDescription="Are you sure you want to delete the selected visa applicants? This action cannot be undone."
       />
     </Container>
   );
