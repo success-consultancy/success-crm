@@ -52,7 +52,7 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
           <div
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/leads/${visa.id}/edit`);
+              router.push(`/visa/${visa.id}/edit`);
             }}
             className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
           >

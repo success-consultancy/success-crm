@@ -66,7 +66,7 @@ export function DatePicker({
           <PopoverTrigger asChild className="!w-[100%] text-sm !h-10" disabled={disabled}>
             <div
               className={cn(
-                'w-full border border-gray-300 rounded-md flex items-center justify-between px-3 py-2 text-b2 cursor-pointer',
+                'w-full border border-gray-300 rounded-md dark:bg-input/30 flex items-center justify-between px-3 py-2 text-b2 cursor-pointer',
                 !value && 'text-muted-foreground',
                 disabled && 'opacity-50 cursor-not-allowed',
                 error && 'border-red-500',
@@ -112,7 +112,7 @@ export function DatePicker({
             step="1"
             value={timeValue}
             onChange={(e) => onTimeChange?.(e.target.value)}
-            className="bg-background appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none h-10"
+            className="bg-background dark:bg-input/30 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none h-10"
             disabled={disabled}
           />
         </div>
