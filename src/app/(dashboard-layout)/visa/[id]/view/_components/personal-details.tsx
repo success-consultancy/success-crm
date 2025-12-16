@@ -15,7 +15,7 @@ const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
         <InfoField title="Email address" value={visa.email} />
         <InfoField title="Phone number" value={visa.phone || '-'} />
         <InfoField title="Nationality" value={visa.country || '-'} />
-        <InfoField title="Address" value={visa.user.address || '-'} />
+        <InfoField title="Address" value={visa?.user?.address || '-'} />
         <InfoField title="Passport number" value={visa.passport || '-'} />
         <InfoField
           title="Passport issue date"
