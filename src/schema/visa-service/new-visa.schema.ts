@@ -67,13 +67,13 @@ export const newVisaServiceSchema = z.object({
   csaStatus: nullableString(),
   remarks: nullableString(),
 
-  sourceId: z.number().min(1, {error : "source is required"}),
+  sourceId: z.string().min(1, { message: 'source is required' }),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: number().min(1, {error: "must be assigned to someone"}),
+  userId: number().min(1, { message: 'must be assigned to someone' }),
 
   assignedDate: z.date().nullable().optional(),
 
@@ -128,7 +128,7 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   state: '',
   csaStatus: '',
   remarks: '',
-  sourceId: 0,
+  sourceId: '',
   invoiceNumber: '',
   payment: '',
   paymentStatus: '',
@@ -140,7 +140,7 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   sponsorName: '',
   sponsorEmail: '',
   sponsorPhone: '',
-  sbsStatus: '',
+  sbsStatus: null,
   sbsSubmissionDate: '',
   sbsDecisionDate: '',
 };
