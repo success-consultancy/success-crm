@@ -67,13 +67,19 @@ export const newVisaServiceSchema = z.object({
   csaStatus: nullableString(),
   remarks: nullableString(),
 
-  sourceId: z.number().min(1, {error : "source is required"}),
+  sourceId: z
+    .union([z.string(), z.number()])
+    .transform((val) => {
+      if (val === null || val === undefined || val === '') return 0;
+      return Number(val);
+    })
+    .refine((val) => val !== null, { error: "Source ID is required" }),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: number().min(1, {error: "must be assigned to someone"}),
+  userId: number().min(1, { error: "must be assigned to someone" }),
 
   assignedDate: z.date().nullable().optional(),
 
@@ -94,6 +100,8 @@ export const newVisaServiceSchema = z.object({
 
   sbsSubmissionDate: nullableString(),
   sbsDecisionDate: nullableString(),
+  feeNote: nullableString(),
+  miscNote: nullableString(),
 });
 
 export type NewVisaServiceType = z.input<typeof newVisaServiceSchema>;
@@ -143,4 +151,6 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   sbsStatus: '',
   sbsSubmissionDate: '',
   sbsDecisionDate: '',
+  feeNote: '',
+  miscNote: '',
 };
