@@ -7,6 +7,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { useState } from 'react';
+import { Label } from '@radix-ui/react-label';
 
 // NOTE : Gopal is using this date picker //
 
@@ -29,6 +30,7 @@ interface DatePickerProps {
   timeLabel?: string;
   timeId?: string;
   error?: boolean;
+  label?: string;
 }
 
 export function DatePicker({
@@ -45,6 +47,7 @@ export function DatePicker({
   disableFutureDates = false,
   error,
   timeId = 'time-picker',
+  label,
 }: DatePickerProps) {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
 
@@ -60,63 +63,71 @@ export function DatePicker({
   };
 
   return (
-    <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
-      <div className={cn('flex w-full flex-col gap-3', needTime ? 'flex-1' : 'w-full')}>
-        <Popover modal={true} open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
-          <PopoverTrigger asChild className="!w-[100%] text-sm !h-10" disabled={disabled}>
-            <div
-              className={cn(
-                'w-full border border-gray-300 rounded-md dark:bg-input/30 flex items-center justify-between px-3 py-2 text-b2 cursor-pointer',
-                !value && 'text-muted-foreground',
-                disabled && 'opacity-50 cursor-not-allowed',
-                error && 'border-red-500',
-                className,
-              )}
-              role="button"
-              tabIndex={disabled ? -1 : 0}
-              aria-label={value ? `Selected date: ${format(value, 'PPP')}` : placeholder}
-              onKeyDown={(e) => {
-                if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
-                  e.preventDefault();
-                  setIsCalendarOpen(true);
-                }
-              }}
-            >
-              {value ? format(value, needTime ? 'MMM dd, yyyy' : 'PPP') : <span>{placeholder}</span>}
-              <CalendarIcon className="size-5 text-dark/50" />
-            </div>
-          </PopoverTrigger>
-          {!disabled && (
-            <PopoverContent className="w-auto p-0" align="start" side={side}>
-              <Calendar
-                mode="single"
-                selected={value}
-                captionLayout="dropdown"
-                onSelect={(date) => {
-                  onChange(date);
-                  if (date) {
-                    setIsCalendarOpen(false);
+    <>
+      {label && (
+        <Label htmlFor="dueDate">
+          Due date
+        </Label>)
+      }
+      <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
+        <div className={cn('flex w-full flex-col gap-3', needTime ? 'flex-1' : 'w-full')}>
+          <Popover modal={true} open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild className="!w-[100%] text-sm !h-10" disabled={disabled}>
+              <div
+                className={cn(
+                  'w-full border border-gray-300 rounded-md dark:bg-input/30 flex items-center justify-between px-3 py-2 text-b2 cursor-pointer',
+                  !value && '!text-muted-foreground',
+                  disabled && 'opacity-50 cursor-not-allowed',
+                  error && 'border-red-500',
+                  className,
+                )}
+                role="button"
+                tabIndex={disabled ? -1 : 0}
+                aria-label={value ? `Selected date: ${format(value, 'PPP')}` : placeholder}
+                onKeyDown={(e) => {
+                  if (!disabled && (e.key === 'Enter' || e.key === ' ')) {
+                    e.preventDefault();
+                    setIsCalendarOpen(true);
                   }
                 }}
-                disabled={getDisabledDates}
-              />
-            </PopoverContent>
-          )}
-        </Popover>
-      </div>
-      {needTime && (
-        <div className="flex !w-[100px] flex-col gap-3 flex-1">
-          <Input
-            type="time"
-            id={timeId}
-            step="1"
-            value={timeValue}
-            onChange={(e) => onTimeChange?.(e.target.value)}
-            className="bg-background dark:bg-input/30 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none h-10"
-            disabled={disabled}
-          />
+              >
+                {value ? format(value, needTime ? 'MMM dd, yyyy' : 'PPP') : <span>{placeholder}</span>}
+                <CalendarIcon className="size-5 text-dark/50" />
+              </div>
+            </PopoverTrigger>
+            {!disabled && (
+              <PopoverContent className="w-auto p-0" align="start" side={side}>
+                <Calendar
+                  mode="single"
+                  selected={value}
+                  captionLayout="dropdown"
+                  onSelect={(date) => {
+                    onChange(date);
+                    if (date) {
+                      setIsCalendarOpen(false);
+                    }
+                  }}
+                  disabled={getDisabledDates}
+                />
+              </PopoverContent>
+            )}
+          </Popover>
         </div>
-      )}
-    </div>
+        {needTime && (
+          <div className="flex !w-[100px] flex-col gap-3 flex-1">
+            <Input
+              type="time"
+              id={timeId}
+              step="1"
+              value={timeValue}
+              onChange={(e) => onTimeChange?.(e.target.value)}
+              className="bg-background dark:bg-input/30 appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none h-10"
+              disabled={disabled}
+            />
+          </div>
+        )}
+      </div>
+    </>
+
   );
 }

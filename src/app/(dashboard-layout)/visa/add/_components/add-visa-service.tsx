@@ -50,41 +50,20 @@ export function AddVisaService({ userId }: Props) {
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
 
-  const occupationsOptions = useMemo(() => {
+  const ANZSCOOccupationOptions = useMemo(() => {
     return occupations?.map((occupation) => {
+      const value = occupation.code;
+      const label = occupation.title + ' - ' + occupation.code;
       return {
-        value: occupation.title as string,
-        label: occupation.title as string,
+        value,
+        label,
       };
     });
   }, [occupations]);
-
-  const ANZSCOOptions = useMemo(() => {
-    return occupations?.map((occupation) => {
-      return {
-        value: occupation.code as string,
-        label: occupation.code as string,
-      };
-    });
-  }, [occupations]);
-
-  const [selectedOccupation, selectedANZSCO] = watch(['occupation', 'anzsco']);
-
-  useEffect(() => {
-    if (selectedOccupation) {
-      const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
-      setValue('anzsco', selected?.code, { shouldValidate: false });
-    }
-  }, [selectedOccupation, occupations, setValue]);
-
-  useEffect(() => {
-    if (selectedANZSCO) {
-      const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
-      setValue('occupation', selected?.title, { shouldValidate: false });
-    }
-  }, [selectedANZSCO, occupations, setValue]);
 
   const remarks = watch('remarks');
+  const feeNote = watch('feeNote');
+  const miscNote = watch('miscNote');
 
   useEffect(() => {
     if (userId) {
@@ -93,9 +72,19 @@ export function AddVisaService({ userId }: Props) {
     }
   }, [userId, setValue]);
 
-  const handleVisaNoteChange = (content: string) => {
+  const handleRemarksChange = (content: string) => {
     // Store visa note in remarks or a separate field if needed
     setValue('remarks', content, { shouldValidate: true });
+  };
+
+  const handleFeeNoteChange = (content: string) => {
+    // Store fee note in remarks or a separate field if needed
+    setValue('feeNote', content, { shouldValidate: true });
+  };
+
+  const handleMiscNoteChange = (content: string) => {
+    // Store misc note in remarks or a separate field if needed
+    setValue('miscNote', content, { shouldValidate: true });
   };
 
   const { mutate, isPending } = useAddVisaService();
@@ -316,28 +305,20 @@ export function AddVisaService({ userId }: Props) {
               ]}
               placeholder="Select an visaStream"
             />
-            <FormField
-              control={control}
-              name="occupation"
-              render={({ field }) => (
-                <SelectWithCommand
-                  options={occupationsOptions || []}
-                  value={field.value || undefined}
-                  label="Occupation"
-                  onSelect={(val) => field.onChange(val)}
-                  error={errors.occupation?.message}
-                />
-              )}
-            />
+
             <FormField
               control={control}
               name="anzsco"
               render={({ field }) => (
                 <SelectWithCommand
-                  options={ANZSCOOptions || []}
+                  options={ANZSCOOccupationOptions || []}
                   value={field.value || undefined}
-                  label="ANZSCO"
-                  onSelect={(val) => field.onChange(val)}
+                  label="ANZSCO / Occupation"
+                  onSelect={(val) => {
+                    field.onChange(val);
+                    const occupation = occupations?.find((occupation) => occupation.code === val);
+                    setValue('occupation', occupation?.title, { shouldValidate: false });
+                  }}
                   error={errors.anzsco?.message}
                 />
               )}
@@ -471,15 +452,13 @@ export function AddVisaService({ userId }: Props) {
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaSubmitted">
-                Visa date submitted
-              </Label>
               <Controller
                 name="visaSubmitted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
+                    label="Visa date submitted"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmitted')}
                     placeholder="DD/MM/YYYY"
@@ -491,15 +470,13 @@ export function AddVisaService({ userId }: Props) {
               <FormErrorMessage message={errors.visaSubmitted?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaGranted">
-                Visa decision date
-              </Label>
               <Controller
                 name="visaGranted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
+                    label="Visa decision date"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaGranted')}
                     placeholder="DD/MM/YYYY"
@@ -511,12 +488,12 @@ export function AddVisaService({ userId }: Props) {
               <FormErrorMessage message={errors.visaGranted?.message} />
             </div>
           </div>
-        </FormAccordion>
 
-        {/* Visa note */}
-        <FormAccordion value="item-3" title="Visa note">
           <div className="w-full space-y-1" suppressHydrationWarning>
-            <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
+            <Label htmlFor="remarks">
+              Visa note
+            </Label>
+            <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
             {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
           </div>
         </FormAccordion>
@@ -536,9 +513,6 @@ export function AddVisaService({ userId }: Props) {
             <TextInput label="Net amount" {...register('payment')} error={errors.payment?.message} type="number" />
             <TextInput label="Invoice number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dueDate">
-                Due date
-              </Label>
               <Controller
                 name="dueDate"
                 control={control}
@@ -549,6 +523,7 @@ export function AddVisaService({ userId }: Props) {
                     onChange={handleDateChange('dueDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
+                    label="Due date"
                     error={!!errors.dueDate?.message}
                   />
                 )}
@@ -558,6 +533,7 @@ export function AddVisaService({ userId }: Props) {
             <SelectField
               control={control}
               name="paymentStatus"
+
               label="Payment status"
               options={[
                 { label: 'Pending', value: 'Pending' },
@@ -568,30 +544,32 @@ export function AddVisaService({ userId }: Props) {
               placeholder="Select a status"
             />
           </div>
-        </FormAccordion>
 
-        {/* Fee note */}
-        <FormAccordion value="item-5" title="Fee note">
           <div className="w-full space-y-1" suppressHydrationWarning>
-            <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
-            {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+            <Label htmlFor="feeNote">
+              Fee note
+            </Label>
+            <TinyEditor value={feeNote || ''} onChange={handleFeeNoteChange} />
+            {errors.feeNote?.message && <p className="text-sm text-red-500">{errors.feeNote?.message}</p>}
           </div>
         </FormAccordion>
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
           <div className="grid grid-cols-2 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="sourceId"
-              label="Source"
-              options={
-                sourceData?.map((source) => ({
-                  label: source.name,
-                  value: source.id.toString(),
-                })) || []
-              }
-              placeholder="Select a source"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={userOptions}
+                  value={field.value?.toString()}
+                  label="Source"
+                  placeholder="Select a source"
+                  onSelect={(val) => field.onChange(Number(val))}
+                  error={errors.sourceId?.message}
+                />
+              )}
             />
             <FormField
               control={control}
@@ -611,8 +589,8 @@ export function AddVisaService({ userId }: Props) {
           <div>
             <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
-              {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+              <TinyEditor value={miscNote || ''} onChange={handleMiscNoteChange} />
+              {errors.miscNote?.message && <p className="text-sm text-red-500">{errors.miscNote.message}</p>}
             </div>
           </div>
         </FormAccordion>

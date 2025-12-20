@@ -53,7 +53,7 @@ const SelectField = <T extends FieldValues>({
 
   return (
     <div className={`flex flex-col gap-1 w-full ${className || ''}`}>
-      <Label htmlFor={inputId} className="font-medium text-sm text-gray-700">
+      <Label htmlFor={inputId} className="font-medium">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>

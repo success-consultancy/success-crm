@@ -11,7 +11,7 @@ const tribunalReviewFormSchema = z.object({
   issueDate: z.string().nullable().optional(),
   expiryDate: z.string().nullable().optional(),
 
-  email: z.string().email(),
+  email: z.email(),
   phone: z.string().nullable().optional(),
   dob: z.string().nullable().optional(),
 
