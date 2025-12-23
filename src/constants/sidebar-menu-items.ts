@@ -188,7 +188,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.SkillAssessmentService,
     icon: Nebulas,
-    href: '#',
+    href: '/skill',
   },
   {
     title: DashboardTitle.TribunalReview,

@@ -16,9 +16,37 @@ export function DateRangePicker({
   onApply: (range: { from: Date | undefined; to: Date | undefined }) => void;
 }) {
   const [open, setOpen] = React.useState(false);
-  const [dateRange, setDateRange] = React.useState<DateRange | undefined>();
+  const { setParams, searchParams } = useSearchParams();
 
-  const { setParams } = useSearchParams();
+  // Initialize dateRange from URL params
+  const fromParam = searchParams.get('from');
+  const toParam = searchParams.get('to');
+
+  const initialDateRange = React.useMemo<DateRange | undefined>(() => {
+    if (fromParam && toParam) {
+      const from = new Date(fromParam);
+      const to = new Date(toParam);
+      if (!isNaN(from.getTime()) && !isNaN(to.getTime())) {
+        return { from, to };
+      }
+    }
+    return undefined;
+  }, [fromParam, toParam]);
+
+  const [dateRange, setDateRange] = React.useState<DateRange | undefined>(initialDateRange);
+
+  // Update dateRange when URL params change
+  React.useEffect(() => {
+    if (fromParam && toParam) {
+      const from = new Date(fromParam);
+      const to = new Date(toParam);
+      if (!isNaN(from.getTime()) && !isNaN(to.getTime())) {
+        setDateRange({ from, to });
+      }
+    } else {
+      setDateRange(undefined);
+    }
+  }, [fromParam, toParam]);
 
   const handleApply = () => {
     onApply({ from: dateRange?.from, to: dateRange?.to });

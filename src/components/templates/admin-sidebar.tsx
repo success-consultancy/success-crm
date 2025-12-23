@@ -44,7 +44,7 @@ const AdminSidebar = ({ className }: Props) => {
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute bottom-40 right-[-12px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md transition-all hover:bg-gray-50"
+          className="absolute top-[20px] right-[-12px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md transition-all hover:bg-gray-50"
         >
           <ChevronLeft
             size={18}

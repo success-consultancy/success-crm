@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { parse } from 'date-fns';
 
 const skillAssessmentFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
@@ -35,7 +36,14 @@ const skillAssessmentFormSchema = z.object({
   csaStatus: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
 
-  sourceId: z.number().int().nullable().optional(),
+  sourceId: z.preprocess(
+    (val) => {
+      if (val === null || val === undefined || val === '') return null;
+      const num = typeof val === 'string' ? Number(val) : val;
+      return isNaN(num) ? null : num;
+    },
+    z.number().int().nullable().optional()
+  ),
   invoiceNumber: z.string().nullable().optional(),
   payment: z.string().nullable().optional(),
   paymentStatus: z.string().nullable().optional(),
@@ -43,7 +51,33 @@ const skillAssessmentFormSchema = z.object({
   userId: z.number().int().nullable().optional(),
   assignedDate: z.date().nullable().optional(),
   updatedBy: z.number().int().nullable().optional(),
-});
+})
+  .superRefine((data, ctx) => {
+    // Validate passport expiry date must be at least 10 years from current year
+    if (data.expiryDate) {
+      try {
+        // Parse DD/MM/YYYY format
+        const expiryDate = parse(data.expiryDate, 'dd/MM/yyyy', new Date());
+        
+        if (!isNaN(expiryDate.getTime())) {
+          const currentYear = new Date().getFullYear();
+          const expiryYear = expiryDate.getFullYear();
+          const minRequiredYear = currentYear + 10;
+          
+          if (expiryYear < minRequiredYear) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: `Passport expiry date must be at least 10 years from the current year (minimum year: ${minRequiredYear})`,
+              path: ['expiryDate'],
+            });
+          }
+        }
+      } catch (error) {
+        // If parsing fails, the date format validation will catch it elsewhere
+        // We don't need to add an issue here as the format validation will handle it
+      }
+    }
+  });
 
 export type SkillAssessmentSchemaType = z.infer<typeof skillAssessmentFormSchema>;
 
