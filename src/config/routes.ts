@@ -22,6 +22,8 @@ export const ROUTES = {
 
   ADD_VISA_SERVICE: '/visa/add',
 
+  ADD_TRIBUNAL_SERVICE: '/tribunalreview/add',
+
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',
   OCCUPATION: '/dashboard/occupation',

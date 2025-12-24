@@ -1,3 +1,4 @@
+
 export const QUERY_KEYS = {
   GET_LEADS: 'get-leads',
   GET_LEAD_BY_ID: 'get-lead-by-id',
@@ -11,4 +12,5 @@ export const QUERY_KEYS = {
   GET_TASKS: 'get-tasks',
   GET_FOLLOW_UP: 'get_follow_up',
   GET_BRANCHES: 'get-branches',
+  GET_TRIBUNALREVIEW: 'get-tribunalreview',
 };

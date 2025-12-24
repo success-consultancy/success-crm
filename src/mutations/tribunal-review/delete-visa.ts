@@ -3,18 +3,18 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const deleteLead = async (id: number) => {
-  const res = await api.delete(`/lead/${id}`);
+const deleteTribunal = async (id: number) => {
+  const res = await api.delete(`/tribunalReview/${id}`);
   return res.data;
 };
 
-export const useDeleteLead = () => {
+export const useDeleteTribunal = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLead,
+    mutationFn: deleteTribunal,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_TRIBUNALREVIEW],
       });
     },
     onError: () => {
@@ -25,18 +25,18 @@ export const useDeleteLead = () => {
   });
 };
 
-const deleteLeadBulk = async (ids: number[]) => {
-  const res = await api.delete(`/lead/bulk-delete`, { data: { ids } });
+const deleteTribunalBulk = async (ids: number[]) => {
+  const res = await api.delete(`/tribunalReview/bulk-delete`, { data: { ids } });
   return res.data;
 };
 
-export const useDeleteLeadBulk = () => {
+export const useDeleteTribunalBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLeadBulk,
+    mutationFn: deleteTribunalBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_TRIBUNALREVIEW],
       });
     },
     onError: () => {
