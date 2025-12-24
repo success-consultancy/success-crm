@@ -12,7 +12,7 @@ import Container from '@/components/atoms/container';
 import { useGetLeadById } from '@/query/get-leads';
 import Transition from './transition';
 import { History } from './history';
-import FollowUpList from './follow-up';
+import FollowUp from '@/components/organisms/follow-up';
 
 interface LeadPageContentProps {
   leadId: string;
@@ -53,7 +53,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
           )}
           {activeTab === 'transition' && <Transition lead={lead} />}
           {activeTab === 'history' && <History lead={lead} />}
-          {activeTab === 'follow-up' && <FollowUpList lead={lead} />}
+          {activeTab === 'follow-up' && <FollowUp id={lead.id.toString()} followableType="" />}
         </div>
       </div>
     </Container>

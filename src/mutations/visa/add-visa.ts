@@ -28,7 +28,7 @@ export const useAddVisaService = () => {
 
       // Invalidate visa list
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_VISA],
+        queryKey: [QUERY_KEYS.GET_VISAS],
       });
 
       return visa;

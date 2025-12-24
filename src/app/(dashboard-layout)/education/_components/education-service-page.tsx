@@ -23,6 +23,7 @@ import { useEducationColumn } from '@/config/columns/education-columns-definitio
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { useDeleteEducation, useDeleteEducationBulk } from '@/mutations/education/delete-education';
+import { useExportStudents } from '@/mutations/education/export-education';
 
 // Tab Config
 let TAB_CONFIG = [
@@ -47,7 +48,7 @@ const EducationServicePage = () => {
   const { mutateAsync: deleteEducation } = useDeleteEducation();
   const { mutateAsync: deleteEducationBulk } = useDeleteEducationBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
-  const { mutateAsync: exportLeads, isPending: isExporting } = useExportLeads();
+  const { mutateAsync: exportStudents, isPending: isExporting } = useExportStudents();
 
   const handleDelete = (id: number) => {
     deleteEducation(id);
@@ -117,7 +118,12 @@ const EducationServicePage = () => {
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />
 
-            <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
+            <Button
+              variant="outline"
+              className="mr-2"
+              onClick={() => exportStudents(filterParams)}
+              loading={isExporting}
+            >
               Export
             </Button>
 
@@ -134,6 +140,8 @@ const EducationServicePage = () => {
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}
+        bulkDeleteTitle="Delete Students"
+        bulkDeleteDescription="Are you sure you want to delete selected students? This action cannot be undone."
       />
     </Container>
   );

@@ -34,7 +34,7 @@ const getVisa = async (params?: VisaFilterParams) => {
 export const useGetVisa = (params?: VisaFilterParams) => {
   return useQuery({
     queryFn: () => getVisa(params),
-    queryKey: [QUERY_KEYS.GET_VISA, params],
+    queryKey: [QUERY_KEYS.GET_VISAS, params],
     refetchOnWindowFocus: false,
   });
 };

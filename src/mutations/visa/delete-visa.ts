@@ -14,7 +14,7 @@ export const useDeleteVisa = () => {
     mutationFn: deleteVisa,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_VISA],
+        queryKey: [QUERY_KEYS.GET_VISAS],
       });
     },
     onError: () => {
@@ -36,7 +36,7 @@ export const useDeleteVisaBulk = () => {
     mutationFn: deleteVisaBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_EDUCATIONS],
+        queryKey: [QUERY_KEYS.GET_VISAS],
       });
     },
     onError: () => {

@@ -18,7 +18,7 @@ export const useEditVisa = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_VISA || query.queryKey[0] === QUERY_KEYS.GET_VISA_BY_ID,
+          query.queryKey[0] === QUERY_KEYS.GET_VISAS || query.queryKey[0] === QUERY_KEYS.GET_VISA_BY_ID,
       });
     },
     onError: () => {

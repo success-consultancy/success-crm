@@ -152,6 +152,42 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   };
 
+  const { data: occupations } = useGetOccupations();
+
+  const occupationsOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.title as string,
+        label: occupation.title as string,
+      };
+    });
+  }, [occupations]);
+
+  const ANZSCOOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      return {
+        value: occupation.code as string,
+        label: occupation.code as string,
+      };
+    });
+  }, [occupations]);
+
+  const [selectedOccupation, selectedANZSCO] = watch(['occupation', 'anzsco']);
+
+  useEffect(() => {
+    if (selectedOccupation) {
+      const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
+      setValue('anzsco', selected?.code, { shouldValidate: false });
+    }
+  }, [selectedOccupation, occupations, setValue]);
+
+  useEffect(() => {
+    if (selectedANZSCO) {
+      const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
+      setValue('occupation', selected?.title, { shouldValidate: false });
+    }
+  }, [selectedANZSCO, occupations, setValue]);
+
   console.log(errors);
 
   return (

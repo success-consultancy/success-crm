@@ -7,14 +7,12 @@ import CardContainer from '@/components/atoms/card-container';
 import { CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
-import Input from '@/components/molecules/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
-import React, { useState } from 'react';
+import React from 'react';
 import DatePicker from '@/components/atoms/date-picker';
 import { useAddFollowUp, useDeleteFollowUp, useUpdateFollowUp } from '@/mutations/leads/follow-up';
-import { ILead } from '@/types/response-types/leads-response';
 import { useGetFollowUp } from '@/query/get-leads';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 
@@ -39,12 +37,16 @@ const getStatusColor = (status: FollowUp['status']) => {
       return 'bg-gray-100 text-gray-700';
   }
 };
+interface IFollowUp {
+  id: string;
+  followableType: string;
+}
 
-export default function FollowUpList({ lead }: { lead: ILead }) {
+export default function FollowUp({ id, followableType }: IFollowUp) {
   const addFollowUp = useAddFollowUp();
   const updateFollowUp = useUpdateFollowUp();
-  const deleteFollowUp = useDeleteFollowUp(lead.id);
-  const { data: followUp } = useGetFollowUp(lead.id.toString(), 'lead');
+  const deleteFollowUp = useDeleteFollowUp(id);
+  const { data: followUp } = useGetFollowUp(id, followableType);
   const [formData, setFormData] = React.useState<{
     date: Date | null;
     time: string;
@@ -134,8 +136,8 @@ export default function FollowUpList({ lead }: { lead: ILead }) {
       date: formData?.date ? formData.date?.toString() : '',
       time: formData.time,
       note: formData.note || null,
-      followableId: lead.id,
-      followableType: 'lead',
+      followableId: Number(id),
+      followableType: followableType,
     });
     // Reset form
     setFormData({
@@ -178,8 +180,8 @@ export default function FollowUpList({ lead }: { lead: ILead }) {
       date: editData.date ? editData.date.toString() : '',
       time: editData.time,
       note: editData.note || null,
-      followableId: lead.id,
-      followableType: 'lead',
+      followableId: Number(id),
+      followableType: followableType,
     });
     setEditDialogOpen(false);
     setEditData({ id: null, date: null, time: '', note: '' });
