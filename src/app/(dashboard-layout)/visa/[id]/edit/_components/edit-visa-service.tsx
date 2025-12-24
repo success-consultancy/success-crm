@@ -152,8 +152,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   };
 
-  const { data: occupations } = useGetOccupations();
-
   const occupationsOptions = useMemo(() => {
     return occupations?.map((occupation) => {
       return {

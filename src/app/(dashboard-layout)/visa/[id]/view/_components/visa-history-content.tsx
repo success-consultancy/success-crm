@@ -5,6 +5,7 @@ import { useGetLeadLog } from '@/query/get-leads'; // temporarily using lead API
 import { useState } from 'react';
 import Button from '@/components/atoms/button';
 import Loading from '@/components/organisms/loading';
+import { useGetVisaLog } from '@/query/get-visa';
 
 // Temporary Visa History Type (matches your structure)
 type VisaHistoryItem = {
@@ -56,7 +57,7 @@ const ExpandableDescriptions = ({ descriptions }: { descriptions: string[] }) =>
 
 const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
   // ✔️ Using lead log API for now
-  const { data, isLoading } = useGetLeadLog(visaId);
+  const { data, isLoading } = useGetVisaLog(visaId);
 
   const VERSION_TYPES = {
     1: 'Created',

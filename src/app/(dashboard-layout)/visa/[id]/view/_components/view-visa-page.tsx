@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import TabsMenu from './navigation-tabs';
 import Container from '@/components/atoms/container';
 import { useGetVisaDetailById } from '@/query/get-visa';
@@ -12,6 +12,7 @@ import MiscSection from './misc-section';
 import NoteSection from './note-section';
 import VisaHistoryContent from './visa-history-content';
 import FollowUp from '@/components/organisms/follow-up';
+import Accounts from './accounts';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -46,6 +47,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
               <VisaStages visa={visa} />
               <PersonalDetails visa={visa} />
               <VisaInformation visa={visa} />
+              <Accounts accounts={visa.accounts} visaApplicantId={visa.id} />
               <VisaNoteSection visa={visa} />
               <MiscSection visa={visa} />
               <NoteSection />
