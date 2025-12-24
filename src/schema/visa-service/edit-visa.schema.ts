@@ -153,6 +153,8 @@ export const editVisaServiceSchema = z
     sourceId: z.string().max(50, 'Source selection is invalid').optional(),
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
     statusDate: z.date().optional(),
+    feeNote: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
+    miscNote: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
   })
   // Conditional, only if both values exist
   .superRefine((data, ctx) => {

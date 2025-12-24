@@ -206,6 +206,41 @@ export const useVisaColumn = (
       size: 136,
       meta: { isVisible: false },
     },
+    {
+      id: 'current_visa',
+      header: () => <ColumnHeader title="Current visa" keyParam="currentVisa" />,
+      cell: function Cell({ row }) {
+        const tableCtx = useTableContext();
+        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
+        return <span className="w-full">{row.original.currentVisa || '-'}</span>;
+      },
+      size: 136,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'proposed_visa',
+      header: () => <ColumnHeader title="Proposed visa" keyParam="proposedVisa" />,
+      cell: function Cell({ row }) {
+        const tableCtx = useTableContext();
+        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
+        return <span className="w-full">{row.original.proposedVisa || '-'}</span>;
+      },
+      size: 136,
+      meta: { isVisible: true },
+    }, {
+      id: 'anzsco',
+      header: () => <ColumnHeader title="Anzsco / Occupation" keyParam="anzsco" />,
+      cell: function Cell({ row }) {
+        const tableCtx = useTableContext();
+        if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
+        if (!row.original?.anzsco && !row.original?.occupation) {
+          return <></>
+        }
+        return <span className="w-full">{row.original?.anzsco + ' - ' + row.original?.occupation}</span>;
+      },
+      size: 136,
+      meta: { isVisible: true },
+    },
 
     {
       id: 'source',

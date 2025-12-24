@@ -43,6 +43,19 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
 
+  const { data: occupations } = useGetOccupations();
+
+  const ANZSCOOccupationOptions = useMemo(() => {
+    return occupations?.map((occupation) => {
+      const value = occupation.code;
+      const label = occupation.title + ' - ' + occupation.code;
+      return {
+        value,
+        label,
+      };
+    });
+  }, [occupations]);
+
   const {
     register,
     control,
@@ -53,8 +66,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     reset,
   } = form;
 
-  const remarks = watch('remarks');
-
   useEffect(() => {
     if (userId) {
       setValue('userId', userId);
@@ -62,8 +73,20 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   }, [userId, setValue]);
 
-  const handleVisaNoteChange = (content: string) => {
+  const feeNote = watch('feeNote');
+  const miscNote = watch('miscNote');
+  const remarks = watch('remarks');
+
+  const handleRemarksChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
+  };
+
+  const handleFeeNoteChange = (content: string) => {
+    setValue('feeNote', content, { shouldValidate: true });
+  };
+
+  const handleMiscNoteChange = (content: string) => {
+    setValue('miscNote', content, { shouldValidate: true });
   };
 
   const { mutate, isPending } = useEditVisa();
@@ -96,6 +119,18 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
     return [];
   }, [users]);
+
+  const sourceOptions = useMemo(() => {
+    if (sourceData) {
+      return sourceData?.map((source) => {
+        return {
+          label: source.name,
+          value: source.id.toString(),
+        };
+      });
+    }
+    return [];
+  }, [sourceData]);
 
   // Helper to handle date changes and convert to string (ISO format)
   const handleDateChange = (fieldName: keyof NewVisaServiceType) => (date: Date | undefined) => {
@@ -326,38 +361,29 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
             />
             <FormField
               control={control}
-              name="occupation"
-              render={({ field }) => (
-                <SelectWithCommand
-                  options={occupationsOptions || []}
-                  value={field.value || undefined}
-                  label="Occupation"
-                  onSelect={(val) => field.onChange(val)}
-                  error={errors.occupation?.message}
-                />
-              )}
-            />
-            <FormField
-              control={control}
               name="anzsco"
               render={({ field }) => (
                 <SelectWithCommand
-                  options={ANZSCOOptions || []}
+                  options={ANZSCOOccupationOptions || []}
                   value={field.value || undefined}
-                  label="ANZSCO"
-                  onSelect={(val) => field.onChange(val)}
+                  label="ANZSCO / Occupation"
+                  onSelect={(val) => {
+                    field.onChange(val);
+                    const occupation = occupations?.find((occupation) => occupation.code === val);
+                    setValue('occupation', occupation?.title, { shouldValidate: false });
+                  }}
                   error={errors.anzsco?.message}
                 />
               )}
             />
-            <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.sponsorName?.message} />
             <TextInput
               type="email"
               label="Sponsor email"
               {...register('sponsorEmail')}
-              error={errors.remarks?.message}
+              error={errors.sponsorEmail?.message}
             />
-            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.remarks?.message} />
+            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.sponsorPhone?.message} />
             <SelectField
               control={control}
               name="csaStatus"
@@ -519,14 +545,15 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
               <FormErrorMessage message={errors.visaGranted?.message} />
             </div>
           </div>
-        </FormAccordion>
 
-        {/* Visa note */}
-        <FormAccordion value="item-3" title="Visa note">
           <div className="w-full space-y-1" suppressHydrationWarning>
-            <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
+            <Label className=" font-medium" htmlFor="remarks">
+              Visa note
+            </Label>
+            <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
             {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
           </div>
+
         </FormAccordion>
 
         {/* Accounts */}
@@ -578,28 +605,22 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
           </div>
         </FormAccordion>
 
-        {/* Fee note */}
-        <FormAccordion value="item-5" title="Fee note">
-          <div className="w-full space-y-1" suppressHydrationWarning>
-            <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
-            {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
-          </div>
-        </FormAccordion>
-
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
           <div className="grid grid-cols-2 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="sourceId"
-              label="Source"
-              options={
-                sourceData?.map((source) => ({
-                  label: source.name,
-                  value: source.id.toString(),
-                })) || []
-              }
-              placeholder="Select a source"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={sourceOptions}
+                  value={field.value?.toString()}
+                  label="Source"
+                  placeholder="Select a source"
+                  onSelect={(val) => field.onChange(Number(val))}
+                  error={errors.sourceId?.message}
+                />
+              )}
             />
             <FormField
               control={control}
@@ -619,8 +640,8 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
           <div>
             <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={remarks || ''} onChange={handleVisaNoteChange} />
-              {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
+              <TinyEditor value={miscNote || ''} onChange={handleMiscNoteChange} />
+              {errors.miscNote?.message && <p className="text-sm text-red-500">{errors.miscNote.message}</p>}
             </div>
           </div>
         </FormAccordion>
