@@ -102,7 +102,12 @@ export const newVisaServiceSchema = z.object({
   sbsDecisionDate: nullableString(),
   feeNote: nullableString(),
   miscNote: nullableString(),
+  serviceFee: nullableString(),
+  gst: nullableString(),
+  discount: nullableString(),
+  netAmount: nullableString()
 });
+
 
 export type NewVisaServiceType = z.input<typeof newVisaServiceSchema>;
 
@@ -153,4 +158,8 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   sbsDecisionDate: '',
   feeNote: '',
   miscNote: '',
+  serviceFee: '',
+  gst: '',
+  discount: '',
+  netAmount: ''
 };
