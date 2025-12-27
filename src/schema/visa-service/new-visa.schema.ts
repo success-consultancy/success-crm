@@ -73,13 +73,13 @@ export const newVisaServiceSchema = z.object({
       if (val === null || val === undefined || val === '') return 0;
       return Number(val);
     })
-    .refine((val) => val !== null, { error: "Source ID is required" }),
+    .refine((val) => val !== null, { error: 'Source ID is required' }),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: number().min(1, { message: 'must be assigned to someone' }),
+  userId: number().min(1, { error: 'must be assigned to someone' }),
 
   assignedDate: z.date().nullable().optional(),
 

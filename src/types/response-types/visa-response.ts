@@ -99,6 +99,7 @@ export interface IAccounts {
   discount: string;
   bonus: string;
   netamount: string;
+  gst: string;
 }
 
 export interface IVisaDetail {
@@ -154,6 +155,7 @@ export interface IVisaDetail {
   user: User;
   source: Source;
   UpdatedByUser: UpdatedByUser;
+  accounts: IAccounts[];
 }
 
 export interface User {

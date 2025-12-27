@@ -533,7 +533,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
             <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
             {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
           </div>
-
         </FormAccordion>
 
         {/* Accounts */}

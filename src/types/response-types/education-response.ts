@@ -94,8 +94,9 @@ export interface IAccounts {
   duedate: string;
   invoicenumber: string;
   status: string;
-  comission: string;
+  comission?: string;
   discount: string;
-  bonus: string;
+  bonus?: string;
+  gst?: string;
   netamount: string;
 }
