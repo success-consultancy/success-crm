@@ -95,7 +95,7 @@ const SkillAssessmentPage = () => {
   );
 
   return (
-    <Container className="flex flex-col py-4 max-h-full overflow-hidden">
+    <Container fluid className="flex flex-col py-4 max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Skill assessment service</h3>
       </Portal>

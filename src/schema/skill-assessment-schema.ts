@@ -36,14 +36,18 @@ const skillAssessmentFormSchema = z.object({
   csaStatus: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
 
-  sourceId: z.preprocess(
-    (val) => {
+  sourceId: z
+    .union([z.string(), z.number(), z.null()])
+    .optional()
+    .transform((val) => {
       if (val === null || val === undefined || val === '') return null;
-      const num = typeof val === 'string' ? Number(val) : val;
-      return isNaN(num) ? null : num;
-    },
-    z.number().int().nullable().optional()
-  ),
+      if (typeof val === 'string') {
+        const num = Number(val);
+        return isNaN(num) ? null : num;
+      }
+      return typeof val === 'number' ? val : null;
+    })
+    .pipe(z.number().int().nullable().optional()),
   invoiceNumber: z.string().nullable().optional(),
   payment: z.string().nullable().optional(),
   paymentStatus: z.string().nullable().optional(),
