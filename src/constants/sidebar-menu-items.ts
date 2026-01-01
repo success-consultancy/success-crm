@@ -193,7 +193,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.TribunalReview,
     icon: Judge,
-    href: '/tribunalreview',
+    href: '/tribunal-review',
   },
   {
     title: DashboardTitle.InsuranceService,

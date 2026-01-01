@@ -14,7 +14,7 @@ export const useDeleteTribunal = () => {
     mutationFn: deleteTribunal,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_TRIBUNALREVIEW],
+        queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
       });
     },
     onError: () => {
@@ -36,7 +36,7 @@ export const useDeleteTribunalBulk = () => {
     mutationFn: deleteTribunalBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_TRIBUNALREVIEW],
+        queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
       });
     },
     onError: () => {

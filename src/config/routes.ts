@@ -22,7 +22,7 @@ export const ROUTES = {
 
   ADD_VISA_SERVICE: '/visa/add',
 
-  ADD_TRIBUNAL_SERVICE: '/tribunalreview/add',
+  ADD_TRIBUNAL_SERVICE: '/tribunal-review/add',
 
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',

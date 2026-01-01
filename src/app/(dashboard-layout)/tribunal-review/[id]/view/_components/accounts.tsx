@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
 import { IAccounts } from '@/types/response-types/education-response';
 import { Input } from '@/components/ui/input';
-import { useAccountsColumn } from '@/config/columns/accounts-columns-definitions';
+import { useAccountsColumn } from '@/config/columns/education-accounts-columns-definitions';
 
 type AccountsProps = {
   courseFee: IAccounts[];
