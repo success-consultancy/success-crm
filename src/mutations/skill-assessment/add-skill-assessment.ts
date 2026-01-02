@@ -15,16 +15,23 @@ export const useAddSkillAssessment = () => {
   return useMutation({
     mutationFn: async ({ payload, leadId }: { payload: SkillAssessmentSchemaType; leadId?: string }) => {
       // 1. Create Skill Assessment
-      const visa = await addSkillAssessment(payload);
+      const skillAssessment = await addSkillAssessment(payload);
 
       // 2. Update lead client if leadId exists
       if (leadId) {
-        const lead = await updateLeadClient(leadId, { skillAssessmentId: visa.id });
+        const lead = await updateLeadClient(leadId, { skillAssessmentId: skillAssessment.id });
 
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.GET_LEAD_BY_ID],
         });
       }
+
+      // 3. Invalidate skill assessments query
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
+      });
+
+      return skillAssessment;
     },
   });
 };

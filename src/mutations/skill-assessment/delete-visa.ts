@@ -3,45 +3,45 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const deleteLead = async (id: number) => {
-  const res = await api.delete(`/lead/${id}`);
+const deleteSkillAssessment = async (id: number) => {
+  const res = await api.delete(`/skillAssessment/${id}`);
   return res.data;
 };
 
-export const useDeleteLead = () => {
+export const useDeleteSkillAssessment = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLead,
+    mutationFn: deleteSkillAssessment,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
     },
     onError: () => {
-      toast("Error!", {
-        description: "Something went wrong",
+      toast('Error!', {
+        description: 'Something went wrong',
       });
     },
   });
 };
 
-const deleteLeadBulk = async (ids: number[]) => {
-  const res = await api.delete(`/lead/bulk-delete`, { data: { ids } });
+const deleteSkillAssessmentBulk = async (ids: number[]) => {
+  const res = await api.delete(`/skillAssessment/bulk-delete`, { data: { ids } });
   return res.data;
 };
 
-export const useDeleteLeadBulk = () => {
+export const useDeleteSkillAssessmentBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLeadBulk,
+    mutationFn: deleteSkillAssessmentBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
     },
     onError: () => {
-      toast("Error!", {
-        description: "Something went wrong",
+      toast('Error!', {
+        description: 'Something went wrong',
       });
     },
   });
