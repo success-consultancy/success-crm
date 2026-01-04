@@ -2,6 +2,7 @@ import { cn } from '@/lib/utils';
 import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
+import { TribunalStatusTypes } from '@/types/response-types/tribunalreview-response';
 
 interface StageProps {
   name: string;
@@ -35,24 +36,24 @@ type VisaStagesProps = { visa: IVisaDetail };
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New Case', active: visa.status === VisaStatusTypes.NewApplicant },
-    { name: 'Documents Collected', active: visa.status === VisaStatusTypes.CollectingDocs },
-    { name: 'Visa Application Ready', active: visa.status === VisaStatusTypes.ReadyToSubmit },
-    { name: 'Visa Submitted', active: visa.status === VisaStatusTypes.Submitted },
-    { name: 'Visa Decision Received', active: visa.status === VisaStatusTypes.Approved },
+    { name: 'New Tribunal', active: visa.status === TribunalStatusTypes.NewTribunal },
+    { name: 'Collecting Docs', active: visa.status === TribunalStatusTypes.CollectingDocs },
+    { name: 'Ready To Submit', active: visa.status === TribunalStatusTypes.ReadyToSubmit },
+    { name: 'Submitted', active: visa.status === TribunalStatusTypes.Submitted },
+    { name: 'Info Received', active: visa.status === TribunalStatusTypes.InfoReceived },
   ];
 
   return (
     <div className="border rounded-lg">
       <div className="border-b px-6 py-3 flex justify-between">
-        <p className="text-xl font-bold">Visa Stages</p>
+        <p className="text-xl font-bold">Tribunal Stages</p>
 
 
         <div className='flex gap-2'>
           <div
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/visa/${visa.id}/edit`);
+              router.push(`/tribunal-review/${visa.id}/edit`);
             }}
             className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
           >

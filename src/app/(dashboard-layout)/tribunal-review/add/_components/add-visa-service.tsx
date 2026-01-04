@@ -94,11 +94,11 @@ export function AddVisaService({ userId }: Props) {
       { payload: { ...data, sourceId: Number(data.sourceId) } },
       {
         onSuccess: () => {
-          toast.success('Visa applicant added successfully');
+          toast.success('Tribunal review added successfully');
           reset();
         },
         onError: (error: any) => {
-          toast.error(error?.response?.data?.message || 'Failed to add visa applicant');
+          toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
         },
       },
     );

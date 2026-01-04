@@ -99,10 +99,10 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
       },
       {
         onSuccess: () => {
-          toast.success('Visa applicant updated successfully');
+          toast.success('Tribunal review updated successfully');
         },
         onError: (error: any) => {
-          toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+          toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
         },
       },
     );
