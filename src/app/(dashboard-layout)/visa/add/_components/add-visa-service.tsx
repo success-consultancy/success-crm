@@ -91,7 +91,7 @@ export function AddVisaService({ userId }: Props) {
   const submitHandler = (data: NewVisaServiceType) => {
     // The schema already expects strings for date fields, so we can pass data as-is
     mutate(
-      { payload: { ...data, sourceId: Number(data.sourceId) } },
+      { payload: { ...data, sourceId: data.sourceId } },
       {
         onSuccess: () => {
           toast.success('Visa applicant added successfully');

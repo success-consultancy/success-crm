@@ -91,7 +91,7 @@ export function AddVisaService({ userId }: Props) {
   const submitHandler = (data: NewVisaServiceType) => {
     // The schema already expects strings for date fields, so we can pass data as-is
     mutate(
-      { payload: { ...data, sourceId: Number(data.sourceId) } },
+      { payload: { ...data, sourceId: data.sourceId } },
       {
         onSuccess: () => {
           toast.success('Tribunal review added successfully');
@@ -638,7 +638,7 @@ export function AddVisaService({ userId }: Props) {
                   value={field.value?.toString()}
                   label="Source"
                   placeholder="Select a source"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val)}
                   error={errors.sourceId?.message}
                 />
               )}
@@ -652,7 +652,13 @@ export function AddVisaService({ userId }: Props) {
                   value={field.value?.toString()}
                   label="Assigned to"
                   placeholder="Select an assignee"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => {
+                    if (!val) {
+                      return;
+                    }
+
+                    field.onChange(Number(val))
+                  }}
                   error={errors.userId?.message}
                 />
               )}

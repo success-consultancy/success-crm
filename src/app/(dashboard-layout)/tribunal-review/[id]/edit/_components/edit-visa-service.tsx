@@ -95,7 +95,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
       {
         id: visaId,
         ...data,
-        sourceId: Number(data.sourceId),
+        sourceId: data.sourceId,
       },
       {
         onSuccess: () => {
@@ -675,7 +675,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
                   value={field.value?.toString()}
                   label="Source"
                   placeholder="Select a source"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val)}
                   error={errors.sourceId?.message}
                 />
               )}

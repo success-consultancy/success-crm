@@ -7,10 +7,11 @@ import { useGetVisaDetailById } from '@/query/get-visa';
 import PageLoader from '@/components/molecules/page-loader';
 import { EditVisaService } from './_components/edit-visa-service';
 import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
+import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 
 const EditVisaServicePage = () => {
   const params = useParams<{ id: string }>();
-  const { data, isLoading: visaLoading } = useGetVisaDetailById(params.id);
+  const { data, isLoading: visaLoading } = useGetTribunalReviewById(params.id);
 
   if (visaLoading) {
     return <PageLoader />;
@@ -61,8 +62,8 @@ const EditVisaServicePage = () => {
     paymentStatus: data?.paymentStatus || '', // "Overdue"
 
     // Misc
-    userId: Number(data?.userId) || '', // 3
-    sourceId: data?.sourceId || '', // 3
+    userId: data?.userId || '', // 3
+    sourceId: data?.sourceId?.toString() || '', // 3
     updatedBy: data?.updatedBy || '', // 1
     remarks: data?.remarks || '', // "<p>Hello World</p>"
     assignedDate: new Date(data?.assignedDate as string) || new Date(), // "2025-11-20"

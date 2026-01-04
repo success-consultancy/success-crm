@@ -40,11 +40,11 @@ interface Props {
 
 export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
   const router = useRouter();
-  
+
   // Parse remarks into separate notes if they exist
   const parseRemarks = (remarks: string | null | undefined) => {
     if (!remarks) return { visaServiceNote: '', feeNote: '', miscNote: '' };
-    
+
     // Split by double newlines (how they're combined in add)
     const parts = remarks.split('\n\n').filter(Boolean);
     return {
@@ -55,7 +55,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
   };
 
   const { visaServiceNote: initialVisaNote, feeNote: initialFeeNote, miscNote: initialMiscNote } = parseRemarks(defaultValues.remarks || null);
-  
+
   const [visaServiceNote, setVisaServiceNote] = useState(initialVisaNote);
   const [feeNote, setFeeNote] = useState(initialFeeNote);
   const [miscNote, setMiscNote] = useState(initialMiscNote);
@@ -99,7 +99,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
     submittedDate: convertDateForForm(defaultValues.submittedDate),
     decisionDate: convertDateForForm(defaultValues.decisionDate),
     status: defaultValues.status || null,
-    sourceId: defaultValues.sourceId || null,
+    sourceId: defaultValues.sourceId?.toString() || '',
     userId: defaultValues.userId || null,
     invoiceNumber: defaultValues.invoiceNumber || null,
     payment: defaultValues.payment || null,
@@ -170,7 +170,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
   const submitHandler = (data: SkillAssessmentSchemaType) => {
     // Combine all notes into remarks field
     const combinedNotes = [visaServiceNote, feeNote, miscNote].filter(Boolean).join('\n\n');
-    
+
     // Convert sourceId from string to number if it exists (SelectField returns string)
     const sourceIdValue = data.sourceId;
     const payload = {
@@ -182,7 +182,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
 
     mutate(
       {
-        payload,
+        payload: payload as any,
         id,
       },
       {
@@ -346,7 +346,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.expiryDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -396,7 +396,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.visaExpiry?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -417,7 +417,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -485,7 +485,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.submittedDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -506,7 +506,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.decisionDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -564,7 +564,7 @@ export function EditSkillAssessment({ userId, id, defaultValues }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />

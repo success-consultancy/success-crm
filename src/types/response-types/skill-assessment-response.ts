@@ -17,7 +17,7 @@ export interface ISkillAssessment {
   lastName: string;
   middleName: string | null;
   files: any;
-  passport: number | null;
+  passport: string | null;
   issueDate: string | null;
   expiryDate: string | null;
   email: string;
@@ -37,7 +37,7 @@ export interface ISkillAssessment {
   submittedDate: string | null;
   decisionDate: string | null;
   remarks: string | null;
-  sourceId: number | null;
+  sourceId: string | null;
   invoiceNumber: string | null;
   payment: string | null;
   paymentStatus: string | null;
