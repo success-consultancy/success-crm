@@ -8,7 +8,7 @@ import { useVisaAccountsColumn } from '@/config/columns/visaApplicant-accounts-c
 import { Button } from '@/components/ui/button';
 import { createEmptyDraft, isDraftValid, mapDraftToAccountRow, updateDraftField } from '@/utils/account';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAddAccount } from '@/mutations/visa/add-account';
+import { useAddAccount, useUpdateAccount } from '@/mutations/visa/add-account';
 
 type AccountsProps = {
   accounts: IAccounts[];
@@ -17,14 +17,33 @@ type AccountsProps = {
 };
 
 const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps) => {
-  const AccountsColumns = useVisaAccountsColumn();
+  const handleEditRow = (row: IAccounts) => {
+    setEditingId(row?.id);
+    setDraft({
+      ...row,
+      amount: String(row.amount),
+      discount: String(row.discount),
+      netamount: String(row.netamount),
+      gst: String(row.gst),
+    });
+  };
+  const AccountsColumns = useVisaAccountsColumn({
+    onEdit: handleEditRow,
+  });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
   const [draft, setDraft] = useState<IAccounts>(createEmptyDraft());
   const [adding, setAdding] = useState<boolean>(false);
+  const [editingId, setEditingId] = useState<number | null>(null);
 
   const createAccount = useAddAccount();
+  const updateAccount = useUpdateAccount();
 
+  const handleCancel = () => {
+    setDraft(createEmptyDraft());
+    setAdding(false);
+    setEditingId(null);
+  };
   const handleDraftChange = (key: keyof IAccounts, value: string) => {
     setDraft((prev) => updateDraftField(prev, key, value));
   };
@@ -46,26 +65,27 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
       netamount: draft.netamount,
       gst: (0.1 * Number(draft.amount || 0)).toString(),
     };
-
-    createAccount.mutateAsync(
-      {
-        accountableId: visaApplicantId,
-        accountableType: 'VisaApplicant',
-        ...accountsData,
-      },
-      {
-        onSuccess: () => {
-          setAdding(false);
-          setDraft(createEmptyDraft());
+    if (editingId) {
+      updateAccount.mutateAsync(
+        {
+          id: editingId,
+          payload: {
+            accountableId: visaApplicantId,
+            accountableType: 'VisaApplicant',
+            ...accountsData,
+          },
         },
-      },
-    );
+        {
+          onSuccess: () => {
+            setAdding(false);
+            setDraft(createEmptyDraft());
+            setEditingId(null);
+          },
+        },
+      );
+    }
   };
 
-  const handleCancel = () => {
-    setDraft(createEmptyDraft());
-    setAdding(false);
-  };
   return (
     <TitleBox title="Accounts">
       <div className="grid grid-cols-1 gap-y-2">
@@ -78,7 +98,7 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
           showHeaderSection={false}
           className="bg-neutral-white !text-neutral-darkGrey"
         />
-        {adding && draft && (
+        {(adding || editingId) && draft && (
           <div className="grid grid-cols-[160px_160px_160px_160px_160px_160px_160px_128px_216px] items-center gap-x-4 px-4 py-2 border-t">
             <Input
               placeholder="Plan name"

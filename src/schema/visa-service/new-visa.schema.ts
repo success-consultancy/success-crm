@@ -69,6 +69,7 @@ export const newVisaServiceSchema = z.object({
 
   sourceId: z
     .union([z.string(), z.number()])
+    .optional()
     .transform((val) => {
       if (val === null || val === undefined || val === '') return 0;
       return Number(val);
@@ -105,11 +106,10 @@ export const newVisaServiceSchema = z.object({
   serviceFee: nullableString(),
   gst: nullableString(),
   discount: nullableString(),
-  netAmount: nullableString()
+  netAmount: nullableString(),
 });
 
-
-export type NewVisaServiceType = z.input<typeof newVisaServiceSchema>;
+export type NewVisaServiceType = z.infer<typeof newVisaServiceSchema>;
 
 export const newVisaServiceDefaultValues: NewVisaServiceType = {
   files: null,
@@ -161,5 +161,5 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   serviceFee: '',
   gst: '',
   discount: '',
-  netAmount: ''
+  netAmount: '',
 };

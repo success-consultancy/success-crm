@@ -4,21 +4,24 @@ import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
 import { IEducation, IFeePlan } from '@/types/response-types/education-response';
 import { useFeeStuructureColumn } from '@/config/columns/fee-structure-columns-definitions';
-import { useAddCourseFee } from '@/mutations/education/add-course-fee';
+import { useAddCourseFee, useUpdateCourseFee } from '@/mutations/education/add-course-fee';
 import useAuthStore from '@/store/auth-store';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
+import { CreateAccountPayload } from '@/mutations/visa/add-account';
 
 type CourseFeeStructureProps = {
   courseFee: IFeePlan[];
   studentId?: number;
   isAdding?: boolean;
   onToggleAdding?: (isAdding: boolean) => void;
-  draft?: IFeePlan;
-  onDraftChange?: (draft: IFeePlan) => void;
-  accountsDraft?: any; // IAccounts type
+  draft?: Partial<IFeePlan>;
+  onDraftChange?: (draft: Partial<IFeePlan>) => void;
+  accountsDraft?: any; // CreateAccountPayload type
+  onAccountsDraftChange?: (accountsDraft: any) => void;
+  onEditingIdChange?: (feeId: number | null) => void;
   compType?: string;
 };
 
@@ -30,12 +33,45 @@ const CourseFeeStructure = ({
   draft,
   onDraftChange,
   accountsDraft,
+  onAccountsDraftChange,
+  onEditingIdChange,
   compType,
 }: CourseFeeStructureProps) => {
-  const CourseFeeStrucutureColumns = useFeeStuructureColumn();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const handleEditRow = (row: IFeePlan) => {
+    const feeId = row?.id || null;
+    setEditingId(feeId);
+    // Set editing ID in parent first so handleFeeDraftChange knows we're editing
+    onEditingIdChange?.(feeId);
+
+    // Update accounts draft when editing - use existing account data if available
+    // If account doesn't exist, parent will calculate it from fee data
+    if (row.account && onAccountsDraftChange) {
+      onAccountsDraftChange({
+        planname: row.account.planname || '',
+        amount: row.account.amount || '',
+        duedate: row.account.duedate || '',
+        invoicenumber: row.account.invoicenumber || '',
+        status: row.account.status || 'Pending',
+        comission: row.account.comission || '',
+        discount: row.account.discount || '0',
+        bonus: row.account.bonus || '0',
+        netamount: row.account.netamount || '',
+      });
+    }
+
+    // Update fee draft - this will trigger handleFeeDraftChange in parent
+    // which will calculate accounts if they don't exist
+    onDraftChange?.({
+      ...row,
+      amount: row.amount as any,
+    });
+  };
+  const CourseFeeStrucutureColumns = useFeeStuructureColumn({ onEdit: handleEditRow });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IFeePlan>[]>(CourseFeeStrucutureColumns);
   const { mutate: addCourseFee, isPending } = useAddCourseFee();
+  const { mutate: updateCourseFee, isPending: isUpdating } = useUpdateCourseFee();
   const user = useAuthStore((s) => s.profile);
 
   const handleAddRow = () => {
@@ -61,37 +97,74 @@ const CourseFeeStructure = ({
       bonus: accountsDraft.bonus,
       netamount: accountsDraft.netamount,
     };
-
-    addCourseFee(
-      {
-        studentId: Number(studentId),
-        planname: draft.planname,
-        amount: Number(draft.amount || 0),
-        duedate,
-        invoicenumber: draft.invoicenumber,
-        status: draft.status,
-        note: draft.note,
-        updatedBy: Number((user as any)?.id || 0),
-        accounts: accountsData,
-      },
-      {
-        onSuccess: () => {
-          onToggleAdding?.(false);
-          onDraftChange?.({
-            planname: '',
-            amount: '',
-            duedate: '',
-            invoicenumber: '',
-            status: 'Pending',
-            note: '',
-          } as IFeePlan);
+    if (editingId) {
+      updateCourseFee(
+        {
+          id: editingId,
+          payload: {
+            studentId: Number(studentId),
+            planname: draft.planname || '',
+            amount: Number(draft.amount || 0),
+            duedate: duedate,
+            invoicenumber: draft.invoicenumber || '',
+            status: draft.status || 'Pending',
+            note: draft.note || '',
+            updatedBy: Number((user as any)?.id || 0),
+            accounts: accountsData as CreateAccountPayload,
+          },
         },
-      },
-    );
+        {
+          onSuccess: () => {
+            onToggleAdding?.(false);
+            setEditingId(null);
+            onEditingIdChange?.(null);
+            onDraftChange?.({
+              planname: '',
+              amount: '',
+              duedate: '',
+              invoicenumber: '',
+              status: 'Pending',
+              note: '',
+            } as IFeePlan);
+          },
+        },
+      );
+    } else {
+      addCourseFee(
+        {
+          studentId: Number(studentId),
+          planname: draft.planname || '',
+          amount: Number(draft.amount || 0),
+          duedate,
+          invoicenumber: draft.invoicenumber || '',
+          status: draft.status || 'Pending',
+          note: draft.note || '',
+          updatedBy: Number((user as any)?.id || 0),
+          accounts: accountsData,
+        },
+        {
+          onSuccess: () => {
+            onToggleAdding?.(false);
+            setEditingId(null);
+            onEditingIdChange?.(null);
+            onDraftChange?.({
+              planname: '',
+              amount: '',
+              duedate: '',
+              invoicenumber: '',
+              status: 'Pending',
+              note: '',
+            } as IFeePlan);
+          },
+        },
+      );
+    }
   };
 
   const handleCancel = () => {
     onToggleAdding?.(false);
+    setEditingId(null);
+    onEditingIdChange?.(null);
   };
 
   return (
@@ -106,7 +179,7 @@ const CourseFeeStructure = ({
           showHeaderSection={false}
           className="bg-neutral-white !text-neutral-darkGrey"
         />
-        {isAdding && draft && (
+        {(isAdding || editingId) && draft && (
           <div className="grid grid-cols-[160px_160px_160px_128px_216px_1fr] items-center gap-x-4 px-4 py-2 border-t">
             <Input
               placeholder="Plan name"
@@ -171,10 +244,14 @@ const CourseFeeStructure = ({
 };
 
 const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
-  if (type === "accordion") {
-    return <FormAccordion value="item-3" title="Fee Structure">{children}</FormAccordion>;
+  if (type === 'accordion') {
+    return (
+      <FormAccordion value="item-3" title="Fee Structure">
+        {children}
+      </FormAccordion>
+    );
   }
-  
+
   return <TitleBox title="Course fee structure">{children}</TitleBox>;
 };
 

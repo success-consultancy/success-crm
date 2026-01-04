@@ -5,8 +5,12 @@ import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { IFeePlan } from '@/types/response-types/education-response';
+import { Button } from '@/components/ui/button';
+interface IEducationFeeColumn {
+  onEdit: (fee: IFeePlan) => void;
+}
 
-export const useFeeStuructureColumn = () => {
+export const useFeeStuructureColumn = ({ onEdit }: IEducationFeeColumn) => {
   const router = useRouter();
 
   const EducationColumns: ColumnDef<IFeePlan>[] = [
@@ -74,6 +78,16 @@ export const useFeeStuructureColumn = () => {
         return <span className="w-full">{row.original.note || '-'}</span>;
       },
       size: 152,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Button size="sm" variant="ghost" onClick={() => onEdit(row.original)}>
+          Edit
+        </Button>
+      ),
       meta: { isVisible: true },
     },
   ];

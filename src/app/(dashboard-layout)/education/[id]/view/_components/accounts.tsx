@@ -11,7 +11,7 @@ type AccountsProps = {
   courseFee: IAccounts[];
   studentId?: number;
   isAdding?: boolean;
-  draft?: IAccounts | null;
+  draft?: Partial<IAccounts> | null;
   onDraftChange?: (field: keyof IAccounts, value: string) => void;
   compType?: 'accordion' | 'default';
 };
@@ -24,7 +24,23 @@ const Accounts = ({
   onDraftChange,
   compType = 'default',
 }: AccountsProps) => {
-  const AccountsColumns = useAccountsColumn();
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const handleEditRow = (row: IAccounts) => {
+    setEditingId(row?.id);
+    // Update draft fields individually to match the onDraftChange pattern
+    if (onDraftChange) {
+      onDraftChange('planname', row.planname || '');
+      onDraftChange('comission', String(row.comission || ''));
+      onDraftChange('amount', String(row.amount || ''));
+      onDraftChange('discount', String(row.discount || ''));
+      onDraftChange('bonus', String(row.bonus || ''));
+      onDraftChange('netamount', String(row.netamount || ''));
+      onDraftChange('duedate', row.duedate || '');
+      onDraftChange('invoicenumber', row.invoicenumber || '');
+      onDraftChange('status', row.status || 'Pending');
+    }
+  };
+  const AccountsColumns = useAccountsColumn({ onEdit: handleEditRow });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
 
@@ -40,7 +56,7 @@ const Accounts = ({
           showHeaderSection={false}
           className="bg-neutral-white !text-neutral-darkGrey"
         />
-        {isAdding && draft && (
+        {(isAdding || editingId) && draft && (
           <div className="grid grid-cols-[160px_160px_160px_160px_160px_160px_160px_128px_216px] items-center gap-x-4 px-4 py-2 border-t">
             <Input placeholder="Plan name" value={draft.planname} readOnly className="bg-gray-100" />
             <Input

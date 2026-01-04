@@ -85,6 +85,7 @@ export interface IFeePlan {
   invoicenumber: string;
   status: string;
   note: string;
+  id: number;
   account?: IAccounts;
 }
 
@@ -99,4 +100,5 @@ export interface IAccounts {
   bonus?: string;
   gst?: string;
   netamount: string;
+  id: number;
 }

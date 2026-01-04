@@ -14,6 +14,7 @@ import Accounts from './accounts';
 import { IAccounts, IFeePlan } from '@/types/response-types/education-response';
 import MiscSection from './misc-section';
 import FollowUp from '@/components/organisms/follow-up';
+import { CreateAccountPayload } from '@/mutations/visa/add-account';
 
 interface EducationPageContentProps {
   studentId: string;
@@ -30,15 +31,15 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Shared state for adding rows
   const [isAddingRow, setIsAddingRow] = useState(false);
-  const [feeDraft, setFeeDraft] = useState({
+  const [feeDraft, setFeeDraft] = useState<Partial<IFeePlan>>({
     planname: '',
     amount: '',
     duedate: '',
     invoicenumber: '',
     status: 'Pending',
     note: '',
-  } as IFeePlan);
-  const [accountsDraft, setAccountsDraft] = useState({
+  });
+  const [accountsDraft, setAccountsDraft] = useState<CreateAccountPayload>({
     planname: '',
     amount: '',
     duedate: '',
@@ -48,7 +49,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     discount: '0',
     bonus: '0',
     netamount: '',
-  } as IAccounts);
+  });
 
   // Extract accounts from education data using useMemo for performance
   const accounts = useMemo(() => {
@@ -96,7 +97,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   }, [accounts]);
 
   // Helper function to calculate accounts from fee data - memoized for performance
-  const calculateAccountsFromFee = useCallback((fee: IFeePlan): IAccounts => {
+  const calculateAccountsFromFee = useCallback((fee: Partial<IFeePlan>): CreateAccountPayload => {
     const amountNum = Number(fee.amount || 0);
 
     // TODO: Get college commission percentage from university/college data
@@ -128,7 +129,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Default draft objects - memoized to prevent recreation
   const defaultFeeDraft = useMemo(
-    (): IFeePlan => ({
+    (): Partial<IFeePlan> => ({
       planname: '',
       amount: '',
       duedate: '',
@@ -140,7 +141,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   );
 
   const defaultAccountsDraft = useMemo(
-    (): IAccounts => ({
+    (): CreateAccountPayload => ({
       planname: '',
       amount: '',
       duedate: '',
@@ -154,12 +155,16 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     [],
   );
 
+  // Track editing state for course fee
+  const [editingFeeId, setEditingFeeId] = useState<number | null>(null);
+
   // Handle fee draft changes and update accounts draft accordingly - memoized
   const handleFeeDraftChange = useCallback(
-    (newFeeDraft: IFeePlan) => {
+    (newFeeDraft: Partial<IFeePlan>) => {
       setFeeDraft(newFeeDraft);
 
-      if (isAddingRow) {
+      // Update accounts draft when adding or editing
+      if (isAddingRow || editingFeeId) {
         const calculatedAccounts = calculateAccountsFromFee(newFeeDraft);
         // Preserve user-edited commission value, recalculate others
         const updatedAccountsDraft = {
@@ -177,13 +182,13 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
         setAccountsDraft(updatedAccountsDraft);
       }
     },
-    [isAddingRow, calculateAccountsFromFee, accountsDraft],
+    [isAddingRow, editingFeeId, calculateAccountsFromFee, accountsDraft],
   );
 
   // Handle accounts draft changes (for commission, discount, bonus edits) - memoized
   const handleAccountsDraftChange = useCallback(
     (field: keyof IAccounts, value: string) => {
-      if (!isAddingRow) return;
+      if (!isAddingRow && !editingFeeId) return;
 
       const updatedAccountsDraft = {
         ...accountsDraft,
@@ -209,8 +214,13 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
       setAccountsDraft(updatedAccountsDraft);
     },
-    [isAddingRow, accountsDraft],
+    [isAddingRow, editingFeeId, accountsDraft],
   );
+
+  // Handle accounts draft change when editing (direct update from course fee structure)
+  const handleAccountsDraftChangeFromEdit = useCallback((newAccountsDraft: CreateAccountPayload) => {
+    setAccountsDraft(newAccountsDraft);
+  }, []);
 
   // Initialize accounts draft when starting to add row - memoized
   const handleToggleAdding = useCallback(
@@ -223,9 +233,23 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
         // Reset drafts when canceling
         setFeeDraft(defaultFeeDraft);
         setAccountsDraft(defaultAccountsDraft);
+        setEditingFeeId(null);
       }
     },
     [calculateAccountsFromFee, feeDraft, defaultFeeDraft, defaultAccountsDraft],
+  );
+
+  // Handle editing state change from course fee structure
+  const handleEditingFeeIdChange = useCallback(
+    (feeId: number | null) => {
+      setEditingFeeId(feeId);
+      if (!feeId) {
+        // Reset drafts when editing is cancelled
+        setFeeDraft(defaultFeeDraft);
+        setAccountsDraft(defaultAccountsDraft);
+      }
+    },
+    [defaultFeeDraft, defaultAccountsDraft],
   );
 
   if (isLoading) {
@@ -254,11 +278,13 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
                 draft={feeDraft}
                 onDraftChange={handleFeeDraftChange}
                 accountsDraft={accountsDraft}
+                onAccountsDraftChange={handleAccountsDraftChangeFromEdit}
+                onEditingIdChange={handleEditingFeeIdChange}
               />
               <Accounts
                 courseFee={accounts}
                 studentId={education.id}
-                isAdding={isAddingRow}
+                isAdding={isAddingRow || !!editingFeeId}
                 draft={accountsDraft}
                 onDraftChange={handleAccountsDraftChange}
               />
