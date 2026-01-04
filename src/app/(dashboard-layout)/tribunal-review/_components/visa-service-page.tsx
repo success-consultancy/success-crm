@@ -15,16 +15,13 @@ import { ROUTES } from '@/config/routes';
 import TabSelector from '@/components/atoms/tab-selector';
 import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
-import { useExportLeads } from '@/mutations/leads/export-lead';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
-import { useGetVisa } from '@/query/get-visa';
-import { useDeleteVisa, useDeleteVisaBulk } from '@/mutations/visa/delete-visa';
 import { IVisa } from '@/types/response-types/visa-response';
-import { useVisaColumn } from '@/config/columns/visa-columns-definitions';
-import { useExportVisaApplicants } from '@/mutations/visa/export-visa-applicants';
-import { useGetTribunalreview } from '@/query/get-tribunalreview';
+import { useGetTribunalReviews } from '@/query/get-tribunalreview';
 import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-visa';
+import { useTribunalReviewColumn } from '@/config/columns/tribunal-columns-definations';
+import { useExportTribunalReviews } from '@/mutations/tribunal-review/export-tribunal-review';
 
 const DEFAULT_TAB = 'all_tribunal';
 // Tab Config
@@ -42,7 +39,7 @@ const ServicePage = () => {
 
   const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
 
-  const { data, isLoading } = useGetTribunalreview({
+  const { data, isLoading } = useGetTribunalReviews({
     ...filterParams,
     q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
@@ -50,7 +47,7 @@ const ServicePage = () => {
   const { mutateAsync: deleteTribunal } = useDeleteTribunal();
   const { mutateAsync: deleteTribunalBulk } = useDeleteTribunalBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
-  const { mutateAsync: exportVisaApplicants, isPending: isExporting } = useExportVisaApplicants();
+  const { mutateAsync: exportDateToCSV, isPending: isExporting } = useExportTribunalReviews();
 
   const handleDelete = (id: number) => {
     deleteTribunal(id);
@@ -64,7 +61,7 @@ const ServicePage = () => {
     sendEmail(payload);
   };
 
-  const VisaColumns = useVisaColumn(handleDelete, handleSendEmail);
+  const VisaColumns = useTribunalReviewColumn(handleDelete, handleSendEmail);
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IVisa>[]>(VisaColumns);
 
@@ -94,7 +91,7 @@ const ServicePage = () => {
 
   const handleRowClick = useCallback(
     (visa: IVisa) => {
-      router.push(`/tribunalreview/${visa.id}/view`);
+      router.push(`/tribunal-review/${visa.id}/view`);
     },
     [router],
   );
@@ -124,7 +121,7 @@ const ServicePage = () => {
             <Button
               variant="outline"
               className="mr-2"
-              onClick={() => exportVisaApplicants(filterParams)}
+              onClick={() => exportDateToCSV(filterParams)}
               loading={isExporting}
             >
               Export

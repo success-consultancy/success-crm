@@ -188,12 +188,12 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.SkillAssessmentService,
     icon: Nebulas,
-    href: '#',
+    href: '/skill',
   },
   {
     title: DashboardTitle.TribunalReview,
     icon: Judge,
-    href: '/tribunalreview',
+    href: '/tribunal-review',
   },
   {
     title: DashboardTitle.InsuranceService,

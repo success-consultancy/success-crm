@@ -33,7 +33,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   }
 
   if (isError || !visa) {
-    return <div className="flex justify-center items-center min-h-[300px] text-red-500">Education not found.</div>;
+    return <div className="flex justify-center items-center min-h-[300px] text-red-500">Visa Applicant not found.</div>;
   }
 
   return (

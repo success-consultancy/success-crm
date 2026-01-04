@@ -8,7 +8,7 @@ import { ChevronLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import SidebarUserOptions from '../organisms/sidebar-user-options';
 import AdminSidebarMenuItems from '../organisms/admin-sidebar-menu-items';
-import SidebarLogo from '../organisms/account-switcher';
+import { SidebarLogo, BranchSelector } from '../organisms/account-switcher';
 
 // UI Elements
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -31,9 +31,10 @@ const AdminSidebar = ({ className }: Props) => {
     >
       <div className="relative h-full w-full flex flex-col justify-between">
         <ScrollArea className="h-full">
-          <div className="flex flex-col gap-2 h-full">
+          <div className="flex flex-col h-full">
             <SidebarLogo />
-            <div className={!isCollapsed ? 'p-2' : undefined}>
+            <div className={!isCollapsed ? 'p-2 pt-2' : undefined}>
+              <BranchSelector />
               <AdminSidebarMenuItems />
             </div>
           </div>
@@ -44,7 +45,7 @@ const AdminSidebar = ({ className }: Props) => {
         {/* Toggle Button */}
         <button
           onClick={toggleSidebar}
-          className="absolute bottom-40 right-[-12px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md transition-all hover:bg-gray-50"
+          className="absolute top-[20px] right-[-12px] w-6 h-6 bg-white border border-gray-200 rounded-full flex items-center justify-center shadow-md transition-all hover:bg-gray-50"
         >
           <ChevronLeft
             size={18}

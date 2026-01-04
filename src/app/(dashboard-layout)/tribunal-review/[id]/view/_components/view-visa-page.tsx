@@ -12,6 +12,7 @@ import MiscSection from './misc-section';
 import NoteSection from './note-section';
 import VisaHistoryContent from './visa-history-content';
 import FollowUp from '@/components/organisms/follow-up';
+import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -25,14 +26,14 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
     { label: 'Follow-up', value: 'follow-up' },
   ];
 
-  const { data: visa, isLoading, isError } = useGetVisaDetailById(studentId);
+  const { data: visa, isLoading, isError } = useGetTribunalReviewById(studentId);
 
   if (isLoading) {
     return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
   }
 
   if (isError || !visa) {
-    return <div className="flex justify-center items-center min-h-[300px] text-red-500">Education not found.</div>;
+    return <div className="flex justify-center items-center min-h-[300px] text-red-500">Tribunal Review not found.</div>;
   }
 
   return (

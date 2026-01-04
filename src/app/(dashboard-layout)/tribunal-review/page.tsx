@@ -1,13 +1,13 @@
 import React from 'react';
 import { Metadata } from 'next';
-import VisaServicePage from './_components/visa-service-page';
+import TribunalReview from './_components/visa-service-page';
 
 export const metadata: Metadata = {
-  title: 'Visa Service',
+  title: 'Tribunal Review Service',
 };
 
 const Page = () => {
-  return <VisaServicePage />;
+  return <TribunalReview />;
 };
 
 export default Page;
