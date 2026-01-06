@@ -155,7 +155,7 @@ const Transition = ({ lead }: { lead: ILead }) => {
         }
 
         console.log('Moving to skill assessment service:', validatedPayload);
-        addSkillAssessment.mutateAsync({ payload: validatedPayload, leadId: lead.id.toString() });
+        addSkillAssessment.mutateAsync({ payload: validatedPayload as any, leadId: lead.id.toString() });
         break;
 
       case 'insurance':

@@ -90,7 +90,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
       {
         id: visaId,
         ...data,
-        sourceId: Number(data.sourceId),
+        sourceId: data.sourceId,
       },
       {
         onSuccess: () => {

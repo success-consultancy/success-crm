@@ -95,14 +95,14 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
       {
         id: visaId,
         ...data,
-        sourceId: Number(data.sourceId),
+        sourceId: data.sourceId,
       },
       {
         onSuccess: () => {
-          toast.success('Visa applicant updated successfully');
+          toast.success('Tribunal review updated successfully');
         },
         onError: (error: any) => {
-          toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+          toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
         },
       },
     );
@@ -538,7 +538,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
         {/* Tribunal */}
         <FormAccordion value="item-3" title="Tribunal review details">
           <div className="grid grid-cols-3 gap-6">
-
             <SelectField
               control={control}
               name="currentVisa"
@@ -552,7 +551,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
               ]}
               placeholder="Select current visa type"
             />
-
 
             <TextInput label="Service Fee" {...register('serviceFee')} error={errors.serviceFee?.message} />
             <TextInput label="GST" {...register('gst')} error={errors.gst?.message} />
@@ -584,7 +582,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
             <SelectField
               control={control}
               name="paymentStatus"
-
               label="Payment status"
               options={[
                 { label: 'Pending', value: 'Pending' },
@@ -596,15 +593,12 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
             />
 
             <div className="space-y-1 col-span-full" suppressHydrationWarning>
-              <Label htmlFor="remarks">
-                Visa note
-              </Label>
+              <Label htmlFor="remarks">Visa note</Label>
               <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
               {errors.remarks?.message && <FormErrorMessage message={errors.remarks.message} />}
             </div>
           </div>
         </FormAccordion>
-
 
         {/* Accounts */}
         <FormAccordion value="item-4" title="Accounts">
@@ -641,7 +635,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
             <SelectField
               control={control}
               name="paymentStatus"
-
               label="Payment status"
               options={[
                 { label: 'Pending', value: 'Pending' },
@@ -654,9 +647,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
           </div>
 
           <div className="w-full space-y-1" suppressHydrationWarning>
-            <Label htmlFor="feeNote">
-              Fee note
-            </Label>
+            <Label htmlFor="feeNote">Fee note</Label>
             <TinyEditor value={feeNote || ''} onChange={handleFeeNoteChange} />
             {errors.feeNote?.message && <p className="text-sm text-red-500">{errors.feeNote?.message}</p>}
           </div>

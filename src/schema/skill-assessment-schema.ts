@@ -36,18 +36,8 @@ const skillAssessmentFormSchema = z.object({
   csaStatus: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
 
-  sourceId: z
-    .union([z.string(), z.number(), z.null()])
-    .optional()
-    .transform((val) => {
-      if (val === null || val === undefined || val === '') return null;
-      if (typeof val === 'string') {
-        const num = Number(val);
-        return isNaN(num) ? null : num;
-      }
-      return typeof val === 'number' ? val : null;
-    })
-    .pipe(z.number().int().nullable().optional()),
+  sourceId: z.string().min(1, 'Please select a source').max(50, 'Source selection is invalid'),
+
   invoiceNumber: z.string().nullable().optional(),
   payment: z.string().nullable().optional(),
   paymentStatus: z.string().nullable().optional(),
@@ -62,12 +52,12 @@ const skillAssessmentFormSchema = z.object({
       try {
         // Parse DD/MM/YYYY format
         const expiryDate = parse(data.expiryDate, 'dd/MM/yyyy', new Date());
-        
+
         if (!isNaN(expiryDate.getTime())) {
           const currentYear = new Date().getFullYear();
           const expiryYear = expiryDate.getFullYear();
           const minRequiredYear = currentYear + 10;
-          
+
           if (expiryYear < minRequiredYear) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,

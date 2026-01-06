@@ -68,14 +68,7 @@ export const newVisaServiceSchema = z.object({
   csaStatus: nullableString(),
   remarks: nullableString(),
 
-  sourceId: z
-    .union([z.string(), z.number()])
-    .optional()
-    .transform((val) => {
-      if (val === null || val === undefined || val === '') return 0;
-      return Number(val);
-    })
-    .refine((val) => val !== null, { error: 'Source ID is required' }),
+  sourceId: z.string().min(1, 'Please select a source').max(50, 'Source selection is invalid'),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),

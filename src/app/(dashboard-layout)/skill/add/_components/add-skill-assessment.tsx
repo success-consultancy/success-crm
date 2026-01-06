@@ -104,12 +104,12 @@ export function AddSkillAssessment({ userId }: Props) {
   const submitHandler = (data: SkillAssessmentSchemaType) => {
     // Combine all notes into remarks field
     const combinedNotes = [visaServiceNote, feeNote, miscNote].filter(Boolean).join('\n\n');
-    
+
     // Convert sourceId from string to number if it exists (SelectField returns string)
     const sourceIdValue = data.sourceId;
     const payload = {
       ...data,
-      sourceId: sourceIdValue ? Number(sourceIdValue) : null,
+      sourceId: sourceIdValue,
       files: null,
       remarks: combinedNotes || data.remarks || null,
     };
@@ -279,7 +279,7 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.expiryDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -329,7 +329,7 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.visaExpiry?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -417,7 +417,7 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.submittedDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -438,7 +438,7 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.decisionDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -496,7 +496,7 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
-                      toYear={new Date().getFullYear() + 50}
+                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />

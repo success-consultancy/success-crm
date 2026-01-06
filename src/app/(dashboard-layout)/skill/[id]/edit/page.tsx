@@ -55,7 +55,7 @@ const EditSkillAssessmentPage = () => {
     submittedDate: convertDate(skillAssessment?.submittedDate),
     decisionDate: convertDate(skillAssessment?.decisionDate),
     status: skillAssessment?.status || null,
-    sourceId: skillAssessment?.sourceId || null,
+    sourceId: skillAssessment?.sourceId?.toString() || null,
     userId: skillAssessment?.userId || null,
     invoiceNumber: skillAssessment?.invoiceNumber || null,
     payment: skillAssessment?.payment || null,

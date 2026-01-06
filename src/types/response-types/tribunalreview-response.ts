@@ -3,12 +3,12 @@ export interface IVisaResponseType {
   rows: IVisa[];
 }
 
-export enum VisaStatusTypes {
-  NewApplicant = 'New Applicant',
+export enum TribunalStatusTypes {
+  NewTribunal = 'New Tribunal',
   CollectingDocs = 'Collecting Docs',
   ReadyToSubmit = 'Ready to Submit',
   Submitted = 'Submitted',
-  InfoRequested = 'Info Requested',
+  InfoReceived = 'Info Received',
   Approved = 'Approved',
   FeePaid = 'Fee Paid',
   Withdrawn = 'Withdrawn',
