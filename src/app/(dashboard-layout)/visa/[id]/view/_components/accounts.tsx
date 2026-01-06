@@ -8,7 +8,7 @@ import { useVisaAccountsColumn } from '@/config/columns/visaApplicant-accounts-c
 import { Button } from '@/components/ui/button';
 import { createEmptyDraft, isDraftValid, mapDraftToAccountRow, updateDraftField } from '@/utils/account';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAddAccount, useUpdateAccount } from '@/mutations/visa/add-account';
+import { CreateAccountPayload, useAddAccount, useUpdateAccount } from '@/mutations/visa/add-account';
 
 type AccountsProps = {
   accounts: IAccounts[];
@@ -32,7 +32,7 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
   });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
-  const [draft, setDraft] = useState<IAccounts>(createEmptyDraft());
+  const [draft, setDraft] = useState<CreateAccountPayload>(createEmptyDraft());
   const [adding, setAdding] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -44,7 +44,7 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
     setAdding(false);
     setEditingId(null);
   };
-  const handleDraftChange = (key: keyof IAccounts, value: string) => {
+  const handleDraftChange = (key: keyof CreateAccountPayload, value: string) => {
     setDraft((prev) => updateDraftField(prev, key, value));
   };
 
@@ -63,8 +63,9 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
       status: draft.status,
       discount: draft.discount,
       netamount: draft.netamount,
-      gst: (0.1 * Number(draft.amount || 0)).toString(),
+      gst: (0.1 * Number(draft.amount)).toLocaleString(),
     };
+
     if (editingId) {
       updateAccount.mutateAsync(
         {
@@ -74,6 +75,21 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
             accountableType: 'VisaApplicant',
             ...accountsData,
           },
+        },
+        {
+          onSuccess: () => {
+            setAdding(false);
+            setDraft(createEmptyDraft());
+            setEditingId(null);
+          },
+        },
+      );
+    } else {
+      createAccount.mutateAsync(
+        {
+          accountableId: visaApplicantId,
+          accountableType: 'VisaApplicant',
+          ...accountsData,
         },
         {
           onSuccess: () => {

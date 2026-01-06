@@ -5,6 +5,7 @@ import { useGetLeadLog } from '@/query/get-leads'; // temporarily using lead API
 import { useState } from 'react';
 import Button from '@/components/atoms/button';
 import Loading from '@/components/organisms/loading';
+import { useGetTribunalReviewLog } from '@/query/get-tribunalreview';
 
 // Temporary Visa History Type (matches your structure)
 type VisaHistoryItem = {
@@ -56,7 +57,7 @@ const ExpandableDescriptions = ({ descriptions }: { descriptions: string[] }) =>
 
 const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
   // ✔️ Using lead log API for now
-  const { data, isLoading } = useGetLeadLog(visaId);
+  const { data, isLoading } = useGetTribunalReviewLog(visaId);
 
   const VERSION_TYPES = {
     1: 'Created',
@@ -68,7 +69,7 @@ const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
 
   return (
     <CardContainer className="w-full">
-      <h2 className="text-lg font-semibold mb-4">Visa history</h2>
+      <h2 className="text-lg font-semibold mb-4">Tribunal Review history</h2>
       <div className="space-y-6">
         <Loading isLoading={isLoading}>
           {logs?.map((log, i) => (

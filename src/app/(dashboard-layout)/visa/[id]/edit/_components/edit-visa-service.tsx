@@ -73,16 +73,11 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   }, [userId, setValue]);
 
-  const feeNote = watch('feeNote');
   const miscNote = watch('miscNote');
   const remarks = watch('remarks');
 
   const handleRemarksChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
-  };
-
-  const handleFeeNoteChange = (content: string) => {
-    setValue('feeNote', content, { shouldValidate: true });
   };
 
   const handleMiscNoteChange = (content: string) => {

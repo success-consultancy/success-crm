@@ -33,7 +33,9 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   }
 
   if (isError || !visa) {
-    return <div className="flex justify-center items-center min-h-[300px] text-red-500">Tribunal Review not found.</div>;
+    return (
+      <div className="flex justify-center items-center min-h-[300px] text-red-500">Tribunal Review not found.</div>
+    );
   }
 
   return (
@@ -54,7 +56,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
           )}
           {/* NOTE : Change this ID later */}
           {activeTab === 'history' && <VisaHistoryContent visaId={studentId} />}
-          {activeTab === 'follow-up' && <FollowUp followableType="visaApplicant" id={studentId} />}
+          {activeTab === 'follow-up' && <FollowUp followableType="tribunalReview" id={studentId} />}
         </div>
       </div>
     </Container>

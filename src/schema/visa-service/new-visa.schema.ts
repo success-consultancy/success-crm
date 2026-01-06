@@ -3,6 +3,7 @@ import { number, z } from 'zod';
 // Helper to allow null or empty string (matching Joi's .allow(null, ''))
 const nullableString = () => z.string().nullable().optional();
 const nullableNumber = () => z.number().int().nullable().optional();
+const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
 export const newVisaServiceSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
@@ -101,12 +102,42 @@ export const newVisaServiceSchema = z.object({
 
   sbsSubmissionDate: nullableString(),
   sbsDecisionDate: nullableString(),
-  feeNote: nullableString(),
   miscNote: nullableString(),
-  serviceFee: nullableString(),
-  gst: nullableString(),
-  discount: nullableString(),
-  netAmount: nullableString(),
+  accounts: z.object({
+    planname: z
+      .string()
+      .min(1, 'Account payment plan is required')
+      .max(50, 'Account payment plan cannot exceed 50 characters'),
+
+    amount: z
+      .string()
+      .min(1, 'Account amount is required')
+      .max(50, 'Account amount cannot exceed 50 characters')
+      .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+
+    duedate: z.date({
+      error: 'Account due date is required',
+    }),
+
+    invoicenumber: z
+      .string()
+      .min(1, 'Account invoice number is required')
+      .max(50, 'Account invoice number cannot exceed 50 characters')
+      .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+
+    status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
+
+    discount: z
+      .string()
+      .max(50, 'Discount amount cannot exceed 50 characters')
+      .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
+      .optional(),
+
+    netamount: z.string().optional(),
+    gst: z.string().optional(),
+    feeNote: z.string().optional(),
+    updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
+  }),
 });
 
 export type NewVisaServiceType = z.infer<typeof newVisaServiceSchema>;
