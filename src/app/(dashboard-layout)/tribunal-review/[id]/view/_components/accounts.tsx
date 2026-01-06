@@ -4,7 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
 import { IAccounts } from '@/types/response-types/education-response';
 import { Input } from '@/components/ui/input';
-import { useAccountsColumn } from '@/config/columns/education-accounts-columns-definitions';
+import { useTribunalReviewAccountsColumn } from '@/config/columns/tribunalReview-accounts-columns-definitions';
 
 type AccountsProps = {
   courseFee: IAccounts[];
@@ -15,7 +15,16 @@ type AccountsProps = {
 };
 
 const Accounts = ({ courseFee, studentId, isAdding = false, draft, onDraftChange }: AccountsProps) => {
-  const AccountsColumns = useAccountsColumn();
+  const AccountsColumns = useTribunalReviewAccountsColumn({
+    onEdit: (row) => {
+      onDraftChange?.('planname', row.planname);
+      onDraftChange?.('comission', String(row.comission));
+      onDraftChange?.('amount', String(row.amount));
+      onDraftChange?.('discount', String(row.discount));
+      onDraftChange?.('bonus', String(row.bonus));
+      onDraftChange?.('netamount', String(row.netamount));
+    },
+  });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
 

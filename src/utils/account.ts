@@ -1,6 +1,7 @@
+import { CreateAccountPayload } from '@/mutations/visa/add-account';
 import { IAccounts } from '@/types/response-types/education-response';
 
-export const createEmptyDraft = (): IAccounts => ({
+export const createEmptyDraft = (): CreateAccountPayload => ({
   planname: '',
   gst: '',
   amount: '',

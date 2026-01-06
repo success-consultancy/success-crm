@@ -7,11 +7,11 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { IAccounts } from '@/types/response-types/education-response';
 import { Button } from '@/components/ui/button';
 
-interface IVisaAccountsColumn {
+interface ITribunalReviewAccountsColumn {
   onEdit: (accounts: IAccounts) => void;
 }
 
-export const useVisaAccountsColumn = ({ onEdit }: IVisaAccountsColumn) => {
+export const useTribunalReviewAccountsColumn = ({ onEdit }: ITribunalReviewAccountsColumn) => {
   const router = useRouter();
 
   const VisaAccountsColumns: ColumnDef<IAccounts>[] = [

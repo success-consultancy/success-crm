@@ -100,6 +100,7 @@ export interface IAccounts {
   bonus: string;
   netamount: string;
   gst: string;
+  id: number;
 }
 
 export interface IVisaDetail {

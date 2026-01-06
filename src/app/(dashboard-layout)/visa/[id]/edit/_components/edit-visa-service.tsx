@@ -73,16 +73,11 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   }, [userId, setValue]);
 
-  const feeNote = watch('feeNote');
   const miscNote = watch('miscNote');
   const remarks = watch('remarks');
 
   const handleRemarksChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
-  };
-
-  const handleFeeNoteChange = (content: string) => {
-    setValue('feeNote', content, { shouldValidate: true });
   };
 
   const handleMiscNoteChange = (content: string) => {
@@ -536,53 +531,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
         </FormAccordion>
 
         {/* Accounts */}
-        <FormAccordion value="item-4" title="Accounts">
-          <div className="grid grid-cols-3 gap-6">
-            <TextInput
-              label="Fee payment plan"
-              {...register('payment')}
-              error={errors.payment?.message}
-              placeholder="Select/enter payment plan"
-            />
-            <TextInput label="Service fee" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="GST" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Discount" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Net amount" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Invoice number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
-            <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dueDate">
-                Due date
-              </Label>
-              <Controller
-                name="dueDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('dueDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.dueDate?.message}
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.dueDate?.message} />
-            </div>
-            <SelectField
-              control={control}
-              name="paymentStatus"
-              label="Payment status"
-              options={[
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Paid', value: 'Paid' },
-                { label: 'Overdue', value: 'Overdue' },
-                { label: 'Cancelled', value: 'Cancelled' },
-              ]}
-              placeholder="Select a status"
-            />
-          </div>
-        </FormAccordion>
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
@@ -597,7 +545,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
                   label="Source"
                   placeholder="Select a source"
                   onSelect={(val) => field.onChange(Number(val))}
-                  error={errors.sourceId?.message}
+                  error={errors.sourceId?.message as string | undefined}
                 />
               )}
             />

@@ -10,7 +10,7 @@ export const ROUTES = {
   TODO: '/dashboard/to-do',
   EDUCATION: '/dashboard/education',
   INSURANCE: '/dashboard/insurance',
-  SKILL_ASSESSMENT: '/dashboard/skill-assessment',
+  SKILL_ASSESSMENT: '/dashboard/skill',
   VISA: '/dashboard/visa',
   TRIBUNAL_REVIEW: '/dashboard/tribunal-review',
   AGENCY_AGREEMENT: '/dashboard/agency-agreement',

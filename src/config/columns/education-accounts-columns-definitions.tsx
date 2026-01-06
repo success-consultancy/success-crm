@@ -5,8 +5,13 @@ import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { IAccounts } from '@/types/response-types/education-response';
+import { Button } from '@/components/ui/button';
 
-export const useAccountsColumn = () => {
+interface IEducationAccountsColumn {
+  onEdit: (accounts: IAccounts) => void;
+}
+
+export const useAccountsColumn = ({ onEdit }: IEducationAccountsColumn) => {
   const router = useRouter();
 
   const AccountsColumns: ColumnDef<IAccounts>[] = [
@@ -109,6 +114,16 @@ export const useAccountsColumn = () => {
         return <span className="w-full">{row.original.status || '-'}</span>;
       },
       size: 216,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <Button size="sm" variant="ghost" onClick={() => onEdit(row.original)}>
+          Edit
+        </Button>
+      ),
       meta: { isVisible: true },
     },
   ];
