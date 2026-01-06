@@ -63,10 +63,10 @@ export function DatePicker({
   };
 
   return (
-    <>
+    <div>
       {label && (
         <Label htmlFor="dueDate">
-          Due date
+          {label}
         </Label>)
       }
       <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
@@ -127,7 +127,7 @@ export function DatePicker({
           </div>
         )}
       </div>
-    </>
+    </div>
 
   );
 }

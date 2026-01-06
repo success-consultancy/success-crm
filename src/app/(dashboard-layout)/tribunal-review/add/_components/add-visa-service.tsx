@@ -26,6 +26,8 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
+import tribunalReviewFormSchema, { newTribunalReviewDefaultValues, TribunalReviewSchemaType } from '@/schema/tribunal-review';
+import { useAddTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 
 interface Props {
   userId: number | undefined;
@@ -40,9 +42,9 @@ export function AddVisaService({ userId }: Props) {
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm<NewVisaServiceType>({
-    resolver: zodResolver(newVisaServiceSchema),
-    defaultValues: newVisaServiceDefaultValues,
+  } = useForm<TribunalReviewSchemaType>({
+    resolver: zodResolver(tribunalReviewFormSchema),
+    defaultValues: newTribunalReviewDefaultValues,
     mode: 'onChange',
   });
 
@@ -61,10 +63,6 @@ export function AddVisaService({ userId }: Props) {
     });
   }, [occupations]);
 
-  const remarks = watch('remarks');
-  const feeNote = watch('feeNote');
-  const miscNote = watch('miscNote');
-
   useEffect(() => {
     if (userId) {
       setValue('userId', userId);
@@ -72,23 +70,21 @@ export function AddVisaService({ userId }: Props) {
     }
   }, [userId, setValue]);
 
-  const handleRemarksChange = (content: string) => {
-    // Store visa note in remarks or a separate field if needed
-    setValue('remarks', content, { shouldValidate: true });
-  };
-
-  const handleFeeNoteChange = (content: string) => {
-    // Store fee note in remarks or a separate field if needed
-    setValue('feeNote', content, { shouldValidate: true });
-  };
+  const miscNote = watch('miscNote');
 
   const handleMiscNoteChange = (content: string) => {
     // Store misc note in remarks or a separate field if needed
     setValue('miscNote', content, { shouldValidate: true });
   };
 
-  const { mutate, isPending } = useAddVisaService();
-  const submitHandler = (data: NewVisaServiceType) => {
+
+  const handleFeeNoteChange = (content: string) => {
+    // Store fee note in remarks or a separate field if needed
+    setValue('accounts.feeNote', content, { shouldValidate: true });
+  };
+
+  const { mutate, isPending } = useAddTribunalReview();
+  const submitHandler = (data: TribunalReviewSchemaType) => {
     // The schema already expects strings for date fields, so we can pass data as-is
     mutate(
       { payload: { ...data, sourceId: data.sourceId } },
@@ -117,7 +113,7 @@ export function AddVisaService({ userId }: Props) {
   }, [users]);
 
   // Helper to handle date changes and convert to string (ISO format)
-  const handleDateChange = (fieldName: keyof NewVisaServiceType) => (date: Date | undefined) => {
+  const handleDateChange = (fieldName: keyof TribunalReviewSchemaType) => (date: Date | undefined) => {
     if (date) {
       setValue(fieldName, format(date, 'yyyy-MM-dd') as any, { shouldValidate: true });
     } else {
@@ -282,7 +278,7 @@ export function AddVisaService({ userId }: Props) {
             </div>
             <SelectField
               control={control}
-              name="proposedVisa"
+              name="purposedVisa"
               label="Proposed visa"
               options={[
                 { label: 'Student Visa', value: 'Student Visa' },
@@ -333,7 +329,7 @@ export function AddVisaService({ userId }: Props) {
             <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.sponsorPhone?.message} />
             <SelectField
               control={control}
-              name="csaStatus"
+              name="sbsStatus"
               label="SBS/TAS status"
               options={[
                 { label: 'Approved', value: 'Approved' },
@@ -488,124 +484,128 @@ export function AddVisaService({ userId }: Props) {
               <FormErrorMessage message={errors.visaGranted?.message} />
             </div>
           </div>
-
-          <div className="w-full space-y-1" suppressHydrationWarning>
-            <Label htmlFor="remarks">
-              Visa note
-            </Label>
-            <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
-            {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
-          </div>
         </FormAccordion>
 
 
         {/* Tribunal */}
         <FormAccordion value="item-3" title="Tribunal review details">
           <div className="grid grid-cols-3 gap-6">
+            {/* date submitted, hearing date, tribunal decision date */}
 
-            <SelectField
+            <TextInput label="Tribunal Status" {...register('status')} error={errors.status?.message} />
+            <Controller
+              name="dateSubmitted"
               control={control}
-              name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <DatePicker
+                  side="top"
+                  value={getDateValue(field.value)}
+                  onChange={handleDateChange('dateSubmitted')}
+                  placeholder="DD/MM/YYYY"
+                  className="h-12 text-b2 w-full"
+                  error={!!errors.dateSubmitted?.message}
+                  label='Date submitted'
+                />
+              )}
             />
 
-
-            <TextInput label="Service Fee" {...register('serviceFee')} error={errors.serviceFee?.message} />
-            <TextInput label="GST" {...register('gst')} error={errors.gst?.message} />
-            <TextInput label="discount" {...register('discount')} error={errors.discount?.message} />
-            <TextInput label="netAmount" {...register('netAmount')} error={errors.netAmount?.message} />
-            <TextInput label="invoiceNumber" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
-
-            <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dueDate">
-                Due date
-              </Label>
-              <Controller
-                name="dueDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('dueDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.dueDate?.message}
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.dueDate?.message} />
-            </div>
-
-            <SelectField
+            <Controller
+              name="hearingDate"
               control={control}
-              name="paymentStatus"
-
-              label="Payment status"
-              options={[
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Paid', value: 'Paid' },
-                { label: 'Overdue', value: 'Overdue' },
-                { label: 'Cancelled', value: 'Cancelled' },
-              ]}
-              placeholder="Select a status"
+              render={({ field }) => (
+                <DatePicker
+                  side="top"
+                  value={getDateValue(field.value)}
+                  onChange={handleDateChange('hearingDate')}
+                  placeholder="DD/MM/YYYY"
+                  className="h-12 text-b2 w-full"
+                  label='Hearing date'
+                  error={!!errors.hearingDate?.message}
+                />
+              )}
             />
 
-            <div className="space-y-1 col-span-full" suppressHydrationWarning>
-              <Label htmlFor="remarks">
-                Visa note
-              </Label>
-              <TinyEditor value={remarks || ''} onChange={handleRemarksChange} />
-              {errors.remarks?.message && <FormErrorMessage message={errors.remarks.message} />}
-            </div>
+            <Controller
+              name="decisionDate"
+              control={control}
+              render={({ field }) => (
+                <DatePicker
+                  side="top"
+                  value={getDateValue(field.value)}
+                  onChange={handleDateChange('decisionDate')}
+                  placeholder="DD/MM/YYYY"
+                  className="h-12 text-b2 w-full"
+                  label='Tribunal decision date'
+                  error={!!errors.decisionDate?.message}
+                />
+              )}
+            />
           </div>
         </FormAccordion>
-
 
         {/* Accounts */}
         <FormAccordion value="item-4" title="Accounts">
           <div className="grid grid-cols-3 gap-6">
             <TextInput
               label="Fee payment plan"
-              {...register('payment')}
-              error={errors.payment?.message}
+              {...register('accounts.planname')}
+              error={errors.accounts?.planname?.message}
               placeholder="Select/enter payment plan"
             />
-            <TextInput label="Service fee" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="GST" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Discount" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Net amount" {...register('payment')} error={errors.payment?.message} type="number" />
-            <TextInput label="Invoice number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
+            <TextInput
+              label="Service fee"
+              {...register('accounts.amount')}
+              error={errors.accounts?.amount?.message}
+              type="number"
+            />
+            <TextInput
+              disabled
+              label="GST"
+              {...register('accounts.gst')}
+              error={errors.accounts?.gst?.message}
+              type="number"
+            />
+            <TextInput
+              label="Discount"
+              {...register('accounts.discount')}
+              error={errors.accounts?.discount?.message}
+              type="number"
+            />
+            <TextInput
+              disabled
+              label="Net amount"
+              {...register('accounts.netamount')}
+              error={errors.accounts?.netamount?.message}
+              type="number"
+            />
+            <TextInput
+              label="Invoice number"
+              {...register('accounts.invoicenumber')}
+              error={errors.accounts?.invoicenumber?.message}
+            />
             <div className="space-y-2">
+              <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
+                Due Date
+              </Label>
               <Controller
-                name="dueDate"
+                name="accounts.duedate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('dueDate')}
-                    placeholder="DD/MM/YYYY"
+                    value={field.value}
+                    onChange={field.onChange}
+                    placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
-                    label="Due date"
-                    error={!!errors.dueDate?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.dueDate?.message} />
+              <FormErrorMessage message={errors.accounts?.duedate?.message} />
             </div>
             <SelectField
               control={control}
-              name="paymentStatus"
-
+              name="accounts.status"
               label="Payment status"
               options={[
                 { label: 'Pending', value: 'Pending' },
@@ -618,11 +618,11 @@ export function AddVisaService({ userId }: Props) {
           </div>
 
           <div className="w-full space-y-1" suppressHydrationWarning>
-            <Label htmlFor="feeNote">
-              Fee note
-            </Label>
-            <TinyEditor value={feeNote || ''} onChange={handleFeeNoteChange} />
-            {errors.feeNote?.message && <p className="text-sm text-red-500">{errors.feeNote?.message}</p>}
+            <Label htmlFor="feeNote">Fee note</Label>
+            <TinyEditor value={watch('accounts.feeNote') || ''} onChange={handleFeeNoteChange} />
+            {errors.accounts?.feeNote?.message && (
+              <p className="text-sm text-red-500">{errors.accounts?.feeNote?.message}</p>
+            )}
           </div>
         </FormAccordion>
 
@@ -634,12 +634,17 @@ export function AddVisaService({ userId }: Props) {
               name="sourceId"
               render={({ field }) => (
                 <SelectWithCommand
-                  options={userOptions}
+                  options={
+                    sourceData?.map((source) => ({
+                      label: source.name,
+                      value: source.id.toString(),
+                    })) || []
+                  }
                   value={field.value?.toString()}
                   label="Source"
                   placeholder="Select a source"
                   onSelect={(val) => field.onChange(val)}
-                  error={errors.sourceId?.message}
+                  error={errors.sourceId?.message?.toString()}
                 />
               )}
             />
