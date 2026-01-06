@@ -4,6 +4,8 @@ import { IPagination, PAGINATION_PARAMS } from '@/types/pagination';
 import { useQuery } from '@tanstack/react-query';
 import QueryString from 'qs';
 import { IVisa, IVisaDetail, IVisaResponseType } from '@/types/response-types/visa-response';
+import { ITribunalReview } from '@/types/response-types/common';
+import { TribunalReviewSchemaType } from '@/schema/tribunal-review';
 
 interface VisaFilterParams extends IPagination {
   order?: string;
@@ -41,7 +43,7 @@ export const useGetTribunalReviews = (params?: VisaFilterParams) => {
 
 const getTribunalReviewById = async (id: string) => {
   const res = await api.get(`/tribunalReview/${id}`);
-  return res.data as IVisaDetail;
+  return res.data as TribunalReviewSchemaType;
 };
 
 export const useGetTribunalReviewById = (id: string) => {

@@ -65,7 +65,7 @@ export function DatePicker({
   return (
     <div>
       {label && (
-        <Label htmlFor="dueDate">
+        <Label htmlFor="dueDate" className='font-medium'>
           {label}
         </Label>)
       }

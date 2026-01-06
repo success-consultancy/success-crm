@@ -26,14 +26,17 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
-import tribunalReviewFormSchema, { newTribunalReviewDefaultValues, TribunalReviewSchemaType } from '@/schema/tribunal-review';
-import { useAddTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
+import tribunalReviewFormSchema, { TribunalReviewSchemaType, updateTribunalReviewFormSchema } from '@/schema/tribunal-review';
+import { useAddTribunalReview, useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
+import { FORM_STATE } from '@/types/common';
 
 interface Props {
   userId: number | undefined;
+  formState: FORM_STATE;
+  defaultValues?: Partial<TribunalReviewSchemaType>;
 }
 
-export function AddVisaService({ userId }: Props) {
+export function TribunalService({ userId, formState, defaultValues }: Props) {
   const {
     register,
     control,
@@ -43,8 +46,8 @@ export function AddVisaService({ userId }: Props) {
     handleSubmit,
     reset,
   } = useForm<TribunalReviewSchemaType>({
-    resolver: zodResolver(tribunalReviewFormSchema),
-    defaultValues: newTribunalReviewDefaultValues,
+    resolver: zodResolver(formState === FORM_STATE.ADD ? tribunalReviewFormSchema : updateTribunalReviewFormSchema),
+    defaultValues: defaultValues,
     mode: 'onChange',
   });
 
@@ -69,35 +72,46 @@ export function AddVisaService({ userId }: Props) {
       setValue('updatedBy', userId);
     }
   }, [userId, setValue]);
-
-  const miscNote = watch('miscNote');
-
-  const handleMiscNoteChange = (content: string) => {
-    // Store misc note in remarks or a separate field if needed
-    setValue('miscNote', content, { shouldValidate: true });
-  };
-
+  const feeNote = watch('accounts.feeNote');
 
   const handleFeeNoteChange = (content: string) => {
     // Store fee note in remarks or a separate field if needed
     setValue('accounts.feeNote', content, { shouldValidate: true });
   };
 
-  const { mutate, isPending } = useAddTribunalReview();
+  const { mutate: addTribunalReview, isPending: addTribunalReviewPending } = useAddTribunalReview();
+  const { mutate: updateTribunalReview, isPending: updateTribunalReviewPending } = useUpdateTribunalReview();
+  console.log(errors);
+
   const submitHandler = (data: TribunalReviewSchemaType) => {
-    // The schema already expects strings for date fields, so we can pass data as-is
-    mutate(
-      { payload: { ...data, sourceId: data.sourceId } },
-      {
-        onSuccess: () => {
-          toast.success('Tribunal review added successfully');
-          reset();
+    console.log(errors);
+    if (formState === FORM_STATE.ADD) {
+      addTribunalReview(
+        { payload: { ...data, sourceId: data.sourceId } },
+        {
+          onSuccess: () => {
+            toast.success('Tribunal review added successfully');
+            reset();
+          },
+          onError: (error: any) => {
+            toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
+          },
         },
-        onError: (error: any) => {
-          toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
+      );
+    } else {
+      updateTribunalReview(
+        { ...data, sourceId: data.sourceId },
+        {
+          onSuccess: () => {
+            toast.success('Tribunal review updated successfully');
+            reset();
+          },
+          onError: (error: any) => {
+            toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+          },
         },
-      },
-    );
+      );
+    }
   };
 
   const userOptions = useMemo(() => {
@@ -142,9 +156,6 @@ export function AddVisaService({ userId }: Props) {
             <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dob">
-                Date of birth
-              </Label>
               <Controller
                 name="dob"
                 control={control}
@@ -157,6 +168,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className={cn('h-12 text-b2 w-full')}
                     disableFutureDates={true}
+                    label="Date of birth"
                   />
                 )}
               />
@@ -165,47 +177,43 @@ export function AddVisaService({ userId }: Props) {
             <TextInput type="email" label="Email address" {...register('email')} error={errors.email?.message} />
             <TextInput label="Phone number" {...register('phone')} error={errors.phone?.message} />
             <TextInput label="Nationality" {...register('country')} error={errors.country?.message} />
-            <TextInput label="Address" {...register('state')} error={errors.state?.message} />
+            <TextInput label="Address" {...register('address')} error={errors.address?.message} />
             <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="issueDate">
-                Passport issue date
-              </Label>
               <Controller
-                name="issueDate"
+                name="passportIssueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('issueDate')}
+                    onChange={handleDateChange('passportIssueDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.issueDate?.message}
+                    error={!!errors.passportIssueDate?.message}
+                    label="Passport issue date"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.issueDate?.message} />
+              <FormErrorMessage message={errors.passportIssueDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="expiryDate">
-                Passport expiry date
-              </Label>
               <Controller
-                name="expiryDate"
+                name="passportExpiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('expiryDate')}
+                    onChange={handleDateChange('passportExpiryDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.expiryDate?.message}
+                    error={!!errors.passportExpiryDate?.message}
+                    label="Passport expiry date"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.expiryDate?.message} />
+              <FormErrorMessage message={errors.passportExpiryDate?.message} />
             </div>
             <SelectField
               control={control}
@@ -237,9 +245,6 @@ export function AddVisaService({ userId }: Props) {
               placeholder="Select current visa type"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaExpiry">
-                Visa expiry date
-              </Label>
               <Controller
                 name="visaExpiry"
                 control={control}
@@ -251,15 +256,13 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    label="Visa expiry date"
                   />
                 )}
               />
               <FormErrorMessage message={errors.visaExpiry?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dueDate">
-                Due date
-              </Label>
               <Controller
                 name="dueDate"
                 control={control}
@@ -271,6 +274,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.dueDate?.message}
+                    label="Due date"
                   />
                 )}
               />
@@ -278,7 +282,7 @@ export function AddVisaService({ userId }: Props) {
             </div>
             <SelectField
               control={control}
-              name="purposedVisa"
+              name="proposedVisa"
               label="Proposed visa"
               options={[
                 { label: 'Student Visa', value: 'Student Visa' },
@@ -339,44 +343,40 @@ export function AddVisaService({ userId }: Props) {
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaSubmitted">
-                Date submitted
-              </Label>
               <Controller
-                name="visaSubmitted"
+                name="sbsSubmissionDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaSubmitted')}
+                    onChange={handleDateChange('sbsSubmissionDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.visaSubmitted?.message}
+                    error={!!errors.sbsSubmissionDate?.message}
+                    label="Date submitted"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.visaSubmitted?.message} />
+              <FormErrorMessage message={errors.sbsSubmissionDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaGranted">
-                Decision date
-              </Label>
               <Controller
-                name="visaGranted"
+                name="sbsDecisionDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaGranted')}
+                    onChange={handleDateChange('sbsDecisionDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.visaGranted?.message}
+                    error={!!errors.sbsDecisionDate?.message}
+                    label="Decision date"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.visaGranted?.message} />
+              <FormErrorMessage message={errors.sbsDecisionDate?.message} />
             </div>
             <SelectField
               control={control}
@@ -396,48 +396,44 @@ export function AddVisaService({ userId }: Props) {
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="nominationLodged">
-                Nomination date submitted
-              </Label>
               <Controller
-                name="nominationLodged"
+                name="nominationSubmittedDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('nominationLodged')}
+                    onChange={handleDateChange('nominationSubmittedDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.nominationLodged?.message}
+                    error={!!errors.nominationSubmittedDate?.message}
+                    label="Nomination date submitted"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.nominationLodged?.message} />
+              <FormErrorMessage message={errors.nominationSubmittedDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="nominationDecision">
-                Nomination decision date
-              </Label>
               <Controller
-                name="nominationDecision"
+                name="nominationDecisionDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('nominationDecision')}
+                    onChange={handleDateChange('nominationDecisionDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.nominationDecision?.message}
+                    error={!!errors.nominationDecisionDate?.message}
+                    label="Nomination decision date"
                   />
                 )}
               />
-              <FormErrorMessage message={errors.nominationDecision?.message} />
+              <FormErrorMessage message={errors.nominationDecisionDate?.message} />
             </div>
             <SelectField
               control={control}
-              name="status"
+              name="visaStatus"
               label="Visa status"
               options={[
                 { label: 'Approved', value: 'Approved' },
@@ -449,39 +445,39 @@ export function AddVisaService({ userId }: Props) {
             />
             <div className="space-y-2">
               <Controller
-                name="visaSubmitted"
+                name="visaSubmittedDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     label="Visa date submitted"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaSubmitted')}
+                    onChange={handleDateChange('visaSubmittedDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.visaSubmitted?.message}
+                    error={!!errors.visaSubmittedDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.visaSubmitted?.message} />
+              <FormErrorMessage message={errors.visaSubmittedDate?.message} />
             </div>
             <div className="space-y-2">
               <Controller
-                name="visaGranted"
+                name="visaDecisionDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     label="Visa decision date"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaGranted')}
+                    onChange={handleDateChange('visaDecisionDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.visaGranted?.message}
+                    error={!!errors.visaDecisionDate?.message}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.visaGranted?.message} />
+              <FormErrorMessage message={errors.visaDecisionDate?.message} />
             </div>
           </div>
         </FormAccordion>
@@ -492,18 +488,18 @@ export function AddVisaService({ userId }: Props) {
           <div className="grid grid-cols-3 gap-6">
             {/* date submitted, hearing date, tribunal decision date */}
 
-            <TextInput label="Tribunal Status" {...register('status')} error={errors.status?.message} />
+            <TextInput label="Tribunal Status" {...register('tribunalStatus')} error={errors.tribunalStatus?.message} />
             <Controller
-              name="dateSubmitted"
+              name="tribunalSubmittedDate"
               control={control}
               render={({ field }) => (
                 <DatePicker
                   side="top"
                   value={getDateValue(field.value)}
-                  onChange={handleDateChange('dateSubmitted')}
+                  onChange={handleDateChange('tribunalSubmittedDate')}
                   placeholder="DD/MM/YYYY"
                   className="h-12 text-b2 w-full"
-                  error={!!errors.dateSubmitted?.message}
+                  error={!!errors.tribunalSubmittedDate?.message}
                   label='Date submitted'
                 />
               )}
@@ -526,17 +522,17 @@ export function AddVisaService({ userId }: Props) {
             />
 
             <Controller
-              name="decisionDate"
+              name="tribunalDecisionDate"
               control={control}
               render={({ field }) => (
                 <DatePicker
                   side="top"
                   value={getDateValue(field.value)}
-                  onChange={handleDateChange('decisionDate')}
+                  onChange={handleDateChange('tribunalDecisionDate')}
                   placeholder="DD/MM/YYYY"
                   className="h-12 text-b2 w-full"
                   label='Tribunal decision date'
-                  error={!!errors.decisionDate?.message}
+                  error={!!errors.tribunalDecisionDate?.message}
                 />
               )}
             />
@@ -544,87 +540,89 @@ export function AddVisaService({ userId }: Props) {
         </FormAccordion>
 
         {/* Accounts */}
-        <FormAccordion value="item-4" title="Accounts">
-          <div className="grid grid-cols-3 gap-6">
-            <TextInput
-              label="Fee payment plan"
-              {...register('accounts.planname')}
-              error={errors.accounts?.planname?.message}
-              placeholder="Select/enter payment plan"
-            />
-            <TextInput
-              label="Service fee"
-              {...register('accounts.amount')}
-              error={errors.accounts?.amount?.message}
-              type="number"
-            />
-            <TextInput
-              disabled
-              label="GST"
-              {...register('accounts.gst')}
-              error={errors.accounts?.gst?.message}
-              type="number"
-            />
-            <TextInput
-              label="Discount"
-              {...register('accounts.discount')}
-              error={errors.accounts?.discount?.message}
-              type="number"
-            />
-            <TextInput
-              disabled
-              label="Net amount"
-              {...register('accounts.netamount')}
-              error={errors.accounts?.netamount?.message}
-              type="number"
-            />
-            <TextInput
-              label="Invoice number"
-              {...register('accounts.invoicenumber')}
-              error={errors.accounts?.invoicenumber?.message}
-            />
-            <div className="space-y-2">
-              <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                Due Date
-              </Label>
-              <Controller
-                name="accounts.duedate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={field.value}
-                    onChange={field.onChange}
-                    placeholder="Pick a date"
-                    className="h-12 text-b2 w-full"
-                    disablePastDates={true}
-                  />
-                )}
+        {formState === FORM_STATE.ADD && (
+          <FormAccordion value="item-4" title="Accounts">
+            <div className="grid grid-cols-3 gap-6">
+              <TextInput
+                label="Fee payment plan"
+                {...register('accounts.planname')}
+                error={errors.accounts?.planname?.message}
+                placeholder="Select/enter payment plan"
               />
-              <FormErrorMessage message={errors.accounts?.duedate?.message} />
+              <TextInput
+                label="Service fee"
+                {...register('accounts.amount')}
+                error={errors.accounts?.amount?.message}
+                type="number"
+              />
+              <TextInput
+                disabled
+                label="GST"
+                {...register('accounts.gst')}
+                error={errors.accounts?.gst?.message}
+                type="number"
+              />
+              <TextInput
+                label="Discount"
+                {...register('accounts.discount')}
+                error={errors.accounts?.discount?.message}
+                type="number"
+              />
+              <TextInput
+                disabled
+                label="Net amount"
+                {...register('accounts.netamount')}
+                error={errors.accounts?.netamount?.message}
+                type="number"
+              />
+              <TextInput
+                label="Invoice number"
+                {...register('accounts.invoicenumber')}
+                error={errors.accounts?.invoicenumber?.message}
+              />
+              <div className="space-y-2">
+                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
+                  Due Date
+                </Label>
+                <Controller
+                  name="accounts.duedate"
+                  control={control}
+                  render={({ field }) => (
+                    <DatePicker
+                      side="top"
+                      value={field.value}
+                      onChange={field.onChange}
+                      placeholder="Pick a date"
+                      className="h-12 text-b2 w-full"
+                      disablePastDates={true}
+                    />
+                  )}
+                />
+                <FormErrorMessage message={errors.accounts?.duedate?.message} />
+              </div>
+              <SelectField
+                control={control}
+                name="accounts.status"
+                label="Payment status"
+                options={[
+                  { label: 'Pending', value: 'Pending' },
+                  { label: 'Paid', value: 'Paid' },
+                  { label: 'Overdue', value: 'Overdue' },
+                  { label: 'Cancelled', value: 'Cancelled' },
+                ]}
+                placeholder="Select a status"
+              />
             </div>
-            <SelectField
-              control={control}
-              name="accounts.status"
-              label="Payment status"
-              options={[
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Paid', value: 'Paid' },
-                { label: 'Overdue', value: 'Overdue' },
-                { label: 'Cancelled', value: 'Cancelled' },
-              ]}
-              placeholder="Select a status"
-            />
-          </div>
 
-          <div className="w-full space-y-1" suppressHydrationWarning>
-            <Label htmlFor="feeNote">Fee note</Label>
-            <TinyEditor value={watch('accounts.feeNote') || ''} onChange={handleFeeNoteChange} />
-            {errors.accounts?.feeNote?.message && (
-              <p className="text-sm text-red-500">{errors.accounts?.feeNote?.message}</p>
-            )}
-          </div>
-        </FormAccordion>
+            <div className="w-full space-y-1" suppressHydrationWarning>
+              <Label htmlFor="feeNote">Fee note</Label>
+              <TinyEditor value={watch('accounts.feeNote') || ''} onChange={handleFeeNoteChange} />
+              {errors.accounts?.feeNote?.message && (
+                <p className="text-sm text-red-500">{errors.accounts?.feeNote?.message}</p>
+              )}
+            </div>
+          </FormAccordion>
+        )}
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
@@ -672,16 +670,16 @@ export function AddVisaService({ userId }: Props) {
           <div>
             <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={miscNote || ''} onChange={handleMiscNoteChange} />
-              {errors.miscNote?.message && <p className="text-sm text-red-500">{errors.miscNote.message}</p>}
+              <TinyEditor value={feeNote || ''} onChange={handleFeeNoteChange} />
+              {errors.accounts?.feeNote?.message && <p className="text-sm text-red-500">{errors.accounts?.feeNote.message}</p>}
             </div>
           </div>
         </FormAccordion>
       </Accordion>
 
       <div className="flex justify-start mt-6">
-        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
-          Add Visa Applicant
+        <Button loading={addTribunalReviewPending || updateTribunalReviewPending} loadingText="Processing" type="submit" variant="primary">
+          {formState === FORM_STATE.ADD ? 'Add Visa Applicant' : 'Update Visa Applicant'}
         </Button>
         <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
           Cancel

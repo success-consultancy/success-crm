@@ -19,7 +19,7 @@ import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { IVisa } from '@/types/response-types/visa-response';
 import { useGetTribunalReviews } from '@/query/get-tribunalreview';
-import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-visa';
+import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-tribunal-review';
 import { useTribunalReviewColumn } from '@/config/columns/tribunal-columns-definations';
 import { useExportTribunalReviews } from '@/mutations/tribunal-review/export-tribunal-review';
 

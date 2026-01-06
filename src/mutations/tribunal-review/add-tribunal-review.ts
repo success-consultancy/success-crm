@@ -3,10 +3,17 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { TribunalReviewSchemaType } from '@/schema/tribunal-review';
+import { toast } from 'sonner';
 
 const addTribunalReview = async (payload: Omit<TribunalReviewSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
   const res = await api.post('/tribunalReview', filteredPayload);
+  return res.data;
+};
+
+const updateTribunalReview = async (payload: Omit<TribunalReviewSchemaType, 'serviceType'>) => {
+  const { id, ...filteredPayload } = payload;
+  const res = await api.put(`/tribunalReview/${id}`, filteredPayload);
   return res.data;
 };
 
@@ -25,6 +32,24 @@ export const useAddTribunalReview = () => {
           queryKey: [QUERY_KEYS.GET_LEAD_BY_ID],
         });
       }
+    },
+  });
+};
+export const useUpdateTribunalReview = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: updateTribunalReview,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
+      });
+    },
+    onError: () => {
+      toast("Error!", {
+        description: "Something went wrong",
+      });
     },
   });
 };

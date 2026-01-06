@@ -1,48 +1,65 @@
 import { z } from 'zod';
+
+// Helper for nullable strings
 const nullableString = () => z.string().nullable().optional();
+const nullableDate = () => z.string().nullable().optional();
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
-const tribunalReviewFormSchema = z.object({
+
+export const tribunalReviewFormSchema = z.object({
+  // ========== FILE UPLOADS ==========
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string(),
-  lastName: z.string().nullable().optional(),
-  middleName: z.string().nullable().optional(),
-  dob: z.string().nullable().optional(),
-  email: z.email(),
-  phone: z.string().nullable().optional(),
-  country: z.string().nullable().optional(),
-  state: z.string().nullable().optional(),
-  passport: z.union([z.number(), z.string()]).nullable().optional(),
-  issueDate: z.string().nullable().optional(),
-  expiryDate: z.string().nullable().optional(),
-  location: z.string().nullable().optional(),
+  // ========== PERSONAL DETAILS ==========
+  firstName: z.string().min(1, 'First name is required').max(100, 'First name too long'),
+  middleName: nullableString(),
+  lastName: nullableString(),
+  dob: nullableDate(),
+  email: z.string().email('Please enter a valid email address'),
+  phone: z.string().regex(/^[0-9+\-() ]*$/, 'Invalid phone number format').nullable().optional(),
+  country: nullableString(),
+  address: nullableString(),
+  passport: z.union([z.string(), z.number()]).nullable().optional(),
+  passportIssueDate: nullableDate(),
+  passportExpiryDate: nullableDate(),
+  location: nullableString(),
 
+  // ========== VISA & SERVICE DETAILS ==========
   currentVisa: nullableString(),
-  visaExpiry: nullableString(),
-  dueDate: nullableString(),
-  purposedVisa: nullableString(),
+  visaExpiry: nullableDate(),
+  dueDate: nullableDate(),
+  proposedVisa: nullableString(),
   visaStream: nullableString(),
-  occupation: z.string().nullable().optional(),
-  anzsco: z.string().nullable().optional(),
+  anzsco: nullableString(),
+  occupation: nullableString(),
 
+  // Sponsor Information
   sponsorName: nullableString(),
-  sponsorEmail: z.string().email('Please enter a valid sponsor email').optional(),
-  sponsorPhone: z
-    .string()
-    .regex(/^[0-9+\-() ]*$/, 'Sponsor phone can only contain numbers and symbols')
-    .optional(),
-  sbsStatus: nullableString(),
-  sbsSubmissionDate: nullableString(),
-  sbsDecisionDate: nullableString(),
-  nominationStatus: nullableString(),
-  nominationLodged: nullableString(),
-  nominationDecision: nullableString(),
-  // status: nullableString(),
-  visaSubmitted: nullableString(),
-  visaDecisionDate: nullableString(),
-  visaGranted: nullableString(),
+  sponsorEmail: z.string().email('Invalid sponsor email').optional().or(z.literal('')),
+  sponsorPhone: z.string().regex(/^[0-9+\-() ]*$/, 'Invalid sponsor phone').optional(),
 
+  // SBS/TAS Tracking
+  sbsStatus: nullableString(),
+  sbsSubmissionDate: nullableDate(),
+  sbsDecisionDate: nullableDate(),
+
+  // Nomination Tracking
+  nominationStatus: nullableString(),
+  nominationSubmittedDate: nullableDate(),
+  nominationDecisionDate: nullableDate(),
+
+  // Visa Application Tracking
+  visaStatus: nullableString(),
+  visaSubmittedDate: nullableDate(),
+  visaDecisionDate: nullableDate(),
+
+  // ========== TRIBUNAL REVIEW DETAILS ==========
+  tribunalStatus: nullableString(),
+  tribunalSubmittedDate: nullableDate(),
+  hearingDate: nullableDate(),
+  tribunalDecisionDate: nullableDate(),
+
+  // ========== ACCOUNTS & PAYMENT ==========
   accounts: z.object({
     planname: z
       .string()
@@ -77,74 +94,105 @@ const tribunalReviewFormSchema = z.object({
     gst: z.string().optional(),
     feeNote: z.string().optional(),
     updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
-  }),
+  }).optional().nullable(),
 
-  sourceId: z.string().nullable().optional(),
+
+  // ========== SYSTEM FIELDS ==========
+  id: z.number().int().positive().optional(),
+  sourceId: z.union([z.string(), z.number()]).nullable().optional(),
   userId: z.number().int().nullable().optional(),
-
   assignedDate: z.date().nullable().optional(),
   updatedBy: z.number().int().nullable().optional(),
-
-  // tribunal section
-  status: z.string().optional(),
-  dateSubmitted: z.string().optional(),
-  hearingDate: z.string().optional(),
-  decisionDate: z.string().optional(),
-
-  miscNote: nullableString(),
 });
+
+// update schema for update without accounts
+export const updateTribunalReviewFormSchema = tribunalReviewFormSchema.omit({ accounts: true });
+
+export type TribunalReviewFormData = z.infer<typeof tribunalReviewFormSchema>;
 
 export type TribunalReviewSchemaType = z.infer<typeof tribunalReviewFormSchema>;
 
+export const getTribunalDefaultValues = (data?: TribunalReviewSchemaType): TribunalReviewSchemaType => {
+  return {
+    id: data?.id,
 
-export const newTribunalReviewDefaultValues: TribunalReviewSchemaType = {
-  files: null,
-  firstName: '',
-  lastName: '',
-  middleName: '',
-  passport: null,
-  issueDate: '',
-  expiryDate: '',
-  email: '',
-  phone: '',
-  dob: '',
-  occupation: '',
-  anzsco: '',
-  location: '',
-  currentVisa: '',
-  visaExpiry: '',
-  dueDate: '',
-  status: '',
-  nominationLodged: '',
-  nominationDecision: '',
-  nominationStatus: '',
-  country: '',
-  sourceId: '',
-  userId: 0,
-  assignedDate: null,
-  updatedBy: null,
-  // New fields default values
-  visaStream: '',
-  sponsorName: '',
-  sponsorEmail: '',
-  sponsorPhone: '',
-  sbsStatus: null,
-  sbsSubmissionDate: '',
-  sbsDecisionDate: '',
-  miscNote: '',
-  purposedVisa: '',
-  accounts: {
-    planname: '',
-    amount: '',
-    duedate: new Date(),
-    invoicenumber: '',
-    status: '',
-    discount: '',
-    netamount: '',
-    gst: '',
-    feeNote: '',
-    updatedBy: '',
-  },
+    // File uploads
+    files: data?.files || null,
+
+    // Personal Details
+    firstName: data?.firstName || '',
+    middleName: data?.middleName || '',
+    lastName: data?.lastName || '',
+    dob: data?.dob || '',
+    email: data?.email || '',
+    phone: data?.phone || '',
+    country: data?.country || '',
+    address: data?.address || '',
+    passport: data?.passport || '',
+    passportIssueDate: data?.passportIssueDate || '',
+    passportExpiryDate: data?.passportExpiryDate || '',
+    location: data?.location || '',
+
+    // Visa & Service Details
+    currentVisa: data?.currentVisa || '',
+    visaExpiry: data?.visaExpiry || '',
+    dueDate: data?.dueDate || '',
+    proposedVisa: data?.proposedVisa || '',
+    visaStream: data?.visaStream || '',
+    anzsco: data?.anzsco || '',
+    occupation: data?.occupation || '',
+
+    // Sponsor Information
+    sponsorName: data?.sponsorName || '',
+    sponsorEmail: data?.sponsorEmail || '',
+    sponsorPhone: data?.sponsorPhone || '',
+
+    // SBS/TAS Tracking
+    sbsStatus: data?.sbsStatus || '',
+    sbsSubmissionDate: data?.sbsSubmissionDate || '',
+    sbsDecisionDate: data?.sbsDecisionDate || '',
+
+    // Nomination Tracking
+    nominationStatus: data?.nominationStatus || '',
+    nominationSubmittedDate: data?.nominationSubmittedDate || '',
+    nominationDecisionDate: data?.nominationDecisionDate || '',
+
+    // Visa Application Tracking
+    visaStatus: data?.visaStatus || '',
+    visaSubmittedDate: data?.visaSubmittedDate || '',
+    visaDecisionDate: data?.visaDecisionDate || '',
+
+    // Tribunal Review Details
+    tribunalStatus: data?.tribunalStatus || '',
+    tribunalSubmittedDate: data?.tribunalSubmittedDate || '',
+    hearingDate: data?.hearingDate || '',
+    tribunalDecisionDate: data?.tribunalDecisionDate || '',
+
+    // Accounts & Payment
+    accounts: data?.accounts ? {
+      planname: data?.accounts?.planname || '',
+      amount: data?.accounts?.amount || '',
+      duedate: data?.accounts?.duedate ? new Date(data.accounts.duedate) : new Date(),
+      invoicenumber: data?.accounts?.invoicenumber || '',
+      status: data?.accounts?.status || '',
+      discount: data?.accounts?.discount || '',
+      netamount: data?.accounts?.netamount || '',
+      gst: data?.accounts?.gst || '',
+      feeNote: data?.accounts?.feeNote || '',
+      updatedBy: data?.accounts?.updatedBy || '',
+    } : null,
+
+
+    // System Fields
+    sourceId: data?.sourceId || null,
+    userId: data?.userId || null,
+    assignedDate: data?.assignedDate ? new Date(data.assignedDate) : null,
+    updatedBy: data?.updatedBy || null,
+  };
+
+
 };
+
+
 
 export default tribunalReviewFormSchema;
