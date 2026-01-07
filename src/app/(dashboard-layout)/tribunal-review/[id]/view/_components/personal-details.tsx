@@ -1,8 +1,8 @@
-import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
 import TitleBox from './title-box';
 import { InfoField } from '@/components/atoms/info-field';
+import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
-type PersonalDetailsProps = { visa: IVisaDetail };
+type PersonalDetailsProps = { visa: ITribunalReview };
 
 const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
   return (
@@ -19,11 +19,11 @@ const PersonalDetails = ({ visa }: PersonalDetailsProps) => {
         <InfoField title="Passport number" value={visa.passport || '-'} />
         <InfoField
           title="Passport issue date"
-          value={visa.issueDate ? new Date(visa.issueDate).toLocaleDateString() : '-'}
+          value={visa.passportExpiryDate ? new Date(visa.passportExpiryDate).toLocaleDateString() : '-'}
         />
         <InfoField
           title="Passport expiry date"
-          value={visa.expiryDate ? new Date(visa.expiryDate).toLocaleDateString() : '-'}
+          value={visa.passportExpiryDate ? new Date(visa.passportExpiryDate).toLocaleDateString() : '-'}
         />
         <InfoField title="Location" value={visa.location || '-'} />
       </div>

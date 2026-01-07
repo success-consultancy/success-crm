@@ -1,8 +1,8 @@
-import { IVisa, IVisaDetail } from '@/types/response-types/visa-response';
+import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 import TitleBox from './title-box';
 import { InfoField } from '@/components/atoms/info-field';
 
-type VisaInformationProps = { visa: IVisaDetail };
+type VisaInformationProps = { visa: ITribunalReview };
 
 const VisaInformation = ({ visa }: VisaInformationProps) => {
   const v = {
@@ -16,55 +16,47 @@ const VisaInformation = ({ visa }: VisaInformationProps) => {
     visaStream: visa.visaStream || '-',
 
     sponsorEmail: visa.sponsorEmail || '-',
-    visaSubmitted: visa.visaSubmitted || '-',
-    nominationLodged: visa.nominationLodged || '-',
+    nominationLodged: visa.nominationSubmittedDate || '-',
     dueDate: visa.dueDate || '-',
     occupation: visa.occupation || '-',
     sponsorPhone: visa.sponsorPhone || '-',
-    visaGranted: visa.visaGranted || '-',
+    visaGranted: visa.visaDecisionDate || '-',
+    visaSubmittedDate: visa.visaSubmittedDate || '-',
+    nominationSubmittedDate: visa.nominationSubmittedDate || '-',
+    visaDecisionDate: visa.visaDecisionDate || '-',
   };
 
   return (
     <TitleBox title="Visa information">
-      <div className="grid grid-cols-2 gap-6">
+      <div className="grid grid-cols-3 gap-6">
         {/* Column 1 */}
-        <div className="space-y-6">
-          <InfoField title="Current visa" value={v.currentVisa} />
-          <InfoField title="Proposed visa" value={v.proposedVisa} />
-          <InfoField title="Sponsor name" value={v.sponsorName} />
-          <InfoField title="SBS/TAS status" value={v.sbsTasStatus} />
-          <InfoField title="Nomination status" value={v.nominationStatus} />
-          <InfoField title="Visa status" value={v.status} />
-          <InfoField
-            title="Visa expiry date"
-            value={v.visaExpiry ? new Date(v.visaExpiry).toLocaleDateString() : 'N/A'}
-          />
-          <InfoField title="Visa stream" value={v.visaStream} />
-        </div>
+        <InfoField title="Current visa" value={v.currentVisa} />
+        <InfoField title="Visa expiry date" value={v.visaExpiry} />
+        <InfoField title="Visa due date" value={v.dueDate} />
+        <InfoField title="Proposed visa" value={v.proposedVisa} />
+        <InfoField title="Visa stream" value={v.visaStream} />
+        <InfoField title="Occupation" value={v.occupation} />
+        <InfoField title="Sponsor name" value={v.sponsorName} />
+        <InfoField title="Sponsor email" value={v.sponsorEmail} />
+        <InfoField title="Sponsor phone" value={v.sponsorPhone} />
+
+        <InfoField title="SBS/TAS status" value={v.sbsTasStatus} type="badge" badgeColor="#C3F8FE" />
+        <InfoField title="Date submitted" value={v.visaSubmittedDate ? new Date(v.visaSubmittedDate).toLocaleDateString() : 'N/A'} />
+        <InfoField title="Date decision" value={v.visaDecisionDate ? new Date(v.visaDecisionDate).toLocaleDateString() : 'N/A'} />
 
         {/* Column 2 */}
-        <div className="space-y-6">
-          <InfoField title="Sponsor email" value={v.sponsorEmail} />
-          <InfoField
-            title="Date submitted"
-            value={v.visaSubmitted ? new Date(v.visaSubmitted).toLocaleDateString() : 'N/A'}
-          />
-          <InfoField
-            title="Nomination date submitted"
-            value={v.nominationLodged ? new Date(v.nominationLodged).toLocaleDateString() : 'N/A'}
-          />
-          <InfoField
-            title="Visa date submitted"
-            value={v.visaSubmitted ? new Date(v.visaSubmitted).toLocaleDateString() : 'N/A'}
-          />
-          <InfoField title="Due date" value={v.dueDate ? new Date(v.dueDate).toLocaleDateString() : 'N/A'} />
-          <InfoField title="Occupation" value={v.occupation} />
-          <InfoField title="Sponsor phone" value={v.sponsorPhone} />
-          <InfoField
-            title="Decision date"
-            value={v.visaGranted ? new Date(v.visaGranted).toLocaleDateString() : 'N/A'}
-          />
-        </div>
+        <InfoField title="Nomination status" value={v.nominationLodged} type="badge" badgeColor="#CCE0FF" />
+        <InfoField
+          title="Nomination date submitted"
+          value={v.nominationSubmittedDate ? new Date(v.nominationSubmittedDate).toLocaleDateString() : 'N/A'}
+        />
+        <InfoField
+          title="Nomination decision date"
+          value={v.nominationSubmittedDate ? new Date(v.nominationSubmittedDate).toLocaleDateString() : 'N/A'}
+        />
+        <InfoField title="Visa status" value={v.status} type="badge" badgeColor="#BAF3" />
+        <InfoField title="Visa date submitted" value={v.visaSubmittedDate ? new Date(v.visaSubmittedDate).toLocaleDateString() : 'N/A'} />
+        <InfoField title="Visa granted date" value={v.visaGranted ? new Date(v.visaGranted).toLocaleDateString() : 'N/A'} />
       </div>
     </TitleBox>
   );

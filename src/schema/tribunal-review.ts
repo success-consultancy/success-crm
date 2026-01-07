@@ -1,4 +1,6 @@
 import { z } from 'zod';
+import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
+
 
 // Helper for nullable strings
 const nullableString = () => z.string().nullable().optional();
@@ -96,6 +98,7 @@ export const tribunalReviewFormSchema = z.object({
     updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
   }).optional().nullable(),
 
+  remarks: z.string().optional(),
 
   // ========== SYSTEM FIELDS ==========
   id: z.number().int().positive().optional(),
@@ -112,7 +115,7 @@ export type TribunalReviewFormData = z.infer<typeof tribunalReviewFormSchema>;
 
 export type TribunalReviewSchemaType = z.infer<typeof tribunalReviewFormSchema>;
 
-export const getTribunalDefaultValues = (data?: TribunalReviewSchemaType): TribunalReviewSchemaType => {
+export const getTribunalDefaultValues = (data?: ITribunalReview | TribunalReviewSchemaType): TribunalReviewSchemaType => {
   return {
     id: data?.id,
 
@@ -169,19 +172,9 @@ export const getTribunalDefaultValues = (data?: TribunalReviewSchemaType): Tribu
     tribunalDecisionDate: data?.tribunalDecisionDate || '',
 
     // Accounts & Payment
-    accounts: data?.accounts ? {
-      planname: data?.accounts?.planname || '',
-      amount: data?.accounts?.amount || '',
-      duedate: data?.accounts?.duedate ? new Date(data.accounts.duedate) : new Date(),
-      invoicenumber: data?.accounts?.invoicenumber || '',
-      status: data?.accounts?.status || '',
-      discount: data?.accounts?.discount || '',
-      netamount: data?.accounts?.netamount || '',
-      gst: data?.accounts?.gst || '',
-      feeNote: data?.accounts?.feeNote || '',
-      updatedBy: data?.accounts?.updatedBy || '',
-    } : null,
+    accounts: null,
 
+    remarks: data?.remarks || '',
 
     // System Fields
     sourceId: data?.sourceId || null,

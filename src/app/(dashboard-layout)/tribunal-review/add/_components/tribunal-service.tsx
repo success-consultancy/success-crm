@@ -73,6 +73,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     }
   }, [userId, setValue]);
   const feeNote = watch('accounts.feeNote');
+  const remarks = watch('remarks');
 
   const handleFeeNoteChange = (content: string) => {
     // Store fee note in remarks or a separate field if needed
@@ -670,8 +671,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           <div>
             <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={feeNote || ''} onChange={handleFeeNoteChange} />
-              {errors.accounts?.feeNote?.message && <p className="text-sm text-red-500">{errors.accounts?.feeNote.message}</p>}
+              <TinyEditor value={feeNote || ''} onChange={(content) => setValue('remarks', content, { shouldValidate: true })} />
+              {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
             </div>
           </div>
         </FormAccordion>
@@ -679,7 +680,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
 
       <div className="flex justify-start mt-6">
         <Button loading={addTribunalReviewPending || updateTribunalReviewPending} loadingText="Processing" type="submit" variant="primary">
-          {formState === FORM_STATE.ADD ? 'Add Visa Applicant' : 'Update Visa Applicant'}
+          {formState === FORM_STATE.ADD ? 'Add Tribunal Review' : 'Update Tribunal Review'}
         </Button>
         <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
           Cancel

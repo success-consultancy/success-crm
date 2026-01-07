@@ -17,7 +17,3 @@ export interface Person {
     dob: string;
 }
 
-
-export interface ITribunalReview extends Person {
-
-}

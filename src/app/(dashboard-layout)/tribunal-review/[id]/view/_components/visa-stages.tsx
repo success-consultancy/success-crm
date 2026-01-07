@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
-import { TribunalStatusTypes } from '@/types/response-types/tribunalreview-response';
+import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 
 interface StageProps {
   name: string;
@@ -31,7 +31,7 @@ const StageItem = ({ name, active, isFirst }: StageProps) => {
   );
 };
 
-type VisaStagesProps = { visa: IVisaDetail };
+type VisaStagesProps = { visa: ITribunalReview };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
@@ -76,11 +76,10 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
       <div className="px-6 py-3 flex justify-between items-center">
         <div className="flex flex-col">
           <p className="text-base font-medium">Start</p>
-          <p className="text-sm text-gray-500">{visa.startDate || '22/02/2025'}</p>
+          <p className="text-sm text-gray-500">{visa.createdAt || '22/02/2025'}</p>
         </div>
         <div className="flex flex-col items-end">
           <p className="text-base font-medium">Closing</p>
-          <p className="text-sm text-gray-500">{visa.endDate || '-'}</p>
         </div>
       </div>
 
