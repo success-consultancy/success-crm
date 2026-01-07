@@ -1,12 +1,10 @@
 import { z } from 'zod';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
-
 // Helper for nullable strings
 const nullableString = () => z.string().nullable().optional();
 const nullableDate = () => z.string().nullable().optional();
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
-
 
 export const tribunalReviewFormSchema = z.object({
   // ========== FILE UPLOADS ==========
@@ -18,7 +16,11 @@ export const tribunalReviewFormSchema = z.object({
   lastName: nullableString(),
   dob: nullableDate(),
   email: z.string().email('Please enter a valid email address'),
-  phone: z.string().regex(/^[0-9+\-() ]*$/, 'Invalid phone number format').nullable().optional(),
+  phone: z
+    .string()
+    .regex(/^[0-9+\-() ]*$/, 'Invalid phone number format')
+    .nullable()
+    .optional(),
   country: nullableString(),
   address: nullableString(),
   passport: z.union([z.string(), z.number()]).nullable().optional(),
@@ -38,7 +40,10 @@ export const tribunalReviewFormSchema = z.object({
   // Sponsor Information
   sponsorName: nullableString(),
   sponsorEmail: z.string().email('Invalid sponsor email').optional().or(z.literal('')),
-  sponsorPhone: z.string().regex(/^[0-9+\-() ]*$/, 'Invalid sponsor phone').optional(),
+  sponsorPhone: z
+    .string()
+    .regex(/^[0-9+\-() ]*$/, 'Invalid sponsor phone')
+    .optional(),
 
   // SBS/TAS Tracking
   sbsStatus: nullableString(),
@@ -62,41 +67,44 @@ export const tribunalReviewFormSchema = z.object({
   tribunalDecisionDate: nullableDate(),
 
   // ========== ACCOUNTS & PAYMENT ==========
-  accounts: z.object({
-    planname: z
-      .string()
-      .min(1, 'Account payment plan is required')
-      .max(50, 'Account payment plan cannot exceed 50 characters'),
+  accounts: z
+    .object({
+      planname: z
+        .string()
+        .min(1, 'Account payment plan is required')
+        .max(50, 'Account payment plan cannot exceed 50 characters'),
 
-    amount: z
-      .string()
-      .min(1, 'Account amount is required')
-      .max(50, 'Account amount cannot exceed 50 characters')
-      .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+      amount: z
+        .string()
+        .min(1, 'Account amount is required')
+        .max(50, 'Account amount cannot exceed 50 characters')
+        .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
 
-    duedate: z.date({
-      error: 'Account due date is required',
-    }),
+      duedate: z.date({
+        required_error: 'Account due date is required',
+      }),
 
-    invoicenumber: z
-      .string()
-      .min(1, 'Account invoice number is required')
-      .max(50, 'Account invoice number cannot exceed 50 characters')
-      .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+      invoicenumber: z
+        .string()
+        .min(1, 'Account invoice number is required')
+        .max(50, 'Account invoice number cannot exceed 50 characters')
+        .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
 
-    status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
+      status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
 
-    discount: z
-      .string()
-      .max(50, 'Discount amount cannot exceed 50 characters')
-      .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
-      .optional(),
+      discount: z
+        .string()
+        .max(50, 'Discount amount cannot exceed 50 characters')
+        .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
+        .optional(),
 
-    netamount: z.string().optional(),
-    gst: z.string().optional(),
-    feeNote: z.string().optional(),
-    updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
-  }).optional().nullable(),
+      netamount: z.string().optional(),
+      gst: z.string().optional(),
+      feeNote: z.string().optional(),
+      updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
+    })
+    .optional()
+    .nullable(),
 
   remarks: z.string().optional(),
 
@@ -115,7 +123,9 @@ export type TribunalReviewFormData = z.infer<typeof tribunalReviewFormSchema>;
 
 export type TribunalReviewSchemaType = z.infer<typeof tribunalReviewFormSchema>;
 
-export const getTribunalDefaultValues = (data?: ITribunalReview | TribunalReviewSchemaType): TribunalReviewSchemaType => {
+export const getTribunalDefaultValues = (
+  data?: ITribunalReview | TribunalReviewSchemaType,
+): TribunalReviewSchemaType => {
   return {
     id: data?.id,
 
@@ -182,10 +192,6 @@ export const getTribunalDefaultValues = (data?: ITribunalReview | TribunalReview
     assignedDate: data?.assignedDate ? new Date(data.assignedDate) : null,
     updatedBy: data?.updatedBy || null,
   };
-
-
 };
-
-
 
 export default tribunalReviewFormSchema;

@@ -28,7 +28,7 @@ export const educationServiceSchema = z
       .regex(nameRegex, 'Last name can only contain letters, spaces, hyphens, and apostrophes'),
 
     dob: z.date({
-      error: 'Date of birth is required',
+      required_error: 'Date of birth is required',
     }),
 
     email: z
@@ -54,11 +54,11 @@ export const educationServiceSchema = z
       .regex(passportRegex, 'Passport number can only contain uppercase letters and numbers'),
 
     issueDate: z.date({
-      error: 'Passport issue date is required',
+      required_error: 'Passport issue date is required',
     }),
 
     expiryDate: z.date({
-      error: 'Passport expiry date is required',
+      required_error: 'Passport expiry date is required',
     }),
 
     location: z.string().min(1, 'Location is required').max(100, 'Location cannot exceed 100 characters'),
@@ -69,11 +69,11 @@ export const educationServiceSchema = z
     courseId: z.string().min(1, 'Please select a course').max(50, 'Course selection is invalid'),
 
     startDate: z.date({
-      error: 'Course start date is required',
+      required_error: 'Course start date is required',
     }),
 
     endDate: z.date({
-      error: 'Course end date is required',
+      required_error: 'Course end date is required',
     }),
 
     status: z.string().min(1, 'Please select a status').max(50, 'Status selection is invalid'),
@@ -92,7 +92,7 @@ export const educationServiceSchema = z
         .refine((val) => !isNaN(val), 'Please enter a valid amount'),
 
       duedate: z.date({
-        error: 'Payment due date is required',
+        required_error: 'Payment due date is required',
       }),
 
       invoicenumber: z
@@ -120,7 +120,7 @@ export const educationServiceSchema = z
           .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
 
         duedate: z.date({
-          error: 'Account due date is required',
+          required_error: 'Account due date is required',
         }),
 
         invoicenumber: z
@@ -163,7 +163,7 @@ export const educationServiceSchema = z
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 
     statusDate: z.date({
-      error: 'Status date is required',
+      required_error: 'Status date is required',
     }),
   })
   .refine((data) => data.expiryDate > data.issueDate, {

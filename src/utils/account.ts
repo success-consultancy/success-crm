@@ -17,7 +17,11 @@ export const calculateNetAmount = (amount: number, discount: number) => {
   return amount - discount + gst;
 };
 
-export const updateDraftField = (draft: IAccounts, key: keyof IAccounts, value: string): IAccounts => {
+export const updateDraftField = (
+  draft: CreateAccountPayload,
+  key: keyof CreateAccountPayload,
+  value: string,
+): CreateAccountPayload => {
   const updatedDraft = {
     ...draft,
     [key]: value,

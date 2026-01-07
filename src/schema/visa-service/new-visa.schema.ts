@@ -74,7 +74,7 @@ export const newVisaServiceSchema = z.object({
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: number().min(1, { error: 'must be assigned to someone' }),
+  userId: number().min(1, { message: 'must be assigned to someone' }),
 
   assignedDate: z.date().nullable().optional(),
 
@@ -109,7 +109,7 @@ export const newVisaServiceSchema = z.object({
       .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
 
     duedate: z.date({
-      error: 'Account due date is required',
+      required_error: 'Account due date is required',
     }),
 
     invoicenumber: z
