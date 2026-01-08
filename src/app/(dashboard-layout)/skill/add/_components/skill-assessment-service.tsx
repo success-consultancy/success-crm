@@ -193,20 +193,15 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     // Combine all notes into remarks field
     const combinedNotes = [visaServiceNote, feeNote, miscNote].filter(Boolean).join('\n\n');
 
-    // Convert sourceId from string to number if it exists (SelectField returns string)
-    const sourceIdValue = data.sourceId;
-
     if (formState === FORM_STATE.ADD) {
-      const payload = {
-        ...data,
-        sourceId: sourceIdValue,
-        files: null,
-        remarks: combinedNotes || data.remarks || null,
-      };
-
       addSkillAssessment(
         {
-          payload,
+          payload: {
+            ...data,
+            sourceId: data.sourceId,
+            files: null,
+            remarks: combinedNotes || data.remarks || null,
+          },
         },
         {
           onSuccess: () => {
@@ -239,7 +234,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         {
           id: id!,
           ...data,
-          sourceId: sourceIdValue ? Number(sourceIdValue) : null,
+          sourceId: data.sourceId,
           userId: finalUserId,
           updatedBy: finalUpdatedBy,
           files: null,

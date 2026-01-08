@@ -35,7 +35,7 @@ interface Props {
 
 export function EditVisaService({ visaId, userId, defaultValues }: Props) {
   const form = useForm<NewVisaServiceType>({
-    resolver: zodResolver(newVisaServiceSchema),
+    resolver: zodResolver(newVisaServiceSchema) as any,
     defaultValues: defaultValues,
     mode: 'onChange',
   });
