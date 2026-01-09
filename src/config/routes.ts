@@ -24,6 +24,8 @@ export const ROUTES = {
 
   ADD_TRIBUNAL_SERVICE: '/tribunal-review/add',
 
+  ADD_SKILL_ASSESSMENT: '/skill/add',
+
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',
   OCCUPATION: '/dashboard/occupation',

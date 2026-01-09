@@ -1,7 +1,7 @@
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
-import skillAssessmentFormSchema, { SkillAssessmentSchemaType } from '@/schema/skill-assessment-schema';
+import skillAssessmentFormSchema, { SkillAssessmentSchemaType, updateSkillAssessmentFormSchema } from '@/schema/skill-assessment-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format, parse } from 'date-fns';
@@ -18,6 +18,7 @@ import SelectField from '@/components/organisms/select-field';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
 import { useAddSkillAssessment } from '@/mutations/skill-assessment/add-skill-assessment';
+import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
 import TinyEditor from '@/components/organisms/text-editor';
@@ -30,13 +31,100 @@ import { PortalIds } from '@/config/portal';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { ArrowLeft, Code2 } from 'lucide-react';
+import { FORM_STATE } from '@/types/common';
 
 interface Props {
   userId: number | undefined;
+  formState: FORM_STATE;
+  id?: number;
+  defaultValues?: Partial<SkillAssessmentSchemaType>;
 }
 
-export function AddSkillAssessment({ userId }: Props) {
+export function SkillAssessmentService({ userId, formState, id, defaultValues }: Props) {
   const router = useRouter();
+
+  // Parse remarks into separate notes if they exist
+  const parseRemarks = (remarks: string | null | undefined) => {
+    if (!remarks) return { visaServiceNote: '', feeNote: '', miscNote: '' };
+
+    // Split by double newlines (how they're combined in add)
+    const parts = remarks.split('\n\n').filter(Boolean);
+    return {
+      visaServiceNote: parts[0] || '',
+      feeNote: parts[1] || '',
+      miscNote: parts[2] || '',
+    };
+  };
+
+  const { visaServiceNote: initialVisaNote, feeNote: initialFeeNote, miscNote: initialMiscNote } = parseRemarks(defaultValues?.remarks || null);
+
+  const [visaServiceNote, setVisaServiceNote] = useState(initialVisaNote);
+  const [feeNote, setFeeNote] = useState(initialFeeNote);
+  const [miscNote, setMiscNote] = useState(initialMiscNote);
+  const [address, setAddress] = useState('');
+
+  // Update notes when defaultValues change (for edit mode)
+  useEffect(() => {
+    if (formState === FORM_STATE.EDIT && defaultValues?.remarks) {
+      const { visaServiceNote: newVisaNote, feeNote: newFeeNote, miscNote: newMiscNote } = parseRemarks(defaultValues.remarks);
+      setVisaServiceNote(newVisaNote);
+      setFeeNote(newFeeNote);
+      setMiscNote(newMiscNote);
+    }
+  }, [defaultValues?.remarks, formState]);
+
+  // Convert dates from API format (ISO string) to DD/MM/YYYY format for form
+  const convertDateForForm = (dateString: string | null | undefined): string | null => {
+    if (!dateString) return null;
+    try {
+      // If already in DD/MM/YYYY format, return as is
+      if (dateString.includes('/')) return dateString;
+      // Otherwise parse ISO format and convert
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return null;
+      return format(date, 'dd/MM/yyyy');
+    } catch {
+      return null;
+    }
+  };
+
+  // Prepare default values for form - memoized to recalculate when defaultValues change
+  const formDefaultValues: Partial<SkillAssessmentSchemaType> = useMemo(() => {
+    if (formState === FORM_STATE.EDIT && defaultValues) {
+      return {
+        firstName: defaultValues.firstName || '',
+        lastName: defaultValues.lastName || '',
+        middleName: defaultValues.middleName || null,
+        email: defaultValues.email || '',
+        phone: defaultValues.phone || '',
+        dob: convertDateForForm(defaultValues.dob as any),
+        country: defaultValues.country || null,
+        passport: defaultValues.passport?.toString() || null,
+        issueDate: convertDateForForm(defaultValues.issueDate as any),
+        expiryDate: convertDateForForm(defaultValues.expiryDate as any),
+        location: defaultValues.location || null,
+        currentVisa: defaultValues.currentVisa || null,
+        visaExpiry: convertDateForForm(defaultValues.visaExpiry as any),
+        occupation: defaultValues.occupation || null,
+        anzsco: defaultValues.anzsco || null,
+        skillAssessmentBody: defaultValues.skillAssessmentBody || null,
+        otherSkillAssessmentBody: defaultValues.otherSkillAssessmentBody || null,
+        dueDate: convertDateForForm(defaultValues.dueDate as any),
+        submittedDate: convertDateForForm(defaultValues.submittedDate as any),
+        decisionDate: convertDateForForm(defaultValues.decisionDate as any),
+        status: defaultValues.status || null,
+        sourceId: defaultValues.sourceId?.toString() || '',
+        userId: defaultValues.userId || userId || null,
+        updatedBy: defaultValues.updatedBy || userId || null,
+        invoiceNumber: defaultValues.invoiceNumber || null,
+        payment: defaultValues.payment || null,
+        paymentStatus: defaultValues.paymentStatus || null,
+        remarks: defaultValues.remarks || null,
+      };
+    }
+    return {};
+  }, [defaultValues, userId, formState]);
+
   const {
     register,
     control,
@@ -46,45 +134,46 @@ export function AddSkillAssessment({ userId }: Props) {
     handleSubmit,
     reset,
   } = useForm<SkillAssessmentSchemaType>({
-    resolver: zodResolver(skillAssessmentFormSchema),
+    resolver: zodResolver(formState === FORM_STATE.ADD ? skillAssessmentFormSchema : updateSkillAssessmentFormSchema),
     mode: 'onChange',
+    defaultValues: formDefaultValues,
   });
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
 
-  const occupationsOptions = useMemo(() => {
+  const ANZSCOOccupationOptions = useMemo(() => {
     return occupations?.map((occupation) => {
+      const value = occupation.code;
+      const label = occupation.title + ' - ' + occupation.code;
       return {
-        value: occupation.title as string,
-        label: occupation.title as string,
+        value,
+        label,
       };
     });
   }, [occupations]);
 
-  const ANZSCOOptions = useMemo(() => {
-    return occupations?.map((occupation) => {
-      return {
-        value: occupation.code as string,
-        label: occupation.code as string,
-      };
-    });
-  }, [occupations]);
+  // Reset form when defaultValues change (when data loads for edit mode)
+  useEffect(() => {
+    if (formState === FORM_STATE.EDIT && defaultValues && defaultValues.firstName) {
+      reset(formDefaultValues);
+    }
+  }, [defaultValues, formDefaultValues, reset, formState]);
 
   const [selectedOccupation, selectedANZSCO] = watch(['occupation', 'anzsco']);
 
   useEffect(() => {
     if (selectedOccupation) {
       const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
-      setValue('anzsco', selected?.code || null, { shouldValidate: false });
+      setValue('anzsco', selected?.code, { shouldValidate: false });
     }
   }, [selectedOccupation, occupations, setValue]);
 
   useEffect(() => {
     if (selectedANZSCO) {
       const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
-      setValue('occupation', selected?.title || null, { shouldValidate: false });
+      setValue('occupation', selected?.title, { shouldValidate: false });
     }
   }, [selectedANZSCO, occupations, setValue]);
 
@@ -95,45 +184,79 @@ export function AddSkillAssessment({ userId }: Props) {
     }
   }, [userId, setValue]);
 
-  const [visaServiceNote, setVisaServiceNote] = useState('');
-  const [feeNote, setFeeNote] = useState('');
-  const [miscNote, setMiscNote] = useState('');
-  const [address, setAddress] = useState('');
+  const { mutate: addSkillAssessment, isPending: addPending } = useAddSkillAssessment();
+  const { mutate: editSkillAssessment, isPending: editPending } = useEditSkillAssessment();
 
-  const { mutate, isPending } = useAddSkillAssessment();
+  const isPending = formState === FORM_STATE.ADD ? addPending : editPending;
+
   const submitHandler = (data: SkillAssessmentSchemaType) => {
     // Combine all notes into remarks field
     const combinedNotes = [visaServiceNote, feeNote, miscNote].filter(Boolean).join('\n\n');
 
-    // Convert sourceId from string to number if it exists (SelectField returns string)
-    const sourceIdValue = data.sourceId;
-    const payload = {
-      ...data,
-      sourceId: sourceIdValue,
-      files: null,
-      remarks: combinedNotes || data.remarks || null,
-    };
+    if (formState === FORM_STATE.ADD) {
+      addSkillAssessment(
+        {
+          payload: {
+            ...data,
+            sourceId: data.sourceId,
+            files: null,
+            remarks: combinedNotes || data.remarks || null,
+          },
+        },
+        {
+          onSuccess: () => {
+            toast.success('Skill assessment applicant added successfully');
+            router.push('/skill');
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message;
+            if (error?.response?.data?.errors) {
+              Object.entries(error.response.data.errors).forEach(([key, value]) => {
+                setValue(key as any, value as any, { shouldValidate: true });
+              });
+            }
+            toast.error(message || 'Failed to add skill assessment applicant');
+          },
+        },
+      );
+    } else {
+      // Edit mode
+      const finalUserId = data.userId || userId;
+      const finalUpdatedBy = userId || data.updatedBy;
 
-    mutate(
-      {
-        payload,
-      },
-      {
-        onSuccess: () => {
-          toast.success('Skill assessment applicant added successfully');
-          router.push('/skill');
+      // Ensure we have valid numbers (not null/undefined)
+      if (!finalUserId || !finalUpdatedBy) {
+        toast.error('User information is missing. Please refresh the page and try again.');
+        return;
+      }
+
+      editSkillAssessment(
+        {
+          id: id!,
+          ...data,
+          sourceId: data.sourceId,
+          userId: finalUserId,
+          updatedBy: finalUpdatedBy,
+          files: null,
+          remarks: combinedNotes || data.remarks || null,
         },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message;
-          if (error?.response?.data?.errors) {
-            Object.entries(error.response.data.errors).forEach(([key, value]) => {
-              setValue(key as any, value as any, { shouldValidate: true });
-            });
-          }
-          toast.error(message || 'Failed to add skill assessment applicant');
+        {
+          onSuccess: () => {
+            toast.success('Skill assessment applicant updated successfully');
+            router.push('/skill');
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message;
+            if (error?.response?.data?.errors) {
+              Object.entries(error.response.data.errors).forEach(([key, value]) => {
+                setValue(key as any, value as any, { shouldValidate: true });
+              });
+            }
+            toast.error(message || 'Failed to update skill assessment applicant');
+          },
         },
-      },
-    );
+      );
+    }
   };
 
   const userOptions = useMemo(() => {
@@ -187,7 +310,7 @@ export function AddSkillAssessment({ userId }: Props) {
           >
             <ArrowLeft className="h-5 w-5 text-gray-600" />
           </button>
-          <h3 className="text-lg font-semibold">New applicant</h3>
+          <h3 className="text-lg font-semibold">{formState === FORM_STATE.ADD ? 'New applicant' : 'Edit applicant'}</h3>
         </div>
       </Portal>
       <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
@@ -279,7 +402,6 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.expiryDate?.message}
-                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -329,7 +451,6 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.visaExpiry?.message}
-                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -357,21 +478,18 @@ export function AddSkillAssessment({ userId }: Props) {
               </div>
               <FormField
                 control={control}
-                name="occupation"
+                name="anzsco"
                 render={({ field }) => (
                   <SelectWithCommand
-                    options={occupationsOptions || []}
+                    options={ANZSCOOccupationOptions || []}
                     value={field.value || undefined}
                     label="ANZSCO / Occupation"
-                    placeholder="Select an occupation"
                     onSelect={(val) => {
                       field.onChange(val);
-                      const selected = occupations?.find((occupation) => occupation.title === val);
-                      if (selected) {
-                        setValue('anzsco', selected.code || null, { shouldValidate: false });
-                      }
+                      const occupation = occupations?.find((occupation) => occupation.code === val);
+                      setValue('occupation', occupation?.title, { shouldValidate: false });
                     }}
-                    error={errors.occupation?.message}
+                    error={errors.anzsco?.message}
                   />
                 )}
               />
@@ -417,7 +535,6 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.submittedDate?.message}
-                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -438,7 +555,6 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.decisionDate?.message}
-                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -496,7 +612,6 @@ export function AddSkillAssessment({ userId }: Props) {
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
-                    // toYear={new Date().getFullYear() + 50}
                     />
                   )}
                 />
@@ -574,8 +689,8 @@ export function AddSkillAssessment({ userId }: Props) {
           >
             Cancel
           </Button>
-          <Button loading={isPending} loadingText="Adding..." type="submit" variant="primary">
-            Add applicant
+          <Button loading={isPending} loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'} type="submit" variant="primary">
+            {formState === FORM_STATE.ADD ? 'Add applicant' : 'Update applicant'}
           </Button>
         </div>
       </form>

@@ -81,7 +81,7 @@ export const tribunalReviewFormSchema = z.object({
         .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
 
       duedate: z.date({
-        required_error: 'Account due date is required',
+        message: 'Account due date is required',
       }),
 
       invoicenumber: z
