@@ -133,8 +133,8 @@ export interface IVisaDetail {
   deletedAt: any;
   user: User;
   source: Source;
-  UpdatedByUser: UpdatedByUser;
-  accounts: IAccounts[];
+  updatedByUser: UpdatedByUser;
+  accounts: IAccount[];
   visaNote: string;
 }
 
