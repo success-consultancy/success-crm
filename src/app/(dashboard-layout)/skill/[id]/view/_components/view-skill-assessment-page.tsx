@@ -49,7 +49,10 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
               <SkillAssessmentStages skillAssessment={skillAssessment} />
               <PersonalDetails skillAssessment={skillAssessment} />
               <VisaServiceDetails skillAssessment={skillAssessment} />
-              <Accounts accounts={skillAssessment.accounts || []} skillAssessmentId={skillAssessment.id} />
+              <Accounts
+                accounts={(skillAssessment.accounts || []) as any}
+                skillAssessmentId={skillAssessment.id}
+              />
               <VisaServiceNoteSection skillAssessment={skillAssessment} />
               <MiscSection skillAssessment={skillAssessment} />
               <NoteSection />

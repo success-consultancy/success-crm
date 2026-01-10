@@ -60,15 +60,19 @@ export interface ISkillAssessment {
   };
   accounts?: Array<{
     id: number;
+    accountableId?: number;
+    accountableType?: string;
     planname: string;
     amount: string;
     duedate: string;
-    invoicenumber: string;
-    status: string;
-    comission: string;
-    discount: string;
-    bonus: string;
-    netamount: string;
-    gst: string;
+    invoicenumber?: string;
+    status: 'Pending' | 'Paid' | 'Overdue' | 'Other';
+    comission?: string;
+    discount?: string;
+    bonus?: string;
+    netamount?: string;
+    gst?: string;
+    updatedBy?: number;
+    feeNote?: string;
   }>;
 }

@@ -33,6 +33,8 @@ export const useUpdateAccount = () => {
     mutationFn: ({ id, payload }: { id: number; payload: CreateAccountPayload }) => updateAccount(id, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_VISA_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID] });
     },
   });
 };
