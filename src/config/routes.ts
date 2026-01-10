@@ -12,7 +12,7 @@ export const ROUTES = {
   INSURANCE: '/dashboard/insurance',
   SKILL_ASSESSMENT: '/dashboard/skill',
   VISA: '/dashboard/visa',
-  TRIBUNAL_REVIEW: '/dashboard/tribunal-review',
+  TRIBUNAL_REVIEW: '/tribunal-review',
   AGENCY_AGREEMENT: '/dashboard/agency-agreement',
   UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements',
 

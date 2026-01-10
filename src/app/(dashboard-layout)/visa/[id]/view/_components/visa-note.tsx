@@ -11,11 +11,11 @@ type VisaNoteSectionProps = {
 
 const VisaNoteSection = ({ visa, onNoteUpdate }: VisaNoteSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [note, setNote] = useState(visa?.remarks || '');
+  const [note, setNote] = useState(visa?.visaNote);
 
   const handleBlur = () => {
     setIsEditing(false);
-    if (onNoteUpdate && note !== visa.remarks) {
+    if (onNoteUpdate && note !== visa.visaNote) {
       onNoteUpdate(note);
     }
   };
@@ -37,9 +37,8 @@ const VisaNoteSection = ({ visa, onNoteUpdate }: VisaNoteSectionProps) => {
           <span
             onClick={() => setIsEditing(true)}
             className="text-gray-900 text-base font-medium cursor-text min-h-[60px] block"
-          >
-            {note || 'Click to add visa notes'}
-          </span>
+            dangerouslySetInnerHTML={{ __html: note || 'Click to add visa notes' }}
+          />
         )}
       </div>
     </TitleBox>

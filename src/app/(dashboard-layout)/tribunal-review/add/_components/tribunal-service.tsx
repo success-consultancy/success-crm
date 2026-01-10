@@ -29,6 +29,9 @@ import { useGetOccupations } from '@/query/get-occupations';
 import tribunalReviewFormSchema, { TribunalReviewSchemaType, updateTribunalReviewFormSchema } from '@/schema/tribunal-review';
 import { useAddTribunalReview, useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { FORM_STATE } from '@/types/common';
+import { ROUTES } from '@/config/routes';
+import { useRouter } from 'next/navigation';
+import { isAxiosError } from 'axios';
 
 interface Props {
   userId: number | undefined;
@@ -43,6 +46,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     watch,
     setValue,
     formState: { errors },
+    setError,
     handleSubmit,
     reset,
   } = useForm<TribunalReviewSchemaType>({
@@ -50,6 +54,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     defaultValues: defaultValues,
     mode: 'onChange',
   });
+
+  const router = useRouter()
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
@@ -72,7 +78,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
       setValue('updatedBy', userId);
     }
   }, [userId, setValue]);
-  const feeNote = watch('accounts.feeNote');
   const remarks = watch('remarks');
 
   const handleFeeNoteChange = (content: string) => {
@@ -82,7 +87,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
 
   const { mutate: addTribunalReview, isPending: addTribunalReviewPending } = useAddTribunalReview();
   const { mutate: updateTribunalReview, isPending: updateTribunalReviewPending } = useUpdateTribunalReview();
-  console.log(errors);
 
   const submitHandler = (data: TribunalReviewSchemaType) => {
     console.log(errors);
@@ -95,10 +99,18 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             reset();
           },
           onError: (error: any) => {
+            if (error?.response?.data?.errors) {
+              const errObject = error?.response?.data?.errors;
+              Object.keys(errObject).forEach((key) => {
+                setError(key as keyof TribunalReviewSchemaType, { type: 'manual', message: errObject[key] });
+              });
+            }
+
             toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
           },
         },
       );
+      router.push(ROUTES.TRIBUNAL_REVIEW)
     } else {
       updateTribunalReview(
         { ...data, sourceId: data.sourceId },
@@ -107,8 +119,18 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             toast.success('Tribunal review updated successfully');
             reset();
           },
-          onError: (error: any) => {
-            toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+          onError: (error) => {
+            if (isAxiosError(error)) {
+              if (error?.response?.data?.errors) {
+                const errObject = error?.response?.data?.errors;
+                Object.keys(errObject).forEach((key) => {
+                  setError(key as keyof TribunalReviewSchemaType, { type: 'manual', message: errObject[key] });
+                });
+              }
+              toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+            } else {
+              toast.error(error?.message || 'Failed to update tribunal review');
+            }
           },
         },
       );
@@ -616,11 +638,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             </div>
 
             <div className="w-full space-y-1" suppressHydrationWarning>
-              <Label htmlFor="feeNote">Fee note</Label>
-              <TinyEditor value={watch('accounts.feeNote') || ''} onChange={handleFeeNoteChange} />
-              {errors.accounts?.feeNote?.message && (
-                <p className="text-sm text-red-500">{errors.accounts?.feeNote?.message}</p>
-              )}
+              <TinyEditor value={watch('accounts.feeNote') || ''} onChange={handleFeeNoteChange} label="Fee note" error={errors.accounts?.feeNote?.message} />
             </div>
           </FormAccordion>
         )}
@@ -671,7 +689,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           <div>
             <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={feeNote || ''} onChange={(content) => setValue('remarks', content, { shouldValidate: true })} />
+              <TinyEditor value={remarks || ''} onChange={(content) => setValue('remarks', content, { shouldValidate: true })} />
               {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
             </div>
           </div>

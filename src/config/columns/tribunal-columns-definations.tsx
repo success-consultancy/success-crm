@@ -16,6 +16,7 @@ import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 }
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { IVisa } from '@/types/response-types/visa-response';
+import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
 export const useTribunalReviewColumn = (
   handleDelete: (id: number) => void,
@@ -23,7 +24,7 @@ export const useTribunalReviewColumn = (
 ) => {
   const router = useRouter();
 
-  const VisaColumns: ColumnDef<IVisa>[] = [
+  const TribunalReviewColumns: ColumnDef<ITribunalReview>[] = [
     {
       id: 'select',
       header: ({ table }) => (
@@ -167,7 +168,7 @@ export const useTribunalReviewColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.issueDate || '-'}</span>;
+        return <span className="w-full">{row.original.passportIssueDate || '-'}</span>;
       },
       size: 128,
       meta: { isVisible: false },
@@ -178,7 +179,7 @@ export const useTribunalReviewColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.expiryDate || '-'}</span>;
+        return <span className="w-full">{row.original.passportExpiryDate || '-'}</span>;
       },
       size: 132,
       meta: { isVisible: false },
@@ -401,5 +402,5 @@ export const useTribunalReviewColumn = (
       meta: { isVisible: true, sticky: 'right', stickyRight: 0 },
     },
   ];
-  return VisaColumns;
+  return TribunalReviewColumns;
 };

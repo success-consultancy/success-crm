@@ -22,6 +22,7 @@ import { useGetTribunalReviews } from '@/query/get-tribunalreview';
 import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-tribunal-review';
 import { useTribunalReviewColumn } from '@/config/columns/tribunal-columns-definations';
 import { useExportTribunalReviews } from '@/mutations/tribunal-review/export-tribunal-review';
+import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
 const DEFAULT_TAB = 'all_tribunal';
 // Tab Config
@@ -61,9 +62,9 @@ const ServicePage = () => {
     sendEmail(payload);
   };
 
-  const VisaColumns = useTribunalReviewColumn(handleDelete, handleSendEmail);
+  const TribunalReviewColumns = useTribunalReviewColumn(handleDelete, handleSendEmail);
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IVisa>[]>(VisaColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ITribunalReview>[]>(TribunalReviewColumns);
 
   const { searchParams, setParams } = useSearchParams();
 
@@ -90,7 +91,7 @@ const ServicePage = () => {
   }
 
   const handleRowClick = useCallback(
-    (visa: IVisa) => {
+    (visa: ITribunalReview) => {
       router.push(`/tribunal-review/${visa.id}/view`);
     },
     [router],
@@ -102,7 +103,7 @@ const ServicePage = () => {
         <h3 className="text-h5 text-content-heading font-bold">Tribunal Review</h3>
       </Portal>
       <TableComponent
-        data={data?.rows as IVisa[]}
+        data={data?.rows as ITribunalReview[]}
         columns={visibleColumns}
         skeletonColumns={visibleColumns}
         isLoading={isLoading}
