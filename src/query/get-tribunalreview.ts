@@ -4,9 +4,9 @@ import { IPagination, PAGINATION_PARAMS } from '@/types/pagination';
 import { useQuery } from '@tanstack/react-query';
 import QueryString from 'qs';
 import { IVisa, IVisaResponseType } from '@/types/response-types/visa-response';
-import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
+import { ITribunalReview, ITribunalReviewResponseType } from '@/types/response-types/tribunal-review-response';
 
-interface VisaFilterParams extends IPagination {
+interface FilterParams extends IPagination {
   order?: string;
   order_by?: string;
   q_field?: string;
@@ -16,7 +16,7 @@ interface VisaFilterParams extends IPagination {
   to?: string;
 }
 
-export const VISA_FILTER_PARAMS: Array<keyof VisaFilterParams> = [
+export const VISA_FILTER_PARAMS: Array<keyof FilterParams> = [
   ...PAGINATION_PARAMS,
   'order',
   'order_by',
@@ -27,12 +27,12 @@ export const VISA_FILTER_PARAMS: Array<keyof VisaFilterParams> = [
   'to',
 ];
 
-const getTribunalReviews = async (params?: VisaFilterParams) => {
+const getTribunalReviews = async (params?: FilterParams) => {
   const res = await api.get('/tribunalReview?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
-  return res.data as IVisaResponseType;
+  return res.data as ITribunalReviewResponseType;
 };
 
-export const useGetTribunalReviews = (params?: VisaFilterParams) => {
+export const useGetTribunalReviews = (params?: FilterParams) => {
   return useQuery({
     queryFn: () => getTribunalReviews(params),
     queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW, params],

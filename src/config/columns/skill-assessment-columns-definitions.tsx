@@ -148,7 +148,7 @@ export const useSkillAssessmentColumn = (
         return <span className="w-full">{row.original.phone || '-'}</span>;
       },
       size: 152,
-      meta: { isVisible: false },
+      meta: { isVisible: true },
     },
     {
       id: 'passport-no',
@@ -196,14 +196,17 @@ export const useSkillAssessmentColumn = (
     },
     {
       id: 'anzsco',
-      header: () => <ColumnHeader title="ANZSCO" keyParam="anzsco" />,
+      header: () => <ColumnHeader title="Anzsco / Occupation" keyParam="anzsco" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        return <span className="w-full">{row.original.anzsco || '-'}</span>;
+        if (!row.original?.anzsco && !row.original?.occupation) {
+          return <></>;
+        }
+        return <span className="w-full">{row.original?.anzsco + ' - ' + row.original?.occupation}</span>;
       },
-      size: 120,
-      meta: { isVisible: false },
+      size: 136,
+      meta: { isVisible: true },
     },
     {
       id: 'location',
@@ -229,14 +232,14 @@ export const useSkillAssessmentColumn = (
     },
     {
       id: 'current-visa',
-      header: () => <ColumnHeader title="Current Visa" keyParam="currentVisa" />,
+      header: () => <ColumnHeader title="Current visa" keyParam="currentVisa" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         return <span className="w-full">{row.original.currentVisa || '-'}</span>;
       },
-      size: 200,
-      meta: { isVisible: false },
+      size: 136,
+      meta: { isVisible: true },
     },
     {
       id: 'visa-expiry',

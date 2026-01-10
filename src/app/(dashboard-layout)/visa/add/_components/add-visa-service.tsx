@@ -41,7 +41,7 @@ export function AddVisaService({ userId }: Props) {
     handleSubmit,
     reset,
   } = useForm<NewVisaServiceType>({
-    resolver: zodResolver(newVisaServiceSchema),
+    resolver: zodResolver(newVisaServiceSchema) as any,
     defaultValues: newVisaServiceDefaultValues,
     mode: 'onChange',
   });

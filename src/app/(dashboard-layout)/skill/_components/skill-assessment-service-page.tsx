@@ -4,7 +4,6 @@ import { Plus } from 'lucide-react';
 import React, { useCallback, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 import useSearchParams from '@/hooks/use-search-params';
-import { LEADS_FILTER_PARAMS, useGetLeads } from '@/query/get-leads';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import TableComponent from '@/components/organisms/table';
@@ -17,58 +16,56 @@ import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
-import { IVisa } from '@/types/response-types/visa-response';
-import { useGetTribunalReviews } from '@/query/get-tribunalreview';
-import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-tribunal-review';
-import { useTribunalReviewColumn } from '@/config/columns/tribunal-columns-definations';
-import { useExportTribunalReviews } from '@/mutations/tribunal-review/export-tribunal-review';
-import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
+import { useGetSkillAssessments, SKILL_ASSESSMENT_FILTER_PARAMS } from '@/query/get-skill-assessments';
+import { useDeleteSkillAssessment, useDeleteSkillAssessmentBulk } from '@/mutations/skill-assessment/delete-visa';
+import { ISkillAssessment } from '@/types/response-types/skill-assessment-response';
+import { useSkillAssessmentColumn } from '@/config/columns/skill-assessment-columns-definitions';
+import { useExportSkillAssessments } from '@/mutations/skill-assessment/export-skill-assessments';
 
-const DEFAULT_TAB = 'all_tribunal';
 // Tab Config
 let TAB_CONFIG = [
-  { key: 'all_tribunal', label: 'All Tribunal' },
-  { key: 'in_progress', label: 'In Progress' }, // New, Collecting Docs, Ready to Submit, Submitted, Info Requested
-  { key: 'decision', label: 'Decisions' },
-  { key: 'closed', label: 'Closed' }, // Withdrawn,  Refused, Discontinued
-  { key: 'follow_up', label: 'Follow Up' },
+  { key: 'all_applicants', label: 'All applicants' },
+  { key: 'in_progress', label: 'In progress' },
+  { key: 'approved', label: 'Approved' },
+  { key: 'closed', label: 'Closed' },
+  { key: 'follow_up', label: 'Follow-up' },
 ];
 
-const ServicePage = () => {
+const SkillAssessmentServicePage = () => {
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
-  const { ...filterParams } = getSearchParamsObject(LEADS_FILTER_PARAMS);
+  const { ...filterParams } = getSearchParamsObject(SKILL_ASSESSMENT_FILTER_PARAMS);
 
-  const { data, isLoading } = useGetTribunalReviews({
+  const { data, isLoading } = useGetSkillAssessments({
     ...filterParams,
     q: filterParams?.q?.trim() || undefined,
     limit: filterParams.limit || '25',
   });
-  const { mutateAsync: deleteTribunal } = useDeleteTribunal();
-  const { mutateAsync: deleteTribunalBulk } = useDeleteTribunalBulk();
+  const { mutateAsync: deleteSkillAssessment } = useDeleteSkillAssessment();
+  const { mutateAsync: deleteSkillAssessmentBulk } = useDeleteSkillAssessmentBulk();
   const { mutateAsync: sendEmail } = useSendEmail();
-  const { mutateAsync: exportDateToCSV, isPending: isExporting } = useExportTribunalReviews();
+  const { mutateAsync: exportSkillAssessments, isPending: isExporting } = useExportSkillAssessments();
 
   const handleDelete = (id: number) => {
-    deleteTribunal(id);
+    deleteSkillAssessment(id);
   };
 
   const handleDeleteBulk = (ids: number[]) => {
-    deleteTribunalBulk(ids);
-  }; 111
+    deleteSkillAssessmentBulk(ids);
+  };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
     sendEmail(payload);
   };
 
-  const TribunalReviewColumns = useTribunalReviewColumn(handleDelete, handleSendEmail);
+  const SkillAssessmentColumns = useSkillAssessmentColumn(handleDelete, handleSendEmail);
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ITribunalReview>[]>(TribunalReviewColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ISkillAssessment>[]>(SkillAssessmentColumns);
 
   const { searchParams, setParams } = useSearchParams();
 
-  const currentTab = searchParams.get('tab') || DEFAULT_TAB;
+  const currentTab = searchParams.get('tab') || 'all_applicants';
 
   const handleTabChange = (tabKey: string) => {
     setParams([{ name: 'tab', value: tabKey }]);
@@ -83,7 +80,7 @@ const ServicePage = () => {
 
   if (data?.count) {
     TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === DEFAULT_TAB) {
+      if (tab.key === currentTab && tab.key === 'all_applicants') {
         return { ...tab, count: data.count };
       }
       return tab;
@@ -91,8 +88,8 @@ const ServicePage = () => {
   }
 
   const handleRowClick = useCallback(
-    (visa: ITribunalReview) => {
-      router.push(`/tribunal-review/${visa.id}/view`);
+    (skillAssessment: ISkillAssessment) => {
+      router.push(`/skill/${skillAssessment.id}/view`);
     },
     [router],
   );
@@ -100,10 +97,10 @@ const ServicePage = () => {
   return (
     <Container className="flex flex-col max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h5 text-content-heading font-bold">Tribunal Review</h3>
+        <h3 className="text-h5 text-content-heading font-bold">Skill assessment service</h3>
       </Portal>
       <TableComponent
-        data={data?.rows as ITribunalReview[]}
+        data={data?.rows as ISkillAssessment[]}
         columns={visibleColumns}
         skeletonColumns={visibleColumns}
         isLoading={isLoading}
@@ -112,8 +109,8 @@ const ServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name', 'visa-last-name'],
-          right: ['visa-actions'],
+          left: ['select', 'skill-assessment-createdAt', 'skill-assessment-id', 'skill-assessment-first-name', 'skill-assessment-last-name'],
+          right: ['skill-assessment-actions'],
         }}
         topRightSection={
           <div className="flex items-center">
@@ -122,14 +119,14 @@ const ServicePage = () => {
             <Button
               variant="outline"
               className="mr-2"
-              onClick={() => exportDateToCSV(filterParams)}
+              onClick={() => exportSkillAssessments(filterParams)}
               loading={isExporting}
             >
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_TRIBUNAL_SERVICE} LeftIcon={Plus}>
-              Add Tribunal Review
+            <ButtonLink href={ROUTES.ADD_SKILL_ASSESSMENT} LeftIcon={Plus}>
+              Add applicant
             </ButtonLink>
           </div>
         }
@@ -141,11 +138,11 @@ const ServicePage = () => {
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}
-        bulkDeleteTitle="Delete tribunal review"
-        bulkDeleteDescription="Are you sure you want to delete the selected tribunal review? This action cannot be undone."
+        bulkDeleteTitle="Delete Skill Assessment Applicants"
+        bulkDeleteDescription="Are you sure you want to delete the selected skill assessment applicants? This action cannot be undone."
       />
     </Container>
   );
 };
 
-export default ServicePage;
+export default SkillAssessmentServicePage;

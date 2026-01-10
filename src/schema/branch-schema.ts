@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const branchSchema = z.object({
-  name: z.string({ required_error: 'Branch name is required.' }),
-  country: z.string({ required_error: 'Country is required.' }),
-  city: z.string({ required_error: 'City is required.' }),
-  timezone: z.string({ required_error: 'Timezone is required.' }),
-  phone: z.string({ required_error: 'Phone number is required.' }).trim(),
+  name: z.string({ message: 'Branch name is required.' }),
+  country: z.string({ message: 'Country is required.' }),
+  city: z.string({ message: 'City is required.' }),
+  timezone: z.string({ message: 'Timezone is required.' }),
+  phone: z.string({ message: 'Phone number is required.' }).trim(),
 });
 
 export type BranchSchemaType = z.infer<typeof branchSchema>;

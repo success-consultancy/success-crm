@@ -134,7 +134,8 @@ export interface IVisaDetail {
   user: User;
   source: Source;
   UpdatedByUser: UpdatedByUser;
-  accounts: IAccount[];
+  accounts: IAccounts[];
+  visaNote: string;
 }
 
 export interface User {
