@@ -1,3 +1,6 @@
+import { IAccount } from '@/schema/account-schema';
+import { IFeePlan } from '@/schema/education-schema';
+
 export interface EducationsResponseType {
   count: number;
   rows: IEducation[];
@@ -76,29 +79,4 @@ export interface IEducation {
     id: string;
   };
   version_type?: number;
-}
-
-export interface IFeePlan {
-  planname: string;
-  amount: string;
-  duedate: string;
-  invoicenumber: string;
-  status: string;
-  note: string;
-  id: number;
-  account?: IAccounts;
-}
-
-export interface IAccounts {
-  planname: string;
-  amount: string;
-  duedate: string;
-  invoicenumber: string;
-  status: string;
-  comission?: string;
-  discount: string;
-  bonus?: string;
-  gst?: string;
-  netamount: string;
-  id: number;
 }

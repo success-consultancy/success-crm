@@ -2,22 +2,22 @@ import { useState } from 'react';
 import TitleBox from './title-box';
 import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
-import { IAccounts } from '@/types/response-types/education-response';
 import { Input } from '@/components/ui/input';
 import { useVisaAccountsColumn } from '@/config/columns/visaApplicant-accounts-columns-definitions';
 import { Button } from '@/components/ui/button';
-import { createEmptyDraft, isDraftValid, mapDraftToAccountRow, updateDraftField } from '@/utils/account';
+import { createEmptyDraft, updateDraftField } from '@/utils/account';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { CreateAccountPayload, useAddAccount, useUpdateAccount } from '@/mutations/visa/add-account';
+import { useAddAccount, useUpdateAccount } from '@/mutations/account/add-account';
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 
 type AccountsProps = {
-  accounts: IAccounts[];
+  accounts: IAccount[];
   visaApplicantId?: number;
   isAdding?: boolean;
 };
 
 const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps) => {
-  const handleEditRow = (row: IAccounts) => {
+  const handleEditRow = (row: IAccount) => {
     setEditingId(row?.id);
     setDraft({
       ...row,
@@ -31,7 +31,7 @@ const Accounts = ({ accounts, visaApplicantId, isAdding = false }: AccountsProps
     onEdit: handleEditRow,
   });
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccount>[]>(AccountsColumns);
   const [draft, setDraft] = useState<CreateAccountPayload>(createEmptyDraft());
   const [adding, setAdding] = useState<boolean>(false);
   const [editingId, setEditingId] = useState<number | null>(null);

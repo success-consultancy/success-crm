@@ -4,8 +4,8 @@ import { useTableContext } from '@/components/molecules/table-context-provider';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
-import { IFeePlan } from '@/types/response-types/education-response';
 import { Button } from '@/components/ui/button';
+import { IFeePlan } from '@/schema/education-schema';
 interface IEducationFeeColumn {
   onEdit: (fee: IFeePlan) => void;
 }

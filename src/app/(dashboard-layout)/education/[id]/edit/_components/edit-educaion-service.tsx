@@ -92,7 +92,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
     );
   };
 
-
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
       <Accordion
@@ -275,7 +274,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
 
         {/* Fee and Accounts Structure */}
         <CourseFeeComponent id={params.id} />
-
 
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">

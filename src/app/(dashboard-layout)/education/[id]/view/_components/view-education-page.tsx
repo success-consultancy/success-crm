@@ -11,10 +11,11 @@ import { History } from './history';
 import { useGetEducationById } from '@/query/get-education';
 import CourseFeeStructure from './course-fee-structure';
 import Accounts from './accounts';
-import { IAccounts, IFeePlan } from '@/types/response-types/education-response';
 import MiscSection from './misc-section';
 import FollowUp from '@/components/organisms/follow-up';
-import { CreateAccountPayload } from '@/mutations/visa/add-account';
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
+import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
+import { ACCOUNTABLE_TYPE } from '@/types/common';
 
 interface EducationPageContentProps {
   studentId: string;
@@ -31,7 +32,8 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Shared state for adding rows
   const [isAddingRow, setIsAddingRow] = useState(false);
-  const [feeDraft, setFeeDraft] = useState<Partial<IFeePlan>>({
+  const [feeDraft, setFeeDraft] = useState<CreateCourseFeePayload>({
+    studentId: Number(studentId),
     planname: '',
     amount: '',
     duedate: '',
@@ -49,6 +51,8 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     discount: '0',
     bonus: '0',
     netamount: '',
+    accountableId: 0,
+    accountableType: ACCOUNTABLE_TYPE.CourseFee,
   });
 
   // Extract accounts from education data using useMemo for performance
@@ -56,48 +60,13 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     if (!education?.course_fees) return [];
 
     return education.course_fees
-      .filter((fee) => fee.account) // Only include fees that have account data
-      .map((fee) => fee.account as IAccounts);
+      .filter((fee) => fee.accounts) // Only include fees that have account data
+      .map((fee) => fee.accounts as IAccount);
   }, [education?.course_fees]);
-
-  // Calculate summary statistics for accounts - memoized for performance
-  const accountsSummary = useMemo(() => {
-    if (accounts.length === 0) {
-      return {
-        totalAmount: 0,
-        totalCommission: 0,
-        totalNetAmount: 0,
-        pendingCount: 0,
-        paidCount: 0,
-      };
-    }
-
-    return accounts.reduce(
-      (summary, account) => {
-        const amount = Number(account.amount) || 0;
-        const commission = Number(account.comission) || 0;
-        const netAmount = Number(account.netamount) || 0;
-
-        return {
-          totalAmount: summary.totalAmount + amount,
-          totalCommission: summary.totalCommission + commission,
-          totalNetAmount: summary.totalNetAmount + netAmount,
-          pendingCount: summary.pendingCount + (account.status === 'Pending' ? 1 : 0),
-          paidCount: summary.paidCount + (account.status === 'Paid' ? 1 : 0),
-        };
-      },
-      {
-        totalAmount: 0,
-        totalCommission: 0,
-        totalNetAmount: 0,
-        pendingCount: 0,
-        paidCount: 0,
-      },
-    );
-  }, [accounts]);
+  console.log({ accounts });
 
   // Helper function to calculate accounts from fee data - memoized for performance
-  const calculateAccountsFromFee = useCallback((fee: Partial<IFeePlan>): CreateAccountPayload => {
+  const calculateAccountsFromFee = useCallback((fee: CreateCourseFeePayload): CreateAccountPayload => {
     const amountNum = Number(fee.amount || 0);
 
     // TODO: Get college commission percentage from university/college data
@@ -124,18 +93,21 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
       discount: String(discountNum),
       bonus: String(bonusNum),
       netamount: String(netAmountNum),
+      accountableId: education ? education.id : 0,
+      accountableType: 'Education',
     };
   }, []);
 
   // Default draft objects - memoized to prevent recreation
   const defaultFeeDraft = useMemo(
-    (): Partial<IFeePlan> => ({
+    (): CreateCourseFeePayload => ({
       planname: '',
       amount: '',
       duedate: '',
       invoicenumber: '',
       status: 'Pending',
       note: '',
+      studentId: Number(studentId),
     }),
     [],
   );
@@ -151,6 +123,8 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
       discount: '0',
       bonus: '0',
       netamount: '',
+      accountableId: 0,
+      accountableType: '',
     }),
     [],
   );
@@ -160,7 +134,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Handle fee draft changes and update accounts draft accordingly - memoized
   const handleFeeDraftChange = useCallback(
-    (newFeeDraft: Partial<IFeePlan>) => {
+    (newFeeDraft: CreateCourseFeePayload) => {
       setFeeDraft(newFeeDraft);
 
       // Update accounts draft when adding or editing
@@ -187,7 +161,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Handle accounts draft changes (for commission, discount, bonus edits) - memoized
   const handleAccountsDraftChange = useCallback(
-    (field: keyof IAccounts, value: string) => {
+    (field: keyof IAccount, value: string) => {
       if (!isAddingRow && !editingFeeId) return;
 
       const updatedAccountsDraft = {

@@ -1,8 +1,10 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { useGetEducationById } from '@/query/get-education';
-import { IAccounts, IFeePlan } from '@/types/response-types/education-response';
 import CourseFeeStructure from '../[id]/view/_components/course-fee-structure';
 import Accounts from '../[id]/view/_components/accounts';
+import { IFeePlan } from '@/schema/education-schema';
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
+import { ACCOUNTABLE_TYPE } from '@/types/common';
 
 interface Props {
   id: string;
@@ -36,15 +38,15 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
     discount: '0',
     bonus: '0',
     netamount: '',
-  } as IAccounts);
+  } as IAccount);
 
   // Extract accounts from education data using useMemo for performance
   const accounts = useMemo(() => {
     if (!education?.course_fees) return [];
 
     return education.course_fees
-      .filter((fee) => fee.account) // Only include fees that have account data
-      .map((fee) => fee.account as IAccounts);
+      .filter((fee) => fee.accounts) // Only include fees that have account data
+      .map((fee) => fee.accounts as IAccount);
   }, [education?.course_fees]);
 
   // Calculate summary statistics for accounts - memoized for performance
@@ -84,7 +86,7 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
   }, [accounts]);
 
   // Helper function to calculate accounts from fee data - memoized for performance
-  const calculateAccountsFromFee = useCallback((fee: IFeePlan): Partial<IAccounts> => {
+  const calculateAccountsFromFee = useCallback((fee: IFeePlan): CreateAccountPayload => {
     const amountNum = Number(fee.amount || 0);
 
     // TODO: Get college commission percentage from university/college data
@@ -111,6 +113,8 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
       discount: String(discountNum),
       bonus: String(bonusNum),
       netamount: String(netAmountNum),
+      accountableId: education?.id || 0,
+      accountableType: ACCOUNTABLE_TYPE.CourseFee,
     };
   }, []);
 
@@ -128,7 +132,7 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
   );
 
   const defaultAccountsDraft = useMemo(
-    (): Partial<IAccounts> => ({
+    (): Partial<IAccount> => ({
       planname: '',
       amount: '',
       duedate: '',
@@ -161,7 +165,7 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
       if (isAddingRow) {
         const calculatedAccounts = calculateAccountsFromFee(updatedFeeDraft);
         // Preserve user-edited commission value, recalculate others
-        const updatedAccountsDraft: IAccounts = {
+        const updatedAccountsDraft: IAccount = {
           planname: calculatedAccounts.planname || accountsDraft.planname || '',
           amount: calculatedAccounts.amount || accountsDraft.amount || '',
           duedate: calculatedAccounts.duedate || accountsDraft.duedate || '',
@@ -176,6 +180,8 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
               Number(accountsDraft.discount || calculatedAccounts.discount || '0') +
               Number(accountsDraft.bonus || calculatedAccounts.bonus || '0'),
           ),
+          accountableId: calculatedAccounts.accountableId || education?.id || 0,
+          accountableType: calculatedAccounts.accountableType || ACCOUNTABLE_TYPE.CourseFee,
           id: accountsDraft.id || 0,
         };
         setAccountsDraft(updatedAccountsDraft);
@@ -186,7 +192,7 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
 
   // Handle accounts draft changes (for commission, discount, bonus edits) - memoized
   const handleAccountsDraftChange = useCallback(
-    (field: keyof IAccounts, value: string) => {
+    (field: keyof IAccount, value: string) => {
       if (!isAddingRow) return;
 
       const updatedAccountsDraft = {
@@ -222,7 +228,7 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
       setIsAddingRow(adding);
       if (adding) {
         const initialAccounts = calculateAccountsFromFee(feeDraft);
-        const completeAccounts: IAccounts = {
+        const completeAccounts: IAccount = {
           planname: initialAccounts.planname || '',
           amount: initialAccounts.amount || '',
           duedate: initialAccounts.duedate || '',
@@ -232,6 +238,8 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
           discount: initialAccounts.discount || '0',
           bonus: initialAccounts.bonus || '0',
           netamount: initialAccounts.netamount || '',
+          accountableId: initialAccounts.accountableId || 0,
+          accountableType: initialAccounts.accountableType || ACCOUNTABLE_TYPE.CourseFee,
           id: 0,
         };
         setAccountsDraft(completeAccounts);
@@ -244,9 +252,10 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
           invoicenumber: defaultFeeDraft.invoicenumber || '',
           status: defaultFeeDraft.status || 'Pending',
           note: defaultFeeDraft.note || '',
+          studentId: education?.id || 0,
           id: 0,
         };
-        const resetAccountsDraft: IAccounts = {
+        const resetAccountsDraft: IAccount = {
           planname: defaultAccountsDraft.planname || '',
           amount: defaultAccountsDraft.amount || '',
           duedate: defaultAccountsDraft.duedate || '',
@@ -257,6 +266,8 @@ const CourseFeeAndAccountsComponent = ({ id }: Props) => {
           bonus: defaultAccountsDraft.bonus || '0',
           netamount: defaultAccountsDraft.netamount || '',
           id: 0,
+          accountableId: defaultAccountsDraft.accountableId || 0,
+          accountableType: defaultAccountsDraft.accountableType || ACCOUNTABLE_TYPE.CourseFee,
         };
         setFeeDraft(resetFeeDraft);
         setAccountsDraft(resetAccountsDraft);

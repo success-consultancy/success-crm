@@ -1,25 +1,7 @@
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { IAccounts } from '@/types/response-types/education-response';
-
-// API payload as required by POST /account
-export type CreateAccountPayload = {
-  accountableId?: number;
-  accountableType?: string;
-  planname: string;
-  amount: string;
-  duedate: string; // ISO date string (YYYY-MM-DD)
-  invoicenumber: string;
-  status: string; // e.g. "Pending" | "Paid"
-  note?: string;
-  updatedBy?: number;
-  gst?: string;
-  discount?: string;
-  bonus?: string;
-  netamount?: string;
-  comission?: string;
-};
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 
 export const createAccount = async (payload: CreateAccountPayload) => {
   const { data } = await api.post('/account', payload);
@@ -33,13 +15,15 @@ export const useAddAccount = () => {
     mutationFn: createAccount,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_VISA_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID] });
     },
   });
 };
 
 export const updateAccount = async (id: number, payload: CreateAccountPayload) => {
   const { data } = await api.put(`/account/${id}`, payload);
-  return data as IAccounts;
+  return data as IAccount;
 };
 
 export const useUpdateAccount = () => {

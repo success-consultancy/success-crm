@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { CreateAccountPayload, IAccount } from './account-schema';
 
 const educationFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
@@ -43,3 +44,18 @@ const educationFormSchema = z.object({
 export type EducationSchemaType = z.infer<typeof educationFormSchema>;
 
 export default educationFormSchema;
+
+export interface IFeePlan {
+  id: number;
+  studentId: number;
+  planname: string;
+  amount: string;
+  duedate: string;
+  invoicenumber?: string;
+  status: 'Pending' | 'Paid' | 'Overdue' | 'Other';
+  note?: string;
+  updatedBy?: number;
+  accounts?: Omit<CreateAccountPayload, 'accountableId' | 'accountableType'>;
+}
+
+export type CreateCourseFeePayload = Omit<IFeePlan, 'id'>;
