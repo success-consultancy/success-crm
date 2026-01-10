@@ -130,6 +130,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     control,
     watch,
     setValue,
+    setError,
     formState: { errors },
     handleSubmit,
     reset,
@@ -208,13 +209,14 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             toast.success('Skill assessment applicant added successfully');
             router.push('/skill');
           },
-          onError: (error: any) => {
-            const message = error?.response?.data?.message;
-            if (error?.response?.data?.errors) {
-              Object.entries(error.response.data.errors).forEach(([key, value]) => {
-                setValue(key as any, value as any, { shouldValidate: true });
+          onError: (err: any) => {
+            if (err?.response?.data?.errors) {
+              Object.entries(err.response.data.errors).forEach(([key, value]) => {
+                setError(key as keyof SkillAssessmentSchemaType, { message: value as string });
               });
             }
+
+            const message = err?.response?.data?.message || err?.message;
             toast.error(message || 'Failed to add skill assessment applicant');
           },
         },
@@ -245,13 +247,14 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             toast.success('Skill assessment applicant updated successfully');
             router.push('/skill');
           },
-          onError: (error: any) => {
-            const message = error?.response?.data?.message;
-            if (error?.response?.data?.errors) {
-              Object.entries(error.response.data.errors).forEach(([key, value]) => {
-                setValue(key as any, value as any, { shouldValidate: true });
+          onError: (err: any) => {
+            if (err?.response?.data?.errors) {
+              Object.entries(err.response.data.errors).forEach(([key, value]) => {
+                setError(key as keyof SkillAssessmentSchemaType, { message: value as string });
               });
             }
+
+            const message = err?.response?.data?.message || err?.message;
             toast.error(message || 'Failed to update skill assessment applicant');
           },
         },
