@@ -51,3 +51,18 @@ export const useGetSkillAssessmentById = (id: string) => {
     refetchOnWindowFocus: false,
   });
 };
+
+const getSkillAssessmentLog = async (id: string, params?: { from?: string; to?: string }) => {
+  const queryParams = QueryString.stringify(params || {}, { arrayFormat: 'repeat' });
+  const url = `/skillAssessment/log/${id}${queryParams ? '?' + queryParams : ''}`;
+  const res = await api.get(url);
+  return res.data as ISkillAssessment[];
+};
+
+export const useGetSkillAssessmentLog = (id: string, params?: { from?: string; to?: string }) => {
+  return useQuery({
+    queryFn: () => getSkillAssessmentLog(id, params),
+    queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_LOG, id, params],
+    refetchOnWindowFocus: false,
+  });
+};

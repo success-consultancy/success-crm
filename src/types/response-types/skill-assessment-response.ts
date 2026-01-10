@@ -49,4 +49,26 @@ export interface ISkillAssessment {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  source?: {
+    id: number;
+    name: string;
+  };
+  user?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+  accounts?: Array<{
+    id: number;
+    planname: string;
+    amount: string;
+    duedate: string;
+    invoicenumber: string;
+    status: string;
+    comission: string;
+    discount: string;
+    bonus: string;
+    netamount: string;
+    gst: string;
+  }>;
 }
