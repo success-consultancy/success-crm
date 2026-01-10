@@ -2,17 +2,17 @@ import { useState } from 'react';
 import TitleBox from './title-box';
 import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
-import { IAccounts } from '@/types/response-types/education-response';
 import { Input } from '@/components/ui/input';
 import { useAccountsColumn } from '@/config/columns/education-accounts-columns-definitions';
 import { FormAccordion } from '@/components/organisms/form-accordion';
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 
 type AccountsProps = {
-  courseFee: IAccounts[];
+  courseFee: IAccount[];
   studentId?: number;
   isAdding?: boolean;
-  draft?: Partial<IAccounts> | null;
-  onDraftChange?: (field: keyof IAccounts, value: string) => void;
+  draft?: CreateAccountPayload | null;
+  onDraftChange?: (field: keyof IAccount, value: string) => void;
   compType?: 'accordion' | 'default';
 };
 
@@ -25,7 +25,7 @@ const Accounts = ({
   compType = 'default',
 }: AccountsProps) => {
   const [editingId, setEditingId] = useState<number | null>(null);
-  const handleEditRow = (row: IAccounts) => {
+  const handleEditRow = (row: IAccount) => {
     setEditingId(row?.id);
     // Update draft fields individually to match the onDraftChange pattern
     if (onDraftChange) {
@@ -42,7 +42,7 @@ const Accounts = ({
   };
   const AccountsColumns = useAccountsColumn({ onEdit: handleEditRow });
 
-  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccounts>[]>(AccountsColumns);
+  const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IAccount>[]>(AccountsColumns);
 
   return (
     <Comp type={compType}>
@@ -106,7 +106,7 @@ const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) 
     );
   }
 
-  return <TitleBox title="Course fee structure">{children}</TitleBox>;
+  return <TitleBox title="Accounts">{children}</TitleBox>;
 };
 
 export default Accounts;

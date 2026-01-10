@@ -72,6 +72,7 @@ export function AddVisaService({ userId }: Props) {
     if (userId) {
       setValue('userId', userId);
       setValue('updatedBy', userId);
+      setValue('accounts.updatedBy', userId);
     }
   }, [userId, setValue]);
 

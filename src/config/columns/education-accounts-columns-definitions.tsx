@@ -4,17 +4,17 @@ import { useTableContext } from '@/components/molecules/table-context-provider';
 import { useRouter } from 'next/navigation';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
-import { IAccounts } from '@/types/response-types/education-response';
 import { Button } from '@/components/ui/button';
+import { IAccount } from '@/schema/account-schema';
 
 interface IEducationAccountsColumn {
-  onEdit: (accounts: IAccounts) => void;
+  onEdit: (accounts: IAccount) => void;
 }
 
 export const useAccountsColumn = ({ onEdit }: IEducationAccountsColumn) => {
   const router = useRouter();
 
-  const AccountsColumns: ColumnDef<IAccounts>[] = [
+  const AccountsColumns: ColumnDef<IAccount>[] = [
     {
       id: 'accounts-payment-plan',
       header: () => <ColumnHeader title="Fee payment plan" keyParam="fee-payment-plan" />,

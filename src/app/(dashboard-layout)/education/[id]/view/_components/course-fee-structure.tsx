@@ -2,7 +2,6 @@ import { useMemo, useState } from 'react';
 import TitleBox from './title-box';
 import { ColumnDef } from '@tanstack/react-table';
 import TableComponent from '@/components/organisms/table';
-import { IEducation, IFeePlan } from '@/types/response-types/education-response';
 import { useFeeStuructureColumn } from '@/config/columns/fee-structure-columns-definitions';
 import { useAddCourseFee, useUpdateCourseFee } from '@/mutations/education/add-course-fee';
 import useAuthStore from '@/store/auth-store';
@@ -10,16 +9,18 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
-import { CreateAccountPayload } from '@/mutations/visa/add-account';
+import { CreateAccountPayload } from '@/schema/account-schema';
+import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
+import { ACCOUNTABLE_TYPE } from '@/types/common';
 
 type CourseFeeStructureProps = {
   courseFee: IFeePlan[];
   studentId?: number;
   isAdding?: boolean;
   onToggleAdding?: (isAdding: boolean) => void;
-  draft?: Partial<IFeePlan>;
-  onDraftChange?: (draft: Partial<IFeePlan>) => void;
-  accountsDraft?: any; // CreateAccountPayload type
+  draft?: CreateCourseFeePayload;
+  onDraftChange?: (draft: CreateCourseFeePayload) => void;
+  accountsDraft?: any;
   onAccountsDraftChange?: (accountsDraft: any) => void;
   onEditingIdChange?: (feeId: number | null) => void;
   compType?: string;
@@ -46,17 +47,17 @@ const CourseFeeStructure = ({
 
     // Update accounts draft when editing - use existing account data if available
     // If account doesn't exist, parent will calculate it from fee data
-    if (row.account && onAccountsDraftChange) {
+    if (row.accounts && onAccountsDraftChange) {
       onAccountsDraftChange({
-        planname: row.account.planname || '',
-        amount: row.account.amount || '',
-        duedate: row.account.duedate || '',
-        invoicenumber: row.account.invoicenumber || '',
-        status: row.account.status || 'Pending',
-        comission: row.account.comission || '',
-        discount: row.account.discount || '0',
-        bonus: row.account.bonus || '0',
-        netamount: row.account.netamount || '',
+        planname: row.accounts.planname || '',
+        amount: row.accounts.amount || '',
+        duedate: row.accounts.duedate || '',
+        invoicenumber: row.accounts.invoicenumber || '',
+        status: row.accounts.status || 'Pending',
+        comission: row.accounts.comission || '',
+        discount: row.accounts.discount || '0',
+        bonus: row.accounts.bonus || '0',
+        netamount: row.accounts.netamount || '',
       });
     }
 
@@ -97,6 +98,7 @@ const CourseFeeStructure = ({
       bonus: accountsDraft.bonus,
       netamount: accountsDraft.netamount,
     };
+
     if (editingId) {
       updateCourseFee(
         {
@@ -104,7 +106,7 @@ const CourseFeeStructure = ({
           payload: {
             studentId: Number(studentId),
             planname: draft.planname || '',
-            amount: Number(draft.amount || 0),
+            amount: draft.amount || '',
             duedate: duedate,
             invoicenumber: draft.invoicenumber || '',
             status: draft.status || 'Pending',
@@ -134,7 +136,7 @@ const CourseFeeStructure = ({
         {
           studentId: Number(studentId),
           planname: draft.planname || '',
-          amount: Number(draft.amount || 0),
+          amount: draft.amount || '',
           duedate,
           invoicenumber: draft.invoicenumber || '',
           status: draft.status || 'Pending',
@@ -190,7 +192,7 @@ const CourseFeeStructure = ({
               placeholder="Amount"
               type="number"
               value={(draft.amount as any) ?? ''}
-              onChange={(e) => onDraftChange?.({ ...draft, amount: Number(e.target.value) as any })}
+              onChange={(e) => onDraftChange?.({ ...draft, amount: e.target.value })}
             />
             <Input
               placeholder="Due date"
@@ -203,7 +205,10 @@ const CourseFeeStructure = ({
               value={draft.invoicenumber}
               onChange={(e) => onDraftChange?.({ ...draft, invoicenumber: e.target.value })}
             />
-            <Select defaultValue={draft.status} onValueChange={(val) => onDraftChange?.({ ...draft, status: val })}>
+            <Select
+              defaultValue={draft.status}
+              onValueChange={(val: any) => onDraftChange?.({ ...draft, status: val })}
+            >
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
               </SelectTrigger>

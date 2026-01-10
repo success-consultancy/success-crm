@@ -1,3 +1,5 @@
+import { IAccount } from '@/schema/account-schema';
+
 export interface IVisaResponseType {
   count: number;
   rows: IVisa[];
@@ -79,30 +81,6 @@ export interface IVisa {
   endDate: string;
 }
 
-export interface IFeePlan {
-  planname: string;
-  amount: string;
-  duedate: string;
-  invoicenumber: string;
-  status: string;
-  note: string;
-  account?: IAccounts;
-}
-
-export interface IAccounts {
-  planname: string;
-  amount: string;
-  duedate: string;
-  invoicenumber: string;
-  status: string;
-  comission: string;
-  discount: string;
-  bonus: string;
-  netamount: string;
-  gst: string;
-  id: number;
-}
-
 export interface IVisaDetail {
   id: number;
   firstName: string;
@@ -156,7 +134,7 @@ export interface IVisaDetail {
   user: User;
   source: Source;
   UpdatedByUser: UpdatedByUser;
-  accounts: IAccounts[];
+  accounts: IAccount[];
 }
 
 export interface User {

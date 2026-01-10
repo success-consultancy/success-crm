@@ -68,7 +68,7 @@ export const newVisaServiceSchema = z.object({
   csaStatus: nullableString(),
   remarks: nullableString(),
 
-  sourceId: z.string().min(1, 'Please select a source').max(50, 'Source selection is invalid'),
+  sourceId: z.union([z.string(), z.number()]).nullable().optional(),
 
   invoiceNumber: nullableString(),
   payment: nullableString(),
@@ -129,7 +129,7 @@ export const newVisaServiceSchema = z.object({
     netamount: z.string().optional(),
     gst: z.string().optional(),
     feeNote: z.string().optional(),
-    updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
+    updatedBy: z.number(),
   }),
 });
 
@@ -191,6 +191,6 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
     netamount: '',
     gst: '',
     feeNote: '',
-    updatedBy: '',
+    updatedBy: 0,
   },
 };

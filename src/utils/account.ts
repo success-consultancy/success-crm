@@ -1,5 +1,4 @@
-import { CreateAccountPayload } from '@/mutations/visa/add-account';
-import { IAccounts } from '@/types/response-types/education-response';
+import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 
 export const createEmptyDraft = (): CreateAccountPayload => ({
   planname: '',
@@ -10,6 +9,8 @@ export const createEmptyDraft = (): CreateAccountPayload => ({
   duedate: '',
   invoicenumber: '',
   status: 'Pending',
+  accountableId: 0,
+  accountableType: '',
 });
 
 export const calculateNetAmount = (amount: number, discount: number) => {
@@ -35,11 +36,11 @@ export const updateDraftField = (
   return updatedDraft;
 };
 
-export const isDraftValid = (draft: IAccounts): boolean => {
+export const isDraftValid = (draft: IAccount): boolean => {
   return Number(draft.amount) > 0 && Number(draft.netamount) > 0 && draft.planname.trim() !== '';
 };
 
-export const mapDraftToAccountRow = (draft: IAccounts): IAccounts => {
+export const mapDraftToAccountRow = (draft: IAccount): IAccount => {
   const amount = draft.amount || '';
   const discount = draft.discount || '';
 

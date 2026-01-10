@@ -48,7 +48,7 @@ const getTribunalReviewById = async (id: string) => {
 export const useGetTribunalReviewById = (id: string) => {
   return useQuery({
     queryFn: () => getTribunalReviewById(id),
-    queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW, id],
+    queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID, id],
     refetchOnWindowFocus: false,
   });
 };
