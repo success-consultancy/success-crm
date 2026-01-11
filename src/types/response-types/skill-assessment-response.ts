@@ -49,4 +49,30 @@ export interface ISkillAssessment {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  source?: {
+    id: number;
+    name: string;
+  };
+  user?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+  };
+  accounts?: Array<{
+    id: number;
+    accountableId?: number;
+    accountableType?: string;
+    planname: string;
+    amount: string;
+    duedate: string;
+    invoicenumber?: string;
+    status: 'Pending' | 'Paid' | 'Overdue' | 'Other';
+    comission?: string;
+    discount?: string;
+    bonus?: string;
+    netamount?: string;
+    gst?: string;
+    updatedBy?: number;
+    feeNote?: string;
+  }>;
 }
