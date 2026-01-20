@@ -604,15 +604,13 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                 error={errors.accounts?.invoicenumber?.message}
               />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                  Due Date
-                </Label>
                 <Controller
                   name="accounts.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
                       side="top"
+                      label="Due Date"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
@@ -687,9 +685,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             />
           </div>
           <div>
-            <Label>Note</Label>
             <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor value={remarks || ''} onChange={(content) => setValue('remarks', content, { shouldValidate: true })} />
+              <TinyEditor label="Note" value={remarks || ''} onChange={(content) => setValue('remarks', content, { shouldValidate: true })} />
               {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
             </div>
           </div>
