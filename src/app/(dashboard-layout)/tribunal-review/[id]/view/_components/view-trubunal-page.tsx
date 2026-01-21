@@ -13,11 +13,11 @@ import FollowUp from '@/components/organisms/follow-up';
 import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import Accounts from './accounts';
 
-interface VisaPageContentProps {
+interface TribunalPageContentProps {
   studentId: string;
 }
 
-const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
+const TribunalPageContent: React.FC<TribunalPageContentProps> = ({ studentId }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const tabs = [
     { label: 'Overview', value: 'overview' },
@@ -62,4 +62,4 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   );
 };
 
-export default VisaPageContent;
+export default TribunalPageContent;

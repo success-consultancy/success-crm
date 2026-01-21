@@ -9,7 +9,7 @@ import { FORM_STATE } from '@/types/common';
 import { TribunalService } from '../../add/_components/tribunal-service';
 import { getTribunalDefaultValues } from '@/schema/tribunal-review';
 
-const EditVisaServicePage = () => {
+const TribunalServicePage = () => {
   const params = useParams<{ id: string }>();
   const { data, isLoading: visaLoading } = useGetTribunalReviewById(params.id);
 
@@ -25,4 +25,4 @@ const EditVisaServicePage = () => {
   );
 };
 
-export default EditVisaServicePage;
+export default TribunalServicePage;
