@@ -19,7 +19,7 @@ interface TinyEditorProps {
 export default function TinyEditor({ value, onChange, label, error }: TinyEditorProps) {
   return (
     <div>
-      {label && <Label htmlFor="feeNote">{label}</Label>}
+      {label && <Label className='mb-2 text-b3-b font-semibold' htmlFor="feeNote">{label}</Label>}
       <Editor
         licenseKey={'gpl'}
         tinymceScriptSrc={'https://cdnjs.cloudflare.com/ajax/libs/tinymce/7.1.2/tinymce.min.js'}
