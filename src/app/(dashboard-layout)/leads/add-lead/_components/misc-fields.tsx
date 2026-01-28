@@ -15,14 +15,7 @@ import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 
-const STATUS_OPTIONS = [
-  { value: 'New', label: 'New' },
-  { value: 'Converted', label: 'Converted' },
-  { value: 'Not Converted', label: 'Not Converted' },
-  { value: 'Follow Up', label: 'Follow Up' },
-];
-
-const ServiceDetailsStep = () => {
+const MiscStep = () => {
   const {
     control,
     setValue: setLead,
@@ -34,13 +27,6 @@ const ServiceDetailsStep = () => {
     return {
       label: service,
       value: service,
-    };
-  });
-
-  const locationOptions = Object.values(Location).map((location) => {
-    return {
-      label: location,
-      value: location,
     };
   });
 
@@ -72,34 +58,8 @@ const ServiceDetailsStep = () => {
 
   return (
     <div className="space-y-5 w-full">
-      <div className="flex items-start w-full gap-5">
-        <FormField
-          control={control}
-          name="serviceType"
-          render={({ field }) => (
-            <MultiSelect
-              options={servicesOptions}
-              value={field.value}
-              label="Service Type"
-              onSelect={(val) => field.onChange(val)}
-              error={errors.serviceType?.message}
-            />
-          )}
-        />
-        <FormField
-          control={control}
-          name="location"
-          render={({ field }) => (
-            <SelectCommon
-              triggerClassName="w-full"
-              options={locationOptions}
-              value={field.value || undefined}
-              label="Location"
-              onSelect={(val) => field.onChange(val)}
-              error={errors.location?.message}
-            />
-          )}
-        />
+      <div className="grid grid-cols-2 gap-6">
+
         <FormField
           control={control}
           name="sourceId"
@@ -114,8 +74,6 @@ const ServiceDetailsStep = () => {
             />
           )}
         />
-      </div>
-      <div className="flex items-start gap-5">
         <FormField
           control={control}
           name="userId"
@@ -127,20 +85,6 @@ const ServiceDetailsStep = () => {
               placeholder="Select a assignee"
               onSelect={(val) => field.onChange(Number(val))}
               error={errors.userId?.message}
-            />
-          )}
-        />
-        <FormField
-          control={control}
-          name="status"
-          render={({ field }) => (
-            <SelectCommon
-              options={STATUS_OPTIONS}
-              value={field.value}
-              label="Status"
-              triggerClassName="w-full"
-              onSelect={(val) => field.onChange(val)}
-              error={errors.status?.message}
             />
           )}
         />
@@ -170,4 +114,4 @@ const ServiceDetailsStep = () => {
   );
 };
 
-export default ServiceDetailsStep;
+export default MiscStep;

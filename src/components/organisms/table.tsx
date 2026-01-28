@@ -211,8 +211,8 @@ const TableComponent = <TData, TValue>({
       ? isLastLeftPinnedColumn
         ? `-2px 0 2px -2px #D9E2E8 inset`
         : isFirstRightPinnedColumn
-        ? `2px 0 2px -2px #D9E2E8 inset`
-        : undefined
+          ? `2px 0 2px -2px #D9E2E8 inset`
+          : undefined
       : undefined;
 
     // For body cells, ensure white background that can be overridden by hover
@@ -252,7 +252,7 @@ const TableComponent = <TData, TValue>({
                 className="max-w-[18rem]"
                 placeholder={`Search data here`}
               />
-              <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
+              <DateRangePicker onApply={handleDateRangeApply || (() => { })} />
             </div>
             <div className="flex items-center gap-[14px]">
               <ColumnSelector table={table} />
@@ -345,7 +345,7 @@ const TableComponent = <TData, TValue>({
                     '*:text-left select-none',
                     '*:align-middle',
                     'last:border-none',
-                    onRowClick && 'cursor-pointer',
+                    onRowClick && !isLoading && 'cursor-pointer',
                   ])}
                   key={idx}
                   onClick={(e) => {
@@ -359,7 +359,7 @@ const TableComponent = <TData, TValue>({
                       target.closest('input') ||
                       target.closest('a');
 
-                    if (!isInteractiveElement && onRowClick) {
+                    if (!isInteractiveElement && onRowClick && !isLoading) {
                       onRowClick(row.original);
                     }
                   }}

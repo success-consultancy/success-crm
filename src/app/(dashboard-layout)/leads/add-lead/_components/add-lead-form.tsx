@@ -20,8 +20,8 @@ import toast from 'react-hot-toast';
 import { FormAccordion } from '@/components/organisms/form-accordion';
 import { Accordion } from '@/components/ui/accordion';
 import PersonalDetailsStep from './personal-details-fields';
-import PassportDetailsStep from './passport-details-fields';
-import ServiceDetailsStep from './service-details-fields';
+import MiscStep from './misc-fields';
+import VisaAndServiceStep from './visa-and-service-fields';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -121,19 +121,13 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       <div>
         <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1', 'item-2', 'item-3']}>
           <FormAccordion value="item-1" title="Personal Details">
-            <>
-              <PersonalDetailsStep />
-            </>
+            <PersonalDetailsStep />
           </FormAccordion>
-          <FormAccordion value="item-2" title="Passport & Visa Details">
-            <>
-              <PassportDetailsStep />
-            </>
+          <FormAccordion value="item-2" title="Visa & Service Details">
+            <VisaAndServiceStep />
           </FormAccordion>
-          <FormAccordion value="item-3" title="Service Details">
-            <>
-              <ServiceDetailsStep />
-            </>
+          <FormAccordion value="item-3" title="Misc">
+            <MiscStep />
           </FormAccordion>
         </Accordion>
       </div>

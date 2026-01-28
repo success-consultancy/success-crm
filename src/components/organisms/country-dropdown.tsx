@@ -15,6 +15,7 @@ import { CircleFlag } from 'react-circle-flags';
 // data
 import { countries } from 'country-data-list';
 import { Label } from '@radix-ui/react-label';
+import FormErrorMessage from '../atoms/form-error-message';
 
 // Country interface
 export interface Country {
@@ -41,6 +42,7 @@ interface CountryDropdownProps {
   label?: string;
   className?: string;
   required?: boolean;
+  error?: string;
 }
 
 const CountryDropdownComponent = (
@@ -56,6 +58,7 @@ const CountryDropdownComponent = (
     name,
     label,
     className,
+    error,
     required = false,
     ...props
   }: CountryDropdownProps,
@@ -113,6 +116,9 @@ const CountryDropdownComponent = (
           )}
           <ChevronDown size={16} />
         </PopoverTrigger>
+
+        {error && <FormErrorMessage message={error} />}
+
         <PopoverContent collisionPadding={10} side="bottom" className="min-w-[--radix-popper-anchor-width] p-0">
           <Command className="w-full max-h-[200px] sm:max-h-[270px]">
             <CommandList>
