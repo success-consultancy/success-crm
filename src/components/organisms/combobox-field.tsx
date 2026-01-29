@@ -53,7 +53,7 @@ const ComboboxField = <T extends FieldValues>({
 
   return (
     <div className={`flex flex-col gap-1 -mt-1 w-full ${className || ''}`}>
-      <Label htmlFor={name} className="font-medium text-sm">
+      <Label htmlFor={name} className="font-medium">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>

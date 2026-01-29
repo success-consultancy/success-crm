@@ -2,45 +2,43 @@ import { cn } from '@/lib/utils';
 import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
+import StageItem from '@/components/organisms/stage-item';
+import { toast } from 'sonner';
+import { useUpdateVisaStatus } from '@/mutations/visa/add-visa';
 
-interface StageProps {
-  name: string;
-  active?: boolean;
-  isFirst?: boolean;
-}
-
-const StageItem = ({ name, active, isFirst }: StageProps) => {
-  const baseClasses =
-    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
-  const inactiveClasses = 'bg-gray-100 text-gray-800';
-  const activeClasses = 'bg-primary-blue text-white';
-  const pointSize = 15;
-
-  const clipPathValue = isFirst
-    ? `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%)`
-    : `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%, ${pointSize}px 50%)`;
-
-  return (
-    <div
-      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
-      style={{ clipPath: clipPathValue }}
-    >
-      {name}
-    </div>
-  );
-};
 
 type VisaStagesProps = { visa: IVisaDetail };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New Case', active: visa.status === VisaStatusTypes.NewApplicant },
-    { name: 'Documents Collected', active: visa.status === VisaStatusTypes.CollectingDocs },
-    { name: 'Visa Application Ready', active: visa.status === VisaStatusTypes.ReadyToSubmit },
-    { name: 'Visa Submitted', active: visa.status === VisaStatusTypes.Submitted },
-    { name: 'Visa Decision Received', active: visa.status === VisaStatusTypes.Approved },
+    { name: VisaStatusTypes.NewApplicant, active: visa.status === VisaStatusTypes.NewApplicant },
+    { name: VisaStatusTypes.CollectingDocs, active: visa.status === VisaStatusTypes.CollectingDocs },
+    { name: VisaStatusTypes.ReadyToSubmit, active: visa.status === VisaStatusTypes.ReadyToSubmit },
+    { name: VisaStatusTypes.Submitted, active: visa.status === VisaStatusTypes.Submitted },
+    { name: VisaStatusTypes.Approved, active: visa.status === VisaStatusTypes.Approved },
   ];
+
+  const updateStatus = useUpdateVisaStatus();
+
+  const handleStageChange = (stage: string) => {
+
+    const payload = { id: visa.id.toString(), status: stage }
+    updateStatus.mutate(
+      payload,
+      {
+        onSuccess: () => {
+          toast.success('Visa updated successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update visa');
+        },
+      },
+    );
+  }
+
 
   return (
     <div className="border rounded-lg">
@@ -86,7 +84,7 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
           {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
           ))}
         </div>
 

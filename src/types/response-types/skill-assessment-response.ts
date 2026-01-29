@@ -4,12 +4,18 @@ export interface ISkillAssessmentResponseType {
 }
 
 export enum SkillAssessmentStatusTypes {
-  Applied = 'Applied',
-  CollectingDocs = 'Collecting Docs',
-  Approved = 'Approved',
-  Discontinued = 'Discontinued',
-  FollowUp = 'Follow Up',
+  NewApplicant = "New Applicant",
+  CollectingDocs = "Collecting Docs",
+  ReadyToSubmit = "Ready to Submit",
+  Submitted = "Submitted",
+  InfoRequested = "Info Requested",
+  Approved = "Approved",
+  Withdrawn = "Withdrawn",
+  Refused = "Refused",
+  Discontinued = "Discontinued",
+  FollowUp = "Follow-up",
 }
+
 
 export interface ISkillAssessment {
   id: number;

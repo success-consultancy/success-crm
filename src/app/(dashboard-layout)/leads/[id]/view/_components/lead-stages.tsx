@@ -1,45 +1,42 @@
+import StageItem from '@/components/organisms/stage-item';
 import { cn } from '@/lib/utils';
+import { useEditLead, useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
+import { useGetLeadById } from '@/query/get-leads';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 import { Edit, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-
-interface StageProps {
-  name: string;
-  active?: boolean;
-  isFirst?: boolean;
-}
-
-const StageItem = ({ name, active, isFirst }: StageProps) => {
-  const baseClasses =
-    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
-  const inactiveClasses = 'bg-gray-100 text-gray-800';
-  const activeClasses = 'bg-primary-blue text-white';
-  const pointSize = 15;
-
-  const clipPathValue = isFirst
-    ? `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%)`
-    : `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%, ${pointSize}px 50%)`;
-
-  return (
-    <div
-      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
-      style={{ clipPath: clipPathValue }}
-    >
-      {name}
-    </div>
-  );
-};
+import toast from 'react-hot-toast';
 
 type LeadStagesProps = { lead: ILead };
 export const LeadStages = ({ lead }: LeadStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New', active: lead.status === LeadStatusTypes.New },
-    { name: 'Negotiation', active: lead.status === LeadStatusTypes.Negotiation },
-    { name: 'Converted', active: lead.status === LeadStatusTypes.Converted },
-    { name: 'Not Interested', active: lead.status === LeadStatusTypes.NotInterested },
-    { name: 'Follow Up', active: lead.status === LeadStatusTypes.FollowUp },
+    { name: LeadStatusTypes.New, active: lead.status === LeadStatusTypes.New },
+    { name: LeadStatusTypes.Negotiation, active: lead.status === LeadStatusTypes.Negotiation },
+    { name: LeadStatusTypes.Converted, active: lead.status === LeadStatusTypes.Converted },
+    { name: LeadStatusTypes.NotInterested, active: lead.status === LeadStatusTypes.NotInterested },
+    { name: LeadStatusTypes.FollowUp, active: lead.status === LeadStatusTypes.FollowUp },
   ];
+
+  const updateLeadStatus = useUpdateLeadStatus();
+
+  const handleStageChange = (stage: string) => {
+
+    const payload = { id: lead.id.toString(), status: stage }
+    updateLeadStatus.mutate(
+      payload,
+      {
+        onSuccess: () => {
+          toast.success('Lead updated successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update lead');
+        },
+      },
+    );
+  }
 
   return (
     <div className="border rounded-lg shadow-sm ">
@@ -85,7 +82,7 @@ export const LeadStages = ({ lead }: LeadStagesProps) => {
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
           {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
           ))}
         </div>
         <div className="flex gap-2 ml-4">

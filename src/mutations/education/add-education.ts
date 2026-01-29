@@ -4,6 +4,7 @@ import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { EducationSchemaType } from '@/schema/education-schema';
 import { EducationServiceType } from '@/schema/education-service/new-student.schema';
+import { toast } from 'sonner';
 
 const addEducation = async (payload: Omit<EducationSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
@@ -54,3 +55,34 @@ export const useAddEducationService = () => {
     },
   });
 };
+
+type IPayloadStatus = {
+  id: string;
+  status: string;
+};
+
+const updateServiceStatus = async ({ id, status }: IPayloadStatus) => {
+  const res = await api.patch(`/student/${id}/status`, { status });
+};
+
+export const useUpdateEducationStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateServiceStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_EDUCATIONS || query.queryKey[0] === QUERY_KEYS.GET_EDUCATION_BY_ID,
+      });
+      toast("Success!", {
+        description: "Education has been updated",
+      })
+    },
+    onError: () => {
+      toast("Error!", {
+        description: "Something went wrong",
+      })
+    },
+  });
+};
+

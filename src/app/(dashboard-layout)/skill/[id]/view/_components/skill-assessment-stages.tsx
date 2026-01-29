@@ -1,46 +1,48 @@
-import { cn } from '@/lib/utils';
-import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
+import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
-
-interface StageProps {
-  name: string;
-  active?: boolean;
-  isFirst?: boolean;
-}
-
-const StageItem = ({ name, active, isFirst }: StageProps) => {
-  const baseClasses =
-    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
-  const inactiveClasses = 'bg-gray-100 text-gray-800';
-  const activeClasses = 'bg-primary-blue text-white';
-  const pointSize = 15;
-
-  const clipPathValue = isFirst
-    ? `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%)`
-    : `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%, ${pointSize}px 50%)`;
-
-  return (
-    <div
-      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
-      style={{ clipPath: clipPathValue }}
-    >
-      {name}
-    </div>
-  );
-};
+import StageItem from '@/components/organisms/stage-item';
+import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
+import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
+import { useUpdateSkillStatus } from '@/mutations/skill-assessment/add-skill-assessment';
 
 type SkillAssessmentStagesProps = { skillAssessment: ISkillAssessment };
 
 export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New Applicant', active: skillAssessment.status === SkillAssessmentStatusTypes.Applied },
-    { name: 'Collecting Docs', active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs },
-    { name: 'Ready to Submit', active: false },
-    { name: 'Submitted', active: false },
-    { name: 'Info Requested', active: false },
+    { name: SkillAssessmentStatusTypes.NewApplicant, active: skillAssessment.status === SkillAssessmentStatusTypes.NewApplicant },
+    { name: SkillAssessmentStatusTypes.CollectingDocs, active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs },
+    { name: SkillAssessmentStatusTypes.ReadyToSubmit, active: skillAssessment.status === SkillAssessmentStatusTypes.ReadyToSubmit },
+    { name: SkillAssessmentStatusTypes.Submitted, active: skillAssessment.status === SkillAssessmentStatusTypes.Submitted },
+    { name: SkillAssessmentStatusTypes.InfoRequested, active: skillAssessment.status === SkillAssessmentStatusTypes.InfoRequested },
+    { name: SkillAssessmentStatusTypes.Approved, active: skillAssessment.status === SkillAssessmentStatusTypes.Approved },
+    { name: SkillAssessmentStatusTypes.Withdrawn, active: skillAssessment.status === SkillAssessmentStatusTypes.Withdrawn },
+    { name: SkillAssessmentStatusTypes.Refused, active: skillAssessment.status === SkillAssessmentStatusTypes.Refused },
+    { name: SkillAssessmentStatusTypes.Discontinued, active: skillAssessment.status === SkillAssessmentStatusTypes.Discontinued },
+    { name: SkillAssessmentStatusTypes.FollowUp, active: skillAssessment.status === SkillAssessmentStatusTypes.FollowUp },
   ];
+
+  const updateSkillStatus = useUpdateSkillStatus();
+
+  const handleStageChange = (stage: string) => {
+
+    const payload = { id: skillAssessment.id.toString(), status: stage }
+    updateSkillStatus.mutate(
+      payload,
+      {
+        onSuccess: () => {
+          toast.success('Skill updated successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update skill');
+        },
+      },
+    );
+  }
+
 
   return (
     <div className="border rounded-lg">
@@ -91,7 +93,7 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
           {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
           ))}
         </div>
 

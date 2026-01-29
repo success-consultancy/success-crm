@@ -6,18 +6,22 @@ export interface ITribunalReviewResponseType {
 }
 
 export enum TribunalStatusTypes {
-  NewTribunal = 'New Tribunal',
-  CollectingDocs = 'Collecting Docs',
-  ReadyToSubmit = 'Ready to Submit',
-  Submitted = 'Submitted',
-  InfoReceived = 'Info Received',
-  Approved = 'Approved',
-  FeePaid = 'Fee Paid',
-  Withdrawn = 'Withdrawn',
-  Refused = 'Refused',
-  Discontinued = 'Discontinued',
-  FollowUp = 'Follow Up',
+  NewTribunal = "New Tribunal",
+  CollectingDocs = "Collecting Docs",
+  ReadyToSubmit = "Ready to Submit",
+  Submitted = "Submitted",
+  InfoRequested = "Info Requested",
+  Remitted = "Remitted",
+  Withdrawn = "Withdrawn",
+  Refused = "Refused",
+  Discontinued = "Discontinued",
+  MinisterialApproved = "Ministerial Approved",
+  MinisterialIntervention = "Ministerial Intervention",
+  MinisterialRefused = "Ministerial Refused",
+  Other = "Other",
+  FollowUp = "Follow-up",
 }
+
 export interface ITribunalReview {
   id: number;
   firstName: string;

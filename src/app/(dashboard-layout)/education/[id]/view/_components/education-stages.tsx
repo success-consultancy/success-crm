@@ -1,46 +1,42 @@
-import { cn } from '@/lib/utils';
-import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
-import { Edit, Eye, MessageCircle } from 'lucide-react';
+import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-
-interface StageProps {
-  name: string;
-  active?: boolean;
-  isFirst?: boolean;
-}
-
-const StageItem = ({ name, active, isFirst }: StageProps) => {
-  const baseClasses =
-    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
-  const inactiveClasses = 'bg-gray-100 text-gray-800';
-  const activeClasses = 'bg-primary-blue text-white';
-  const pointSize = 15;
-
-  const clipPathValue = isFirst
-    ? `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%)`
-    : `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%, ${pointSize}px 50%)`;
-
-  return (
-    <div
-      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
-      style={{ clipPath: clipPathValue }}
-    >
-      {name}
-    </div>
-  );
-};
+import { Edit, Eye, MessageCircle } from 'lucide-react';
+import StageItem from '@/components/organisms/stage-item';
+import { useUpdateEducationStatus } from '@/mutations/education/add-education';
+import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 
 type EducationStagesProps = { education: IEducation };
 export const EducationStages = ({ education }: EducationStagesProps) => {
   const router = useRouter();
 
   const stages = [
-    { name: 'New', active: education.status === EducationStatusTypes.New },
-    { name: 'Checklist Sent', active: education.status === EducationStatusTypes.ChecklistSent },
-    { name: 'Application Ready', active: education.status === EducationStatusTypes.ApplicationReady },
-    { name: 'Application Submitted', active: education.status === EducationStatusTypes.ApplicaitonSubmitted },
-    { name: 'Offer Received', active: education.status === EducationStatusTypes.OfferReceived },
+    { name: EducationStatusTypes.New, active: education.status === EducationStatusTypes.New },
+    { name: EducationStatusTypes.ChecklistSent, active: education.status === EducationStatusTypes.ChecklistSent },
+    { name: EducationStatusTypes.ApplicationReady, active: education.status === EducationStatusTypes.ApplicationReady },
+    { name: EducationStatusTypes.ApplicationSubmitted, active: education.status === EducationStatusTypes.ApplicationSubmitted },
+    { name: EducationStatusTypes.OfferReceived, active: education.status === EducationStatusTypes.OfferReceived },
   ];
+
+  const updateLeadStatus = useUpdateEducationStatus();
+
+  const handleStageChange = (stage: string) => {
+
+    const payload = { id: education.id.toString(), status: stage }
+    updateLeadStatus.mutate(
+      payload,
+      {
+        onSuccess: () => {
+          toast.success('Education updated successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update education');
+        },
+      },
+    );
+  }
+
 
   return (
     <div className="border rounded-lg shadow-sm ">
@@ -85,7 +81,7 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
           {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
           ))}
         </div>
         <div className="flex gap-2 ml-4">

@@ -62,7 +62,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   }, [userId, setValue]);
 
   const universityId = form.watch('universityId');
-  console.log('universityId', universityId, errors);
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
   const editEducation = useEditEducation();
   const params = useParams<{ id: string }>();
@@ -106,14 +105,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dob">
-                Birth Date
-              </Label>
               <Controller
                 name="dob"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label='Birth Date'
                     error={!!errors.dob?.message}
                     side="top"
                     value={field.value}
@@ -132,14 +129,13 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="issueDate">
-                Passport Issue Date
-              </Label>
+
               <Controller
                 name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label='Passport Issue Date'
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
@@ -152,14 +148,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
               <FormErrorMessage message={errors.issueDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="expiryDate">
-                Passport Expiry Date
-              </Label>
               <Controller
                 name="expiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label='Passport Expiry Date'
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
@@ -215,14 +209,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             </div>
             <div className="grid grid-cols-3 gap-6 mt-6">
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="startDate">
-                  Start Date
-                </Label>
                 <Controller
                   name="startDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label='Start Date'
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
@@ -236,14 +228,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 <FormErrorMessage message={errors.startDate?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="endDate">
-                  End Date
-                </Label>
                 <Controller
                   name="endDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label='End Date'
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
