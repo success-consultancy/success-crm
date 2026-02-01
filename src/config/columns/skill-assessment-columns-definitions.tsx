@@ -284,18 +284,28 @@ export const useSkillAssessmentColumn = (
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
-            case SkillAssessmentStatusTypes.Applied:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Applied</Badge>;
-            case SkillAssessmentStatusTypes.Approved:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>;
-            case SkillAssessmentStatusTypes.Discontinued:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Discontinued</Badge>;
-            case SkillAssessmentStatusTypes.FollowUp:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
+            case SkillAssessmentStatusTypes.NewApplicant:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New Applicant</Badge>;
             case SkillAssessmentStatusTypes.CollectingDocs:
-              return <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100">Collecting Docs</Badge>;
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Collecting Docs</Badge>;
+            case SkillAssessmentStatusTypes.ReadyToSubmit:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Ready to Submit</Badge>;
+            case SkillAssessmentStatusTypes.Submitted:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Submitted</Badge>;
+            case SkillAssessmentStatusTypes.InfoRequested:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Info Requested</Badge>;
+            case SkillAssessmentStatusTypes.Approved:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Approved</Badge>;
+            case SkillAssessmentStatusTypes.Discontinued:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Discontinued</Badge>;
+            case SkillAssessmentStatusTypes.FollowUp:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Follow Up</Badge>;
+            case SkillAssessmentStatusTypes.Withdrawn:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Withdrawn</Badge>;
+            case SkillAssessmentStatusTypes.Refused:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Refused</Badge>;
             default:
-              return status ? <span>{status}</span> : <span>-</span>;
+              return status ? <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{status}</Badge> : <span>-</span>;
           }
         };
 

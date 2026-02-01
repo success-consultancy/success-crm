@@ -569,9 +569,14 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 label="Status"
                 required
                 options={[
-                  { label: SkillAssessmentStatusTypes.Applied, value: SkillAssessmentStatusTypes.Applied },
+                  { label: SkillAssessmentStatusTypes.NewApplicant, value: SkillAssessmentStatusTypes.NewApplicant },
                   { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
+                  { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
+                  { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
+                  { label: SkillAssessmentStatusTypes.InfoRequested, value: SkillAssessmentStatusTypes.InfoRequested },
                   { label: SkillAssessmentStatusTypes.Approved, value: SkillAssessmentStatusTypes.Approved },
+                  { label: SkillAssessmentStatusTypes.Withdrawn, value: SkillAssessmentStatusTypes.Withdrawn },
+                  { label: SkillAssessmentStatusTypes.Refused, value: SkillAssessmentStatusTypes.Refused },
                   { label: SkillAssessmentStatusTypes.Discontinued, value: SkillAssessmentStatusTypes.Discontinued },
                   { label: SkillAssessmentStatusTypes.FollowUp, value: SkillAssessmentStatusTypes.FollowUp },
                 ]}
