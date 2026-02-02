@@ -8,9 +8,7 @@ type NoteSectionProps = { lead: ILead };
 
 const NoteSection = ({ lead }: NoteSectionProps) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [note, setNote] = useState(
-    `Lead for ${lead.firstName} ${lead.lastName}. Status: ${lead.status || '-'}. Service: ${lead.serviceType || '-'}.`,
-  );
+  const [note, setNote] = useState(``);
 
   return (
     <TitleBox title="Note">

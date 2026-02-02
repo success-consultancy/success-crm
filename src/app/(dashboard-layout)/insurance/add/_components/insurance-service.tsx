@@ -35,11 +35,15 @@ import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
+import insuranceFormSchema, { InsuranceSchemaType, updateInsuranceFormSchema } from '@/schema/insurance';
+import { useAddInsurance } from '@/mutations/insurance/add-insurance';
+import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
+import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
 
 interface Props {
   userId: number | undefined;
   formState: FORM_STATE;
-  defaultValues?: Partial<TribunalReviewSchemaType>;
+  defaultValues?: Partial<InsuranceSchemaType>;
 }
 
 export function TribunalService({ userId, formState, defaultValues }: Props) {
@@ -52,8 +56,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     setError,
     handleSubmit,
     reset,
-  } = useForm<TribunalReviewSchemaType>({
-    resolver: zodResolver(formState === FORM_STATE.ADD ? tribunalReviewFormSchema : updateTribunalReviewFormSchema),
+  } = useForm<InsuranceSchemaType>({
+    resolver: zodResolver(formState === FORM_STATE.ADD ? insuranceFormSchema : updateInsuranceFormSchema),
     defaultValues: defaultValues,
     mode: 'onChange',
   });
@@ -62,20 +66,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
-  const { data: occupations } = useGetOccupations();
-  const discount = watch('accounts.discount');
-  const amount = watch('accounts.amount');
-
-  const ANZSCOOccupationOptions = useMemo(() => {
-    return occupations?.map((occupation) => {
-      const value = occupation.code;
-      const label = occupation.title + ' - ' + occupation.code;
-      return {
-        value,
-        label,
-      };
-    });
-  }, [occupations]);
+  const insuranceProviders = getInsuranceProviderMapping();
+  const insuranceTypes = getInsuranceTypeMapping();
 
   useEffect(() => {
     if (userId) {
@@ -90,24 +82,24 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     setValue('accounts.feeNote', content, { shouldValidate: true });
   };
 
-  const { mutate: addTribunalReview, isPending: addTribunalReviewPending } = useAddTribunalReview();
-  const { mutate: updateTribunalReview, isPending: updateTribunalReviewPending } = useUpdateTribunalReview();
+  const { mutate: addInsurance, isPending: addTribunalReviewPending } = useAddInsurance();
+  const { mutate: updateInsurance, isPending: updateTribunalReviewPending } = useEditInsurance();
 
-  const submitHandler = (data: TribunalReviewSchemaType) => {
+  const submitHandler = (data: InsuranceSchemaType) => {
     console.log(errors);
     if (formState === FORM_STATE.ADD) {
-      addTribunalReview(
+      addInsurance(
         { payload: { ...data, sourceId: data.sourceId } },
         {
           onSuccess: () => {
-            toast.success('Tribunal review added successfully');
+            toast.success('Insurance added successfully');
             reset();
           },
           onError: (error: any) => {
             if (error?.response?.data?.errors) {
               const errObject = error?.response?.data?.errors;
               Object.keys(errObject).forEach((key) => {
-                setError(key as keyof TribunalReviewSchemaType, { type: 'manual', message: errObject[key] });
+                setError(key as keyof InsuranceSchemaType, { type: 'manual', message: errObject[key] });
               });
             }
 
@@ -115,13 +107,13 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           },
         },
       );
-      router.push(ROUTES.TRIBUNAL_REVIEW);
+      router.push(ROUTES.INSURANCE);
     } else {
-      updateTribunalReview(
+      updateInsurance(
         { ...data, sourceId: data.sourceId },
         {
           onSuccess: () => {
-            toast.success('Tribunal review updated successfully');
+            toast.success('Insurance updated successfully');
             reset();
           },
           onError: (error) => {
@@ -129,12 +121,12 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               if (error?.response?.data?.errors) {
                 const errObject = error?.response?.data?.errors;
                 Object.keys(errObject).forEach((key) => {
-                  setError(key as keyof TribunalReviewSchemaType, { type: 'manual', message: errObject[key] });
+                  setError(key as keyof InsuranceSchemaType, { type: 'manual', message: errObject[key] });
                 });
               }
-              toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+              toast.error(error?.response?.data?.message || 'Failed to update insurance');
             } else {
-              toast.error(error?.message || 'Failed to update tribunal review');
+              toast.error(error?.message || 'Failed to update insurance');
             }
           },
         },
@@ -155,7 +147,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
   }, [users]);
 
   // Helper to handle date changes and convert to string (ISO format)
-  const handleDateChange = (fieldName: keyof TribunalReviewSchemaType) => (date: Date | undefined) => {
+  const handleDateChange = (fieldName: keyof InsuranceSchemaType) => (date: Date | undefined) => {
     if (date) {
       setValue(fieldName, format(date, 'yyyy-MM-dd') as any, { shouldValidate: true });
     } else {
@@ -173,22 +165,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
       return undefined;
     }
   };
-
-  // Calculate GST and Net Amount when amount or discount changes
-  useEffect(() => {
-    const amountValue = Number(amount) || 0;
-    const discountValue = Number(discount) || 0;
-
-    // Calculate GST (10% of amount)
-    const gstValue = (amountValue * 0.1).toFixed(2);
-
-    // Calculate Net Amount (amount + gst - discount)
-    const netAmountValue = (amountValue + Number(gstValue) - discountValue).toFixed(2);
-
-    // Update form values
-    setValue('accounts.gst', gstValue, { shouldValidate: false });
-    setValue('accounts.netamount', netAmountValue, { shouldValidate: false });
-  }, [amount, discount, setValue]);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
@@ -327,19 +303,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               />
               <FormErrorMessage message={errors.dueDate?.message} />
             </div>
-            <SelectField
-              control={control}
-              name="proposedVisa"
-              label="Proposed visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Skilled Migration', value: 'Skilled Migration' },
-                { label: 'Family Visa', value: 'Family Visa' },
-                { label: 'Business Visa', value: 'Business Visa' },
-              ]}
-              placeholder="Select proposed visa type"
-            />
+
             <SelectField
               control={control}
               name="visaStream"
@@ -353,239 +317,80 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               placeholder="Select an visaStream"
             />
 
-            <FormField
-              control={control}
-              name="anzsco"
-              render={({ field }) => (
-                <SelectWithCommand
-                  options={ANZSCOOccupationOptions || []}
-                  value={field.value || undefined}
-                  label="ANZSCO / Occupation"
-                  onSelect={(val) => {
-                    field.onChange(val);
-                    const occupation = occupations?.find((occupation) => occupation.code === val);
-                    setValue('occupation', occupation?.title, { shouldValidate: false });
-                  }}
-                  error={errors.anzsco?.message}
-                />
-              )}
-            />
-            <TextInput label="Sponsor name" {...register('sponsorName')} error={errors.sponsorName?.message} />
-            <TextInput
-              type="email"
-              label="Sponsor email"
-              {...register('sponsorEmail')}
-              error={errors.sponsorEmail?.message}
-            />
-            <TextInput label="Sponsor phone" {...register('sponsorPhone')} error={errors.sponsorPhone?.message} />
             <SelectField
               control={control}
-              name="sbsStatus"
-              label="SBS/TAS status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-              ]}
-              placeholder="Select a status"
+              name="insuranceProviderId"
+              label="Current insurance provider"
+              options={insuranceProviders}
+              placeholder="Select current insurance provider"
             />
+            <TextInput
+              label="Policy number"
+              placeholder="000-0000-0000"
+              {...register('policyNumber')}
+              error={errors.policyNumber?.message}
+            />
+
+            <SelectField
+              control={control}
+              name="insuranceTypeId"
+              label="Policy type"
+              options={insuranceTypes}
+              placeholder="Select policy type"
+            />
+
             <div className="space-y-2">
               <Controller
-                name="sbsSubmissionDate"
+                name="startDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
                     side="top"
                     value={getDateValue(field.value)}
-                    onChange={handleDateChange('sbsSubmissionDate')}
+                    onChange={handleDateChange('startDate')}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.sbsSubmissionDate?.message}
-                    label="Date submitted"
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.sbsSubmissionDate?.message} />
-            </div>
-            <div className="space-y-2">
-              <Controller
-                name="sbsDecisionDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('sbsDecisionDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.sbsDecisionDate?.message}
-                    label="Decision date"
+                    error={!!errors.startDate?.message}
+                    label="Policy start date"
                     disablePastDates={true}
                   />
                 )}
               />
-              <FormErrorMessage message={errors.sbsDecisionDate?.message} />
+              <FormErrorMessage message={errors.startDate?.message} />
             </div>
+
+            <div className="space-y-2">
+              <Controller
+                name="expiryDate"
+                control={control}
+                render={({ field }) => (
+                  <DatePicker
+                    side="top"
+                    value={getDateValue(field.value)}
+                    onChange={handleDateChange('expiryDate')}
+                    placeholder="DD/MM/YYYY"
+                    className="h-12 text-b2 w-full"
+                    error={!!errors.expiryDate?.message}
+                    label="Policy end date"
+                    disablePastDates={true}
+                  />
+                )}
+              />
+              <FormErrorMessage message={errors.expiryDate?.message} />
+            </div>
+
             <SelectField
               control={control}
-              name="nominationStatus"
-              label="Nomination status"
+              name="status"
+              label="Status"
               options={[
                 { label: 'New', value: 'New' },
-                { label: 'Collecting docs', value: 'Collecting docs' },
-                { label: 'Ready to submit', value: 'Ready to submit' },
-                { label: 'Submitted', value: 'Submitted' },
-                { label: 'Info requested', value: 'Info requested' },
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Withdrawn', value: 'Withdrawn' },
-                { label: 'Refused', value: 'Refused' },
+                { label: 'Processing', value: 'Processing' },
+                { label: 'Completed', value: 'Completed' },
                 { label: 'Discontinued', value: 'Discontinued' },
+                { label: 'Refunded', value: 'Refunded' },
               ]}
               placeholder="Select a status"
-            />
-            <div className="space-y-2">
-              <Controller
-                name="nominationSubmittedDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('nominationSubmittedDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.nominationSubmittedDate?.message}
-                    label="Nomination date submitted"
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.nominationSubmittedDate?.message} />
-            </div>
-            <div className="space-y-2">
-              <Controller
-                name="nominationDecisionDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('nominationDecisionDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.nominationDecisionDate?.message}
-                    label="Nomination decision date"
-                    disablePastDates={true}
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.nominationDecisionDate?.message} />
-            </div>
-            <SelectField
-              control={control}
-              name="visaStatus"
-              label="Visa status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-                { label: 'Under Review', value: 'Under Review' },
-              ]}
-              placeholder="Select a status"
-            />
-            <div className="space-y-2">
-              <Controller
-                name="visaSubmittedDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    label="Visa date submitted"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaSubmittedDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.visaSubmittedDate?.message}
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.visaSubmittedDate?.message} />
-            </div>
-            <div className="space-y-2">
-              <Controller
-                name="visaDecisionDate"
-                control={control}
-                render={({ field }) => (
-                  <DatePicker
-                    side="top"
-                    label="Visa decision date"
-                    value={getDateValue(field.value)}
-                    onChange={handleDateChange('visaDecisionDate')}
-                    placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
-                    error={!!errors.visaDecisionDate?.message}
-                    disablePastDates={true}
-                  />
-                )}
-              />
-              <FormErrorMessage message={errors.visaDecisionDate?.message} />
-            </div>
-          </div>
-        </FormAccordion>
-
-        {/* Tribunal */}
-        <FormAccordion value="item-3" title="Tribunal review details">
-          <div className="grid grid-cols-3 gap-6">
-            {/* date submitted, hearing date, tribunal decision date */}
-
-            <TextInput label="Tribunal Status" {...register('tribunalStatus')} error={errors.tribunalStatus?.message} />
-            <Controller
-              name="tribunalSubmittedDate"
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  side="top"
-                  value={getDateValue(field.value)}
-                  onChange={handleDateChange('tribunalSubmittedDate')}
-                  placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
-                  error={!!errors.tribunalSubmittedDate?.message}
-                  label="Date submitted"
-                />
-              )}
-            />
-
-            <Controller
-              name="hearingDate"
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  side="top"
-                  value={getDateValue(field.value)}
-                  onChange={handleDateChange('hearingDate')}
-                  placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
-                  label="Hearing date"
-                  error={!!errors.hearingDate?.message}
-                  disablePastDates={true}
-                />
-              )}
-            />
-
-            <Controller
-              name="tribunalDecisionDate"
-              control={control}
-              render={({ field }) => (
-                <DatePicker
-                  side="top"
-                  value={getDateValue(field.value)}
-                  onChange={handleDateChange('tribunalDecisionDate')}
-                  placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
-                  label="Tribunal decision date"
-                  error={!!errors.tribunalDecisionDate?.message}
-                  disablePastDates={true}
-                />
-              )}
             />
           </div>
         </FormAccordion>
@@ -732,14 +537,14 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-start mt-6">
+      <div className="flex justify-end mt-6">
         <Button
           loading={addTribunalReviewPending || updateTribunalReviewPending}
           loadingText="Processing"
           type="submit"
           variant="primary"
         >
-          {formState === FORM_STATE.ADD ? 'Add Tribunal Review' : 'Update Tribunal Review'}
+          {formState === FORM_STATE.ADD ? 'Add Applicant' : 'Update Tribunal Review'}
         </Button>
         <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
           Cancel

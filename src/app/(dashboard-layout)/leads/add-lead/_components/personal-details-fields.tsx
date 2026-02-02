@@ -22,20 +22,13 @@ const PersonalDetailsStep = () => {
 
   const { data: occupations } = useGetOccupations();
 
-  const occupationsOptions = useMemo(() => {
+  const ANZSCOOccupationOptions = useMemo(() => {
     return occupations?.map((occupation) => {
+      const value = occupation.code;
+      const label = occupation.title + ' - ' + occupation.code;
       return {
-        value: occupation.title as string,
-        label: occupation.title as string,
-      };
-    });
-  }, [occupations]);
-
-  const ANZSCOOptions = useMemo(() => {
-    return occupations?.map((occupation) => {
-      return {
-        value: occupation.code as string,
-        label: occupation.code as string,
+        value,
+        label,
       };
     });
   }, [occupations]);
@@ -136,26 +129,17 @@ const PersonalDetailsStep = () => {
       <div className="flex items-center gap-5">
         <FormField
           control={control}
-          name="occupation"
-          render={({ field }) => (
-            <SelectWithCommand
-              options={occupationsOptions || []}
-              value={field.value || undefined}
-              label="Occupation"
-              onSelect={(val) => field.onChange(val)}
-              error={errors.occupation?.message}
-            />
-          )}
-        />
-        <FormField
-          control={control}
           name="anzsco"
           render={({ field }) => (
             <SelectWithCommand
-              options={ANZSCOOptions || []}
+              options={ANZSCOOccupationOptions || []}
               value={field.value || undefined}
-              label="ANZSCO"
-              onSelect={(val) => field.onChange(val)}
+              label="ANZSCO / Occupation"
+              onSelect={(val) => {
+                field.onChange(val);
+                const occupation = occupations?.find((occupation) => occupation.code === val);
+                setValue('occupation', occupation?.title, { shouldValidate: false });
+              }}
               error={errors.anzsco?.message}
             />
           )}

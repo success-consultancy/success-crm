@@ -17,4 +17,7 @@ export const QUERY_KEYS = {
   GET_TRIBUNAL_REVIEW: 'get-tribunal-review',
   GET_TRIBUNAL_LOG: 'get-tribunal-log',
   GET_TRIBUNAL_REVIEW_BY_ID: 'get-tribunal-review-by-id',
+  GET_INSURANCE: 'get-insurance',
+  GET_INSURANCE_LOG: 'get-insurance-log',
+  GET_INSURANCE_BY_ID: 'get-insurance-by-id',
 };

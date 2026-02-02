@@ -61,14 +61,15 @@ export function DatePicker({
 
     return false;
   };
+  const defaultMonth = value || new Date();
 
   return (
     <div>
       {label && (
-        <Label htmlFor="dueDate" className='font-medium'>
+        <Label htmlFor="dueDate" className="font-medium">
           {label}
-        </Label>)
-      }
+        </Label>
+      )}
       <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
         <div className={cn('flex w-full flex-col gap-3', needTime ? 'flex-1' : 'w-full')}>
           <Popover modal={true} open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
@@ -108,6 +109,8 @@ export function DatePicker({
                     }
                   }}
                   disabled={getDisabledDates}
+                  startMonth={disablePastDates ? defaultMonth : undefined}
+                  endMonth={disablePastDates ? new Date(2050, 12, 31) : undefined}
                 />
               </PopoverContent>
             )}
@@ -128,6 +131,5 @@ export function DatePicker({
         )}
       </div>
     </div>
-
   );
 }

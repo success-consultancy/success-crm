@@ -17,3 +17,10 @@ export const FOLLOWABLE_TYPE = {
   TRIBUNAL_REVIEW: 'tribunalReview',
   SKILL_ASSESSMENT: 'skillAssessment',
 };
+
+export type UploadedFileMeta = {
+  url: string;
+  size: number;
+  addedDate: string;
+  name: string;
+};

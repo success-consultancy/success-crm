@@ -198,7 +198,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.InsuranceService,
     icon: ShieldTick,
-    href: '#',
+    href: '/insurance',
   },
   {
     title: DashboardTitle.AgencyAgreement,

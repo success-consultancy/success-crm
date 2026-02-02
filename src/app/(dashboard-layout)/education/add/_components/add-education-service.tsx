@@ -29,6 +29,7 @@ import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
+import countryList from 'react-select-country-list';
 
 interface Props {
   userId: number | undefined;
@@ -131,6 +132,16 @@ export function AddEducationService({ userId }: Props) {
     }
   }, [users]);
 
+  const countries = useMemo(
+    () =>
+      countryList()
+        .getData()
+        .map((country) => {
+          return { label: country.label, value: country.label };
+        }),
+    [],
+  );
+
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
@@ -163,7 +174,19 @@ export function AddEducationService({ userId }: Props) {
             </div>
             <TextInput type="email" label="Email" {...register('email')} error={errors.email?.message} />
             <TextInput label="Phone Number" {...register('phone')} error={errors.phone?.message} />
-            <TextInput label="Country" {...register('country')} error={errors.country?.message} />
+            <FormField
+              control={control}
+              name="country"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={countries || []}
+                  value={field.value ?? undefined}
+                  label="Country"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.country?.message}
+                />
+              )}
+            />
             <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
@@ -181,6 +204,7 @@ export function AddEducationService({ userId }: Props) {
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
                     error={!!errors.issueDate?.message}
+                    disableFutureDates={true}
                   />
                 )}
               />
@@ -201,6 +225,7 @@ export function AddEducationService({ userId }: Props) {
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
                     error={!!errors.expiryDate?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -485,7 +510,7 @@ export function AddEducationService({ userId }: Props) {
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
-        <Button type="button" variant="outline" className="ml-3">
+        <Button onClick={() => form.reset()} type="button" variant="outline" className="ml-3">
           Cancel
         </Button>
       </div>

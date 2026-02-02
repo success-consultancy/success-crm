@@ -8,14 +8,17 @@ import { useAddTribunalReview } from '@/mutations/tribunal-review/add-tribunal-r
 import { useAddVisa } from '@/mutations/visas/add-visa';
 import { ILead } from '@/types/response-types/leads-response';
 import { FolderSymlink, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 const Transition = ({ lead }: { lead: ILead }) => {
   type Service = {
     id: string;
     title: string;
+    path: string;
     clientKey: keyof ILead['clientIds'];
   };
+  const router = useRouter();
 
   const addVisa = useAddVisa();
   const addSkillAssessment = useAddSkillAssessment();
@@ -28,26 +31,31 @@ const Transition = ({ lead }: { lead: ILead }) => {
       id: 'students',
       title: 'Education service',
       clientKey: 'students',
+      path: 'education',
     },
     {
       id: 'visa',
       title: 'Visa service',
       clientKey: 'visaApplicants',
+      path: 'visa',
     },
     {
       id: 'skill',
       title: 'Skill assessment service',
       clientKey: 'skillAssessments',
+      path: 'skill',
     },
     {
       id: 'insurance',
       title: 'Insurance service',
       clientKey: 'insuranceApplicants',
+      path: 'insurance',
     },
     {
       id: 'tribunal',
       title: 'Tribunal review service',
       clientKey: 'tribunalReviews',
+      path: 'tribunal-review',
     },
   ]);
 
@@ -220,7 +228,9 @@ const Transition = ({ lead }: { lead: ILead }) => {
             {getClient(service.clientKey).map((client) => {
               return (
                 <div key={client?.id} className="bg-[#F2F4F7] mb-4 flex flex-col gap-2 p-3 rounded-md">
-                  <p>ID:{client?.id}</p>
+                  <p className="cursor-pointer" onClick={() => router.push(`/${service.path}/${client.id}/view`)}>
+                    ID:{client?.id}
+                  </p>
                   <p className="text-c1 text-neutral-dark-grey">
                     Moved by {client?.UpdatedByUser?.firstName}
                     {client?.UpdatedByUser?.lastName}
@@ -254,7 +264,9 @@ const Transition = ({ lead }: { lead: ILead }) => {
         isOpen={isConfirmationOpen}
         setIsOpen={setIsConfirmationOpen}
         title="Confirm Move"
-        message={`Are you sure you want to move this lead to ${services.find((s) => s.id === selectedServiceId)?.title}?`}
+        message={`Are you sure you want to move this lead to ${
+          services.find((s) => s.id === selectedServiceId)?.title
+        }?`}
         confirmText="Move"
         cancelText="Cancel"
         onConfirm={handleConfirmMove}

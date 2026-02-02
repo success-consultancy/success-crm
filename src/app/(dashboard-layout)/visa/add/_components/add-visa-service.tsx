@@ -275,6 +275,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -295,6 +296,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.dueDate?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -397,6 +399,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaGranted?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -454,6 +457,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationDecision?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -502,6 +506,7 @@ export function AddVisaService({ userId }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaGranted?.message}
+                    disablePastDates={true}
                   />
                 )}
               />

@@ -5,12 +5,13 @@ import { useDropzone } from 'react-dropzone';
 import { CloudUpload, File, X, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
+import { UploadedFileMeta } from '@/types/common';
 
 type Props = {
   type: string;
   maxFileSize: number; // in MB
   acceptedFiles: string[];
-  onUploadComplete?: (fileUrls: string[]) => void;
+  onUploadComplete?: (files: UploadedFileMeta[]) => void;
 };
 
 type FileWithStatus = {
@@ -22,7 +23,8 @@ type FileWithStatus = {
 const FileUploader = (props: Props) => {
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [isUploading, setIsUploading] = useState(false);
-  const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  // const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFileMeta[]>([]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -87,13 +89,21 @@ const FileUploader = (props: Props) => {
 
           // Add the new URL to the uploaded URLs
           if (remoteFileUrl) {
-            setUploadedUrls((prev) => {
-              const newUrls = [...prev, remoteFileUrl as string];
-              // Call the onUploadComplete callback with all uploaded URLs
+            const uploadedFile: UploadedFileMeta = {
+              url: remoteFileUrl,
+              size: file.size,
+              name: file.name,
+              addedDate: new Date().toISOString(),
+            };
+
+            setUploadedFiles((prev) => {
+              const updated = [...prev, uploadedFile];
+
               if (props.onUploadComplete) {
-                props.onUploadComplete(newUrls);
+                props.onUploadComplete(updated);
               }
-              return newUrls;
+
+              return updated;
             });
           }
         } else {
@@ -130,25 +140,19 @@ const FileUploader = (props: Props) => {
   };
 
   const removeFile = (fileName: string) => {
-    setFiles((prev) => {
-      const filteredFiles = prev.filter((f) => f.file.name !== fileName);
-      // If no files left, clear uploaded URLs and call callback with empty array
-      if (filteredFiles.length === 0) {
-        setUploadedUrls([]);
-        if (props.onUploadComplete) {
-          props.onUploadComplete([]);
-        }
-      }
-      return filteredFiles;
+    setFiles((prev) => prev.filter((f) => f.file.name !== fileName));
+
+    setUploadedFiles((prev) => {
+      const updated = prev.filter((f) => f.name !== fileName);
+      props.onUploadComplete?.(updated);
+      return updated;
     });
   };
 
   const clearAllFiles = () => {
     setFiles([]);
-    setUploadedUrls([]);
-    if (props.onUploadComplete) {
-      props.onUploadComplete([]);
-    }
+    setUploadedFiles([]);
+    props.onUploadComplete?.([]);
   };
 
   const getFileSize = (size: number) => {
