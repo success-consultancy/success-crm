@@ -91,6 +91,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       const payload = {
         title: data.title,
         description: data.description || undefined,
+        date: dateStr,
         startTime: startDateTime,
         endTime: endDateTime,
         clientId: data.clientId || undefined,
