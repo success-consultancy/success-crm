@@ -19,6 +19,7 @@ export const QUERY_KEYS = {
   GET_TRIBUNAL_REVIEW_BY_ID: 'get-tribunal-review-by-id',
   GET_APPOINTMENTS: 'get-appointments',
   GET_APPOINTMENT_BY_ID: 'get-appointment-by-id',
+  GET_CALENDAR: 'get-calendar',
   GET_AGREEMENTS: 'get-agreements',
   GET_AGREEMENT_BY_ID: 'get-agreement-by-id',
 };
