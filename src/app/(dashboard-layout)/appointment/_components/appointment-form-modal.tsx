@@ -89,9 +89,13 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       const endDateTime = `${dateStr}T${data.endTime}:00`;
 
       const payload = {
-        ...data,
+        title: data.title,
+        description: data.description || undefined,
+        date: dateStr,
         startTime: startDateTime,
         endTime: endDateTime,
+        clientId: data.clientId || undefined,
+        ownerId: data.ownerId,
       };
 
       if (isEditMode && appointment) {

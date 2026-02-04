@@ -5,6 +5,7 @@ import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSa
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import useSearchParams from '@/hooks/use-search-params';
 import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
+import { CALENDAR_FILTER_PARAMS, useGetCalendar } from '@/query/get-calendar';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
@@ -87,7 +88,15 @@ const AppointmentCalendarPage = () => {
     view: currentView as 'month' | 'week' | 'work-week' | 'day' | 'agenda',
   });
 
+  const { data: calendarData, isLoading: isCalendarLoading } = useGetCalendar({
+    ...getSearchParamsObject(CALENDAR_FILTER_PARAMS),
+    ...dateRange,
+    userId: userId,
+    view: currentView as 'month' | 'week' | 'work-week' | 'day' | 'agenda',
+  });
+
   const appointments = data?.rows || [];
+  const calendarEvents = calendarData?.rows || [];
 
   const handleViewChange = (view: string) => {
     setParams([{ name: 'view', value: view }]);
@@ -175,6 +184,13 @@ const AppointmentCalendarPage = () => {
     return aptDate === selectedDateStr;
   });
 
+  // Get calendar events for selected date
+  const selectedDateEvents = calendarEvents.filter((evt) => {
+    const evtDate = format(parseISO(evt.date), 'yyyy-MM-dd');
+    const selectedDateStr = format(selectedDate, 'yyyy-MM-dd');
+    return evtDate === selectedDateStr;
+  });
+
   // Group appointments by date for calendar view
   const appointmentsByDate = appointments.reduce((acc, apt) => {
     const dateKey = format(parseISO(apt.date), 'yyyy-MM-dd');
@@ -182,6 +198,16 @@ const AppointmentCalendarPage = () => {
       acc[dateKey] = [];
     }
     acc[dateKey].push(apt);
+    return acc;
+  }, {} as Record<string, IAppointment[]>);
+
+  // Group calendar events by date
+  const eventsByDate = calendarEvents.reduce((acc, evt) => {
+    const dateKey = format(parseISO(evt.date), 'yyyy-MM-dd');
+    if (!acc[dateKey]) {
+      acc[dateKey] = [];
+    }
+    acc[dateKey].push(evt as IAppointment);
     return acc;
   }, {} as Record<string, IAppointment[]>);
 
@@ -334,6 +360,33 @@ const AppointmentCalendarPage = () => {
     
     return result;
   }, [appointments]);
+
+  // Group calendar events by date for agenda view
+  const eventsByDateForAgenda = useMemo(() => {
+    const grouped: Record<string, IAppointment[]> = {};
+    calendarEvents.forEach((evt) => {
+      const dateKey = format(parseISO(evt.date), 'yyyy-MM-dd');
+      if (!grouped[dateKey]) {
+        grouped[dateKey] = [];
+      }
+      grouped[dateKey].push(evt as IAppointment);
+    });
+    
+    // Sort dates and events within each date
+    const sortedDates = Object.keys(grouped).sort();
+    const result: Array<{ date: string; events: IAppointment[] }> = [];
+    
+    sortedDates.forEach((dateKey) => {
+      const dayEvents = grouped[dateKey].sort((a, b) => {
+        const timeA = parseISO(a.startTime);
+        const timeB = parseISO(b.startTime);
+        return timeA.getTime() - timeB.getTime();
+      });
+      result.push({ date: dateKey, events: dayEvents });
+    });
+    
+    return result;
+  }, [calendarEvents]);
 
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] max-h-[calc(100vh-66px)] overflow-hidden">
@@ -758,6 +811,398 @@ const AppointmentCalendarPage = () => {
                   onAppointmentClick={handleAppointmentClick}
                   isLoading={isLoading}
                 />
+              </div>
+            </div>
+          )}
+
+          {/* Calendar Tab */}
+          {currentTab === 'calendar' && (
+            <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
+              {/* Calendar View - Takes full height, no scrollbar */}
+              <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+                <div className="flex-1 flex flex-col border rounded-lg overflow-hidden">
+                  {/* Day View */}
+                  {currentView === 'day' ? (
+                    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                      {/* Day Header */}
+                      <div className="grid gap-px bg-gray-200 border-b flex-shrink-0" style={{ gridTemplateColumns: '80px 1fr' }}>
+                        <div className="bg-white p-2"></div>
+                        <div className="bg-white p-2 text-center">
+                          <div className="text-xs text-gray-500 font-medium">
+                            {format(selectedDate, 'EEEE')}
+                          </div>
+                          <div className={`text-lg font-semibold ${isSameDay(selectedDate, new Date()) ? 'text-blue-600' : ''}`}>
+                            {format(selectedDate, 'd MMM, yyyy')}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Time Slots Grid */}
+                      <div className="flex-1 overflow-y-auto relative">
+                        <div className="grid gap-px bg-gray-200" style={{ gridTemplateColumns: '80px 1fr' }}>
+                          {/* Time Column */}
+                          <div className="bg-white">
+                            {timeSlots.map((slot, idx) => (
+                              <div
+                                key={slot.hour ?? `all-day-${idx}`}
+                                className={`${slot.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-gray-500 flex items-start pt-1`}
+                              >
+                                {slot.label}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Day Column */}
+                          <div className="bg-white relative">
+                            {/* Time slot cells */}
+                            {timeSlots.map((slot, idx) => (
+                              <div
+                                key={slot.hour ?? `all-day-${idx}`}
+                                className={`${slot.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
+                                onClick={() => {
+                                  if (!slot.isAllDay && slot.hour !== null) {
+                                    const newDate = new Date(selectedDate);
+                                    newDate.setHours(slot.hour, 0, 0, 0);
+                                    setSelectedDate(newDate);
+                                  }
+                                }}
+                              />
+                            ))}
+                            
+                            {/* Current Time Indicator */}
+                            {getCurrentTimePosition && (
+                              <div
+                                className="absolute left-0 right-0 z-20 pointer-events-none"
+                                style={{ top: getCurrentTimePosition.top }}
+                              >
+                                <div className="flex items-center">
+                                  <div className="text-xs text-red-600 font-medium px-2 bg-white">
+                                    {getCurrentTimePosition.time}
+                                  </div>
+                                  <div className="flex-1 h-0.5 bg-red-500"></div>
+                                </div>
+                              </div>
+                            )}
+                            
+                            {/* Calendar Events */}
+                            {getDayAppointments(selectedDate).map((evt) => {
+                              const position = getAppointmentPosition(evt, selectedDate);
+                              if (!position) return null;
+                              
+                              const colors = getAppointmentColor(evt.type);
+                              return (
+                                <div
+                                  key={evt.id}
+                                  className={`absolute left-1 right-1 ${colors.light} ${colors.text} border-l-4 ${colors.bg} rounded-r px-2 py-1 cursor-pointer hover:opacity-90 shadow-sm z-10`}
+                                  style={{
+                                    top: position.top,
+                                    height: position.height,
+                                    minHeight: '24px',
+                                  }}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleAppointmentClick(evt);
+                                  }}
+                                >
+                                  <div className="text-xs font-medium truncate">
+                                    {format(position.startTime, 'h:mm a')} - {format(position.endTime, 'h:mm a')}
+                                  </div>
+                                  <div className="text-xs font-semibold truncate mt-0.5">
+                                    {evt.title}
+                                  </div>
+                                  {evt.description && (
+                                    <div className="text-xs text-gray-600 truncate mt-0.5">
+                                      {evt.description}
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (currentView === 'week' || currentView === 'work-week') ? (
+                    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
+                      {/* Day Headers */}
+                      <div className={`grid gap-px bg-gray-200 border-b flex-shrink-0`} style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+                        <div className="bg-white p-2"></div>
+                        {weekDays.map((day) => {
+                          const isSelected = isSameDay(day, selectedDate);
+                          const isToday = isSameDay(day, new Date());
+                          return (
+                            <div
+                              key={day.toString()}
+                              className={`bg-white p-2 text-center cursor-pointer hover:bg-gray-50 ${
+                                isSelected ? 'bg-blue-50 border-b-2 border-blue-500' : ''
+                              }`}
+                              onClick={() => setSelectedDate(day)}
+                            >
+                              <div className="text-xs text-gray-500 font-medium">
+                                {format(day, 'EEE')}
+                              </div>
+                              <div className={`text-lg font-semibold ${isToday ? 'text-blue-600' : ''}`}>
+                                {format(day, 'd')}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+
+                      {/* Time Slots Grid */}
+                      <div className="flex-1 overflow-y-auto">
+                        <div className={`grid gap-px bg-gray-200`} style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+                          {/* Time Column */}
+                          <div className="bg-white">
+                            {timeSlots.map((slot, idx) => (
+                              <div
+                                key={slot.hour ?? `all-day-${idx}`}
+                                className={`${slot.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-gray-500 flex items-start pt-1`}
+                              >
+                                {slot.label}
+                              </div>
+                            ))}
+                          </div>
+
+                          {/* Day Columns */}
+                          {weekDays.map((day) => {
+                            const dayEvents = getDayAppointments(day);
+                            return (
+                              <div key={day.toString()} className="bg-white relative">
+                                {timeSlots.map((slot, idx) => (
+                                  <div
+                                    key={slot.hour ?? `all-day-${idx}`}
+                                    className={`${slot.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
+                                    onClick={() => setSelectedDate(day)}
+                                  />
+                                ))}
+                                
+                                {/* Calendar Events */}
+                                {dayEvents.map((evt) => {
+                                  const position = getAppointmentPosition(evt, day);
+                                  if (!position) return null;
+                                  
+                                  const colors = getAppointmentColor(evt.type);
+                                  return (
+                                    <div
+                                      key={evt.id}
+                                      className={`absolute left-0 right-0 ${colors.light} ${colors.text} border-l-4 ${colors.bg} rounded-r px-2 py-1 cursor-pointer hover:opacity-90 shadow-sm z-10`}
+                                      style={{
+                                        top: position.top,
+                                        height: position.height,
+                                        minHeight: '24px',
+                                      }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleAppointmentClick(evt);
+                                      }}
+                                    >
+                                      <div className="text-xs font-medium truncate">
+                                        {format(position.startTime, 'h:mm a')} - {format(position.endTime, 'h:mm a')}
+                                      </div>
+                                      <div className="text-xs font-semibold truncate mt-0.5">
+                                        {evt.title}
+                                      </div>
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ) : currentView === 'agenda' ? (
+                    /* Agenda View */
+                    <div className="flex-1 overflow-y-auto bg-white">
+                      {isCalendarLoading ? (
+                        <div className="flex items-center justify-center h-64">
+                          <div className="text-gray-500">Loading calendar events...</div>
+                        </div>
+                      ) : eventsByDateForAgenda.length === 0 ? (
+                        <div className="flex items-center justify-center h-64">
+                          <div className="text-gray-500">No calendar events found</div>
+                        </div>
+                      ) : (
+                        <div className="divide-y divide-gray-200">
+                          {eventsByDateForAgenda.map(({ date, events }) => {
+                            const dateObj = parseISO(date);
+                            const isToday = isSameDay(dateObj, new Date());
+                            
+                            return (
+                              <div key={date} className="py-4">
+                                {/* Date Header */}
+                                <div className="flex items-center justify-between px-6 mb-3">
+                                  <div className="flex items-center gap-3">
+                                    <div className={`text-lg font-semibold ${isToday ? 'text-blue-600' : 'text-gray-900'}`}>
+                                      {format(dateObj, 'MMM d, yyyy')} - {format(dateObj, 'EEEE')}
+                                    </div>
+                                  </div>
+                                  <div className="text-sm text-gray-500">
+                                    {events.length} {events.length === 1 ? 'event' : 'events'}
+                                  </div>
+                                </div>
+                                
+                                {/* Events List */}
+                                <div className="space-y-2 px-6">
+                                  {events.map((evt) => {
+                                    const colors = getAppointmentColor(evt.type);
+                                    const startTime = parseISO(evt.startTime);
+                                    const endTime = parseISO(evt.endTime);
+                                    const ownerInitials = getUserInitials(evt.owner?.firstName, evt.owner?.lastName);
+                                    
+                                    return (
+                                      <div
+                                        key={evt.id}
+                                        className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer group"
+                                        onClick={() => handleAppointmentClick(evt)}
+                                      >
+                                        {/* Time Block */}
+                                        <div className="flex-shrink-0 w-24 text-sm font-medium text-gray-700">
+                                          {format(startTime, 'h:mm a')} - {format(endTime, 'h:mm a')}
+                                        </div>
+                                        
+                                        {/* Colored Vertical Bar */}
+                                        <div className={`w-1 ${colors.bg} rounded-full flex-shrink-0`} />
+                                        
+                                        {/* Event Details */}
+                                        <div className="flex-1 min-w-0">
+                                          <div className="font-semibold text-gray-900 mb-1">
+                                            {evt.title}
+                                          </div>
+                                          {evt.description && (
+                                            <div className="text-sm text-gray-600 mb-2">
+                                              {evt.description}
+                                            </div>
+                                          )}
+                                          {evt.client && (
+                                            <div className="text-sm text-gray-500">
+                                              {evt.client.firstName} {evt.client.lastName}
+                                              {evt.client.email && ` | ${evt.client.email}`}
+                                              {evt.client.phone && ` | ${evt.client.phone}`}
+                                            </div>
+                                          )}
+                                        </div>
+                                        
+                                        {/* Assigned User */}
+                                        {evt.owner && (
+                                          <div className="flex-shrink-0 flex items-center gap-2">
+                                            <div className="text-sm text-gray-700 font-medium">
+                                              {evt.owner.firstName} {evt.owner.lastName}
+                                            </div>
+                                            <div className={`w-8 h-8 rounded-full ${colors.light} ${colors.text} flex items-center justify-center text-xs font-semibold ${colors.border} border-2`}>
+                                              {ownerInitials}
+                                            </div>
+                                          </div>
+                                        )}
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    /* Month View */
+                    <div className="flex-1 flex flex-col p-4 overflow-hidden">
+                      <div className="grid grid-cols-7 gap-1 mb-2 flex-shrink-0">
+                        {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map((day) => (
+                          <div key={day} className="text-center text-sm font-medium text-gray-600 py-2">
+                            {day}
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-7 auto-rows-fr gap-1 flex-1 min-h-0">
+                        {calendarDays.map((day, idx) => {
+                          const dayKey = format(day, 'yyyy-MM-dd');
+                          const dayEvents = eventsByDate[dayKey] || [];
+                          const isCurrentMonth = isSameMonth(day, selectedDate);
+                          const isSelected = isSameDay(day, selectedDate);
+                          const isToday = isSameDay(day, new Date());
+
+                          const getAppointmentColorClass = (type?: string) => {
+                            switch (type) {
+                              case 'online':
+                                return 'bg-green-500';
+                              case 'phone':
+                                return 'bg-yellow-500';
+                              default:
+                                return 'bg-blue-500';
+                            }
+                          };
+
+                          return (
+                            <div
+                              key={idx}
+                              className={`flex flex-col border rounded p-1.5 cursor-pointer hover:bg-gray-50 ${
+                                !isCurrentMonth ? 'opacity-40' : ''
+                              } ${isSelected ? 'bg-blue-100 border-blue-500' : ''} ${isToday ? 'border-blue-300' : ''}`}
+                              onClick={() => setSelectedDate(day)}
+                            >
+                              <div className={`text-sm mb-1.5 flex-shrink-0 ${isToday ? 'font-bold text-blue-600' : ''}`}>
+                                {format(day, 'd')}
+                              </div>
+                              <div className="flex-1 space-y-1 overflow-hidden min-h-0">
+                                {dayEvents.slice(0, 2).map((evt) => (
+                                  <div
+                                    key={evt.id}
+                                    className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5"
+                                    style={{ backgroundColor: evt.type === 'online' ? '#d1fae5' : evt.type === 'phone' ? '#fef3c7' : '#dbeafe' }}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleAppointmentClick(evt);
+                                    }}
+                                  >
+                                    <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${getAppointmentColorClass(evt.type)}`} />
+                                    <span className="truncate text-gray-700">
+                                      {format(parseISO(evt.startTime), 'h:mma')} {evt.title.substring(0, 12)}...
+                                    </span>
+                                  </div>
+                                ))}
+                                {dayEvents.length > 2 && (
+                                  <div className="text-xs text-gray-500 mt-1 px-1">{dayEvents.length - 2} more</div>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Calendar Event List - Fixed width with scrollbar */}
+              <div className="w-80 flex flex-col flex-shrink-0 border rounded-lg p-4 overflow-hidden">
+                <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                  <h4 className="text-lg font-semibold">{format(selectedDate, 'd MMM, yyyy')}</h4>
+                </div>
+                <div className="flex-1 overflow-y-auto space-y-2">
+                  {selectedDateEvents.length === 0 ? (
+                    <div className="text-center text-gray-500 py-8">
+                      No events for this date
+                    </div>
+                  ) : (
+                    selectedDateEvents.map((evt) => (
+                      <div
+                        key={evt.id}
+                        className="p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors"
+                        onClick={() => handleAppointmentClick(evt as IAppointment)}
+                      >
+                        <div className="font-semibold text-sm text-gray-900">{evt.title}</div>
+                        <div className="text-xs text-gray-600 mt-1">
+                          {format(parseISO(evt.startTime), 'h:mm a')} - {format(parseISO(evt.endTime), 'h:mm a')}
+                        </div>
+                        {evt.description && (
+                          <div className="text-xs text-gray-500 mt-1 line-clamp-2">{evt.description}</div>
+                        )}
+                      </div>
+                    ))
+                  )}
+                </div>
               </div>
             </div>
           )}
