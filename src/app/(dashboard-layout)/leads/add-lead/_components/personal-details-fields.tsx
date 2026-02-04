@@ -8,7 +8,6 @@ import { useFormContext } from 'react-hook-form';
 
 import { format } from 'date-fns';
 import { Label } from '@/components/ui/label';
-import { useGetOccupations } from '@/query/get-occupations';
 import { DatePicker } from '@/components/organisms/date-picker';
 import SelectCommon from '@/components/molecules/select-common';
 import { Location, Services } from '@/constants/lead-constants';
@@ -19,32 +18,14 @@ const PersonalDetailsStep = () => {
     control,
     formState: { errors },
     setValue,
-    watch,
   } = useFormContext<LeadSchemaType>();
 
-  const { data: occupations } = useGetOccupations();
   const locationOptions = Object.values(Location).map((location) => {
     return {
       label: location,
       value: location,
     };
   });
-
-  const [selectedOccupation, selectedANZSCO] = watch(['occupation', 'anzsco']);
-
-  useEffect(() => {
-    if (selectedOccupation) {
-      const selected = occupations?.find((occupation) => occupation.title === selectedOccupation);
-      setValue('anzsco', selected?.code, { shouldValidate: false });
-    }
-  }, [selectedOccupation, occupations, setValue]);
-
-  useEffect(() => {
-    if (selectedANZSCO) {
-      const selected = occupations?.find((occupation) => occupation.code === selectedANZSCO);
-      setValue('occupation', selected?.title, { shouldValidate: false });
-    }
-  }, [selectedANZSCO, occupations, setValue]);
 
   return (
     <div className="space-y-5">
@@ -130,6 +111,7 @@ const PersonalDetailsStep = () => {
             />
           )}
         />
+
         <FormField
           control={control}
           name="passport"
@@ -153,7 +135,7 @@ const PersonalDetailsStep = () => {
                 side="top"
                 value={field.value || undefined}
                 onChange={(date) => setValue('issueDate', date)}
-                label='Passport issue date'
+                label="Passport issue date"
                 placeholder="DD/MM/YYYY"
                 className="h-12 text-b2 w-full"
                 error={!!errors.issueDate?.message}
@@ -167,7 +149,7 @@ const PersonalDetailsStep = () => {
           render={({ field }) => (
             <div className=" flex flex-col gap-2 flex-1">
               <DatePicker
-                label='Passport expiry date'
+                label="Passport expiry date"
                 side="top"
                 value={field.value || undefined}
                 onChange={(date) => setValue('expiryDate', date)}
@@ -193,7 +175,6 @@ const PersonalDetailsStep = () => {
             />
           )}
         />
-
       </div>
     </div>
   );

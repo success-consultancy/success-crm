@@ -102,7 +102,7 @@ const MiscStep = () => {
           onUploadComplete={(urls) => {
             console.log('Uploaded URLs:', urls);
 
-            setLead('files', [urls[0]], { shouldValidate: false });
+            setLead('files', urls, { shouldValidate: false });
           }}
           type="lead"
           maxFileSize={20}

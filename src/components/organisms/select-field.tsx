@@ -12,7 +12,7 @@ import { useId } from 'react';
 
 export type ObjType = {
   label: string;
-  value: string;
+  value: string | number;
 };
 
 export interface SelectFieldProps<T extends FieldValues> {
@@ -57,20 +57,30 @@ const SelectField = <T extends FieldValues>({
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
-      <Select disabled={disabled} onValueChange={field.onChange} value={field.value || ''}>
+      <Select
+        disabled={disabled}
+        onValueChange={(val) => {
+          // Convert back to number if original value is number-like
+          const parsed = isNaN(Number(val)) ? val : Number(val);
+          field.onChange(parsed);
+        }}
+        value={field.value !== undefined ? String(field.value) : ''}
+      >
         <SelectTrigger className={cn('w-full !h-10', error && 'border-red-500')} id={name}>
           <div className="flex items-center gap-2">
             <SelectValue placeholder={placeholder} />
           </div>
         </SelectTrigger>
+
         <SelectContent>
           {options.map((option, index) => (
-            <SelectItem key={`${option.value}-${index}`} value={option.value}>
+            <SelectItem key={`${option.value}-${index}`} value={String(option.value)}>
               {option.label}
             </SelectItem>
           ))}
         </SelectContent>
       </Select>
+
       {error && <p className="text-sm text-red-500">{error.message}</p>}
     </div>
   );

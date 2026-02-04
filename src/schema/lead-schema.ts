@@ -17,7 +17,7 @@ export const personalDetailsSchema = z.object({
 
 export const passportDetailsSchema = z.object({
   country: z.string().nullable().optional(),
-  passport: z.coerce.number().nullable().optional(),
+  passport: z.union([z.number(), z.string()]).nullable().optional(),
   issueDate: z.date().nullable().optional(),
   expiryDate: z.date().nullable().optional(),
   visa: z.string().nullable().optional(),
@@ -35,7 +35,17 @@ export const serviceDetailsSchema = z.object({
   userId: z.number().nullable().optional(),
   status: z.string({ message: 'Status is required' }).min(1, { message: 'Status is required' }),
   note: z.string().nullable().optional(),
-  files: z.array(z.string(), { message: 'Invalid file format' }).nullable().optional(),
+  files: z
+    .array(
+      z.object({
+        url: z.string().url(),
+        name: z.string(),
+        size: z.number().nonnegative(),
+        addedDate: z.string().datetime(),
+      }),
+    )
+    .nullable()
+    .optional(),
 });
 
 const leadFormSchema = personalDetailsSchema.and(serviceDetailsSchema).and(passportDetailsSchema);

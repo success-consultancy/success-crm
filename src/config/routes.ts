@@ -9,7 +9,7 @@ export const ROUTES = {
   CALENDAR: '/dashboard/calendar',
   TODO: '/dashboard/to-do',
   EDUCATION: '/dashboard/education',
-  INSURANCE: '/dashboard/insurance',
+  INSURANCE: '/insurance',
   SKILL_ASSESSMENT: '/dashboard/skill',
   VISA: '/dashboard/visa',
   TRIBUNAL_REVIEW: '/tribunal-review',
@@ -23,6 +23,8 @@ export const ROUTES = {
   ADD_VISA_SERVICE: '/visa/add',
 
   ADD_TRIBUNAL_SERVICE: '/tribunal-review/add',
+
+  ADD_INSURANCE_SERVICE: '/insurance/add',
 
   ADD_SKILL_ASSESSMENT: '/skill/add',
 

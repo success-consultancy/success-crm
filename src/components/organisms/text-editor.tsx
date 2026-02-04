@@ -39,14 +39,12 @@ export default function TinyEditor({ value, onChange, label, error }: TinyEditor
             'lists',
             'media',
             'searchreplace',
-            'table',
             'visualblocks',
             'accordion',
             'autoresize',
             'autosave',
             'code',
             'directionality',
-            'emoticons',
             'fullscreen',
             'insertdatetime',
             'preview',
@@ -54,9 +52,10 @@ export default function TinyEditor({ value, onChange, label, error }: TinyEditor
             'searchreplace',
             'table',
             'wordcount',
+            'autoresize',
           ],
           toolbar:
-            'wordcount | table tabledelete | tableprops tablerowprops tablecellprops | tableinsertrowbefore tableinsertrowafter tabledeleterow | tableinsertcolbefore tableinsertcolafter tabledeletecol | searchreplace | preview | insertdatetime | fullscreen | emoticons | ltr rtl | code | restoredraft | accordion | undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table mergetags | addcomment showcomments | spellcheckdialog a11ycheck typography | align lineheight | checklist numlist bullist indent outdent | emoticons charmap | removeformat',
+            'removeformat | charmap emoticons | outdent indent bullist numlist checklist | lineheight align | typography a11ycheck spellcheckdialog | showcomments addcomment | mergetags table media image link | strikethrough underline italic bold | fontsize fontfamily blocks | redo undo | accordion | restoredraft | code | rtl ltr | emoticons | fullscreen | insertdatetime | preview | searchreplace | tabledeletecol tableinsertcolafter tableinsertcolbefore | tabledeleterow tableinsertrowafter tableinsertrowbefore | tablecellprops tablerowprops tableprops | tabledelete | wordcount',
           menubar: '',
           tinycomments_mode: 'embedded',
           tinycomments_author: 'Author name',
@@ -64,13 +63,12 @@ export default function TinyEditor({ value, onChange, label, error }: TinyEditor
             { value: 'First.Name', title: 'First Name' },
             { value: 'Email', title: 'Email' },
           ],
-          resize: false,
+          min_height: 250,
+          resize: true,
         }}
       />
 
       <FormErrorMessage message={error} />
-
-
     </div>
   );
 }

@@ -433,8 +433,11 @@
   .chevonDownTranstion {
     @apply w-5 h-5 transition-all duration-500;
   }
-  .tox-tinymce {
+  /* .tox-tinymce {
     height: 250px !important;
+  } */
+  .tox-fullscreen {
+    height: 100vh !important; 
   }
 
   @keyframes scrollUp {

@@ -1,7 +1,10 @@
 'use client';
 
 import { Accordion } from '@/components/ui/accordion';
-import skillAssessmentFormSchema, { SkillAssessmentSchemaType, updateSkillAssessmentFormSchema } from '@/schema/skill-assessment-schema';
+import skillAssessmentFormSchema, {
+  SkillAssessmentSchemaType,
+  updateSkillAssessmentFormSchema,
+} from '@/schema/skill-assessment-schema';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format, parse } from 'date-fns';
@@ -56,7 +59,11 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     };
   };
 
-  const { visaServiceNote: initialVisaNote, feeNote: initialFeeNote, miscNote: initialMiscNote } = parseRemarks(defaultValues?.remarks || null);
+  const {
+    visaServiceNote: initialVisaNote,
+    feeNote: initialFeeNote,
+    miscNote: initialMiscNote,
+  } = parseRemarks(defaultValues?.remarks || null);
 
   const [visaServiceNote, setVisaServiceNote] = useState(initialVisaNote);
   const [feeNote, setFeeNote] = useState(initialFeeNote);
@@ -66,7 +73,11 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
   // Update notes when defaultValues change (for edit mode)
   useEffect(() => {
     if (formState === FORM_STATE.EDIT && defaultValues?.remarks) {
-      const { visaServiceNote: newVisaNote, feeNote: newFeeNote, miscNote: newMiscNote } = parseRemarks(defaultValues.remarks);
+      const {
+        visaServiceNote: newVisaNote,
+        feeNote: newFeeNote,
+        miscNote: newMiscNote,
+      } = parseRemarks(defaultValues.remarks);
       setVisaServiceNote(newVisaNote);
       setFeeNote(newFeeNote);
       setMiscNote(newMiscNote);
@@ -307,10 +318,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           <button className="p-1.5 rounded hover:bg-gray-100 transition-colors">
             <Code2 className="h-5 w-5 text-gray-600" />
           </button>
-          <button
-            onClick={() => router.back()}
-            className="p-1.5 rounded hover:bg-gray-100 transition-colors"
-          >
+          <button onClick={() => router.back()} className="p-1.5 rounded hover:bg-gray-100 transition-colors">
             <ArrowLeft className="h-5 w-5 text-gray-600" />
           </button>
           <h3 className="text-lg font-semibold">{formState === FORM_STATE.ADD ? 'New applicant' : 'Edit applicant'}</h3>
@@ -322,7 +330,11 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           <FormAccordion value="item-1" title="Personal details">
             <div className="grid grid-cols-3 gap-6">
               <TextInput label="First name" required {...register('firstName')} error={errors.firstName?.message} />
-              <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
+              <TextInput
+                label="Middle name (optional)"
+                {...register('middleName')}
+                error={errors.middleName?.message}
+              />
               <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
               <div className="space-y-2">
                 <Label className="text-b2" htmlFor="dob">
@@ -405,6 +417,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.expiryDate?.message}
+                      disablePastDates={true}
                     />
                   )}
                 />
@@ -454,6 +467,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.visaExpiry?.message}
+                      disablePastDates={true}
                     />
                   )}
                 />
@@ -474,6 +488,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
+                      disablePastDates={true}
                     />
                   )}
                 />
@@ -558,6 +573,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="h-12 text-b2 w-full"
                       error={!!errors.decisionDate?.message}
+                      disablePastDates={true}
                     />
                   )}
                 />
@@ -570,7 +586,10 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 required
                 options={[
                   { label: SkillAssessmentStatusTypes.NewApplicant, value: SkillAssessmentStatusTypes.NewApplicant },
-                  { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
+                  {
+                    label: SkillAssessmentStatusTypes.CollectingDocs,
+                    value: SkillAssessmentStatusTypes.CollectingDocs,
+                  },
                   { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
                   { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
                   { label: SkillAssessmentStatusTypes.InfoRequested, value: SkillAssessmentStatusTypes.InfoRequested },
@@ -697,7 +716,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           >
             Cancel
           </Button>
-          <Button loading={isPending} loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'} type="submit" variant="primary">
+          <Button
+            loading={isPending}
+            loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'}
+            type="submit"
+            variant="primary"
+          >
             {formState === FORM_STATE.ADD ? 'Add applicant' : 'Update applicant'}
           </Button>
         </div>

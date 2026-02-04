@@ -3,45 +3,45 @@ import { toast } from 'sonner';
 import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const deleteLead = async (id: number) => {
-  const res = await api.delete(`/lead/${id}`);
+const deleteInsurance = async (id: number) => {
+  const res = await api.delete(`/insuranceApplicant/${id}`);
   return res.data;
 };
 
-export const useDeleteLead = () => {
+export const useDeleteInsurance = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLead,
+    mutationFn: deleteInsurance,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_INSURANCE],
       });
     },
     onError: () => {
-      toast("Error!", {
-        description: "Something went wrong",
+      toast('Error!', {
+        description: 'Something went wrong',
       });
     },
   });
 };
 
-const deleteLeadBulk = async (ids: number[]) => {
-  const res = await api.delete(`/lead/bulk-delete`, { data: { ids } });
+const deleteInsuranceApplicantBulk = async (ids: number[]) => {
+  const res = await api.delete(`/insuranceApplicant/bulk-delete`, { data: { ids } });
   return res.data;
 };
 
-export const useDeleteLeadBulk = () => {
+export const useDeleteInsuranceBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: deleteLeadBulk,
+    mutationFn: deleteInsuranceApplicantBulk,
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_LEADS],
+        queryKey: [QUERY_KEYS.GET_INSURANCE],
       });
     },
     onError: () => {
-      toast("Error!", {
-        description: "Something went wrong",
+      toast('Error!', {
+        description: 'Something went wrong',
       });
     },
   });

@@ -1,3 +1,5 @@
+import { UploadedFileMeta } from '../common';
+
 export interface LeadsResponseType {
   count: number;
   rows: ILead[];
@@ -41,7 +43,7 @@ export interface ILead {
   note: null | string;
   anzsco: null | string;
   updatedBy: null | number;
-  files: string[];
+  files: UploadedFileMeta[];
   user: {
     firstName: string;
     lastName: string;

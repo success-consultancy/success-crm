@@ -9,20 +9,35 @@ import FileUploader from '@/components/organisms/file-uploader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { LeadSchemaType } from '@/schema/lead-schema';
+import { FilePreviewDialog } from '@/components/organisms/preview-model';
+import { UploadedFileMeta } from '@/types/common';
+import { formatFileSize } from '@/utils/file';
 
 const DocumentsSection = ({ lead }: { lead: ILead }) => {
   const [leadData, setLeadData] = useState<ILead>(lead);
   const getFileNameFromURL = (url: string) => decodeURIComponent(url.split('/').pop() || '');
   const getFileExtension = (fileName: string) => fileName.split('.').pop() || '';
   const [isUploaderOpen, setIsUploaderOpen] = useState(false);
+  const [preview, setPreview] = useState<{
+    url: string;
+    name: string;
+    type: 'image' | 'pdf' | 'other';
+  } | null>(null);
+  type LeadFile = {
+    url: string;
+    addedDate: string;
+    size: number;
+  };
+
   const editLead = useEditLead();
 
   const handleAddDocument = () => {
     setIsUploaderOpen(true);
   };
 
-  const handleDocumentUpload = (urls: string[]) => {
-    const updatedFiles = [...(leadData?.files || []), ...urls];
+  const handleDocumentUpload = (files: UploadedFileMeta[]) => {
+    const updatedFiles = [...(leadData?.files || []), ...files];
+
     setLeadData({ ...leadData, files: updatedFiles });
 
     // Update lead when document is added
@@ -39,6 +54,12 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
     });
 
     setIsUploaderOpen(false);
+  };
+
+  const getFileType = (ext: string) => {
+    if (['jpg', 'jpeg', 'png', 'webp'].includes(ext)) return 'image';
+    if (ext === 'pdf') return 'pdf';
+    return 'other';
   };
 
   return (
@@ -87,19 +108,42 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
           </TableHeader>
           <TableBody>
             {lead?.files?.map((doc, index) => {
-              const fileName = getFileNameFromURL(doc);
-              const fileExtension = getFileExtension(fileName);
+              const fileName = doc.name || getFileNameFromURL(doc as any);
+
+              const fileExtension = getFileExtension(fileName || '');
+              const fileType = getFileType(fileExtension || '');
+              const fileSize = formatFileSize(doc.size) || 0;
               return (
-                <TableRow key={index} className="text-neutral-darkGrey">
-                  <TableCell className="text-gray-900 py-3 pl-6">{fileName}</TableCell>
-                  <TableCell className="text-gray-900 py-3">{fileExtension}</TableCell>
-                  <TableCell className="text-gray-900 py-3">{fileExtension}</TableCell>
-                  <TableCell className="text-gray-900 py-3 pr-6">{new Date().toLocaleDateString('en-GB')}</TableCell>
+                <TableRow key={index}>
+                  <TableCell
+                    onClick={() =>
+                      setPreview({
+                        url: doc.url,
+                        name: fileName,
+                        type: fileType,
+                      })
+                    }
+                    className="pl-6 text-primary underline hover:opacity-80"
+                  >
+                    {fileName}
+                  </TableCell>
+                  <TableCell>{fileSize}</TableCell>
+                  <TableCell>{fileExtension}</TableCell>
+                  <TableCell className="pr-6">{new Date(doc.addedDate).toLocaleDateString('en-GB')}</TableCell>
                 </TableRow>
               );
             })}
           </TableBody>
         </Table>
+        {preview && (
+          <FilePreviewDialog
+            open={!!preview}
+            onOpenChange={(open) => !open && setPreview(null)}
+            fileUrl={preview.url}
+            fileName={preview.name}
+            fileType={preview.type}
+          />
+        )}
       </div>
     </div>
   );

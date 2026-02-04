@@ -29,7 +29,6 @@ const VisaAndServiceStep = () => {
   } = useFormContext<LeadSchemaType>();
   const { data: occupations } = useGetOccupations();
 
-
   const servicesOptions = Object.values(Services).map((service) => {
     return {
       label: service,
@@ -90,6 +89,7 @@ const VisaAndServiceStep = () => {
                 placeholder="DD/MM/YYYY"
                 className="h-12 text-b2 w-full"
                 error={!!errors.visaExpiry?.message}
+                disablePastDates={true}
               />
             </div>
           )}
@@ -153,7 +153,6 @@ const VisaAndServiceStep = () => {
             />
           )}
         />
-
       </div>
     </div>
   );
