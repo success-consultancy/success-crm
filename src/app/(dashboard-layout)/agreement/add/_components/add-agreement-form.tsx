@@ -102,7 +102,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
     setValue('note', content, { shouldValidate: true });
   };
 
-  const handleFileUploadComplete = (fileUrls: string[]) => {
+  const handleFileUploadComplete = (fileUrls: any[]) => {
     if (fileUrls.length > 0) {
       setFileUrl(fileUrls[0]);
       setValue('file', fileUrls[0], { shouldValidate: true });
