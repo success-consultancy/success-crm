@@ -4,45 +4,51 @@ import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { format } from 'date-fns';
-
-interface StageProps {
-  name: string;
-  active?: boolean;
-  isFirst?: boolean;
-}
-
-const StageItem = ({ name, active, isFirst }: StageProps) => {
-  const baseClasses =
-    'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
-  const inactiveClasses = 'bg-gray-100 text-gray-800';
-  const activeClasses = 'bg-primary-blue text-white';
-  const pointSize = 15;
-
-  const clipPathValue = isFirst
-    ? `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%)`
-    : `polygon(0 0, calc(100% - ${pointSize}px) 0, 100% 50%, calc(100% - ${pointSize}px) 100%, 0 100%, ${pointSize}px 50%)`;
-
-  return (
-    <div
-      className={cn(baseClasses, active ? activeClasses : inactiveClasses, !isFirst && `-ml-[${pointSize}px]`)}
-      style={{ clipPath: clipPathValue }}
-    >
-      {name}
-    </div>
-  );
-};
+import { toast } from 'sonner';
+import StageItem from '@/components/organisms/stage-item';
+import { useUpdateTribunalStatus } from '@/mutations/tribunal-review/add-tribunal-review';
 
 type VisaStagesProps = { visa: ITribunalReview };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New Tribunal', active: visa.status === TribunalStatusTypes.NewTribunal },
-    { name: 'Collecting Docs', active: visa.status === TribunalStatusTypes.CollectingDocs },
-    { name: 'Ready To Submit', active: visa.status === TribunalStatusTypes.ReadyToSubmit },
-    { name: 'Submitted', active: visa.status === TribunalStatusTypes.Submitted },
-    { name: 'Info Received', active: visa.status === TribunalStatusTypes.InfoReceived },
+    { name: TribunalStatusTypes.NewTribunal, active: visa.status === TribunalStatusTypes.NewTribunal },
+    { name: TribunalStatusTypes.CollectingDocs, active: visa.status === TribunalStatusTypes.CollectingDocs },
+    { name: TribunalStatusTypes.ReadyToSubmit, active: visa.status === TribunalStatusTypes.ReadyToSubmit },
+    { name: TribunalStatusTypes.Submitted, active: visa.status === TribunalStatusTypes.Submitted },
+    { name: TribunalStatusTypes.InfoRequested, active: visa.status === TribunalStatusTypes.InfoRequested },
+    { name: TribunalStatusTypes.Remitted, active: visa.status === TribunalStatusTypes.Remitted },
+    { name: TribunalStatusTypes.Withdrawn, active: visa.status === TribunalStatusTypes.Withdrawn },
+    { name: TribunalStatusTypes.Refused, active: visa.status === TribunalStatusTypes.Refused },
+    { name: TribunalStatusTypes.Discontinued, active: visa.status === TribunalStatusTypes.Discontinued },
+    { name: TribunalStatusTypes.MinisterialApproved, active: visa.status === TribunalStatusTypes.MinisterialApproved },
+    { name: TribunalStatusTypes.MinisterialIntervention, active: visa.status === TribunalStatusTypes.MinisterialIntervention },
+    { name: TribunalStatusTypes.MinisterialRefused, active: visa.status === TribunalStatusTypes.MinisterialRefused },
+    { name: TribunalStatusTypes.Other, active: visa.status === TribunalStatusTypes.Other },
+    { name: TribunalStatusTypes.FollowUp, active: visa.status === TribunalStatusTypes.FollowUp },
   ];
+
+  const updateStatus = useUpdateTribunalStatus();
+
+  const handleStageChange = (stage: string) => {
+
+    const payload = { id: visa.id.toString(), status: stage }
+    updateStatus.mutate(
+      payload,
+      {
+        onSuccess: () => {
+          toast.success('Lead updated successfully');
+        },
+        onError: (error: any) => {
+          const message = error?.response?.data?.message;
+
+          toast.error(message || 'Failed to update lead');
+        },
+      },
+    );
+  }
+
 
   return (
     <div className="border rounded-lg">
@@ -85,9 +91,9 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex w-full">
+        <div className="flex w-full overflow-x-auto">
           {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
+            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
           ))}
         </div>
 

@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { SkillAssessmentSchemaType } from '@/schema/skill-assessment-schema';
+import { toast } from 'sonner';
 
 const addSkillAssessment = async (payload: Omit<SkillAssessmentSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
@@ -32,6 +33,38 @@ export const useAddSkillAssessment = () => {
       });
 
       return skillAssessment;
+    },
+  });
+};
+
+
+type IPayloadStatus = {
+  id: string;
+  status: string;
+};
+
+const updateServiceStatus = async ({ id, status }: IPayloadStatus) => {
+  const res = await api.patch(`/skillAssessment/${id}/status`, { status });
+};
+
+export const useUpdateSkillStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateServiceStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_SKILL_ASSESSMENTS
+          || query.queryKey[0] === QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID,
+      });
+      toast("Success!", {
+        description: "Skill assessment has been updated",
+      })
+    },
+    onError: () => {
+      toast("Error!", {
+        description: "Something went wrong",
+      })
     },
   });
 };

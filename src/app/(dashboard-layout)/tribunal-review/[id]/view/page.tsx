@@ -3,12 +3,12 @@
 import React from 'react';
 import { useParams } from 'next/navigation';
 
-import VisaPageContent from './_components/view-visa-page';
+import TribunalReviewPageContent from './_components/view-trubunal-page';
 
-const ViewEducationPage = () => {
+const TribunalReviewPage = () => {
   const params = useParams<{ id: string }>();
   const studentId = params.id;
-  return <VisaPageContent studentId={studentId} />;
+  return <TribunalReviewPageContent studentId={studentId} />;
 };
 
-export default ViewEducationPage;
+export default TribunalReviewPage;

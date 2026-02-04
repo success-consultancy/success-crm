@@ -53,3 +53,34 @@ export const useUpdateTribunalReview = () => {
     },
   });
 };
+
+
+type IPayloadStatus = {
+  id: string;
+  status: string;
+};
+
+const updateServiceStatus = async ({ id, status }: IPayloadStatus) => {
+  const res = await api.patch(`/tribunalReview/${id}/status`, { status });
+};
+
+export const useUpdateTribunalStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateServiceStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID
+      });
+      toast("Success!", {
+        description: "Tribunal review has been updated",
+      })
+    },
+    onError: () => {
+      toast("Error!", {
+        description: "Something went wrong",
+      })
+    },
+  });
+};

@@ -10,7 +10,7 @@ export enum EducationStatusTypes {
   New = 'New',
   ChecklistSent = 'Checklist Sent',
   ApplicationReady = 'Application Ready',
-  ApplicaitonSubmitted = 'Applicaiton Submitted',
+  ApplicationSubmitted = 'Application Submitted',
   OfferReceived = 'Offer received',
   WaitingPayment = 'Waiting Payment',
   FeePaid = 'Fee Paid',

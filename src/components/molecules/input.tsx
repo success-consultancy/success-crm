@@ -107,9 +107,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                       ? undefined
                       : onIconClick
                         ? (onIconClick as unknown as React.MouseEventHandler<SVGSVGElement> &
-                            React.MouseEventHandler<HTMLButtonElement>)
+                          React.MouseEventHandler<HTMLButtonElement>)
                         : (props?.onClick as React.MouseEventHandler<SVGSVGElement> &
-                            React.MouseEventHandler<HTMLButtonElement>)
+                          React.MouseEventHandler<HTMLButtonElement>)
                   }
                 />
               )}
@@ -138,9 +138,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                       ? undefined
                       : onIconClick
                         ? (onIconClick as unknown as React.MouseEventHandler<SVGSVGElement> &
-                            React.MouseEventHandler<HTMLButtonElement>)
+                          React.MouseEventHandler<HTMLButtonElement>)
                         : (props?.onClick as React.MouseEventHandler<SVGSVGElement> &
-                            React.MouseEventHandler<HTMLButtonElement>)
+                          React.MouseEventHandler<HTMLButtonElement>)
                   }
                 />
               )}

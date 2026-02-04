@@ -163,7 +163,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.AppointmentCalendar,
     icon: CalendarIcon,
-    href: '#',
+    href: '/appointment',
   },
   {
     title: DashboardTitle.CheckIn,
@@ -203,7 +203,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.AgencyAgreement,
     icon: TableDocument,
-    href: '#',
+    href: '/agreement',
   },
   {
     title: DashboardTitle.NewsAndUpdates,

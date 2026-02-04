@@ -2,7 +2,7 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   FACE_UPLOAD: `/dashboard/face-upload`,
   FISCAL_REPORT: '/dashboard/fiscal-report',
-  APPOINTMENT: '/dashboard/appointment',
+  APPOINTMENT: '/appointment',
   CHECK_IN: '/dashboard/check-in',
   LEADS: '/dashboard/leads',
   SERVICES: '/dashboard/services',
@@ -13,7 +13,7 @@ export const ROUTES = {
   SKILL_ASSESSMENT: '/dashboard/skill',
   VISA: '/dashboard/visa',
   TRIBUNAL_REVIEW: '/tribunal-review',
-  AGENCY_AGREEMENT: '/dashboard/agency-agreement',
+  AGENCY_AGREEMENT: '/agreement',
   UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements',
 
   ADD_LEAD: '/leads/add-lead',
@@ -27,6 +27,8 @@ export const ROUTES = {
   ADD_INSURANCE_SERVICE: '/insurance/add',
 
   ADD_SKILL_ASSESSMENT: '/skill/add',
+
+  ADD_AGREEMENT: '/agreement/add',
 
   USERS: '/dashboard/users',
   EMPLOYEES: '/dashboard/employees',

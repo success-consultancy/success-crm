@@ -2,7 +2,7 @@ import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { LeadSchemaType } from '@/schema/lead-schema';
-import {toast} from 'sonner'
+import { toast } from 'sonner'
 
 const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {
@@ -26,16 +26,18 @@ export const useEditLead = () => {
           query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
       });
       toast("Success!", {
-          description: "Lead has been updated",
-        })
+        description: "Lead has been updated",
+      })
     },
     onError: () => {
       toast("Error!", {
-          description: "Something went wrong",
-        })
+        description: "Something went wrong",
+      })
     },
   });
 };
+
+
 type IPayload = {
   studentId?: string;
   visaApplicantId?: string;
@@ -65,3 +67,34 @@ export const updateLeadClient = async (leadId: string, payload: IPayload) => {
 //     },
 //   });
 // };
+
+type IPayloadStatus = {
+  id: string;
+  status: string;
+};
+
+const updateLeadStatus = async ({ id, status }: IPayloadStatus) => {
+  const res = await api.patch(`/lead/${id}/status`, { status });
+};
+
+export const useUpdateLeadStatus = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: updateLeadStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
+      });
+      toast("Success!", {
+        description: "Lead has been updated",
+      })
+    },
+    onError: () => {
+      toast("Error!", {
+        description: "Something went wrong",
+      })
+    },
+  });
+};
+

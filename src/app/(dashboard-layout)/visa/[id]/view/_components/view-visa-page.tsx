@@ -47,8 +47,8 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
               <VisaStages visa={visa} />
               <PersonalDetails visa={visa} />
               <VisaInformation visa={visa} />
-              <Accounts accounts={visa.accounts} visaApplicantId={visa.id} />
               <VisaNoteSection visa={visa} />
+              <Accounts accounts={visa.accounts} visaApplicantId={visa.id} />
               <MiscSection visa={visa} />
               <NoteSection initialNote={visa?.remarks} />
             </div>

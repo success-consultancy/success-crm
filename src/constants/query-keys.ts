@@ -20,4 +20,8 @@ export const QUERY_KEYS = {
   GET_INSURANCE: 'get-insurance',
   GET_INSURANCE_LOG: 'get-insurance-log',
   GET_INSURANCE_BY_ID: 'get-insurance-by-id',
+  GET_APPOINTMENTS: 'get-appointments',
+  GET_APPOINTMENT_BY_ID: 'get-appointment-by-id',
+  GET_AGREEMENTS: 'get-agreements',
+  GET_AGREEMENT_BY_ID: 'get-agreement-by-id',
 };
