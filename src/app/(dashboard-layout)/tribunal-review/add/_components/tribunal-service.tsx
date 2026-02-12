@@ -35,6 +35,7 @@ import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
+import { CountryDropdown } from '@/components/organisms/country-dropdown';
 
 interface Props {
   userId: number | undefined;
@@ -220,7 +221,21 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             </div>
             <TextInput type="email" label="Email address" {...register('email')} error={errors.email?.message} />
             <TextInput label="Phone number" {...register('phone')} error={errors.phone?.message} />
-            <TextInput label="Nationality" {...register('country')} error={errors.country?.message} />
+            <FormField
+              control={control}
+              name="country"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label className="text-b2">Country</Label>
+                  <CountryDropdown
+                    onChange={(country) => field.onChange(country?.alpha3 || null)}
+                    defaultValue={field.value || undefined}
+                    placeholder="Select a country"
+                  />
+                  {errors.country?.message && <FormErrorMessage message={errors.country?.message} />}
+                </div>
+              )}
+            />
             <TextInput label="Address" {...register('address')} error={errors.address?.message} />
             <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />
             <div className="space-y-2">
