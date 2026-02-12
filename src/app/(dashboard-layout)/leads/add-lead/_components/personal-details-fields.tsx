@@ -117,7 +117,7 @@ const PersonalDetailsStep = () => {
           name="passport"
           render={({ field }) => (
             <Input
-              type="number"
+              type="text"
               label={'Passport number'}
               className="flex-1"
               {...field}
@@ -139,6 +139,7 @@ const PersonalDetailsStep = () => {
                 placeholder="DD/MM/YYYY"
                 className="h-12 text-b2 w-full"
                 error={!!errors.issueDate?.message}
+                disableFutureDates={true}
               />
             </div>
           )}
@@ -156,6 +157,7 @@ const PersonalDetailsStep = () => {
                 placeholder="DD/MM/YYYY"
                 className="h-12 text-b2 w-full"
                 error={!!errors.expiryDate?.message}
+                disablePastDates={true}
               />
             </div>
           )}
