@@ -30,6 +30,7 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import countryList from 'react-select-country-list';
+import { CountryDropdown } from '@/components/organisms/country-dropdown';
 
 interface Props {
   userId: number | undefined;
@@ -178,13 +179,15 @@ export function AddEducationService({ userId }: Props) {
               control={control}
               name="country"
               render={({ field }) => (
-                <SelectWithCommand
-                  options={countries || []}
-                  value={field.value ?? undefined}
-                  label="Country"
-                  onSelect={(val) => field.onChange(val)}
-                  error={errors.country?.message}
-                />
+                <div className="space-y-2">
+                  <Label className="text-b2">Country</Label>
+                  <CountryDropdown
+                    onChange={(country) => field.onChange(country?.alpha3 || null)}
+                    defaultValue={field.value || undefined}
+                    placeholder="Select a country"
+                  />
+                  {errors.country?.message && <FormErrorMessage message={errors.country?.message} />}
+                </div>
               )}
             />
             <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />

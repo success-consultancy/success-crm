@@ -158,7 +158,7 @@ export const educationServiceSchema = z
     // Misc
     userId: z.string().min(1, 'Please assign to a user').max(50, 'User selection is invalid'),
 
-    sourceId: z.string().min(1, 'Please select a source').max(50, 'Source selection is invalid'),
+    sourceId: z.string().max(50, 'Source selection is invalid').optional(),
 
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 

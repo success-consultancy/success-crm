@@ -27,6 +27,10 @@ import { useEditEducation } from '@/mutations/education/edit-education';
 import toast from 'react-hot-toast';
 import { useParams, useRouter } from 'next/navigation';
 import CourseFeeComponent from '../../../_components/course_fee_component';
+import { FormField } from '@/components/ui/form';
+import { CountryDropdown } from '@/components/organisms/country-dropdown';
+import { useGetUsers } from '@/query/get-user';
+import SelectWithCommand from '@/components/molecules/select-with-command';
 
 interface Props {
   id?: number;
@@ -66,10 +70,6 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   const editEducation = useEditEducation();
   const params = useParams<{ id: string }>();
 
-  const handleFeeStructureEditorChange = (content: string) => {
-    setValue('courseFee.note', content, { shouldValidate: true });
-  };
-
   const handleMiscEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
   };
@@ -91,6 +91,19 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
     );
   };
 
+  const { data: users } = useGetUsers();
+
+  const userOptions = useMemo(() => {
+    if (users) {
+      return users?.map((user) => {
+        return {
+          label: user.firstName + '' + user.lastName,
+          value: '' + user.id,
+        };
+      });
+    }
+  }, [users]);
+
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
       <Accordion
@@ -110,7 +123,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    label='Birth Date'
+                    label="Birth Date"
                     error={!!errors.dob?.message}
                     side="top"
                     value={field.value}
@@ -125,23 +138,37 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             </div>
             <TextInput type="email" label="Email" {...register('email')} error={errors.email?.message} />
             <TextInput label="Phone Number" {...register('phone')} error={errors.phone?.message} />
-            <TextInput label="Country" {...register('country')} error={errors.country?.message} />
+            <FormField
+              control={control}
+              name="country"
+              render={({ field }) => (
+                <div className="space-y-2">
+                  <Label className="text-b2">Country</Label>
+                  <CountryDropdown
+                    onChange={(country) => field.onChange(country?.alpha3 || null)}
+                    defaultValue={field.value || undefined}
+                    placeholder="Select a country"
+                  />
+                  {errors.country?.message && <FormErrorMessage message={errors.country?.message} />}
+                </div>
+              )}
+            />
             <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
-
               <Controller
                 name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    label='Passport Issue Date'
+                    label="Passport Issue Date"
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
                     error={!!errors.issueDate?.message}
+                    disableFutureDates={true}
                   />
                 )}
               />
@@ -153,13 +180,14 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 control={control}
                 render={({ field }) => (
                   <DatePicker
-                    label='Passport Expiry Date'
+                    label="Passport Expiry Date"
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
                     error={!!errors.expiryDate?.message}
+                    disablePastDates={true}
                   />
                 )}
               />
@@ -214,7 +242,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                   control={control}
                   render={({ field }) => (
                     <DatePicker
-                      label='Start Date'
+                      label="Start Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
@@ -233,7 +261,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                   control={control}
                   render={({ field }) => (
                     <DatePicker
-                      label='End Date'
+                      label="End Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
@@ -268,17 +296,19 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">
           <div className="grid grid-cols-2 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="userId"
-              label="Assigned To"
-              options={[
-                { label: 'John Doe', value: '1' },
-                { label: 'Jane Smith', value: '2' },
-                { label: 'Mike Johnson', value: '3' },
-                { label: 'Sarah Wilson', value: '4' },
-              ]}
-              placeholder="Select assignee"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={userOptions || []}
+                  value={field.value?.toString()}
+                  label="Assigned to"
+                  placeholder="Select a assignee"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.userId?.message}
+                />
+              )}
             />
             <SelectField
               control={control}
