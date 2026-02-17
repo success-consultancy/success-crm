@@ -24,7 +24,7 @@ function Checkbox({ className, icon: Icon, ...props }: CheckboxProps) {
         data-slot="checkbox-indicator"
         className="flex items-center justify-center text-current transition-none"
       >
-        {Icon ? <Icon className="size-3.5 stroke-[3]" /> : <CheckIcon className="size-3.5 stroke-[3]" />}
+        {Icon ? <Icon className="size-3.5 stroke-[3]" /> : <CheckIcon className="size-3.5 stroke-[3] text-primary" />}
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   );
