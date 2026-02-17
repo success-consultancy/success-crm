@@ -37,10 +37,8 @@ export const useInsuranceColumn = (
                 } else table.toggleAllPageRowsSelected(!!value);
               }}
               aria-label="Select all"
+              icon={table.getIsSomePageRowsSelected() ? Minus : undefined}
             />
-            {table.getIsSomePageRowsSelected() && (
-              <Minus className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-3 w-3" />
-            )}
           </div>
         </div>
       ),
