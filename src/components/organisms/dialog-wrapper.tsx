@@ -41,7 +41,7 @@ const DialogWrapper = (props: Props) => {
         className={cn('w-[calc(100vw-10px)] xl:min-w-[650px] !rounded-3xl p-2 z-50', props.className)}
       >
         <DialogHeader className="px-4 md:px-6 pt-4 md:pt-6">
-          <DialogTitle className="text-2xl md:!text-h3 text-left font-medium pr-5">
+          <DialogTitle className="text-2xl md:!text-h4 text-left font-medium pr-5">
             {props.title.length > 100 ? props.title.slice(0, 100) + '...' : props.title}
           </DialogTitle>
           <DialogDescription></DialogDescription>

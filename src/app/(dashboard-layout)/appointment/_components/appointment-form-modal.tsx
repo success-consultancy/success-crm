@@ -123,7 +123,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
     <DialogWrapper
       isOpen={isOpen}
       setIsOpen={onClose}
-      title={isEditMode ? 'Edit Appointment' : 'Add Appointment'}
+      title={isEditMode ? 'Edit appointment' : 'Create new appointment'}
       className="max-w-2xl"
     >
       <Form {...form}>
@@ -133,9 +133,9 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
             name="title"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Title *</FormLabel>
+                <FormLabel>Title</FormLabel>
                 <FormControl>
-                  <Input {...field} placeholder="Enter appointment title" />
+                  <Input {...field} placeholder="e.g, Online appointment for visa service" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -149,11 +149,11 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
               <FormItem>
                 <FormLabel>Description</FormLabel>
                 <FormControl>
-                  <Textarea 
-                    {...field} 
-                    value={field.value || ''} 
-                    placeholder="Enter appointment description" 
-                    rows={3} 
+                  <Textarea
+                    {...field}
+                    value={field.value || ''}
+                    placeholder="Enter appointment description"
+                    rows={3}
                   />
                 </FormControl>
                 <FormMessage />
@@ -214,7 +214,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
               name="startTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Start Time *</FormLabel>
+                  <FormLabel>Start Time</FormLabel>
                   <FormControl>
                     <Input type="time" {...field} />
                   </FormControl>
@@ -228,7 +228,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
               name="endTime"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>End Time *</FormLabel>
+                  <FormLabel>End Time</FormLabel>
                   <FormControl>
                     <Input type="time" {...field} />
                   </FormControl>

@@ -32,7 +32,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.AppointmentCalendar,
     icon: Icons.AppointmentCalendarIcon,
-    href: '/appointment',
+    href: '/appointment?view=work-week',
   },
   {
     title: DashboardTitle.CheckIn,
