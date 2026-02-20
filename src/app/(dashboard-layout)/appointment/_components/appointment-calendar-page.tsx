@@ -204,29 +204,57 @@ const AppointmentCalendarPage = () => {
 
   const renderWeekView = () => (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div className="grid gap-px bg-gray-200 border-b flex-shrink-0" style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
-        <div className="bg-white p-2" />
-        {weekDays.map(day => (
-          <div key={day.toString()} className={`bg-white p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`} onClick={() => setSelectedDate(day)}>
-            <div className="text-xs text-gray-500 font-medium">{format(day, 'EEE')}</div>
-            <div className={`text-lg font-semibold ${isSameDay(day, new Date()) ? 'text-blue-600' : ''}`}>{format(day, 'd')}</div>
-          </div>
-        ))}
-      </div>
-      <div className="flex-1 overflow-y-auto">
-        <div className="grid gap-px bg-gray-200" style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
-          <div className="bg-white">
-            {timeSlots.map((slot, idx) => <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-gray-500 pt-1`}>{slot.label}</div>)}
-          </div>
+      <div className="flex-1 overflow-y-scroll relative flex flex-col">
+
+        <div
+          className="sticky top-0 z-20 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm"
+          style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
+        >
+          <div className="bg-[#F9FAFB] p-2" />
           {weekDays.map(day => (
-            <div key={day.toString()} className="bg-white relative">
-              {timeSlots.map((slot, idx) => <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`} onClick={() => setSelectedDate(day)} />)}
-              {(itemsByDate[format(day, 'yyyy-MM-dd')] || []).map(item => <EventBlock key={item.id} item={item} dayDate={day} onClick={() => handleAppointmentClick(item)} />)}
+            <div
+              key={day.toString()}
+              className={`bg-[#F9FAFB] p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50' : ''}`}
+              onClick={() => setSelectedDate(day)}
+            >
+              <div className="text-b12-500 text-neutral-dark-grey font-medium mb-1">{format(day, 'EEE')}</div>
+              <span className={`text-lg font-semibold ${isSameDay(day, new Date()) ? 'bg-primary rounded-full p-2 text-white' : ''}`}>
+                {format(day, 'd')}
+              </span>
             </div>
           ))}
         </div>
+
+        {/* 3. Body Grid: Naturally flows underneath and shares the exact same width as the header */}
+        <div
+          className="flex-1 grid gap-px bg-gray-200"
+          style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
+        >
+          <div className="bg-[#F9FAFB]">
+            {timeSlots.map((slot, idx) => (
+              <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-neutral-dark-grey pt-1`}>
+                {slot.label}
+              </div>
+            ))}
+          </div>
+          {weekDays.map(day => (
+            <div key={day.toString()} className="bg-neutral-white relative">
+              {timeSlots.map((slot, idx) => (
+                <div
+                  key={idx}
+                  className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`}
+                  onClick={() => setSelectedDate(day)}
+                />
+              ))}
+              {(itemsByDate[format(day, 'yyyy-MM-dd')] || []).map(item => (
+                <EventBlock key={item.id} item={item} dayDate={day} onClick={() => handleAppointmentClick(item)} />
+              ))}
+            </div>
+          ))}
+        </div>
+
       </div>
-    </div>
+    </div >
   );
 
   const renderAgendaView = () => (
