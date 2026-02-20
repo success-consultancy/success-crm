@@ -45,10 +45,11 @@ const getLeadById = async (id: string) => {
   return res.data as ILead;
 };
 
-export const useGetLeadById = (id: string) => {
+export const useGetLeadById = (id?: string) => {
   return useQuery({
-    queryFn: () => getLeadById(id),
+    queryFn: () => getLeadById(id!),
     queryKey: [QUERY_KEYS.GET_LEAD_BY_ID, id],
+    enabled: !!id,
     refetchOnWindowFocus: false,
   });
 };

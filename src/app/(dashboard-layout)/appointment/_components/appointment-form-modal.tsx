@@ -16,6 +16,8 @@ import { DatePicker } from '@/components/organisms/date-picker';
 import { useAddAppointment } from '@/mutations/appointments/add-appointment';
 import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
 import { useGetMe } from '@/query/get-me';
+import { trim } from 'lodash';
+import LeadSelectWithCommand from '@/components/molecules/lead-select-with-command';
 
 interface AppointmentFormModalProps {
   isOpen: boolean;
@@ -142,25 +144,6 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
             )}
           />
 
-          <FormField
-            control={form.control}
-            name="description"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    {...field}
-                    value={field.value || ''}
-                    placeholder="Enter appointment description"
-                    rows={3}
-                  />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
           <div className="grid grid-cols-2 gap-4">
             <FormField
               control={form.control}
@@ -169,7 +152,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
                 const dateValue = field.value ? (typeof field.value === 'string' ? parseISO(field.value) : field.value) : selectedDate || new Date();
                 return (
                   <FormItem>
-                    <FormLabel>Date *</FormLabel>
+                    <FormLabel>Date</FormLabel>
                     <FormControl>
                       <DatePicker
                         value={dateValue instanceof Date ? dateValue : undefined}
@@ -238,6 +221,49 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
             />
           </div>
 
+          <FormField
+            control={form.control}
+            name="clientId"
+            render={({ field }) => (
+              <FormItem>
+                <FormControl>
+                  <LeadSelectWithCommand
+                    value={field.value?.toString()}
+                    label="Client"
+                    placeholder="Search by name, email or phone"
+                    onSelect={(val) => {
+                      if (!val) {
+                        return;
+                      }
+
+                      field.onChange(Number(val));
+                    }}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="description"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Description</FormLabel>
+                <FormControl>
+                  <Textarea
+                    {...field}
+                    value={field.value || ''}
+                    placeholder="Type something about appointment..."
+                    rows={3}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
           <div className="flex items-center justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={onClose}>
               Cancel
@@ -248,7 +274,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
           </div>
         </form>
       </Form>
-    </DialogWrapper>
+    </DialogWrapper >
   );
 };
 
