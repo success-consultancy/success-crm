@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useCallback, useMemo } from 'react';
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, parseISO, getHours, getMinutes, differenceInMinutes } from 'date-fns';
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, startOfDay, parseISO, getHours, getMinutes, differenceInMinutes } from 'date-fns';
 import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import useSearchParams from '@/hooks/use-search-params';
 import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
@@ -202,60 +202,134 @@ const AppointmentCalendarPage = () => {
     </div>
   );
 
-  const renderWeekView = () => (
-    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      <div className="flex-1 overflow-y-scroll relative flex flex-col">
+  // 1. Define exactly how tall one hour should be in pixels
+  const HOUR_HEIGHT = 80;
 
-        <div
-          className="sticky top-0 z-20 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm"
-          style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
-        >
-          <div className="bg-[#F9FAFB] p-2" />
-          {weekDays.map(day => (
-            <div
-              key={day.toString()}
-              className={`bg-[#F9FAFB] p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50' : ''}`}
-              onClick={() => setSelectedDate(day)}
-            >
-              <div className="text-b12-500 text-neutral-dark-grey font-medium mb-1">{format(day, 'EEE')}</div>
-              <span className={`text-lg font-semibold ${isSameDay(day, new Date()) ? 'bg-primary rounded-full p-2 text-white' : ''}`}>
-                {format(day, 'd')}
-              </span>
-            </div>
-          ))}
-        </div>
+  const RenderWeekView = () => {
+    // Update time every minute to keep the red line accurate
+    const [currentTime, setCurrentTime] = useState(new Date());
 
-        {/* 3. Body Grid: Naturally flows underneath and shares the exact same width as the header */}
-        <div
-          className="flex-1 grid gap-px bg-gray-200"
-          style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
-        >
-          <div className="bg-[#F9FAFB]">
-            {timeSlots.map((slot, idx) => (
-              <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-neutral-dark-grey pt-1`}>
-                {slot.label}
+    React.useEffect(() => {
+      const interval = setInterval(() => setCurrentTime(new Date()), 60000);
+      return () => clearInterval(interval);
+    }, []);
+
+    // Helper to calculate pixel positions based on time
+    const getTopPosition = (date: Date | string) => {
+      const minutesSinceMidnight = differenceInMinutes(new Date(date), startOfDay(new Date(date)));
+      return (minutesSinceMidnight / 60) * HOUR_HEIGHT;
+    };
+
+    const getEventHeight = (startTime: Date | string, endTime: Date | string) => {
+      const durationMinutes = differenceInMinutes(new Date(endTime), new Date(startTime));
+      return (durationMinutes / 60) * HOUR_HEIGHT;
+    };
+
+    return (
+      <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+
+        {/* HEADER (Sticky) */}
+        <div className="flex-1 overflow-y-scroll relative flex flex-col">
+          <div
+            className="sticky top-0 z-30 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm"
+            style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
+          >
+            <div className="bg-[#F9FAFB] p-2" />
+            {weekDays.map(day => (
+              <div
+                key={day.toString()}
+                className={`bg-[#F9FAFB] p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`}
+                onClick={() => setSelectedDate(day)}
+              >
+                <div className="text-b12-500 text-neutral-dark-grey font-medium mb-1">{format(day, 'EEE')}</div>
+                <span className={`text-lg font-semibold ${isSameDay(day, new Date()) ? 'bg-primary rounded-full p-2 text-white' : ''}`}>
+                  {format(day, 'd')}
+                </span>
               </div>
             ))}
           </div>
-          {weekDays.map(day => (
-            <div key={day.toString()} className="bg-neutral-white relative">
-              {timeSlots.map((slot, idx) => (
-                <div
-                  key={idx}
-                  className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`}
-                  onClick={() => setSelectedDate(day)}
-                />
-              ))}
-              {(itemsByDate[format(day, 'yyyy-MM-dd')] || []).map(item => (
-                <EventBlock key={item.id} item={item} dayDate={day} onClick={() => handleAppointmentClick(item)} />
-              ))}
-            </div>
-          ))}
-        </div>
 
+          {/* BODY (Grid with 24 Hours) */}
+          <div
+            className="flex-1 grid gap-px bg-gray-200"
+            style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}
+          >
+            {/* Time Labels Column */}
+            <div className="bg-white flex flex-col relative">
+              {Array.from({ length: 24 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="relative border-b border-gray-100 flex items-start justify-center text-xs text-gray-500"
+                  style={{ height: `${HOUR_HEIGHT}px` }}
+                >
+                  {/* -top-2.5 shifts the text up so it straddles the dividing line, just like the image */}
+                  <span className="relative -top-2.5 bg-white px-1">
+                    {i === 0 ? '12 AM' : i < 12 ? `${i} AM` : i === 12 ? '12 PM' : `${i - 12} PM`}
+                  </span>
+                </div>
+              ))}
+
+              {/* Red Current Time Label */}
+              <div
+                className="absolute left-0 right-0 flex justify-center z-20"
+                style={{ top: `${getTopPosition(currentTime)}px`, transform: 'translateY(-50%)' }}
+              >
+                <span className="text-[10px] font-bold text-red-500 bg-white px-1">
+                  {format(currentTime, 'h:mm a')}
+                </span>
+              </div>
+            </div>
+
+            {/* Days Columns */}
+            {weekDays.map(day => (
+              <div key={day.toString()} className="bg-white relative">
+                {/* Hourly Background Grid Lines */}
+                {Array.from({ length: 24 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer"
+                    style={{ height: `${HOUR_HEIGHT}px` }}
+                  />
+                ))}
+
+                {/* Red Current Time Line & Dot (Only on Today's Column) */}
+                {isSameDay(day, new Date()) && (
+                  <div
+                    className="absolute left-0 right-0 border-t-2 border-red-500 z-20"
+                    style={{ top: `${getTopPosition(currentTime)}px` }}
+                  >
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 absolute -left-1.5 -top-[5px]" />
+                  </div>
+                )}
+
+                {/* Event Blocks */}
+                {(itemsByDate[format(day, 'yyyy-MM-dd')] || []).map(item => (
+                  <div
+                    key={item.id}
+                    className="absolute rounded-r-md border-l-4 overflow-hidden p-1 text-xs cursor-pointer hover:shadow-md transition-shadow z-10"
+                    style={{
+                      top: `${getTopPosition(item.startTime)}px`,
+                      height: `${getEventHeight(item.startTime, item.endTime)}px`,
+                      left: '4px',    // Add padding from edges
+                      right: '4px',
+                      borderColor: '#3b82f6',        // The thick left border
+                      backgroundColor: '#f0f9ff',  // Light background color
+                    }}
+                    onClick={() => handleAppointmentClick(item)}
+                  >
+                    <div className="font-semibold text-gray-800">
+                      {format(new Date(item.startTime), 'h:mm a')} - {format(new Date(item.endTime), 'h:mm a')}
+                    </div>
+                    <div className="text-gray-600 truncate">{item.title}</div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
-    </div >
-  );
+    );
+  };
 
   const renderAgendaView = () => (
     <div className="flex-1 overflow-y-auto bg-white">
@@ -342,7 +416,7 @@ const AppointmentCalendarPage = () => {
             {/* Calendar Canvas */}
             <div className="flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden">
               {currentView === 'day' && renderDayView()}
-              {(currentView === 'week' || currentView === 'work-week') && renderWeekView()}
+              {(currentView === 'week' || currentView === 'work-week') && <RenderWeekView />}
               {currentView === 'agenda' && renderAgendaView()}
               {currentView === 'month' && renderMonthView()}
             </div>
