@@ -11,6 +11,7 @@ export interface IAppointment {
   updatedById?: number;
   createdAt: string;
   updatedAt: string;
+  userId: number;
   client?: {
     id: number;
     firstName: string;
@@ -18,20 +19,33 @@ export interface IAppointment {
     email: string;
     phone: string;
   };
-  owner?: {
+  user?: {
     id: number;
     firstName: string;
     lastName: string;
+    email: string;
+    phone: string;
   };
-  createdBy?: {
+  lead?: {
     id: number;
     firstName: string;
     lastName: string;
+    email: string;
+    phone: string;
   };
-  updatedBy?: {
+  createdByUser?: {
     id: number;
     firstName: string;
     lastName: string;
+    email: string;
+    phone: string;
+  };
+  updatedByUser?: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
   };
   type?: 'online' | 'in-person' | 'phone';
   status?: 'scheduled' | 'completed' | 'cancelled';

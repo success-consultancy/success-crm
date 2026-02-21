@@ -82,13 +82,12 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
                   <span className="text-b12-500 border rounded-full px-2 py-1 !mb-0">
                     {startTime} - {endTime}
                   </span>
-
-                  {appointment.owner && (
+                  {appointment.user && (
                     <Avatar
-                      title={`${appointment.owner?.firstName} ${appointment.owner?.lastName}`}
+                      title={`${appointment.user?.firstName} ${appointment.user?.lastName}`}
                       className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
                     >
-                      {getInitials(appointment.owner?.firstName, appointment.owner?.lastName)}
+                      {getInitials(appointment.user?.firstName, appointment.user?.lastName)}
                     </Avatar>
                   )}
                 </div>

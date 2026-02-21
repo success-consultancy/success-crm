@@ -18,6 +18,7 @@ import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
 import { useGetMe } from '@/query/get-me';
 import { trim } from 'lodash';
 import LeadSelectWithCommand from '@/components/molecules/lead-select-with-command';
+import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
 
 interface AppointmentFormModalProps {
   isOpen: boolean;
@@ -75,7 +76,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
         description: '',
         date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
         startTime: '09:00',
-        endTime: '10:00',
+        endTime: '09:30',
         ownerId: currentUser?.data?.id || 0,
         type: 'in-person',
         status: 'scheduled',
@@ -172,17 +173,21 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
 
             <FormField
               control={form.control}
-              name="type"
+              name="ownerId"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Type</FormLabel>
                   <FormControl>
-                    <SelectField
-                      name="type"
-                      label=""
-                      control={form.control}
-                      options={typeOptions}
-                      placeholder="Select type"
+                    <UserSelectWithCommand
+                      value={field.value?.toString()}
+                      label="Owner"
+                      placeholder="Search by name, email or phone"
+                      onSelect={(val) => {
+                        if (!val) {
+                          return;
+                        }
+
+                        field.onChange(Number(val));
+                      }}
                     />
                   </FormControl>
                   <FormMessage />

@@ -104,37 +104,37 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         )}
 
         {/* Owner */}
-        {appointment.owner && (
+        {appointment.user && (
           <div className='flex'>
             <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner</h4>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium">
-                {getInitials(appointment.owner.firstName, appointment.owner.lastName)}
+                {getInitials(appointment.user.firstName, appointment.user.lastName)}
               </div>
               <p className="text-sm text-gray-900">
-                {getInitials(appointment.owner.firstName, appointment.owner.lastName)}{' '}
-                {appointment.owner.firstName} {appointment.owner.lastName}
+                {getInitials(appointment.user.firstName, appointment.user.lastName)}{' '}
+                {appointment.user.firstName} {appointment.user.lastName}
               </p>
             </div>
           </div>
         )}
 
         {/* Created By */}
-        {appointment.createdBy && appointment.createdAt && (
+        {appointment.createdByUser && appointment.createdAt && (
           <div className='flex'>
             <h4 className="text-sm font-semibold text-gray-700 mb-1 w-[84px] mr-3">Created by</h4>
             <p className="text-sm text-gray-900">
-              {appointment.createdBy.firstName} {appointment.createdBy.lastName} {formatDateTime(appointment.createdAt)}
+              {appointment.createdByUser.firstName} {appointment.createdByUser.lastName} {formatDateTime(appointment.createdAt)}
             </p>
           </div>
         )}
 
         {/* Updated By */}
-        {appointment.updatedBy && appointment.updatedAt && (
+        {appointment.updatedByUser && appointment.updatedAt && (
           <div className='flex'>
             <h4 className="text-sm font-semibold text-gray-700 mb-1 w-[84px] mr-3">Updated by</h4>
             <p className="text-sm text-gray-900">
-              {appointment.updatedBy.firstName} {appointment.updatedBy.lastName} {formatDateTime(appointment.updatedAt)}
+              {appointment.updatedByUser.firstName} {appointment.updatedByUser.lastName} {formatDateTime(appointment.updatedAt)}
             </p>
           </div>
         )}

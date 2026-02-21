@@ -483,11 +483,11 @@ const AgendaCard = ({ item, onClick }: { item: IAppointment, onClick: () => void
         <div className="font-semibold text-gray-900 mb-1">{item.title}</div>
         {item.description && <div className="text-sm text-gray-600 mb-2">{item.description}</div>}
       </div>
-      {item.owner && (
+      {item.user && (
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="text-sm text-gray-700 font-medium">{item.owner.firstName} {item.owner.lastName}</div>
+          <div className="text-sm text-gray-700 font-medium">{item.user.firstName} {item.user.lastName}</div>
           <div className={`w-8 h-8 rounded-full ${colors.light} ${colors.text} flex items-center justify-center text-xs font-semibold ${colors.border} border-2`}>
-            {getUserInitials(item.owner.firstName, item.owner.lastName)}
+            {getUserInitials(item.user.firstName, item.user.lastName)}
           </div>
         </div>
       )}

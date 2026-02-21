@@ -30,7 +30,42 @@ interface ApiAppointment {
   updatedBy: number;
   createdAt: string;
   updatedAt: string;
-  deletedAt: string | null;
+  user: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+    deletedAt: string | null;
+  };
+  createdByUser: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+    deletedAt: string | null;
+  };
+  updatedByUser: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+    deletedAt: string | null;
+  };
+  lead: {
+    id: number;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    avatar: string;
+    deletedAt: string | null;
+  };
 }
 
 interface ApiAppointmentsResponse {
@@ -41,7 +76,7 @@ interface ApiAppointmentsResponse {
 const transformAppointment = (apt: ApiAppointment): IAppointment => {
   // Extract date from start field (format: yyyy-MM-dd)
   const date = format(parseISO(apt.start), 'yyyy-MM-dd');
-  
+
   return {
     id: apt.id,
     title: apt.title,
@@ -55,13 +90,18 @@ const transformAppointment = (apt: ApiAppointment): IAppointment => {
     updatedById: apt.updatedBy,
     createdAt: apt.createdAt,
     updatedAt: apt.updatedAt,
+    user: apt.user,
+    lead: apt.lead,
+    createdByUser: apt.createdByUser,
+    updatedByUser: apt.updatedByUser,
+    userId: apt.userId,
   };
 };
 
 const getAppointments = async (params: AppointmentFilterParams) => {
   const res = await api.get('/appointment?' + QueryString.stringify(params, { arrayFormat: 'repeat' }));
   const data = res.data;
-  
+
   // Handle array response (direct array of appointments)
   if (Array.isArray(data)) {
     if (data.length > 0 && 'start' in data[0]) {
@@ -76,10 +116,10 @@ const getAppointments = async (params: AppointmentFilterParams) => {
       rows: data as IAppointment[],
     } as AppointmentsResponseType;
   }
-  
+
   // Handle object response with rows property
   const responseData = data as ApiAppointmentsResponse | AppointmentsResponseType;
-  
+
   // Check if data needs transformation (has 'start' field instead of 'startTime')
   if (responseData.rows && responseData.rows.length > 0 && 'start' in responseData.rows[0]) {
     return {
@@ -87,7 +127,7 @@ const getAppointments = async (params: AppointmentFilterParams) => {
       rows: (responseData.rows as ApiAppointment[]).map(transformAppointment),
     } as AppointmentsResponseType;
   }
-  
+
   return responseData as AppointmentsResponseType;
 };
 
@@ -102,12 +142,12 @@ export const useGetAppointments = (params: AppointmentFilterParams) => {
 const getAppointmentById = async (id: string) => {
   const res = await api.get(`/appointment/${id}`);
   const data = res.data as ApiAppointment | IAppointment;
-  
+
   // Check if data needs transformation (has 'start' field instead of 'startTime')
   if ('start' in data) {
     return transformAppointment(data as ApiAppointment);
   }
-  
+
   return data as IAppointment;
 };
 

@@ -99,37 +99,37 @@ const AppointmentDetailModal: React.FC<AppointmentDetailModalProps> = ({
         )}
 
         {/* Owner */}
-        {appointment.owner && (
+        {appointment.user && (
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-1">Owner</h4>
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium">
-                {getInitials(appointment.owner.firstName, appointment.owner.lastName)}
+                {getInitials(appointment.user.firstName, appointment.user.lastName)}
               </div>
               <p className="text-sm text-gray-900">
-                {getInitials(appointment.owner.firstName, appointment.owner.lastName)}{' '}
-                {appointment.owner.firstName} {appointment.owner.lastName}
+                {getInitials(appointment.user.firstName, appointment.user.lastName)}{' '}
+                {appointment.user.firstName} {appointment.user.lastName}
               </p>
             </div>
           </div>
         )}
 
         {/* Created By */}
-        {appointment.createdBy && appointment.createdAt && (
+        {appointment.createdByUser && appointment.createdAt && (
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-1">Created by</h4>
             <p className="text-sm text-gray-900">
-              {appointment.createdBy.firstName} {appointment.createdBy.lastName} {formatDateTime(appointment.createdAt)}
+              {appointment.createdByUser.firstName} {appointment.createdByUser.lastName} {formatDateTime(appointment.createdAt)}
             </p>
           </div>
         )}
 
         {/* Updated By */}
-        {appointment.updatedBy && appointment.updatedAt && (
+        {appointment.updatedByUser && appointment.updatedAt && (
           <div>
             <h4 className="text-sm font-semibold text-gray-700 mb-1">Updated by</h4>
             <p className="text-sm text-gray-900">
-              {appointment.updatedBy.firstName} {appointment.updatedBy.lastName} {formatDateTime(appointment.updatedAt)}
+              {appointment.updatedByUser.firstName} {appointment.updatedByUser.lastName} {formatDateTime(appointment.updatedAt)}
             </p>
           </div>
         )}
