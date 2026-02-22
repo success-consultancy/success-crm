@@ -17,14 +17,15 @@ export interface ISelectOptions {
 }
 
 type Props = {
-  label: string;
+  label?: string;
   value?: string;
   onSelect?: (val: string) => void;
   placeholder?: string;
   error?: string;
+  className?: string
 };
 
-const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error }: Props) => {
+const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error, className }: Props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch] = useDebounceValue(searchTerm, 500);
 
@@ -77,10 +78,10 @@ const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error }: P
 
   return (
     <div className="flex flex-col gap-1 flex-1">
-      <Label className="text-b3-b font-semibold">{label}</Label>
+      {label && <Label className="text-b3-b font-semibold">{label}</Label>}
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
-        <SelectTrigger className={cn(['w-full', error && 'border-primary-red'])}>
+        <SelectTrigger className={cn(['w-full', error && 'border-primary-red', className])}>
           <SelectValue placeholder={placeholder}>{selectedLabel || placeholder}</SelectValue>
         </SelectTrigger>
         <SelectContent className="w-full">

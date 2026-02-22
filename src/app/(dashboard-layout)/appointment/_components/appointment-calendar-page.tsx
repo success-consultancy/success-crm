@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, startOfDay, parseISO, getHours, getMinutes, differenceInMinutes } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
 import useSearchParams from '@/hooks/use-search-params';
 import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
 import { CALENDAR_FILTER_PARAMS, useGetCalendar } from '@/query/get-calendar';
@@ -18,6 +18,7 @@ import TabSelector from '@/components/atoms/tab-selector';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import AppointmentPreview from './appointment-preview';
 import { cn } from '@/lib/utils';
+import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
 
 // --- CONFIGURATION ---
 const VIEW_OPTIONS = [
@@ -400,7 +401,29 @@ const AppointmentCalendarPage = () => {
                 </span>
                 <Button variant="ghost" size="icon" onClick={() => handleDateChange('next')}><ChevronRight className="h-4 w-4" /></Button>
               </div>
-              <div className="border rounded-md px-2 py-1.5">User: All selected</div>
+              <div className="flex items-center gap-2">
+                <UserSelectWithCommand
+                  value={userId || ''}
+                  placeholder={userId ? 'Selected' : 'User Selection: All selected'}
+                  onSelect={(val) => {
+                    if (val) {
+                      setParams([{ name: 'userId', value: val }]);
+                    }
+                  }}
+                  className="w-[240px]"
+                />
+                {userId && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setParams([{ name: 'userId', value: '' }])}
+                    className="flex-shrink-0"
+                    title="Clear filter"
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
             </div>
             <div className="flex items-center rounded-3xl p-1 bg-[#F7F8FA] border border-light-grey">
               {VIEW_OPTIONS.map(view => (

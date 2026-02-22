@@ -110,6 +110,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
         await addAppointment(payload);
       }
 
+      form.reset();
       onClose();
     } catch (error) {
       console.error('Error saving appointment:', error);
