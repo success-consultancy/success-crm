@@ -38,10 +38,10 @@ const DialogWrapper = (props: Props) => {
             e.stopPropagation();
           }
         }}
-        className={cn('w-[calc(100vw-10px)] xl:min-w-[650px] !rounded-3xl p-2 z-50', props.className)}
+        className={cn('w-[calc(100vw-10px)] xl:min-w-[496px] !rounded-lg p-0 z-50', props.className)}
       >
-        <DialogHeader className="px-4 md:px-6 pt-4 md:pt-6">
-          <DialogTitle className="text-2xl md:!text-h4 text-left font-medium pr-5">
+        <DialogHeader className="px-4 md:px-6 pt-4 pb-2 md:pt-6 border-b">
+          <DialogTitle className="text-2xl md:!text-h4-700 text-left pr-5">
             {props.title.length > 100 ? props.title.slice(0, 100) + '...' : props.title}
           </DialogTitle>
           <DialogDescription></DialogDescription>

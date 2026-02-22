@@ -10,6 +10,7 @@ import { Search } from 'lucide-react';
 import { useGetLeads, useGetLeadById } from '@/query/get-leads';
 import useDebounceValue from '@/hooks/use-debounce';
 import { useGetUserById, useGetUsers } from '@/query/get-user';
+import { getAppointColorBasedOnUserName } from '@/utils/color';
 
 export interface ISelectOptions {
   label: string;
@@ -82,6 +83,10 @@ const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error, cla
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
         <SelectTrigger className={cn(['w-full', error && 'border-primary-red', className])}>
+          {selectedUserData?.firstName && (
+            <div className={`w-2 ${getAppointColorBasedOnUserName(selectedUserData?.firstName || '', selectedUserData?.lastName || '', 'tailwind')} rounded-full flex-shrink-0 self-stretch`} />
+          )}
+
           <SelectValue placeholder={placeholder}>{selectedLabel || placeholder}</SelectValue>
         </SelectTrigger>
         <SelectContent className="w-full">
