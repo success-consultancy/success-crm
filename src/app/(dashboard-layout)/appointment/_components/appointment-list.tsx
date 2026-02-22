@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { IAppointment } from '@/types/response-types/appointment-response';
 import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
+import { getAppointColorBasedOnUserName } from '@/utils/color';
 
 interface AppointmentListProps {
   appointments: IAppointment[];
@@ -31,17 +32,6 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
     );
   }
 
-  const getAppointmentColor = (type?: string) => {
-    switch (type) {
-      case 'online':
-        return 'bg-green-100 text-green-800';
-      case 'phone':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-blue-100 text-blue-800';
-    }
-  };
-
   const getInitials = (firstName?: string, lastName?: string) => {
     const first = firstName?.charAt(0) || '';
     const last = lastName?.charAt(0) || '';
@@ -54,16 +44,6 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
         const startTime = format(parseISO(appointment.startTime), 'h:mm a');
         const endTime = format(parseISO(appointment.endTime), 'h:mm a');
 
-        const getDotColor = (type?: string) => {
-          switch (type) {
-            case 'online':
-              return 'bg-green-500';
-            case 'phone':
-              return 'bg-yellow-500';
-            default:
-              return 'bg-blue-500';
-          }
-        };
 
         return (
           <div
@@ -72,7 +52,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
             onClick={() => onAppointmentClick(appointment)}
           >
             <div className="flex items-start gap-3">
-              <div className={cn('w-2 h-2 rounded-full mt-2 flex-shrink-0', getDotColor(appointment.type))} />
+              <div className={cn('w-2 h-2 rounded-full mt-2 flex-shrink-0', getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))} />
               <div className="flex-1 min-w-0">
                 <h5 className="text-b13-500 text-neutral-black mb-1 truncate">{appointment.title}</h5>
                 {appointment.description && (
@@ -85,7 +65,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
                   {appointment.user && (
                     <Avatar
                       title={`${appointment.user?.firstName} ${appointment.user?.lastName}`}
-                      className="w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium"
+                      className={cn("w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-medium text-white", getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))}
                     >
                       {getInitials(appointment.user?.firstName, appointment.user?.lastName)}
                     </Avatar>

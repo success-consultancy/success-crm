@@ -2,7 +2,7 @@
 
 import React, { useState, useCallback, useMemo } from 'react';
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, isSameMonth, isSameDay, startOfDay, parseISO, getHours, getMinutes, differenceInMinutes } from 'date-fns';
-import { ChevronLeft, ChevronRight, Plus, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, Plus, X } from 'lucide-react';
 import useSearchParams from '@/hooks/use-search-params';
 import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
 import { CALENDAR_FILTER_PARAMS, useGetCalendar } from '@/query/get-calendar';
@@ -19,6 +19,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import AppointmentPreview from './appointment-preview';
 import { cn } from '@/lib/utils';
 import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
+import { getAppointColorBasedOnUserName } from '@/utils/color';
 
 // --- CONFIGURATION ---
 const VIEW_OPTIONS = [
@@ -333,14 +334,14 @@ const AppointmentCalendarPage = () => {
   };
 
   const renderAgendaView = () => (
-    <div className="flex-1 overflow-y-auto bg-white">
-      {isLoading ? <div className="flex justify-center p-8 text-gray-500">Loading...</div> : agendaGroups.length === 0 ? <div className="flex justify-center p-8 text-gray-500">No events found</div> : (
+    <div className="flex-1 overflow-y-auto bg-white px-6 py-4">
+      {isLoading ? <div className="flex justify-center p-8 text-gray-500">Loading...</div> : agendaGroups.length === 0 ? <div className="flex justify-center p-8 text-gray-500">No appointments found</div> : (
         <div className="divide-y divide-gray-200">
-          {agendaGroups.map(({ date, items }) => (
-            <div key={date} className="py-4">
-              <div className="flex justify-between px-6 mb-3">
-                <div className={`text-lg font-semibold ${isSameDay(parseISO(date), new Date()) ? 'text-blue-600' : 'text-gray-900'}`}>{format(parseISO(date), 'MMM d, yyyy - EEEE')}</div>
-                <div className="text-sm text-gray-500">{items.length} events</div>
+          {agendaGroups.map(({ date, items }, index) => (
+            <div key={date} className={cn('border rounded-2xl pb-4', index > 0 && 'mt-2 mb-10')}>
+              <div className="flex justify-between px-6 mb-3 bg-[#F7F8FA] py-4 rounded-t-2xl">
+                <div className={`text-b14-600 text-neutral-dark-grey ${isSameDay(parseISO(date), new Date()) ? 'text-primary-blue' : 'text-neutral-dark-grey'}`}>{format(parseISO(date), 'MMM d, yyyy - EEEE')}</div>
+                <div className="text-sm text-neutral-dark-grey">{items.length} appointments</div>
               </div>
               <div className="space-y-2 px-6">
                 {items.map(item => <AgendaCard key={item.id} item={item} onClick={() => handleAppointmentClick(item)} />)}
@@ -369,7 +370,7 @@ const AppointmentCalendarPage = () => {
                 {dayItems.slice(0, 2).map(item => (
                   <AppointmentPopover key={item.id} apt={item}>
                     <div className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 bg-[#F7F8FA]" onClick={e => e.stopPropagation()}>
-                      <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", getAppointmentColor(item.type).bg)} />
+                      <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
                       <span className="truncate">{format(parseISO(item.startTime), 'h:mma')} {item.title}</span>
                     </div>
                   </AppointmentPopover>
@@ -437,7 +438,7 @@ const AppointmentCalendarPage = () => {
           {/* Main Layout Area */}
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
             {/* Calendar Canvas */}
-            <div className="flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden">
+            <div className={cn("flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden", currentView === 'agenda' && 'border-0')}>
               {currentView === 'day' && renderDayView()}
               {(currentView === 'week' || currentView === 'work-week') && <RenderWeekView />}
               {currentView === 'agenda' && renderAgendaView()}
@@ -445,25 +446,28 @@ const AppointmentCalendarPage = () => {
             </div>
 
             {/* Right Sidebar */}
-            <div className="w-80 flex flex-col flex-shrink-0 rounded-lg p-4 overflow-hidden">
-              <div className="flex items-center justify-between mb-4 flex-shrink-0">
-                <h4 className="text-b14-600">{format(selectedDate, 'd MMM, yyyy')}</h4>
-                {currentTab === 'appointment' && <Button LeftIcon={Plus} onClick={() => setIsFormModalOpen(true)} size="sm" className='text-primary' variant="ghost">Add</Button>}
-              </div>
-
-              {currentTab === 'appointment' ? (
-                <AppointmentList appointments={selectedDateItems} onAppointmentClick={handleAppointmentClick} isLoading={isLoading} />
-              ) : (
-                <div className="flex-1 overflow-y-auto space-y-2">
-                  {selectedDateItems.length === 0 ? <div className="text-center text-gray-500 py-8">No events</div> : selectedDateItems.map(evt => (
-                    <div key={evt.id} className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => handleAppointmentClick(evt)}>
-                      <div className="font-semibold text-sm">{evt.title}</div>
-                      <div className="text-xs text-gray-600 mt-1">{format(parseISO(evt.startTime), 'h:mm a')} - {format(parseISO(evt.endTime), 'h:mm a')}</div>
-                    </div>
-                  ))}
+            {currentView !== 'agenda' && (
+              <div className="w-80 flex flex-col flex-shrink-0 rounded-lg p-4 overflow-hidden">
+                <div className="flex items-center justify-between mb-4 flex-shrink-0">
+                  <h4 className="text-b14-600">{format(selectedDate, 'd MMM, yyyy')}</h4>
+                  {currentTab === 'appointment' && <Button LeftIcon={Plus} onClick={() => setIsFormModalOpen(true)} size="sm" className='text-primary' variant="ghost">Add</Button>}
                 </div>
-              )}
-            </div>
+
+                {currentTab === 'appointment' ? (
+                  <AppointmentList appointments={selectedDateItems} onAppointmentClick={handleAppointmentClick} isLoading={isLoading} />
+                ) : (
+                  <div className="flex-1 overflow-y-auto space-y-2">
+                    {selectedDateItems.length === 0 ? <div className="text-center text-gray-500 py-8">No events</div> : selectedDateItems.map(evt => (
+                      <div key={evt.id} className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => handleAppointmentClick(evt)}>
+                        <div className="font-semibold text-sm">{evt.title}</div>
+                        <div className="text-xs text-gray-600 mt-1">{format(parseISO(evt.startTime), 'h:mm a')} - {format(parseISO(evt.endTime), 'h:mm a')}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
+
           </div>
         </div>
       </Container>
@@ -497,19 +501,21 @@ const EventBlock = ({ item, dayDate, onClick }: { item: IAppointment, dayDate: D
 };
 
 const AgendaCard = ({ item, onClick }: { item: IAppointment, onClick: () => void }) => {
-  const colors = getAppointmentColor(item.type);
+  console.log({ item });
   return (
-    <div className="flex items-start gap-4 p-4 bg-white border border-gray-200 rounded-lg hover:shadow-md transition-shadow cursor-pointer" onClick={onClick}>
-      <div className="flex-shrink-0 w-24 text-sm font-medium text-gray-700">{format(parseISO(item.startTime), 'h:mm a')} - {format(parseISO(item.endTime), 'h:mm a')}</div>
-      <div className={`w-1 ${colors.bg} rounded-full flex-shrink-0 self-stretch`} />
+    <div key={item.id} className="flex items-start gap-4 px-1 py-2 border-gray-200 cursor-pointer border-b last:border-b-0" onClick={onClick}>
+      <div className={`w-1 ${getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '')} rounded-full flex-shrink-0 self-stretch`} />
+      <div className="flex-shrink-0 text-sm font-medium text-neutral-black min-w-[148px] flex items-center gap-2 mr-8"><Clock className="h-4 w-4" /> {format(parseISO(item.startTime), 'h:mm a')} - {format(parseISO(item.endTime), 'h:mm a')}</div>
       <div className="flex-1 min-w-0">
-        <div className="font-semibold text-gray-900 mb-1">{item.title}</div>
-        {item.description && <div className="text-sm text-gray-600 mb-2">{item.description}</div>}
+        <div className="font-semibold text-b14-600 mb-1">{item.title}</div>
+        {item.description && <div className="text-b13 text-neutral-dark-grey mb-1">{item.description}</div>}
+        {item?.lead && <div className="text-b13 text-neutral-dark-grey">{item.lead?.firstName} {item.lead?.lastName} | {item.lead?.email} | {item.lead?.phone}</div>}
       </div>
-      {item.user && (
+
+      {item?.user && (
         <div className="flex-shrink-0 flex items-center gap-2">
-          <div className="text-sm text-gray-700 font-medium">{item.user.firstName} {item.user.lastName}</div>
-          <div className={`w-8 h-8 rounded-full ${colors.light} ${colors.text} flex items-center justify-center text-xs font-semibold ${colors.border} border-2`}>
+          <div className="text-sm text-neutral-dark-grey font-medium">{item.user.firstName} {item.user.lastName}</div>
+          <div className={`w-8 h-8 rounded-full ${getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '')} text-white flex items-center justify-center text-xs font-semibold border-2`}>
             {getUserInitials(item.user.firstName, item.user.lastName)}
           </div>
         </div>
