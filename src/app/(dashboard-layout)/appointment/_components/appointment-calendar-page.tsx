@@ -501,7 +501,6 @@ const EventBlock = ({ item, dayDate, onClick }: { item: IAppointment, dayDate: D
 };
 
 const AgendaCard = ({ item, onClick }: { item: IAppointment, onClick: () => void }) => {
-  console.log({ item });
   return (
     <div key={item.id} className="flex items-start gap-4 px-1 py-2 border-gray-200 cursor-pointer border-b last:border-b-0" onClick={onClick}>
       <div className={`w-1 ${getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '')} rounded-full flex-shrink-0 self-stretch`} />
