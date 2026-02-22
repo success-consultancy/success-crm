@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import { format, parseISO } from 'date-fns';
 import { IAppointment } from '@/types/response-types/appointment-response';
 import DialogWrapper from '@/components/organisms/dialog-wrapper';
@@ -9,12 +9,15 @@ import { Cross, Pencil, Trash2, X } from 'lucide-react';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { cn } from '@/lib/utils';
 import { CloseCircle } from 'iconsax-reactjs';
+import { getAppointColorBasedOnUserName } from '@/utils/color';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 
 interface AppointmentPreviewProps {
   appointment: IAppointment;
   onEdit: (appointment: IAppointment) => void;
   onDelete: () => void;
   onClose: () => void;
+  disableHeader?: boolean;
 }
 
 const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
@@ -22,12 +25,27 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
   onEdit,
   onDelete,
   onClose,
+  disableHeader = false,
 }) => {
   const { mutateAsync: deleteAppointment } = useDeleteAppointment();
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleDelete = async () => {
-    await deleteAppointment(appointment.id);
-    onDelete();
+    setIsDeleting(true);
+    try {
+      await deleteAppointment(appointment.id);
+      setIsDeleteDialogOpen(false);
+      onDelete();
+    } catch (error) {
+      console.error('Failed to delete appointment:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setIsDeleteDialogOpen(true);
   };
 
   const startTime = format(parseISO(appointment.startTime), 'h:mm a');
@@ -52,30 +70,37 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
   };
 
   return (
-    <div className="">
+    <div>
+      {!disableHeader && (
+        <>
+          <div className='flex w-full justify-between'>
+            <div className='flex'>
+              <span className={cn('h-[10px] w-[10px] rounded-full mt-2', getAppointColorBasedOnUserName(appointment?.user?.firstName || '', appointment?.user?.lastName || ''))}></span>
+              <div className='ml-3'>
+                <h4 className='text-neutral-black font-bold text-[18px] mb-1'>{appointment.title} {appointment?.type ? `- ${appointment.type}` : ''}</h4>
+                <div className='text-neutral-dark-grey text-b12'>{date}</div>
+              </div>
+            </div>
 
-      <div className='flex w-full justify-between border-b pb-4'>
-        <div>
-          <h4 className='text-neutral-black font-bold text-[18px] mb-1'>{appointment.title} {appointment?.type ? `- ${appointment.type}` : ''}</h4>
-          <div className='text-neutral-dark-grey text-body-12'>{date}</div>
-        </div>
+            {/* Header Actions */}
+            <div className="flex items-center justify-end gap-2">
+              <Button variant="ghost" size="icon" onClick={() => onEdit(appointment)}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={handleDeleteClick}>
+                <Trash2 className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={onClose}>
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+          <div className='border-b mb-4'></div>
+        </>
+      )}
 
-        {/* Header Actions */}
-        <div className="flex items-center justify-end gap-2">
-          <Button variant="ghost" size="icon" onClick={() => onEdit(appointment)}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={handleDelete}>
-            <Trash2 className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-      </div>
+      <div className='pt-[10px] flex flex-col gap-[6px]'>
 
-
-      <div className='py-[10px]'>
         {/* Time */}
         <div className='flex'>
           <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Time</h4>
@@ -93,12 +118,12 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         )}
 
         {/* Client */}
-        {appointment.client && (
+        {appointment.lead && (
           <div className='flex'>
             <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Client</h4>
             <p className="text-sm text-gray-900">
-              {appointment.client.firstName} {appointment.client.lastName} • {appointment.client.email} •{' '}
-              {appointment.client.phone}
+              {appointment.lead.firstName} {appointment.lead.lastName} • {appointment.lead.email} •{' '}
+              {appointment.lead.phone}
             </p>
           </div>
         )}
@@ -108,10 +133,10 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
           <div className='flex'>
             <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner</h4>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium">
+              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium", getAppointColorBasedOnUserName(appointment.user.firstName, appointment.user.lastName))}>
                 {getInitials(appointment.user.firstName, appointment.user.lastName)}
               </div>
-              <p className="text-sm text-gray-900">
+              <p className="text-sm">
                 {getInitials(appointment.user.firstName, appointment.user.lastName)}{' '}
                 {appointment.user.firstName} {appointment.user.lastName}
               </p>
@@ -119,12 +144,14 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
           </div>
         )}
 
+        <div className='border-b pb-4 mb-4'></div>
+
         {/* Created By */}
         {appointment.createdByUser && appointment.createdAt && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold text-gray-700 mb-1 w-[84px] mr-3">Created by</h4>
-            <p className="text-sm text-gray-900">
-              {appointment.createdByUser.firstName} {appointment.createdByUser.lastName} {formatDateTime(appointment.createdAt)}
+            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Created by</h4>
+            <p className="text-sm">
+              {appointment.createdByUser.firstName} {appointment.createdByUser.lastName} • {formatDateTime(appointment.createdAt)}
             </p>
           </div>
         )}
@@ -132,15 +159,27 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         {/* Updated By */}
         {appointment.updatedByUser && appointment.updatedAt && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold text-gray-700 mb-1 w-[84px] mr-3">Updated by</h4>
-            <p className="text-sm text-gray-900">
-              {appointment.updatedByUser.firstName} {appointment.updatedByUser.lastName} {formatDateTime(appointment.updatedAt)}
+            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Updated by</h4>
+            <p className="text-sm">
+              {appointment.updatedByUser.firstName} {appointment.updatedByUser.lastName} • {formatDateTime(appointment.updatedAt)}
             </p>
           </div>
         )}
       </div>
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        setIsOpen={setIsDeleteDialogOpen}
+        title="Delete Appointment"
+        message={`Are you sure you want to delete "${appointment.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        loading={isDeleting}
+      />
     </div>
   );
 };
 
 export default AppointmentPreview;
+

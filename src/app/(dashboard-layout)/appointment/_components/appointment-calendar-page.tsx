@@ -24,6 +24,8 @@ import { cn } from '@/lib/utils';
 import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { useCalendarData } from './use-calendar-data';
+import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 
 // ==========================================
 // 1. CONSTANTS & UTILITIES (Move to a utils file)
@@ -42,14 +44,6 @@ const TAB_CONFIG = [
 ];
 
 const HOUR_HEIGHT = 80;
-
-const getAppointmentColor = (type?: string) => {
-  switch (type) {
-    case 'online': return { bg: 'bg-green-500', light: 'bg-green-100', text: 'text-green-800', border: 'border-green-500' };
-    case 'phone': return { bg: 'bg-yellow-500', light: 'bg-yellow-100', text: 'text-yellow-800', border: 'border-yellow-500' };
-    default: return { bg: 'bg-blue-500', light: 'bg-blue-100', text: 'text-blue-800', border: 'border-blue-500' };
-  }
-};
 
 const getUserInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
@@ -245,7 +239,7 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
 };
 
 // --- Month View ---
-const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate }: any) => (
+const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate, setEditingAppointment }: any) => (
   <div className="flex-1 flex flex-col overflow-hidden">
     <div className="grid grid-cols-7 flex-shrink-0 bg-[#F9FAFB]">
       {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
@@ -260,7 +254,7 @@ const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate }:
             <div className="text-sm mb-1.5 flex-shrink-0"><span className={isSameDay(day, new Date()) ? 'font-bold text-white bg-primary-blue p-1.5 rounded-md' : ''}>{format(day, 'd')}</span></div>
             <div className="flex-1 space-y-1 overflow-hidden min-h-0">
               {dayItems.slice(0, 2).map((item: any) => (
-                <AppointmentPopover key={item.id} apt={item}>
+                <AppointmentPopover setEditingAppointment={setEditingAppointment} key={item.id} apt={item}>
                   <div className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 bg-[#F7F8FA]" onClick={e => e.stopPropagation()}>
                     <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
                     <span className="truncate">{format(parseISO(item.startTime), 'h:mma')} {item.title}</span>
@@ -338,6 +332,11 @@ const AppointmentCalendarPage = () => {
     setIsDetailModalOpen(true);
   }, []);
 
+  const handleEdit = useCallback((appointment: IAppointment) => {
+    setEditingAppointment(appointment);
+    setIsFormModalOpen(true);
+  }, [setEditingAppointment, setIsFormModalOpen]);
+
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -382,7 +381,7 @@ const AppointmentCalendarPage = () => {
               {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} />}
               {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} />}
               {currentView === 'agenda' && <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} />}
-              {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} />}
+              {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} />}
             </div>
 
             {/* Right Sidebar */}
@@ -481,15 +480,56 @@ const AgendaCard = ({ item, onClick }: { item: IAppointment, onClick: () => void
   );
 };
 
-const AppointmentPopover = ({ apt, children }: { apt: any, children: React.ReactNode }) => {
+const AppointmentPopover = ({ setEditingAppointment, apt, children }: { setEditingAppointment: (appointment: any) => void, apt: any, children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const { mutateAsync: deleteAppointment } = useDeleteAppointment();
+
+  const handleEdit = () => {
+    console.log('Editing appointment:', apt);
+    setEditingAppointment(apt);
+    setIsOpen(false);
+  };
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    try {
+      await deleteAppointment(apt.id);
+      setIsDeleteDialogOpen(false);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Failed to delete appointment:', error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  const handleDeleteClick = () => {
+    setIsDeleteDialogOpen(true);
+  };
+
   return (
-    <Popover open={isOpen} onOpenChange={setIsOpen}>
-      <PopoverTrigger asChild>{children}</PopoverTrigger>
-      <PopoverContent align='start' className="min-w-[504px]">
-        <AppointmentPreview appointment={apt} onEdit={() => { }} onDelete={() => { }} onClose={() => setIsOpen(false)} />
-      </PopoverContent>
-    </Popover>
+    <>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>{children}</PopoverTrigger>
+        <PopoverContent align='start' className="min-w-[504px]">
+          <AppointmentPreview appointment={apt} onEdit={handleEdit} onDelete={handleDeleteClick} onClose={() => setIsOpen(false)} />
+        </PopoverContent>
+      </Popover>
+
+      <ConfirmationDialog
+        isOpen={isDeleteDialogOpen}
+        setIsOpen={setIsDeleteDialogOpen}
+        title="Delete Appointment"
+        message={`Are you sure you want to delete "${apt.title}"? This action cannot be undone.`}
+        confirmText="Delete"
+        cancelText="Cancel"
+        onConfirm={handleDelete}
+        loading={isDeleting}
+      />
+    </>
   );
 };
 export default AppointmentCalendarPage;
