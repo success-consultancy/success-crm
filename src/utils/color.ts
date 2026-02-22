@@ -1,5 +1,5 @@
 
-type ColorOutputType = "tailwind" | "css" | "style";
+type ColorOutputType = "tailwind" | "css" | "style" | "border" | "raw";
 
 const getAppointColorBasedOnUserName = (
     firstName: string,
@@ -34,6 +34,12 @@ const getAppointColorBasedOnUserName = (
 
         case "style":
             return { backgroundColor: cssColor };
+
+        case "border":
+            return { borderColor: cssColor };
+
+        case "raw":
+            return cssColor;
 
         case "css":
         default:
