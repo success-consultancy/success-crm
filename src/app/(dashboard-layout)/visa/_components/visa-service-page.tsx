@@ -111,7 +111,7 @@ const VisaServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name', 'visa-last-name'],
+          left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name'],
           right: ['visa-actions'],
         }}
         topRightSection={

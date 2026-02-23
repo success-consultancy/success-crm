@@ -546,7 +546,15 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
         >
           {formState === FORM_STATE.ADD ? 'Add Applicant' : 'Update Tribunal Review'}
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
+        <Button
+          type="button"
+          variant="outline"
+          className="ml-3"
+          onClick={() => {
+            reset();
+            router.push('/insurance');
+          }}
+        >
           Cancel
         </Button>
       </div>

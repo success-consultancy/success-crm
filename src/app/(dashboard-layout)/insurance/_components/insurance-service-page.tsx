@@ -113,7 +113,7 @@ const ServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'insurance-createdAt', 'insurance-id', 'insurance-first-name', 'insurance-last-name'],
+          left: ['select', 'insurance-createdAt', 'insurance-id', 'insurance-first-name'],
           right: ['insurance-actions'],
         }}
         topRightSection={

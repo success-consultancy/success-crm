@@ -31,6 +31,8 @@ import { FormField } from '@/components/ui/form';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { useGetUsers } from '@/query/get-user';
 import SelectWithCommand from '@/components/molecules/select-with-command';
+import TinyEditor from '@/components/organisms/text-editor';
+import { useRouterOriginal } from '@/lib/navigation';
 
 interface Props {
   id?: number;
@@ -38,6 +40,7 @@ interface Props {
 }
 
 export function EditEducationService({ id: userId, defaultValues }: Props) {
+  const router = useRouterOriginal();
   const form = useForm<EditEducationServiceType>({
     resolver: zodResolver(editEducationServiceSchema),
     defaultValues: defaultValues || educationServiceDefaultValues,
@@ -325,22 +328,9 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             <div className="col-span-2">
               <div className="mt-6">
                 <Label className="text-b2 mb-2" htmlFor="courseFee.note">
-                  Remarks
+                  Note
                 </Label>
-                <Editor
-                  apiKey={process.env.NEXT_PUBLIC_TINY_EDITOR_KEY}
-                  value={remarks}
-                  onEditorChange={handleMiscEditorChange}
-                  init={{
-                    height: 300,
-                    menubar: false,
-                    toolbar:
-                      'undo redo | blocks | bold italic forecolor | alignleft aligncenter ' +
-                      'alignright alignjustify | bullist numlist outdent indent',
-                    promotion: false,
-                    branding: false,
-                  }}
-                />
+                <TinyEditor value={remarks} onChange={handleMiscEditorChange} />
                 {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
               </div>{' '}
             </div>
@@ -352,7 +342,15 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         <Button loadingText="Updating..." type="submit" variant="primary">
           Update Data
         </Button>
-        <Button type="button" variant="outline" className="ml-3">
+        <Button
+          onClick={() => {
+            reset();
+            router.push('/education');
+          }}
+          type="button"
+          variant="outline"
+          className="ml-3"
+        >
           Cancel
         </Button>
       </div>

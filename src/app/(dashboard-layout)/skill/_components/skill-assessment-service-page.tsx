@@ -109,7 +109,7 @@ const SkillAssessmentServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'skill-assessment-createdAt', 'skill-assessment-id', 'skill-assessment-first-name', 'skill-assessment-last-name'],
+          left: ['select', 'skill-assessment-createdAt', 'skill-assessment-id', 'skill-assessment-first-name'],
           right: ['skill-assessment-actions'],
         }}
         topRightSection={

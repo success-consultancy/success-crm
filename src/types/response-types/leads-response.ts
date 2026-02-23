@@ -40,7 +40,7 @@ export interface ILead {
   location: null | string;
   occupation: null | string;
   qualification: null | string;
-  note: null | string;
+  remarks: null | string;
   anzsco: null | string;
   updatedBy: null | number;
   files: UploadedFileMeta[];
