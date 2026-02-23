@@ -5,7 +5,13 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft } from 'lucide-react';
-import { agreementFormSchema, AgreementSchemaType, getAgreementDefaultValues, updateAgreementFormSchema, UpdateAgreementSchemaType } from '@/schema/agreement-schema';
+import {
+  agreementFormSchema,
+  AgreementSchemaType,
+  getAgreementDefaultValues,
+  updateAgreementFormSchema,
+  UpdateAgreementSchemaType,
+} from '@/schema/agreement-schema';
 import { useAddAgreement } from '@/mutations/agreement/add-agreement';
 import { useEditAgreement } from '@/mutations/agreement/edit-agreement';
 import { useGetUniversity } from '@/query/get-university';
@@ -26,7 +32,7 @@ import TinyEditor from '@/components/organisms/text-editor';
 import FileUploader from '@/components/organisms/file-uploader';
 import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
-import { FORM_STATE } from '@/types/common';
+import { FORM_STATE, UploadedFileMeta } from '@/types/common';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -111,16 +117,19 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
 
   const submitHandler = (data: AgreementSchemaType) => {
     if (isEditMode && id) {
-      editAgreement({ ...data, id }, {
-        onSuccess: () => {
-          toast.success('Agreement updated successfully');
-          router.push(ROUTES.AGENCY_AGREEMENT);
+      editAgreement(
+        { ...data, id },
+        {
+          onSuccess: () => {
+            toast.success('Agreement updated successfully');
+            router.push(ROUTES.AGENCY_AGREEMENT);
+          },
+          onError: (error: any) => {
+            const message = error?.response?.data?.message || 'Failed to update agreement';
+            toast.error(message);
+          },
         },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to update agreement';
-          toast.error(message);
-        },
-      });
+      );
     } else {
       addAgreement(data, {
         onSuccess: () => {
@@ -179,13 +188,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
           </div>
 
           <div className="space-y-2">
-            <SelectField
-              name="type"
-              label="Type"
-              control={control}
-              options={typeOptions}
-              placeholder="Type"
-            />
+            <SelectField name="type" label="Type" control={control} options={typeOptions} placeholder="Type" />
             <FormErrorMessage message={errors.type?.message} />
           </div>
         </div>
@@ -193,13 +196,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         {/* Group Row */}
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <SelectField
-              name="group"
-              label="Group"
-              control={control}
-              options={groupOptions}
-              placeholder="Group"
-            />
+            <SelectField name="group" label="Group" control={control} options={groupOptions} placeholder="Group" />
             <FormErrorMessage message={errors.group?.message} />
           </div>
         </div>
@@ -218,8 +215,10 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
               name="startDate"
               control={control}
               render={({ field }) => {
-                const dateValue = field.value 
-                  ? (typeof field.value === 'string' ? new Date(field.value + 'T00:00:00') : field.value)
+                const dateValue = field.value
+                  ? typeof field.value === 'string'
+                    ? new Date(field.value + 'T00:00:00')
+                    : field.value
                   : undefined;
                 return (
                   <DatePicker
@@ -248,8 +247,10 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
               name="endDate"
               control={control}
               render={({ field }) => {
-                const dateValue = field.value 
-                  ? (typeof field.value === 'string' ? new Date(field.value + 'T00:00:00') : field.value)
+                const dateValue = field.value
+                  ? typeof field.value === 'string'
+                    ? new Date(field.value + 'T00:00:00')
+                    : field.value
                   : undefined;
                 return (
                   <DatePicker
@@ -319,7 +320,12 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
             <div className="mt-2">
               <p className="text-sm text-gray-600">Current file: {fileUrl.split('/').pop()}</p>
               {isEditMode && (
-                <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                <a
+                  href={fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-blue-600 hover:underline"
+                >
                   View file
                 </a>
               )}

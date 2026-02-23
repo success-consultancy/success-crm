@@ -97,8 +97,8 @@ const Transition = ({ lead }: { lead: ILead }) => {
     if (client.hasOwnProperty('sourceId')) {
       payload.sourceId = client.sourceId;
     }
-    if (client.hasOwnProperty('note')) {
-      payload.remarks = client.note;
+    if (client.hasOwnProperty('remarks')) {
+      payload.remarks = client.remarks;
     }
     if (client.hasOwnProperty('files')) {
       payload.files = client.files;
