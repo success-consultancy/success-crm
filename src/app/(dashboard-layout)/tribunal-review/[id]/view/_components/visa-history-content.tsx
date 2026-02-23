@@ -82,7 +82,7 @@ const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
                 )}
               />
               <div>
-                <p className="text-b1-b">Visa {log.versionTypeName}</p>
+                <p className="text-b1-b">Tribunal Review {log.versionTypeName}</p>
                 <p className="text-b1 text-neutral-light-grey mt-1">
                   by {log.updatedBy}, {log.formattedDate}, {log.formattedTime}
                 </p>

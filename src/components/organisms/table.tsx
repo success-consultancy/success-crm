@@ -68,8 +68,17 @@ interface Props<TData, TValue> {
   showPaginationSection?: boolean;
   bulkDeleteTitle?: string;
   bulkDeleteDescription?: string;
+  onCellUpdate?: (row: TData, columnId: string, value: any) => void;
+  meta?: any;
 }
 
+declare module '@tanstack/react-table' {
+  interface TableMeta<TData> {
+    updateData?: (rowIndex: number, columnId: string, value: unknown) => void;
+    editingId?: number | null;
+    draft?: Record<string, unknown>;
+  }
+}
 const TableComponent = <TData, TValue>({
   className,
   data,
@@ -94,6 +103,8 @@ const TableComponent = <TData, TValue>({
   onRowClick,
   bulkDeleteTitle,
   bulkDeleteDescription,
+  onCellUpdate,
+  meta,
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -180,6 +191,15 @@ const TableComponent = <TData, TValue>({
     defaultColumn: {
       minSize: 40,
       maxSize: 500,
+    },
+    meta: {
+      ...meta,
+      updateData:
+        onCellUpdate &&
+        ((rowIndex: number, columnId: string, value: unknown) => {
+          const row = data[rowIndex];
+          if (row != null) onCellUpdate(row, columnId, value);
+        }),
     },
   });
 

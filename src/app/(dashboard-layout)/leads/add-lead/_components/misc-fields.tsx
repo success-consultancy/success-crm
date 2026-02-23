@@ -19,9 +19,10 @@ const MiscStep = () => {
   const {
     control,
     setValue: setLead,
-
+    watch,
     formState: { errors },
   } = useFormContext<LeadSchemaType>();
+  const remarks = watch('remarks');
 
   const servicesOptions = Object.values(Services).map((service) => {
     return {
@@ -59,7 +60,6 @@ const MiscStep = () => {
   return (
     <div className="space-y-5 w-full">
       <div className="grid grid-cols-2 gap-6">
-
         <FormField
           control={control}
           name="sourceId"
@@ -92,8 +92,11 @@ const MiscStep = () => {
       <div className="w-full space-y-1" suppressHydrationWarning>
         <Label className="text-b3-b font-semibold">Note</Label>
 
-        <TinyEditor />
-        {errors.note?.message && <p className="text-sm text-red-500">{errors.note.message}</p>}
+        <TinyEditor
+          value={remarks || ''}
+          onChange={(content) => setLead('remarks', content, { shouldValidate: true })}
+        />
+        {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
       </div>
 
       <div className="space-y-1">

@@ -56,7 +56,7 @@ const ServicePage = () => {
 
   const handleDeleteBulk = (ids: number[]) => {
     deleteTribunalBulk(ids);
-  }; 111
+  };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
     sendEmail(payload);
@@ -112,7 +112,7 @@ const ServicePage = () => {
         currentPage={filterParams.page}
         searchKey="email"
         columnPinning={{
-          left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name', 'visa-last-name'],
+          left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name'],
           right: ['visa-actions'],
         }}
         topRightSection={

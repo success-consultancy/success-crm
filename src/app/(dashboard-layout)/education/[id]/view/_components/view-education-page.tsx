@@ -9,6 +9,8 @@ import NoteSection from './note-section';
 import Container from '@/components/atoms/container';
 import { History } from './history';
 import { useGetEducationById } from '@/query/get-education';
+import { useUpdateAccount } from '@/mutations/account/add-account';
+import { QUERY_KEYS } from '@/constants/query-keys';
 import CourseFeeStructure from './course-fee-structure';
 import Accounts from './accounts';
 import MiscSection from './misc-section';
@@ -16,6 +18,7 @@ import FollowUp from '@/components/organisms/follow-up';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
 import { ACCOUNTABLE_TYPE } from '@/types/common';
+import { useQueryClient } from '@tanstack/react-query';
 
 interface EducationPageContentProps {
   studentId: string;
@@ -29,6 +32,8 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     { label: 'Follow-up', value: 'follow-up' },
   ];
   const { data: education, isLoading, isError } = useGetEducationById(studentId);
+  const queryClient = useQueryClient();
+  const { mutate: updateAccount, isPending: isUpdatingAccount } = useUpdateAccount();
 
   // Shared state for adding rows
   const [isAddingRow, setIsAddingRow] = useState(false);
@@ -63,7 +68,6 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
       .filter((fee) => fee.accounts) // Only include fees that have account data
       .map((fee) => fee.accounts as IAccount);
   }, [education?.course_fees]);
-  console.log({ accounts });
 
   // Helper function to calculate accounts from fee data - memoized for performance
   const calculateAccountsFromFee = useCallback((fee: CreateCourseFeePayload): CreateAccountPayload => {
@@ -131,6 +135,15 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   // Track editing state for course fee
   const [editingFeeId, setEditingFeeId] = useState<number | null>(null);
+  // Track when user is editing an account row directly (inline in Accounts table)
+  const [editingAccountRowId, setEditingAccountRowId] = useState<number | null>(null);
+
+  // When editing a fee, the account row to edit inline is the one linked to that fee
+  const editingAccountId = useMemo(() => {
+    if (!editingFeeId || !education?.course_fees) return null;
+    const fee = education.course_fees.find((f) => f.id === editingFeeId);
+    return (fee?.accounts as IAccount)?.id ?? null;
+  }, [editingFeeId, education?.course_fees]);
 
   // Handle fee draft changes and update accounts draft accordingly - memoized
   const handleFeeDraftChange = useCallback(
@@ -162,7 +175,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   // Handle accounts draft changes (for commission, discount, bonus edits) - memoized
   const handleAccountsDraftChange = useCallback(
     (field: keyof IAccount, value: string) => {
-      if (!isAddingRow && !editingFeeId) return;
+      if (!isAddingRow && !editingFeeId && !editingAccountRowId) return;
 
       const updatedAccountsDraft = {
         ...accountsDraft,
@@ -188,7 +201,38 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
       setAccountsDraft(updatedAccountsDraft);
     },
-    [isAddingRow, editingFeeId, accountsDraft],
+    [isAddingRow, editingFeeId, editingAccountRowId, accountsDraft],
+  );
+
+  // Start editing an account row directly (inline in Accounts table)
+  const handleStartEditAccount = useCallback((accountId: number, draft: CreateAccountPayload) => {
+    setEditingAccountRowId(accountId);
+    setAccountsDraft(draft);
+  }, []);
+
+  // Cancel editing an account row
+  const handleCancelEditAccount = useCallback(() => {
+    setEditingAccountRowId(null);
+    setAccountsDraft(defaultAccountsDraft);
+  }, [defaultAccountsDraft]);
+
+  // Save account (direct edit from Accounts table)
+  const handleSaveAccount = useCallback(
+    (accountId: number, payload: CreateAccountPayload) => {
+      if (!education?.id) return;
+
+      updateAccount(
+        { id: accountId, payload },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_EDUCATION_BY_ID, studentId] });
+            setEditingAccountRowId(null);
+            setAccountsDraft(defaultAccountsDraft);
+          },
+        },
+      );
+    },
+    [education?.id, updateAccount, queryClient, studentId, defaultAccountsDraft],
   );
 
   // Handle accounts draft change when editing (direct update from course fee structure)
@@ -258,9 +302,16 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
               <Accounts
                 courseFee={accounts}
                 studentId={education.id}
-                isAdding={isAddingRow || !!editingFeeId}
+                isAdding={isAddingRow}
+                editingFeeId={editingFeeId}
+                editingAccountId={editingAccountId}
+                editingAccountRowId={editingAccountRowId}
                 draft={accountsDraft}
                 onDraftChange={handleAccountsDraftChange}
+                onStartEditAccount={handleStartEditAccount}
+                onCancelEditAccount={handleCancelEditAccount}
+                onSaveAccount={handleSaveAccount}
+                isSavingAccount={isUpdatingAccount}
               />
               <MiscSection education={education} />
               <NoteSection education={education} />

@@ -34,7 +34,7 @@ export const serviceDetailsSchema = z.object({
   sourceId: z.number().nullable().optional(),
   userId: z.number().nullable().optional(),
   status: z.string({ message: 'Status is required' }).min(1, { message: 'Status is required' }),
-  note: z.string().nullable().optional(),
+  remarks: z.string().nullable().optional(),
   files: z
     .array(
       z.object({
