@@ -26,7 +26,7 @@ import TinyEditor from '@/components/organisms/text-editor';
 import FileUploader from '@/components/organisms/file-uploader';
 import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
-import { FORM_STATE } from '@/types/common';
+import { FORM_STATE, UploadedFileMeta } from '@/types/common';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 
@@ -102,10 +102,10 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
     setValue('note', content, { shouldValidate: true });
   };
 
-  const handleFileUploadComplete = (fileUrls: string[]) => {
-    if (fileUrls.length > 0) {
-      setFileUrl(fileUrls[0]);
-      setValue('file', fileUrls[0], { shouldValidate: true });
+  const handleFileUploadComplete = (files: UploadedFileMeta[]) => {
+    if (files.length > 0) {
+      setFileUrl(files[0].url);
+      setValue('file', files[0].url, { shouldValidate: true });
     }
   };
 
