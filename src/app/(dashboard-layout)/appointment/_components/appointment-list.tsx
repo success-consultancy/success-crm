@@ -4,6 +4,8 @@ import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { IAppointment } from '@/types/response-types/appointment-response';
 import { cn } from '@/lib/utils';
+import { Avatar } from '@/components/ui/avatar';
+import { getAppointColorBasedOnUserName } from '@/utils/color';
 
 interface AppointmentListProps {
   appointments: IAppointment[];
@@ -30,17 +32,6 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
     );
   }
 
-  const getAppointmentColor = (type?: string) => {
-    switch (type) {
-      case 'online':
-        return 'bg-green-100 text-green-800';
-      case 'phone':
-        return 'bg-yellow-100 text-yellow-800';
-      default:
-        return 'bg-blue-100 text-blue-800';
-    }
-  };
-
   const getInitials = (firstName?: string, lastName?: string) => {
     const first = firstName?.charAt(0) || '';
     const last = lastName?.charAt(0) || '';
@@ -53,16 +44,6 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
         const startTime = format(parseISO(appointment.startTime), 'h:mm a');
         const endTime = format(parseISO(appointment.endTime), 'h:mm a');
 
-        const getDotColor = (type?: string) => {
-          switch (type) {
-            case 'online':
-              return 'bg-green-500';
-            case 'phone':
-              return 'bg-yellow-500';
-            default:
-              return 'bg-blue-500';
-          }
-        };
 
         return (
           <div
@@ -71,22 +52,23 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
             onClick={() => onAppointmentClick(appointment)}
           >
             <div className="flex items-start gap-3">
-              <div className={cn('w-2 h-2 rounded-full mt-2 flex-shrink-0', getDotColor(appointment.type))} />
+              <div className={cn('w-2 h-2 rounded-full mt-2 flex-shrink-0', getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))} />
               <div className="flex-1 min-w-0">
-                <h5 className="font-medium text-sm mb-1 truncate">{appointment.title}</h5>
+                <h5 className="text-b13-500 text-neutral-black mb-1 truncate">{appointment.title}</h5>
                 {appointment.description && (
-                  <p className="text-xs text-gray-600 mb-2 line-clamp-2">{appointment.description}</p>
+                  <p className="text-neutral-dark-grey text-b12 mb-2 line-clamp-2">{appointment.description}</p>
                 )}
-                <div className="flex items-center justify-between">
-                  <span className="text-xs text-gray-500">
+                <div className="flex items-center gap-2">
+                  <span className="text-b12-500 border rounded-full px-2 py-1 !mb-0">
                     {startTime} - {endTime}
                   </span>
-                  {appointment.owner && (
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-gray-300 flex items-center justify-center text-xs font-medium text-gray-700">
-                        {getInitials(appointment.owner.firstName, appointment.owner.lastName)}
-                      </div>
-                    </div>
+                  {appointment.user && (
+                    <Avatar
+                      title={`${appointment.user?.firstName} ${appointment.user?.lastName}`}
+                      className={cn("w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-medium text-white", getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))}
+                    >
+                      {getInitials(appointment.user?.firstName, appointment.user?.lastName)}
+                    </Avatar>
                   )}
                 </div>
               </div>
@@ -94,7 +76,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
           </div>
         );
       })}
-    </div>
+    </div >
   );
 };
 

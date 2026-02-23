@@ -3,7 +3,7 @@ import { NuqsAdapter } from 'nuqs/adapters/next/app';
 
 import TanstackProvider from '@/context/tanstack-context';
 import { ToastProvider } from '@/context/toast-context';
-import { Figtree } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Figtree({ subsets: ['latin'] });
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({
   children,

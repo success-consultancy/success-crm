@@ -12,7 +12,11 @@ const AdminSidebarMenuItems = () => {
   const { isCollapsed } = useSidebarStore();
 
   const isItemActive = (item: MenuItem) => {
-    if (item.href) return pathName.includes(item.href);
+    if (item.href) {
+      // Strip query parameters from item.href before comparison
+      const [itemPath] = item.href.split('?');
+      return pathName.startsWith(itemPath) && itemPath !== '/';
+    }
 
     if (item.subItems) return item.subItems.some((subItem) => pathName === subItem.href);
 

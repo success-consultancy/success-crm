@@ -108,36 +108,35 @@ export function ColumnSelector<TData>({
             {allColumns.map((column) => {
               const columnName = column.id
                 .split('-')
-                  .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                  .join(' ')
-                  .replace('Lead ', '');
+                .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ')
+                .replace('Lead ', '');
 
-                return (
-                  <CommandItem className="p-0 m-0" key={column.id} value={columnName}>
-                    <div
-                      className="flex items-center gap-1.5 px-2 py-2.5 min-w-full text-sm hover:bg-component-hoveredLight cursor-pointer"
-                      key={column.id}
-                    >
-                      <Checkbox
-                        checked={selected.has(column.id)}
-                        onCheckedChange={(value) => {
-                          setSelected((prev) => {
-                            const newSet = new Set(prev);
-                            if (value) newSet.add(column.id);
-                            else newSet.delete(column.id);
-                            return newSet;
-                          });
-                        }}
-                        id={`option-${column.id}`}
-                        className="data-[state=checked]:!bg-blue-600 data-[state=checked]:!border-blue-600 data-[state=checked]:!text-white data-[state=checked]:[&_svg]:!text-white data-[state=checked]:[&_svg]:!fill-white data-[state=checked]:[&_svg]:!stroke-white"
-                      />
-                      <label htmlFor={`option-${column.id}`} className="cursor-pointer flex-1">
-                        {columnName}
-                      </label>
-                    </div>
-                  </CommandItem>
-                );
-              })}
+              return (
+                <CommandItem className="p-0 m-0" key={column.id} value={columnName}>
+                  <div
+                    className="flex items-center gap-1.5 px-2 py-2.5 min-w-full text-sm hover:bg-component-hoveredLight cursor-pointer"
+                    key={column.id}
+                  >
+                    <Checkbox
+                      checked={selected.has(column.id)}
+                      onCheckedChange={(value) => {
+                        setSelected((prev) => {
+                          const newSet = new Set(prev);
+                          if (value) newSet.add(column.id);
+                          else newSet.delete(column.id);
+                          return newSet;
+                        });
+                      }}
+                      id={`option-${column.id}`}
+                    />
+                    <label htmlFor={`option-${column.id}`} className="cursor-pointer flex-1">
+                      {columnName}
+                    </label>
+                  </div>
+                </CommandItem>
+              );
+            })}
           </CommandList>
         </Command>
 

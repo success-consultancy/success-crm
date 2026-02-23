@@ -281,7 +281,7 @@ const TableComponent = <TData, TValue>({
           </div>
         )}
         {table.getSelectedRowModel().rows.length > 0 && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 ml-[9px]">
             {onSendEmail && (
               <EmailDialog
                 trigger={<Mail className="cursor-pointer" />}

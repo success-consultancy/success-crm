@@ -51,15 +51,15 @@ const SidebarLogo = () => {
   }
 
   return (
-    <div className="border-b border-gray-100 px-4 pt-6 pb-3">
-      <div className="flex items-center justify-center">
+    <div className="border-b border-gray-100 pl-5 py-3">
+      <div className="flex items-center ">
         <Image
           src={SuccessLogo.src}
           alt="logo"
-          height={100}
-          width={180}
+          height={40}
+          width={132}
           quality={70}
-          className="h-auto w-auto object-contain"
+          className="h-10 w-auto object-contain"
         />
       </div>
     </div>
@@ -125,7 +125,7 @@ const BranchSelector = () => {
           </div>
         </DropdownMenuTrigger>
 
-        <DropdownMenuContent align="start" className="w-56">
+        <DropdownMenuContent align="center" className="w-56">
           {!hasBranches && <p className="px-2 py-1.5 text-sm text-gray-500">No Branches</p>}
 
           <DropdownMenuLabel className="text-neutral-light-grey">Switch branch</DropdownMenuLabel>
