@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { Pencil, Trash2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/organisms/date-picker';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 
 /** Read-only cell when row is in edit mode (disabled field). */
 const ReadOnlyCell = ({ value, isEditing, className }: { value: string; isEditing: boolean; className?: string }) => (
@@ -34,6 +35,7 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 interface IVisaAccountsColumn {
   onEdit: (accounts: IAccount) => void;
+  onDelete?: (accounts: IAccount) => void;
   /** When set, this row shows inline inputs. */
   editingId?: number | null;
   draft?: CreateAccountPayload | null;
@@ -49,7 +51,7 @@ function isEditingRow(
   return rowId != null && Number(rowId) === Number(editingId);
 }
 
-export const useVisaAccountsColumn = ({ onEdit, editingId: _editingId, draft }: IVisaAccountsColumn) => {
+export const useVisaAccountsColumn = ({ onEdit, onDelete, editingId: _editingId, draft }: IVisaAccountsColumn) => {
   const VisaAccountsColumns: ColumnDef<IAccount>[] = [
     {
       id: 'accounts-payment-plan',
@@ -258,8 +260,21 @@ export const useVisaAccountsColumn = ({ onEdit, editingId: _editingId, draft }: 
       header: 'Actions',
       cell: ({ row }) => (
         <div className="flex gap-4">
-          <Pencil onClick={() => onEdit(row.original)} strokeWidth={1.5} className="h-5 w-5 cursor-pointer" />
-          <Trash2 className="text-red-400" />
+          <Pencil
+            onClick={() => onEdit(row.original)}
+            strokeWidth={1.5}
+            className="h-5 w-5 cursor-pointer"
+          />
+          <DeleteDialog
+            trigger={
+              <div className="cursor-pointer text-red-400">
+                <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+              </div>
+            }
+            title="Delete this account"
+            description="Are you sure you want to delete this account?"
+            onConfirm={() => onDelete?.(row.original)}
+          />
         </div>
       ),
       meta: { isVisible: true },
