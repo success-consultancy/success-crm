@@ -2,7 +2,7 @@ import { useMemo, useState, useCallback } from 'react';
 import TitleBox from './title-box';
 import TableComponent from '@/components/organisms/table';
 import { useFeeStuructureColumn } from '@/config/columns/fee-structure-columns-definitions';
-import { useAddCourseFee, useUpdateCourseFee } from '@/mutations/education/add-course-fee';
+import { useAddCourseFee, useUpdateCourseFee, useDeleteCourseFee } from '@/mutations/education/course-fee';
 import useAuthStore from '@/store/auth-store';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -71,12 +71,18 @@ const CourseFeeStructure = ({
     },
     [onDraftChange, onAccountsDraftChange, onEditingIdChange],
   );
+  const handleDeleteRow = (row: IFeePlan) => {
+    if (!row.id) return;
+    deleteCourseFee(row.id);
+  };
   const CourseFeeStrucutureColumns = useMemo(
-    () => useFeeStuructureColumn({ onEdit: handleEditRow, editingId }),
+    () => useFeeStuructureColumn({ onEdit: handleEditRow, editingId, onDelete: handleDeleteRow }),
     [handleEditRow, editingId],
   );
   const { mutate: addCourseFee, isPending } = useAddCourseFee();
   const { mutate: updateCourseFee, isPending: isUpdating } = useUpdateCourseFee();
+  const { mutate: deleteCourseFee } = useDeleteCourseFee();
+
   const user = useAuthStore((s) => s.profile);
 
   const handleAddRow = () => {

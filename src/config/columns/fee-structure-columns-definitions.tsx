@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/organisms/date-picker';
 import { cn } from '@/lib/utils';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 
 const STATUS_COLORS: Record<string, string> = {
   Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
@@ -27,10 +28,11 @@ const StatusBadge = ({ status }: { status: string }) => {
 
 interface IEducationFeeColumn {
   onEdit: (fee: IFeePlan) => void;
+  onDelete?: (fee: IFeePlan) => void;
   editingId?: number | null;
 }
 
-export const useFeeStuructureColumn = ({ onEdit, editingId: _editingId }: IEducationFeeColumn) => {
+export const useFeeStuructureColumn = ({ onEdit, onDelete, editingId: _editingId }: IEducationFeeColumn) => {
   const EducationColumns: ColumnDef<IFeePlan>[] = [
     {
       id: 'planname',
@@ -206,8 +208,21 @@ export const useFeeStuructureColumn = ({ onEdit, editingId: _editingId }: IEduca
       header: 'Actions',
       cell: ({ row }) => (
         <div className="flex gap-4">
-          <Pencil onClick={() => onEdit(row.original)} strokeWidth={1.5} className="h-5 w-5 cursor-pointer" />
-          <Trash2 className="text-red-400" />
+          <Pencil
+            onClick={() => onEdit(row.original)}
+            strokeWidth={1.5}
+            className="h-5 w-5 cursor-pointer"
+          />
+          <DeleteDialog
+            trigger={
+              <div className="cursor-pointer text-red-400">
+                <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+              </div>
+            }
+            title="Delete this fee"
+            description="Are you sure you want to delete this course fee?"
+            onConfirm={() => onDelete?.(row.original)}
+          />
         </div>
       ),
       meta: { isVisible: true },

@@ -2,6 +2,7 @@ import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
+import { toast } from 'sonner';
 
 export const createAccount = async (payload: CreateAccountPayload) => {
   const { data } = await api.post('/account', payload);
@@ -17,6 +18,7 @@ export const useAddAccount = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_VISA_BY_ID] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_INSURANCE_BY_ID] });
     },
   });
 };
@@ -35,6 +37,38 @@ export const useUpdateAccount = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_VISA_BY_ID] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_INSURANCE_BY_ID] });
+    },
+  });
+};
+
+const deleteAccount = async (id: number) => {
+  const res = await api.delete(`/account/${id}`);
+  return res.data;
+};
+
+export const useDeleteAccount = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteAccount,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_VISA_BY_ID],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID],
+      });
+      queryClient.invalidateQueries({
+        queryKey: [QUERY_KEYS.GET_INSURANCE_BY_ID],
+      });
+    },
+    onError: () => {
+      toast('Error!', {
+        description: 'Something went wrong',
+      });
     },
   });
 };

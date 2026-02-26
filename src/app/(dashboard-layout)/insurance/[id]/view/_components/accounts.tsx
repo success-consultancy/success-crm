@@ -6,7 +6,7 @@ import { useVisaAccountsColumn } from '@/config/columns/visaApplicant-accounts-c
 import { Button } from '@/components/ui/button';
 import { createEmptyDraft, updateDraftField } from '@/utils/account';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAddAccount, useUpdateAccount } from '@/mutations/account/add-account';
+import { useAddAccount, useUpdateAccount, useDeleteAccount } from '@/mutations/account/add-account';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 import { DatePicker } from '@/components/organisms/date-picker';
 
@@ -59,14 +59,22 @@ const Accounts = ({ accounts, id, isAdding = false }: AccountsProps) => {
     handleDraftChange(field, String(value ?? ''));
   };
 
+  const deleteAccount = useDeleteAccount();
+
+  const handleDeleteRow = (row: IAccount) => {
+    if (!row.id) return;
+    deleteAccount.mutate(row.id);
+  };
+
   const AccountsColumns = useMemo(
     () =>
       useVisaAccountsColumn({
         onEdit: handleEditRow,
+        onDelete: handleDeleteRow,
         editingId,
         draft,
       }),
-    [handleEditRow, editingId],
+    [handleEditRow, handleDeleteRow, editingId],
   );
 
   const createAccount = useAddAccount();
@@ -102,7 +110,7 @@ const Accounts = ({ accounts, id, isAdding = false }: AccountsProps) => {
           id: editingId,
           payload: {
             accountableId: id,
-            accountableType: 'Insurance',
+            accountableType: 'InsuranceApplicant',
             ...accountsData,
           },
         },
@@ -118,7 +126,7 @@ const Accounts = ({ accounts, id, isAdding = false }: AccountsProps) => {
       createAccount.mutateAsync(
         {
           accountableId: id,
-          accountableType: 'Insurance',
+          accountableType: 'InsuranceApplicant',
           ...accountsData,
         },
         {
