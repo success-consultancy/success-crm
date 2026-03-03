@@ -7,8 +7,6 @@ import {
 } from 'date-fns';
 import { ChevronLeft, ChevronRight, Clock, Plus, X } from 'lucide-react';
 import useSearchParams from '@/hooks/use-search-params';
-import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
-import { CALENDAR_FILTER_PARAMS, useGetCalendar } from '@/query/get-calendar';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
@@ -43,61 +41,54 @@ const TAB_CONFIG = [
   { key: 'calendar', label: 'Calendar' },
 ];
 
-const HOUR_HEIGHT = 80;
+const HOUR_HEIGHT = 64;
+const ALL_DAY_HEIGHT = 38;
+const START_HOUR = 7;
+const END_HOUR = 20; // 8 PM
+const MIN_EVENT_WIDTH = 130;
 
 const getUserInitials = (firstName?: string, lastName?: string) =>
   `${firstName?.charAt(0) || ''}${lastName?.charAt(0) || ''}`.toUpperCase();
 
-const getAppointmentPosition = (item: IAppointment, dayDate: Date) => {
-  const startTime = parseISO(item.startTime);
-  const endTime = parseISO(item.endTime);
-  if (format(startTime, 'yyyy-MM-dd') !== format(dayDate, 'yyyy-MM-dd')) return null;
+const getProcessedItems = (items: any[]) => {
+  const sorted = [...items].sort((a, b) =>
+    new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
+  );
 
-  const startMinutes = (getHours(startTime) - 8) * 60 + getMinutes(startTime);
-  const totalMinutesInDay = 12 * 60; // 8 AM to 8 PM
+  if (sorted.length === 0) return [];
 
-  return {
-    top: `${Math.max(0, (startMinutes / totalMinutesInDay) * 100)}%`,
-    height: `${Math.min(100, (differenceInMinutes(endTime, startTime) / totalMinutesInDay) * 100)}%`,
-    startTime,
-    endTime,
-  };
-};
+  // 1. Group overlapping items into clusters (all connected events)
+  const clusters: any[][] = [];
+  let currentCluster: any[] = [];
+  let clusterEnd: number | null = null;
 
-const getTopPosition = (date: Date | string) => {
-  const minutesSinceMidnight = differenceInMinutes(new Date(date), startOfDay(new Date(date)));
-  return (minutesSinceMidnight / 60) * HOUR_HEIGHT;
-};
+  sorted.forEach(item => {
+    const start = new Date(item.startTime).getTime();
+    const end = new Date(item.endTime).getTime();
 
-const getEventHeight = (startTime: Date | string, endTime: Date | string) => {
-  const durationMinutes = differenceInMinutes(new Date(endTime), new Date(startTime));
-  return (durationMinutes / 60) * HOUR_HEIGHT;
-};
+    if (clusterEnd === null || start < clusterEnd) {
+      currentCluster.push(item);
+      if (clusterEnd === null || end > clusterEnd) clusterEnd = end;
+    } else {
+      clusters.push(currentCluster);
+      currentCluster = [item];
+      clusterEnd = end;
+    }
+  });
+  clusters.push(currentCluster);
 
-
-const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick }: any) => {
-  const dateKey = format(selectedDate, 'yyyy-MM-dd');
-  const selectedDateItems = itemsByDate[dateKey] || [];
-
-  // --- NEW OVERLAP LOGIC ---
-  const processedItems = useMemo(() => {
-    // 1. Sort by start time first
-    const sorted = [...selectedDateItems].sort((a, b) =>
-      new Date(a.startTime).getTime() - new Date(b.startTime).getTime()
-    );
-
+  // 2. Assign columns for each cluster
+  const result: any[] = [];
+  clusters.forEach(cluster => {
     const columns: any[][] = [];
-
-    sorted.forEach(item => {
-      let placed = false;
+    cluster.forEach(item => {
       const itemStart = new Date(item.startTime).getTime();
+      let placed = false;
 
-      // Try to place in an existing column where it doesn't overlap with the last item
+      // Find the first column where this item doesn't overlap
       for (let i = 0; i < columns.length; i++) {
-        const lastItemInColumn = columns[i][columns[i].length - 1];
-        const lastEnd = new Date(lastItemInColumn.endTime).getTime();
-
-        if (itemStart >= lastEnd) {
+        const lastInCol = columns[i][columns[i].length - 1];
+        if (itemStart >= new Date(lastInCol.endTime).getTime()) {
           columns[i].push(item);
           placed = true;
           break;
@@ -109,22 +100,53 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
       }
     });
 
-    // Map items to include their position metadata
-    return sorted.map(item => {
+    const groupCols = columns.length;
+    cluster.forEach(item => {
       const colIndex = columns.findIndex(col => col.includes(item));
-      const totalCols = columns.length;
-      return { ...item, colIndex, totalCols };
+      result.push({ ...item, colIndex, totalCols: groupCols });
     });
-  }, [selectedDateItems]);
+  });
+
+  return result;
+};
+
+const getTopPosition = (date: Date | string) => {
+  const d = new Date(date);
+  const totalMinutes = getHours(d) * 60 + getMinutes(d);
+  const startMinutesAt7AM = START_HOUR * 60;
+
+  // Account for All Day slot at the top
+  if (totalMinutes < startMinutesAt7AM) return ALL_DAY_HEIGHT;
+
+  return ALL_DAY_HEIGHT + ((totalMinutes - startMinutesAt7AM) / 60) * HOUR_HEIGHT;
+};
+
+const getEventHeight = (startTime: Date | string, endTime: Date | string) => {
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const durationMinutes = differenceInMinutes(end, start);
+  return (durationMinutes / 60) * HOUR_HEIGHT;
+};
+
+
+const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick }: any) => {
+  const dateKey = format(selectedDate, 'yyyy-MM-dd');
+  const selectedDateItems = itemsByDate[dateKey] || [];
+
+  const processedItems = useMemo(() => getProcessedItems(selectedDateItems), [selectedDateItems]);
+
+  const maxConcurrency = useMemo(() => {
+    return Math.max(0, ...processedItems.map((i: any) => i.totalCols));
+  }, [processedItems]);
 
   const renderCurrentTimeIndicator = () => {
     const now = new Date();
     const currentHour = getHours(now);
-    if (currentHour < 8 || currentHour > 20 || !isSameDay(selectedDate, now)) return null;
+    if (currentHour < START_HOUR || currentHour >= END_HOUR || !isSameDay(selectedDate, now)) return null;
 
-    const topPercent = (((currentHour - 8) * 60 + getMinutes(now)) / (12 * 60)) * 100;
+    const topPx = getTopPosition(now);
     return (
-      <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${topPercent}%` }}>
+      <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${topPx}px` }}>
         <div className="flex items-center">
           <div className="text-xs text-red-600 font-medium px-2 bg-white">{format(now, 'h:mm a')}</div>
           <div className="flex-1 h-0.5 bg-red-500"></div>
@@ -136,24 +158,25 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
       {/* ... Header Grid ... */}
-      <div className="flex-1 overflow-y-auto relative">
-        <div className="grid gap-px bg-gray-200" style={{ gridTemplateColumns: '80px 1fr' }}>
+      <div className="flex-1 overflow-x-auto overflow-y-auto relative">
+        <div className="grid gap-px bg-gray-200" style={{ gridTemplateColumns: '98px 1fr' }}>
           {/* Time Labels */}
-          <div className="bg-white">
+          <div className="bg-white sticky left-0 z-30 shadow-[1px_0_0_0_rgba(0,0,0,0.05)]">
             {timeSlots.map((slot: any, idx: number) => (
-              <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 px-2 text-xs text-gray-500 pt-1`}>
+              <div key={idx} className={`${slot?.isAllDay ? 'h-[48px]' : 'h-[80px]'} border-b border-gray-100 px-2 text-b12-500 text-neutral-dark-grey pt-1`}>
                 {slot.label}
               </div>
             ))}
           </div>
 
           {/* Event Area */}
-          <div className="bg-white relative">
+          <div className="bg-white relative min-h-full" style={{ minWidth: `${maxConcurrency * MIN_EVENT_WIDTH}px` }}>
             {timeSlots.map((slot: any, idx: number) => (
-              <div key={idx} className={`${slot?.isAllDay ? 'h-12' : 'h-16'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
+              <div key={idx} className={`${slot?.isAllDay ? 'h-[48px]' : 'h-[80px]'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
                 onClick={() => slot.hour !== null && setSelectedDate(new Date(selectedDate).setHours(slot.hour, 0, 0, 0))}
               />
             ))}
+
             {renderCurrentTimeIndicator()}
 
             {/* Pass position metadata to EventBlock */}
@@ -175,7 +198,7 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
 };
 
 // --- Week View ---
-const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick }: any) => {
+const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick, timeSlots }: any) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -186,7 +209,8 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
   return (
     <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
       <div className="flex-1 overflow-y-scroll relative flex flex-col">
-        <div className="sticky top-0 z-30 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm" style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+        {/* Header Grid */}
+        <div className="sticky top-0 z-30 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm pt-1" style={{ gridTemplateColumns: `98px repeat(${weekDays.length}, 1fr)` }}>
           <div className="bg-[#F9FAFB] p-2" />
           {weekDays.map((day: Date) => (
             <div key={day.toString()} className={`bg-[#F9FAFB] p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`} onClick={() => setSelectedDate(day)}>
@@ -198,38 +222,50 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
           ))}
         </div>
 
-        <div className="flex-1 grid gap-px bg-gray-200" style={{ gridTemplateColumns: `80px repeat(${weekDays.length}, 1fr)` }}>
+        {/* Event Area */}
+        <div className="flex-1 grid gap-px bg-gray-200" style={{ gridTemplateColumns: `98px repeat(${weekDays.length}, 1fr)` }}>
+          {/* Time Labels */}
           <div className="bg-white flex flex-col relative">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div key={i} className="relative border-b border-gray-100 flex items-start justify-center text-xs text-gray-500" style={{ height: `${HOUR_HEIGHT}px` }}>
-                <span className="relative -top-2.5 bg-white px-1">{i === 0 ? '12 AM' : i < 12 ? `${i} AM` : i === 12 ? '12 PM' : `${i - 12} PM`}</span>
+            {timeSlots.map((slot: any, i: number) => (
+              <div key={i} className="relative border-b border-gray-100 flex items-start justify-center text-b12-500 text-neutral-dark-grey" style={{ height: `${slot.isAllDay ? ALL_DAY_HEIGHT : HOUR_HEIGHT}px` }}>
+                <span className="relative pt-2 bg-white px-1">{slot.label}</span>
               </div>
             ))}
-            <div className="absolute left-0 right-0 flex justify-center z-20" style={{ top: `${getTopPosition(currentTime)}px`, transform: 'translateY(-50%)' }}>
-              <span className="text-[10px] font-bold text-red-500 bg-white px-1">{format(currentTime, 'h:mm a')}</span>
-            </div>
+            {getHours(currentTime) >= START_HOUR && getHours(currentTime) < END_HOUR && (
+              <div className="absolute left-0 right-0 flex justify-center z-20" style={{ top: `${getTopPosition(currentTime)}px`, transform: 'translateY(-50%)' }}>
+                <span className="text-[10px] font-bold text-red-500 bg-white px-1">{format(currentTime, 'h:mm a')}</span>
+              </div>
+            )}
           </div>
 
+          {/* Event Columns */}
           {weekDays.map((day: Date) => (
             <div key={day.toString()} className="bg-white relative">
-              {Array.from({ length: 24 }).map((_, i) => (
-                <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: `${HOUR_HEIGHT}px` }} />
+              {timeSlots.map((slot: any, i: number) => (
+                <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: `${slot.isAllDay ? ALL_DAY_HEIGHT : HOUR_HEIGHT}px` }}
+                  onClick={() => slot.hour !== null && setSelectedDate(new Date(day).setHours(slot.hour, 0, 0, 0))}
+                />
               ))}
-              {isSameDay(day, new Date()) && (
+              {isSameDay(day, new Date()) && getHours(currentTime) >= START_HOUR && getHours(currentTime) < END_HOUR && (
                 <div className="absolute left-0 right-0 border-t-2 border-red-500 z-20" style={{ top: `${getTopPosition(currentTime)}px` }}>
                   <div className="w-2.5 h-2.5 rounded-full bg-red-500 absolute -left-1.5 -top-[5px]" />
                 </div>
               )}
-              {(itemsByDate[format(day, 'yyyy-MM-dd')] || []).map((item: any) => (
-                <div key={item.id} className="absolute rounded-r-md border-l-4 overflow-hidden p-1 text-xs cursor-pointer hover:shadow-md transition-shadow z-10"
-                  style={{
-                    top: `${getTopPosition(item.startTime)}px`, height: `${getEventHeight(item.startTime, item.endTime)}px`,
-                    left: '4px', right: '4px', borderColor: getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'raw') as string, backgroundColor: '#f0f9ff',
-                  }} onClick={() => onAppointmentClick(item)}>
-                  <div className="font-semibold text-gray-800">{format(new Date(item.startTime), 'h:mm a')} - {format(new Date(item.endTime), 'h:mm a')}</div>
-                  <div className="text-gray-600 truncate">{item.title}</div>
-                </div>
-              ))}
+              {(() => {
+                const dayItems = itemsByDate[format(day, 'yyyy-MM-dd')] || [];
+                const dayProcessed = getProcessedItems(dayItems);
+
+                return dayProcessed.map((item: any) => (
+                  <EventBlock
+                    key={item.id}
+                    item={item}
+                    dayDate={day}
+                    colIndex={item.colIndex}
+                    totalCols={item.totalCols}
+                    onClick={() => onAppointmentClick(item)}
+                  />
+                ));
+              })()}
             </div>
           ))}
         </div>
@@ -255,7 +291,7 @@ const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate, s
             <div className="flex-1 space-y-1 overflow-hidden min-h-0">
               {dayItems.slice(0, 2).map((item: any) => (
                 <AppointmentPopover setEditingAppointment={setEditingAppointment} key={item.id} apt={item}>
-                  <div className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 bg-[#F7F8FA]" onClick={e => e.stopPropagation()}>
+                  <div className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 bg-bluish-grey" onClick={e => e.stopPropagation()}>
                     <span className={cn("w-1.5 h-1.5 rounded-full flex-shrink-0", getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
                     <span className="truncate">{format(parseISO(item.startTime), 'h:mma')} {item.title}</span>
                   </div>
@@ -379,7 +415,7 @@ const AppointmentCalendarPage = () => {
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
             <div className={cn("flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden", currentView === 'agenda' && 'border-0')}>
               {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} />}
-              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} />}
+              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} />}
               {currentView === 'agenda' && <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} />}
               {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} />}
             </div>
@@ -424,34 +460,46 @@ const AppointmentCalendarPage = () => {
 };
 
 // --- SUB-COMPONENTS ---
-const EventBlock = ({ item, dayDate, colIndex, totalCols, onClick }: any) => {
-  const position = getAppointmentPosition(item, dayDate);
-  if (!position) return null;
-
-  const color = getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'border') || {};
-
-  // Calculate width and horizontal position
+const EventBlock = ({ item, colIndex, totalCols, onClick }: any) => {
+  // Always divide by totalCols so overlapping events sit side-by-side
   const widthPercent = 100 / totalCols;
   const leftPercent = colIndex * widthPercent;
 
+  // Inset right edge slightly so overlapping events peek through underneath
+  const rightInsetPx = totalCols > 1 ? 4 : 0;
+
+  // Format: "11:20 - 11:50 am" — period only on end time, drop it from start
+  const startDate = new Date(item.startTime);
+  const endDate = new Date(item.endTime);
+  const startPeriod = format(startDate, 'a').toLowerCase();
+  const endPeriod = format(endDate, 'a').toLowerCase();
+  const startFormatted = startPeriod === endPeriod
+    ? format(startDate, 'h:mm')
+    : format(startDate, 'h:mm a').toLowerCase();
+  const endFormatted = format(endDate, 'h:mm a').toLowerCase();
+  const timeLabel = `${startFormatted} - ${endFormatted}`;
+
   return (
     <div
-      className={cn(`absolute border-l-4 px-2 py-1 cursor-pointer hover:opacity-90 shadow-sm z-10 overflow-hidden bg-[#F2F2F2]`)}
+      className={cn('absolute cursor-pointer transition-all hover:opacity-90 z-10 overflow-hidden bg-[#F2F2F2] flex items-stretch')}
       style={{
-        top: position.top,
-        height: position.height,
-        minHeight: '24px',
+        top: `${getTopPosition(item.startTime)}px`,
+        height: `${Math.max(getEventHeight(item.startTime, item.endTime), 44)}px`,
         left: `${leftPercent}%`,
-        width: `${widthPercent}%`,
-        ...color
+        width: `calc(${widthPercent}% - ${rightInsetPx}px)`,
+        minWidth: `${MIN_EVENT_WIDTH}px`,
       }}
       onClick={e => { e.stopPropagation(); onClick(); }}
     >
-      <div className="text-[10px] font-medium truncate leading-tight">
-        {format(new Date(item.startTime), 'h:mm a')}
-      </div>
-      <div className="text-xs font-bold truncate mt-0.5">
-        {item.title}
+      {/* Colored left border indicator */}
+      <div className={cn('w-[3px] flex-shrink-0 rounded-l-sm', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'tailwind'))} />
+      <div className='flex flex-col overflow-hidden px-2 py-1'>
+        <div className="text-b12-500 text-neutral-black leading-tight truncate">
+          {timeLabel}
+        </div>
+        <div className="text-b12 text-neutral-black mt-0.5 truncate">
+          {item.title}
+        </div>
       </div>
     </div>
   );

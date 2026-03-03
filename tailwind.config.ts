@@ -63,6 +63,7 @@ export default {
           borderLight: 'var(--neutral-border-light)',
           white: 'var(--neutral-white)',
         },
+        bluishGrey: 'var(--bluish-grey)',
         primary: {
           red: 'var(--primary-red)',
           blue: 'var(--primary-blue)',

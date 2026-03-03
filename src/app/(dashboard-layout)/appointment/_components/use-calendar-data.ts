@@ -32,6 +32,9 @@ export function useCalendarData(
       return zonedDate.toISOString();
     };
 
+    const weekStart = startOfWeek(selectedDate);
+    const weekEnd = endOfWeek(selectedDate);
+
     switch (currentView) {
       case 'day':
         return {
@@ -40,8 +43,13 @@ export function useCalendarData(
         };
 
       case 'week':
-        const weekStart = startOfWeek(selectedDate);
-        const weekEnd = endOfWeek(selectedDate);
+
+        return {
+          from: getBoundary(weekStart, 'start'),
+          to: getBoundary(weekEnd, 'end')
+        };
+
+      case 'work-week':
         return {
           from: getBoundary(weekStart, 'start'),
           to: getBoundary(weekEnd, 'end')
@@ -79,9 +87,9 @@ export function useCalendarData(
   // 3. Generate Calendar Grids
   const timeSlots = useMemo(() => [
     { hour: null, label: 'All day', isAllDay: true },
-    ...Array.from({ length: 13 }, (_, i) => ({
-      hour: i + 8,
-      label: formatInTimeZone(new Date().setHours(i + 8, 0, 0, 0), timeZone, 'h a'), // Apply TZ to labels
+    ...Array.from({ length: 14 }, (_, i) => ({
+      hour: i + 7,
+      label: formatInTimeZone(new Date().setHours(i + 7, 0, 0, 0), timeZone, 'h a'), // Apply TZ to labels
       isAllDay: false
     }))
   ], [timeZone]);
