@@ -31,6 +31,8 @@ import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import countryList from 'react-select-country-list';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -42,6 +44,7 @@ export function AddEducationService({ userId }: Props) {
     defaultValues: educationServiceDefaultValues,
     mode: 'onChange',
   });
+  const router = useRouter()
 
   const { data: sourceData, isLoading: sourceLoading } = useGetSource();
   const { data: universityData, isLoading: universityLoading } = useGetUniversity();
@@ -513,7 +516,7 @@ export function AddEducationService({ userId }: Props) {
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
-        <Button onClick={() => form.reset()} type="button" variant="outline" className="ml-3">
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.EDUCATION)}>
           Cancel
         </Button>
       </div>

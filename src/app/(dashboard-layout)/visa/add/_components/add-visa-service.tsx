@@ -26,6 +26,8 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -45,6 +47,7 @@ export function AddVisaService({ userId }: Props) {
     defaultValues: newVisaServiceDefaultValues,
     mode: 'onChange',
   });
+  const router = useRouter();
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
@@ -655,7 +658,8 @@ export function AddVisaService({ userId }: Props) {
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Visa Applicant
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => reset()}>
+
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.VISA)}>
           Cancel
         </Button>
       </div>

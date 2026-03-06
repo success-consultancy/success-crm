@@ -35,6 +35,7 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { ArrowLeft, Code2 } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -706,23 +707,23 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
 
         <div className="flex justify-end mt-6">
           <Button
-            type="button"
-            variant="outline"
-            className="mr-3"
-            onClick={() => {
-              reset();
-              router.push('/skill');
-            }}
-          >
-            Cancel
-          </Button>
-          <Button
             loading={isPending}
             loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'}
             type="submit"
             variant="primary"
           >
             {formState === FORM_STATE.ADD ? 'Add applicant' : 'Update applicant'}
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            className="ml-3"
+            onClick={() => {
+              reset();
+              router.push(ROUTES.SKILL_ASSESSMENT);
+            }}
+          >
+            Cancel
           </Button>
         </div>
       </form>

@@ -33,6 +33,7 @@ import { useGetUsers } from '@/query/get-user';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import TinyEditor from '@/components/organisms/text-editor';
 import { useRouterOriginal } from '@/lib/navigation';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   id?: number;
@@ -345,7 +346,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         <Button
           onClick={() => {
             reset();
-            router.push('/education');
+            router.push(ROUTES.EDUCATION);
           }}
           type="button"
           variant="outline"

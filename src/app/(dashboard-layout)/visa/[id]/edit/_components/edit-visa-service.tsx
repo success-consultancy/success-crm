@@ -26,6 +26,8 @@ import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
+import { ROUTES } from '@/config/routes';
+import { useRouter } from 'next/navigation';
 
 interface Props {
   visaId: number;
@@ -39,6 +41,8 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     defaultValues: defaultValues,
     mode: 'onChange',
   });
+
+  const router = useRouter()
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
@@ -577,6 +581,9 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
       <div className="flex justify-start mt-6">
         <Button loading={isPending} loadingText="Updating" type="submit" variant="primary">
           Update Visa Applicant
+        </Button>
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.VISA)}>
+          Cancel
         </Button>
       </div>
     </form>
