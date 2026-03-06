@@ -42,8 +42,8 @@ const TAB_CONFIG = [
 ];
 
 const HOUR_HEIGHT = 64;
-const ALL_DAY_HEIGHT = 38;
-const START_HOUR = 7;
+const ALL_DAY_HEIGHT = 0;
+const START_HOUR = 6; // start from 7 but it also has all day column
 const END_HOUR = 20; // 8 PM
 const MIN_EVENT_WIDTH = 130;
 
@@ -114,9 +114,10 @@ const getTopPosition = (date: Date | string) => {
   const d = new Date(date);
   const totalMinutes = getHours(d) * 60 + getMinutes(d);
   const startMinutesAt7AM = START_HOUR * 60;
+  const minutesAfter7PM = END_HOUR * 60;
 
   // Account for All Day slot at the top
-  if (totalMinutes < startMinutesAt7AM) return ALL_DAY_HEIGHT;
+  if (totalMinutes < startMinutesAt7AM || totalMinutes > minutesAfter7PM) return ALL_DAY_HEIGHT;
 
   return ALL_DAY_HEIGHT + ((totalMinutes - startMinutesAt7AM) / 60) * HOUR_HEIGHT;
 };
@@ -139,31 +140,28 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
     return Math.max(0, ...processedItems.map((i: any) => i.totalCols));
   }, [processedItems]);
 
-  const renderCurrentTimeIndicator = () => {
-    const now = new Date();
-    const currentHour = getHours(now);
-    if (currentHour < START_HOUR || currentHour >= END_HOUR || !isSameDay(selectedDate, now)) return null;
-
-    const topPx = getTopPosition(now);
-    return (
-      <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${topPx}px` }}>
-        <div className="flex items-center">
-          <div className="text-xs text-red-600 font-medium px-2 bg-white">{format(now, 'h:mm a')}</div>
-          <div className="flex-1 h-0.5 bg-red-500"></div>
-        </div>
-      </div>
-    );
-  };
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
-      {/* ... Header Grid ... */}
-      <div className="flex-1 overflow-x-auto overflow-y-auto relative">
+    <div className="flex flex-col flex-1 min-h-0 overflow-hidden bg-white">
+      <div className="flex-1 overflow-y-scroll relative flex flex-col bg-[#F9FAFB]">
+        {/* Header Grid */}
+        <div className="sticky top-0 z-40 grid gap-px border-b flex-shrink-0 shadow-sm pt-1 bg-[#F9FAFB]" style={{ gridTemplateColumns: `98px repeat(2, 1fr)` }}>
+          <div className="bg-[#F9FAFB] p-2" ></div>
+          <div key={selectedDate.toString()} className={`p-2 flex flex-col cursor-pointer ml-[24px]`} onClick={() => setSelectedDate(selectedDate)}>
+            <div className="text-b12-500 pl-1.5 text-neutral-dark-grey font-medium mb-1 text-left">{format(selectedDate, 'EEE')}</div>
+            <div className={`text-lg font-semibold w-[36px] h-[36px] text-center flex justify-center items-center bg-primary rounded-full p-2 text-white`}>
+              {format(selectedDate, 'd')}
+            </div>
+          </div>
+        </div>
+
         <div className="grid gap-px bg-gray-200" style={{ gridTemplateColumns: '98px 1fr' }}>
-          {/* Time Labels */}
+          {/* Side Time Labels */}
           <div className="bg-white sticky left-0 z-30 shadow-[1px_0_0_0_rgba(0,0,0,0.05)]">
             {timeSlots.map((slot: any, idx: number) => (
-              <div key={idx} className={`${slot?.isAllDay ? 'h-[48px]' : 'h-[80px]'} border-b border-gray-100 px-2 text-b12-500 text-neutral-dark-grey pt-1`}>
+              <div key={idx} className={`h-[98px] border-b border-gray-100 px-2 text-b12-500 text-neutral-dark-grey pt-2`}
+                style={{ height: `${HOUR_HEIGHT}px` }}
+              >
                 {slot.label}
               </div>
             ))}
@@ -172,12 +170,13 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
           {/* Event Area */}
           <div className="bg-white relative min-h-full" style={{ minWidth: `${maxConcurrency * MIN_EVENT_WIDTH}px` }}>
             {timeSlots.map((slot: any, idx: number) => (
-              <div key={idx} className={`${slot?.isAllDay ? 'h-[48px]' : 'h-[80px]'} border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
+              <div key={idx} className={`h-[98px] border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
+                style={{ height: HOUR_HEIGHT }}
                 onClick={() => slot.hour !== null && setSelectedDate(new Date(selectedDate).setHours(slot.hour, 0, 0, 0))}
               />
             ))}
 
-            {renderCurrentTimeIndicator()}
+            {renderCurrentTimeIndicator(selectedDate)}
 
             {/* Pass position metadata to EventBlock */}
             {processedItems.map((item: any) => (
@@ -192,6 +191,22 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
             ))}
           </div>
         </div>
+      </div>
+    </div>
+  );
+};
+
+const renderCurrentTimeIndicator = (selectedDate: any) => {
+  const now = new Date();
+  const currentHour = getHours(now);
+  if (currentHour < START_HOUR || currentHour >= END_HOUR || !isSameDay(selectedDate, now)) return null;
+  const topPx = getTopPosition(now);
+
+  return (
+    <div className="absolute left-0 right-0 z-20 pointer-events-none" style={{ top: `${topPx}px` }}>
+      <div className="flex items-center">
+        <div className="text-xs text-red-600 font-medium px-2 bg-white">{format(now, 'h:mm a')}</div>
+        <div className="flex-1 h-0.5 bg-red-500"></div>
       </div>
     </div>
   );
@@ -213,11 +228,11 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
         <div className="sticky top-0 z-30 grid gap-px bg-gray-200 border-b flex-shrink-0 shadow-sm pt-1" style={{ gridTemplateColumns: `98px repeat(${weekDays.length}, 1fr)` }}>
           <div className="bg-[#F9FAFB] p-2" />
           {weekDays.map((day: Date) => (
-            <div key={day.toString()} className={`bg-[#F9FAFB] p-2 text-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`} onClick={() => setSelectedDate(day)}>
-              <div className="text-b12-500 text-neutral-dark-grey font-medium mb-1">{format(day, 'EEE')}</div>
-              <span className={`text-lg font-semibold ${isSameDay(day, new Date()) ? 'bg-primary rounded-full p-2 text-white' : ''}`}>
+            <div key={day.toString()} className={`flex flex-col bg-[#F9FAFB] p-2 items-center cursor-pointer hover:bg-gray-50 ${isSameDay(day, selectedDate) ? 'bg-blue-50 border-b-2 border-blue-500' : ''}`} onClick={() => setSelectedDate(day)}>
+              <div className="text-b12-500 text-neutral-dark-grey font-medium mb-1 text-left">{format(day, 'EEE')}</div>
+              <div className={`text-lg font-semibold w-[36px] h-[36px] text-center flex justify-center items-center ${isSameDay(day, new Date()) ? 'bg-primary rounded-full p-2 text-white' : ''}`}>
                 {format(day, 'd')}
-              </span>
+              </div>
             </div>
           ))}
         </div>
@@ -227,22 +242,21 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
           {/* Time Labels */}
           <div className="bg-white flex flex-col relative">
             {timeSlots.map((slot: any, i: number) => (
-              <div key={i} className="relative border-b border-gray-100 flex items-start justify-center text-b12-500 text-neutral-dark-grey" style={{ height: `${slot.isAllDay ? ALL_DAY_HEIGHT : HOUR_HEIGHT}px` }}>
+              <div key={i} className="relative border-b border-gray-100 flex items-start justify-center text-b12-500 text-neutral-dark-grey" style={{
+                height: HOUR_HEIGHT
+              }}>
                 <span className="relative pt-2 bg-white px-1">{slot.label}</span>
               </div>
             ))}
-            {getHours(currentTime) >= START_HOUR && getHours(currentTime) < END_HOUR && (
-              <div className="absolute left-0 right-0 flex justify-center z-20" style={{ top: `${getTopPosition(currentTime)}px`, transform: 'translateY(-50%)' }}>
-                <span className="text-[10px] font-bold text-red-500 bg-white px-1">{format(currentTime, 'h:mm a')}</span>
-              </div>
-            )}
+
+            {renderCurrentTimeIndicator(selectedDate)}
           </div>
 
           {/* Event Columns */}
           {weekDays.map((day: Date) => (
             <div key={day.toString()} className="bg-white relative">
               {timeSlots.map((slot: any, i: number) => (
-                <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: `${slot.isAllDay ? ALL_DAY_HEIGHT : HOUR_HEIGHT}px` }}
+                <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: HOUR_HEIGHT }}
                   onClick={() => slot.hour !== null && setSelectedDate(new Date(day).setHours(slot.hour, 0, 0, 0))}
                 />
               ))}
@@ -323,8 +337,9 @@ const AgendaView = ({ isLoading, agendaGroups, onAppointmentClick }: any) => (
           </div>
         ))}
       </div>
-    )}
-  </div>
+    )
+    }
+  </div >
 );
 
 // ==========================================
