@@ -5,11 +5,16 @@ import StageItem from '@/components/organisms/stage-item';
 import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
 import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { useUpdateSkillStatus } from '@/mutations/skill-assessment/add-skill-assessment';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { useState } from 'react';
 
 type SkillAssessmentStagesProps = { skillAssessment: ISkillAssessment };
 
 export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStagesProps) => {
   const router = useRouter();
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingStage, setPendingStage] = useState<string | null>(null);
+
   const stages = [
     { name: SkillAssessmentStatusTypes.NewApplicant, active: skillAssessment.status === SkillAssessmentStatusTypes.NewApplicant },
     { name: SkillAssessmentStatusTypes.CollectingDocs, active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs },
@@ -26,8 +31,14 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
   const updateSkillStatus = useUpdateSkillStatus();
 
   const handleStageChange = (stage: string) => {
+    setPendingStage(stage);
+    setConfirmOpen(true);
+  };
 
-    const payload = { id: skillAssessment.id.toString(), status: stage }
+  const confirmStageChange = () => {
+    if (!pendingStage) return;
+
+    const payload = { id: skillAssessment.id.toString(), status: pendingStage }
     updateSkillStatus.mutate(
       payload,
       {
@@ -92,9 +103,19 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
 
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
-          {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
-          ))}
+          {(() => {
+            const activeIndex = stages.findIndex((s) => s.active);
+            return stages.map((stage, index) => (
+              <StageItem
+                key={stage.name}
+                name={stage.name}
+                active={stage.active}
+                completed={activeIndex !== -1 && index < activeIndex}
+                isFirst={index === 0}
+                handleStageChange={handleStageChange}
+              />
+            ));
+          })()}
         </div>
 
         <div className="flex gap-2 ml-4">
@@ -102,6 +123,18 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
           <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={confirmOpen}
+        setIsOpen={setConfirmOpen}
+        title="Change Lead Stage"
+        message={`Are you sure you want to change the lead stage to "${pendingStage}"?`}
+        confirmText="Yes, change it"
+        cancelText="Cancel"
+        onConfirm={confirmStageChange}
+        onCancel={() => setPendingStage(null)}
+        loading={updateSkillStatus.isPending}
+      />
     </div>
   );
 };
