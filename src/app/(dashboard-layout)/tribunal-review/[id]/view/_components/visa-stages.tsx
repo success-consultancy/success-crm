@@ -7,11 +7,17 @@ import { format } from 'date-fns';
 import { toast } from 'sonner';
 import StageItem from '@/components/organisms/stage-item';
 import { useUpdateTribunalStatus } from '@/mutations/tribunal-review/add-tribunal-review';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { useState } from 'react';
 
 type VisaStagesProps = { visa: ITribunalReview };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingStage, setPendingStage] = useState<string | null>(null);
+
   const stages = [
     { name: TribunalStatusTypes.NewTribunal, active: visa.status === TribunalStatusTypes.NewTribunal },
     { name: TribunalStatusTypes.CollectingDocs, active: visa.status === TribunalStatusTypes.CollectingDocs },
@@ -32,8 +38,14 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
   const updateStatus = useUpdateTribunalStatus();
 
   const handleStageChange = (stage: string) => {
+    setPendingStage(stage);
+    setConfirmOpen(true);
+  };
 
-    const payload = { id: visa.id.toString(), status: stage }
+  const confirmStageChange = () => {
+    if (!pendingStage) return;
+
+    const payload = { id: visa.id.toString(), status: pendingStage }
     updateStatus.mutate(
       payload,
       {
@@ -92,10 +104,32 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
 
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full overflow-x-auto">
-          {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
-          ))}
+          {(() => {
+            const activeIndex = stages.findIndex((s) => s.active);
+            return stages.map((stage, index) => (
+              <StageItem
+                key={stage.name}
+                name={stage.name}
+                active={stage.active}
+                completed={activeIndex !== -1 && index < activeIndex}
+                isFirst={index === 0}
+                handleStageChange={handleStageChange}
+              />
+            ));
+          })()}
         </div>
+
+        <ConfirmationDialog
+          isOpen={confirmOpen}
+          setIsOpen={setConfirmOpen}
+          title="Change Tribunal Stage"
+          message={`Are you sure you want to change the tribunal stage to "${pendingStage}"?`}
+          confirmText="Yes, change it"
+          cancelText="Cancel"
+          onConfirm={confirmStageChange}
+          onCancel={() => setPendingStage(null)}
+          loading={updateStatus.isPending}
+        />
 
         <div className="flex gap-2 ml-4">
           <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>

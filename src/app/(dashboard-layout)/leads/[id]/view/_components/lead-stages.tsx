@@ -29,6 +29,7 @@ export const LeadStages = ({ lead }: LeadStagesProps) => {
 
   const confirmStageChange = () => {
     if (!pendingStage) return;
+
     updateLeadStatus.mutate(
       { id: lead.id.toString(), status: pendingStage },
       {

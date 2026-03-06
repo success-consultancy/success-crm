@@ -127,8 +127,8 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
       <ConfirmationDialog
         isOpen={confirmOpen}
         setIsOpen={setConfirmOpen}
-        title="Change Lead Stage"
-        message={`Are you sure you want to change the lead stage to "${pendingStage}"?`}
+        title="Change Skill Stage"
+        message={`Are you sure you want to change the skill stage to "${pendingStage}"?`}
         confirmText="Yes, change it"
         cancelText="Cancel"
         onConfirm={confirmStageChange}

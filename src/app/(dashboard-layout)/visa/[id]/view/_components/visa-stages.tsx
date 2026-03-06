@@ -5,12 +5,19 @@ import { Edit, MessageCircle } from 'lucide-react';
 import StageItem from '@/components/organisms/stage-item';
 import { toast } from 'sonner';
 import { useUpdateVisaStatus } from '@/mutations/visa/add-visa';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { useState } from 'react';
 
 
 type VisaStagesProps = { visa: IVisaDetail };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
   const router = useRouter();
+
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [pendingStage, setPendingStage] = useState<string | null>(null);
+
+
   const stages = [
     { name: VisaStatusTypes.NewApplicant, active: visa.status === VisaStatusTypes.NewApplicant },
     { name: VisaStatusTypes.CollectingDocs, active: visa.status === VisaStatusTypes.CollectingDocs },
@@ -20,10 +27,15 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
   ];
 
   const updateStatus = useUpdateVisaStatus();
-
   const handleStageChange = (stage: string) => {
+    setPendingStage(stage);
+    setConfirmOpen(true);
+  };
 
-    const payload = { id: visa.id.toString(), status: stage }
+  const confirmStageChange = () => {
+    if (!pendingStage) return;
+
+    const payload = { id: visa.id.toString(), status: pendingStage }
     updateStatus.mutate(
       payload,
       {
@@ -83,10 +95,32 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
 
       <div className="px-6 pb-6 flex gap-10">
         <div className="flex w-full">
-          {stages.map((stage, index) => (
-            <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} handleStageChange={handleStageChange} />
-          ))}
+          {(() => {
+            const activeIndex = stages.findIndex((s) => s.active);
+            return stages.map((stage, index) => (
+              <StageItem
+                key={stage.name}
+                name={stage.name}
+                active={stage.active}
+                completed={activeIndex !== -1 && index < activeIndex}
+                isFirst={index === 0}
+                handleStageChange={handleStageChange}
+              />
+            ));
+          })()}
         </div>
+
+        <ConfirmationDialog
+          isOpen={confirmOpen}
+          setIsOpen={setConfirmOpen}
+          title="Change Visa Stage"
+          message={`Are you sure you want to change the visa stage to "${pendingStage}"?`}
+          confirmText="Yes, change it"
+          cancelText="Cancel"
+          onConfirm={confirmStageChange}
+          onCancel={() => setPendingStage(null)}
+          loading={updateStatus.isPending}
+        />
 
         <div className="flex gap-2 ml-4">
           <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
