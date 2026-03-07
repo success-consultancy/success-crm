@@ -21,9 +21,11 @@ type Props = {
   children: React.ReactNode;
   className?: string;
   canClose?: boolean;
+  showHeader?: boolean;
+  containerClassName?: string;
 };
 
-const DialogWrapper = (props: Props) => {
+const DialogWrapper = ({ showHeader = true, ...props }: Props) => {
   return (
     <Dialog open={props.isOpen} onOpenChange={props.setIsOpen}>
       <DialogTrigger asChild>{props.trigger}</DialogTrigger>
@@ -39,15 +41,18 @@ const DialogWrapper = (props: Props) => {
           }
         }}
         className={cn('w-[calc(100vw-10px)] xl:min-w-[496px] !rounded-lg p-0 z-50', props.className)}
+        showCloseButton={false}
       >
-        <DialogHeader className="px-4 md:px-6 pt-4 pb-2 md:pt-6 border-b">
-          <DialogTitle className="text-2xl md:!text-h4-700 text-left pr-5">
-            {props.title.length > 100 ? props.title.slice(0, 100) + '...' : props.title}
-          </DialogTitle>
-          <DialogDescription></DialogDescription>
-        </DialogHeader>
+        {showHeader && (
+          <DialogHeader className="px-4 md:px-6 pt-4 pb-2 md:pt-6 border-b">
+            <DialogTitle className="text-2xl md:!text-h4-700 text-left pr-5">
+              {props.title.length > 100 ? props.title.slice(0, 100) + '...' : props.title}
+            </DialogTitle>
+            <DialogDescription></DialogDescription>
+          </DialogHeader>
+        )}
         <ScrollArea className="max-h-[calc(100vh-15rem)]">
-          <div className="px-4 pb-4 md:px-6 md:pb-6">{props.children}</div>
+          <div className={cn("px-4 pb-4 md:px-6 md:pb-6", props.containerClassName)}>{props.children}</div>
         </ScrollArea>
       </DialogContent>
     </Dialog>

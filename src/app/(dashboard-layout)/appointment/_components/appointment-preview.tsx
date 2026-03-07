@@ -73,7 +73,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
     <div>
       {!disableHeader && (
         <>
-          <div className='flex w-full justify-between'>
+          <div className='flex w-full justify-between py-4'>
             <div className='flex'>
               <span className={cn('h-[10px] w-[10px] rounded-full mt-2', getAppointColorBasedOnUserName(appointment?.user?.firstName || '', appointment?.user?.lastName || ''))}></span>
               <div className='ml-3'>
@@ -95,15 +95,14 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
               </Button>
             </div>
           </div>
-          <div className='border-b mb-4'></div>
+          <div className='border-b mb-4 -mx-4 md:-mx-6'></div>
         </>
       )}
 
       <div className='pt-[10px] flex flex-col gap-[6px]'>
-
         {/* Time */}
         <div className='flex'>
-          <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Time</h4>
+          <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Time: </h4>
           <p className="text-sm text-gray-900">
             {startTime} - {endTime} • {duration} mins
           </p>
@@ -112,7 +111,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         {/* Description */}
         {appointment.description && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Description</h4>
+            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Description: </h4>
             <p className="text-sm text-gray-900">{appointment.description}</p>
           </div>
         )}
@@ -120,7 +119,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         {/* Client */}
         {appointment.lead && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Client</h4>
+            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Client: </h4>
             <p className="text-sm text-gray-900">
               {appointment.lead.firstName} {appointment.lead.lastName} • {appointment.lead.email} •{' '}
               {appointment.lead.phone}
@@ -131,7 +130,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         {/* Owner */}
         {appointment.user && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner</h4>
+            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner: </h4>
             <div className="flex items-center gap-2">
               <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium", getAppointColorBasedOnUserName(appointment.user.firstName, appointment.user.lastName))}>
                 {getInitials(appointment.user.firstName, appointment.user.lastName)}
@@ -144,13 +143,13 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
           </div>
         )}
 
-        <div className='border-b pb-4 mb-4'></div>
+        <div className='border-b pb-4 mb-4 -mx-4 md:-mx-6'></div>
 
         {/* Created By */}
         {appointment.createdByUser && appointment.createdAt && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Created by</h4>
-            <p className="text-sm">
+            <h4 className="text-b12-500 mb-1 w-[84px] mr-3 text-neutral-black">Created by: </h4>
+            <p className="text-b12 text-neutral-dark-grey">
               {appointment.createdByUser.firstName} {appointment.createdByUser.lastName} • {formatDateTime(appointment.createdAt)}
             </p>
           </div>
@@ -159,8 +158,8 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         {/* Updated By */}
         {appointment.updatedByUser && appointment.updatedAt && (
           <div className='flex'>
-            <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Updated by</h4>
-            <p className="text-sm">
+            <h4 className="text-b12-500 mb-1 w-[84px] mr-3 text-neutral-black">Updated by: </h4>
+            <p className="text-b12 text-neutral-dark-grey">
               {appointment.updatedByUser.firstName} {appointment.updatedByUser.lastName} • {formatDateTime(appointment.updatedAt)}
             </p>
           </div>
