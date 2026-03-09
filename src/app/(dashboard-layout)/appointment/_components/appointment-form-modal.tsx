@@ -3,7 +3,7 @@
 import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { format, parseISO } from 'date-fns';
+import { addMinutes, format, parseISO } from 'date-fns';
 import { AppointmentSchemaType, appointmentFormSchema } from '@/schema/appointment-schema';
 import { IAppointment } from '@/types/response-types/appointment-response';
 import DialogWrapper from '@/components/organisms/dialog-wrapper';
@@ -46,7 +46,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       description: '',
       date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
       startTime: '09:00',
-      endTime: '10:00',
+      endTime: '09:30',
       ownerId: currentUser?.data?.id || 0,
       type: 'in-person',
       status: 'scheduled',
@@ -90,6 +90,14 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       const dateStr = data.date;
       const startDateTime = `${dateStr}T${data.startTime}:00`;
       const endDateTime = `${dateStr}T${data.endTime}:00`;
+      // validate if end time is before start time
+      if (endDateTime <= startDateTime) {
+        form.setError('endTime', {
+          type: 'manual',
+          message: 'End time must be after start time',
+        });
+        return;
+      }
 
       const payload = {
         title: data.title,
@@ -116,12 +124,6 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       console.error('Error saving appointment:', error);
     }
   };
-
-  const typeOptions = [
-    { label: 'In Person', value: 'in-person' },
-    { label: 'Online', value: 'online' },
-    { label: 'Phone', value: 'phone' },
-  ];
 
   return (
     <DialogWrapper
@@ -205,7 +207,22 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
                 <FormItem>
                   <FormLabel>Start Time</FormLabel>
                   <FormControl>
-                    <Input type="time" {...field} />
+                    <Input
+                      type="time"
+                      {...field}
+                      onChange={(e) => {
+                        const newStartTime = e.target.value;
+                        field.onChange(newStartTime);
+
+                        if (newStartTime) {
+                          const [hours, minutes] = newStartTime.split(':').map(Number);
+                          const date = new Date();
+                          date.setHours(hours, minutes, 0, 0);
+                          const endDateTime = addMinutes(date, 30);
+                          form.setValue('endTime', format(endDateTime, 'HH:mm'));
+                        }
+                      }}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
