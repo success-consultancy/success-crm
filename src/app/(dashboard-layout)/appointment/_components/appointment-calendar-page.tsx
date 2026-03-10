@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import {
   format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays,
   isSameMonth, isSameDay, startOfDay, parseISO, getHours, getMinutes, differenceInMinutes
@@ -23,6 +23,7 @@ import UserSelectWithCommand from '@/components/molecules/user-select-with-comma
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { useCalendarData } from './use-calendar-data';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
+import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 
 // ==========================================
@@ -130,7 +131,7 @@ const getEventHeight = (startTime: Date | string, endTime: Date | string) => {
 };
 
 
-const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick }: any) => {
+const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick, onReschedule }: any) => {
   const dateKey = format(selectedDate, 'yyyy-MM-dd');
   const selectedDateItems = itemsByDate[dateKey] || [];
 
@@ -187,6 +188,7 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
                 colIndex={item.colIndex}
                 totalCols={item.totalCols}
                 onClick={() => onAppointmentClick(item)}
+                onReschedule={onReschedule}
               />
             ))}
           </div>
@@ -213,7 +215,7 @@ const renderCurrentTimeIndicator = (selectedDate: any) => {
 };
 
 // --- Week View ---
-const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick, timeSlots }: any) => {
+const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick, timeSlots, onReschedule }: any) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -277,6 +279,7 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
                     colIndex={item.colIndex}
                     totalCols={item.totalCols}
                     onClick={() => onAppointmentClick(item)}
+                    onReschedule={onReschedule}
                   />
                 ));
               })()}
@@ -388,6 +391,23 @@ const AppointmentCalendarPage = () => {
     setIsFormModalOpen(true);
   }, [setEditingAppointment, setIsFormModalOpen]);
 
+  const { mutateAsync: editAppointment } = useEditAppointment();
+
+  const handleReschedule = useCallback(async (item: IAppointment, newStart: Date, newEnd: Date) => {
+    await editAppointment({
+      id: item.id,
+      title: item.title,
+      description: item.description,
+      date: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
+      startTime: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
+      endTime: format(newEnd, "yyyy-MM-dd'T'HH:mm:ss"),
+      clientId: item.clientId ?? item.lead?.id ?? null,
+      ownerId: item.userId,
+      type: item.type,
+      status: item.status,
+    });
+  }, [editAppointment]);
+
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -429,8 +449,8 @@ const AppointmentCalendarPage = () => {
           {/* Main Layout Area */}
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
             <div className={cn("flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden", currentView === 'agenda' && 'border-0')}>
-              {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} />}
-              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} />}
+              {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} />}
+              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} />}
               {currentView === 'agenda' && <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} />}
               {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} />}
             </div>
@@ -475,50 +495,214 @@ const AppointmentCalendarPage = () => {
 };
 
 // --- SUB-COMPONENTS ---
-const EventBlock = ({ item, colIndex, totalCols, onClick }: any) => {
-  // Always divide by totalCols so overlapping events sit side-by-side
+const SNAP_MINUTES = 30;
+const SNAP_PX = (SNAP_MINUTES / 60) * HOUR_HEIGHT; // 32px per 30 min
+
+const formatTimeLabel = (start: Date, end: Date) => {
+  const startPeriod = format(start, 'a').toLowerCase();
+  const endPeriod = format(end, 'a').toLowerCase();
+  const startFormatted = startPeriod === endPeriod
+    ? format(start, 'h:mm')
+    : format(start, 'h:mm a').toLowerCase();
+  return `${startFormatted} - ${format(end, 'h:mm a').toLowerCase()}`;
+};
+
+const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) => {
   const widthPercent = 100 / totalCols;
   const leftPercent = colIndex * widthPercent;
-
-  // Inset right edge slightly so overlapping events peek through underneath
   const rightInsetPx = totalCols > 1 ? 4 : 0;
 
-  // Format: "11:20 - 11:50 am" — period only on end time, drop it from start
-  const startDate = new Date(item.startTime);
-  const endDate = new Date(item.endTime);
-  const startPeriod = format(startDate, 'a').toLowerCase();
-  const endPeriod = format(endDate, 'a').toLowerCase();
-  const startFormatted = startPeriod === endPeriod
-    ? format(startDate, 'h:mm')
-    : format(startDate, 'h:mm a').toLowerCase();
-  const endFormatted = format(endDate, 'h:mm a').toLowerCase();
-  const timeLabel = `${startFormatted} - ${endFormatted}`;
+  const originalStart = new Date(item.startTime);
+  const originalEnd = new Date(item.endTime);
+  const durationMs = originalEnd.getTime() - originalStart.getTime();
+
+  // Saving state — held at optimistic position while API is in-flight
+  const [isSaving, setIsSaving] = useState(false);
+  const [savedTopPx, setSavedTopPx] = useState<number | null>(null);
+  const [savedHeightPx, setSavedHeightPx] = useState<number | null>(null);
+
+  // --- Move-drag state ---
+  const [dragOffsetPx, setDragOffsetPx] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStartY = useRef<number>(0);
+  const dragRef = useRef<HTMLDivElement>(null);
+
+  const snappedMoveSteps = Math.round(dragOffsetPx / SNAP_PX);
+  const snappedMovePx = snappedMoveSteps * SNAP_PX;
+  const snappedMoveMinutes = snappedMoveSteps * SNAP_MINUTES;
+  const previewStart = new Date(originalStart.getTime() + snappedMoveMinutes * 60_000);
+  const previewEnd = new Date(previewStart.getTime() + durationMs);
+  const baseTop = getTopPosition(item.startTime);
+  const displayTop = isSaving && savedTopPx !== null
+    ? savedTopPx
+    : isDragging ? baseTop + snappedMovePx : baseTop;
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || isSaving) return;
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragStartY.current = e.clientY;
+    setIsDragging(true);
+    setDragOffsetPx(0);
+  };
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    e.stopPropagation();
+    setDragOffsetPx(e.clientY - dragStartY.current);
+  };
+  const handlePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isDragging) return;
+    e.stopPropagation();
+    setIsDragging(false);
+
+    if (snappedMoveSteps === 0) {
+      onClick();
+      setDragOffsetPx(0);
+      return;
+    }
+
+    if (onReschedule) {
+      // Lock block at dropped position while API is saving
+      setSavedTopPx(baseTop + snappedMovePx);
+      setIsSaving(true);
+      setDragOffsetPx(0);
+      try {
+        await onReschedule(item, previewStart, previewEnd);
+      } finally {
+        setIsSaving(false);
+        setSavedTopPx(null);
+      }
+    } else {
+      setDragOffsetPx(0);
+    }
+  };
+
+  // --- Resize state (bottom handle) ---
+  const [resizeOffsetPx, setResizeOffsetPx] = useState(0);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartY = useRef<number>(0);
+
+  const baseHeight = Math.max(getEventHeight(item.startTime, item.endTime), 44);
+  const rawResizeSteps = Math.round(resizeOffsetPx / SNAP_PX);
+  const resizeSteps = Math.max(rawResizeSteps, 1 - Math.round(baseHeight / SNAP_PX));
+  const resizeSnappedPx = resizeSteps * SNAP_PX;
+  const resizePreviewEnd = new Date(originalEnd.getTime() + resizeSteps * SNAP_MINUTES * 60_000);
+  const displayHeight = isSaving && savedHeightPx !== null
+    ? savedHeightPx
+    : isResizing ? Math.max(baseHeight + resizeSnappedPx, SNAP_PX) : baseHeight;
+
+  const handleResizePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || isSaving) return;
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    resizeStartY.current = e.clientY;
+    setIsResizing(true);
+    setResizeOffsetPx(0);
+  };
+  const handleResizePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isResizing) return;
+    e.stopPropagation();
+    setResizeOffsetPx(e.clientY - resizeStartY.current);
+  };
+  const handleResizePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isResizing) return;
+    e.stopPropagation();
+    setIsResizing(false);
+
+    if (resizeSteps !== 0 && onReschedule) {
+      // Lock block at resized height while API is saving
+      setSavedHeightPx(Math.max(baseHeight + resizeSnappedPx, SNAP_PX));
+      setIsSaving(true);
+      setResizeOffsetPx(0);
+      try {
+        await onReschedule(item, originalStart, resizePreviewEnd);
+      } finally {
+        setIsSaving(false);
+        setSavedHeightPx(null);
+      }
+    } else {
+      setResizeOffsetPx(0);
+    }
+  };
+
+  const isActive = isDragging || isResizing;
+  const activeTimeLabel = isResizing
+    ? formatTimeLabel(originalStart, resizePreviewEnd)
+    : isDragging
+      ? formatTimeLabel(previewStart, previewEnd)
+      : formatTimeLabel(originalStart, originalEnd);
 
   return (
     <div
-      className={cn('absolute cursor-pointer transition-all hover:opacity-90 z-10 overflow-hidden bg-[#F2F2F2] flex items-stretch')}
+      ref={dragRef}
+      className={cn(
+        'absolute z-10 overflow-hidden bg-[#F2F2F2] flex items-stretch',
+        isActive
+          ? 'cursor-grabbing opacity-80 shadow-lg ring-2 ring-primary ring-offset-1'
+          : isSaving
+            ? 'cursor-wait ring-2 ring-primary/40 ring-offset-1'
+            : 'cursor-grab hover:opacity-90 transition-opacity',
+      )}
       style={{
-        top: `${getTopPosition(item.startTime)}px`,
-        height: `${Math.max(getEventHeight(item.startTime, item.endTime), 44)}px`,
+        top: `${displayTop}px`,
+        height: `${Math.max(displayHeight, 44)}px`,
         left: `${leftPercent}%`,
         width: `calc(${widthPercent}% - ${rightInsetPx}px)`,
         minWidth: `${MIN_EVENT_WIDTH}px`,
+        userSelect: 'none',
+        touchAction: 'none',
+        transition: isActive ? 'none' : 'top 0.2s ease, height 0.2s ease',
       }}
-      onClick={e => { e.stopPropagation(); onClick(); }}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerCancel={() => { setIsDragging(false); setDragOffsetPx(0); }}
     >
       {/* Colored left border indicator */}
       <div className={cn('w-[3px] flex-shrink-0 rounded-l-sm', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'tailwind'))} />
-      <div className='flex flex-col overflow-hidden px-2 py-1'>
-        <div className="text-b12-500 text-neutral-black leading-tight truncate">
-          {timeLabel}
+      <div className='flex flex-col overflow-hidden px-2 py-1 flex-1'>
+        <div className={cn('text-b12-500 text-neutral-black leading-tight truncate', isActive && 'font-semibold')}>
+          {activeTimeLabel}
         </div>
         <div className="text-b12 text-neutral-black mt-0.5 truncate">
           {item.title}
         </div>
       </div>
+
+      {/* Saving shimmer overlay */}
+      {isSaving && (
+        <div className="absolute inset-0 pointer-events-none overflow-hidden rounded-sm">
+          <div className="absolute inset-0 bg-white/30 animate-pulse" />
+          <div
+            className="absolute inset-0 -translate-x-full animate-[shimmer_1.2s_ease-in-out_infinite]"
+            style={{
+              background: 'linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.5) 50%, transparent 100%)',
+              animation: 'shimmer 1.2s ease-in-out infinite',
+            }}
+          />
+        </div>
+      )}
+
+      {/* Bottom resize handle */}
+      <div
+        className={cn(
+          'absolute bottom-0 left-0 right-0 h-3 flex items-center justify-center group cursor-s-resize',
+          isSaving && 'pointer-events-none',
+        )}
+        onPointerDown={handleResizePointerDown}
+        onPointerMove={handleResizePointerMove}
+        onPointerUp={handleResizePointerUp}
+        onPointerCancel={() => { setIsResizing(false); setResizeOffsetPx(0); }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="w-8 h-1 rounded-full bg-neutral-400 opacity-0 group-hover:opacity-60 transition-opacity" />
+      </div>
     </div>
   );
 };
+
+
+
 
 const AgendaCard = ({ item, onClick }: { item: IAppointment, onClick: () => void }) => {
   return (
