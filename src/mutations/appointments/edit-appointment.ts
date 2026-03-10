@@ -65,8 +65,8 @@ export const useEditAppointment = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editAppointment,
-    onSuccess: () => {
-      queryClient.invalidateQueries({
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
         predicate: (query) =>
           query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENTS || query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENT_BY_ID,
       });

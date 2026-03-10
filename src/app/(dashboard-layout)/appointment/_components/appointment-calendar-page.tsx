@@ -542,6 +542,7 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule, weekDays
   const [isSaving, setIsSaving] = useState(false);
   const [savedTopPx, setSavedTopPx] = useState<number | null>(null);
   const [savedHeightPx, setSavedHeightPx] = useState<number | null>(null);
+  const [savedTranslateX, setSavedTranslateX] = useState<number | null>(null);
 
   // --- Move-drag state ---
   const [dragOffsetPx, setDragOffsetPx] = useState(0);
@@ -632,18 +633,22 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule, weekDays
   const handlePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     e.stopPropagation();
-    setIsDragging(false);
 
     if (snappedMoveSteps === 0 && clampedDayOffset === 0) {
-      onClick();
+      setIsDragging(false);
       setDragOffsetPx(0);
       setDragOffsetXPx(0);
+      onClick();
       return;
     }
 
     if (onReschedule) {
+      // Set saving state BEFORE clearing drag state so the element
+      // never snaps back to its original position between frames.
       setSavedTopPx(baseTop + snappedMovePx);
+      setSavedTranslateX(clampedTranslateX);
       setIsSaving(true);
+      setIsDragging(false);
       setDragOffsetPx(0);
       setDragOffsetXPx(0);
       try {
@@ -651,8 +656,10 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule, weekDays
       } finally {
         setIsSaving(false);
         setSavedTopPx(null);
+        setSavedTranslateX(null);
       }
     } else {
+      setIsDragging(false);
       setDragOffsetPx(0);
       setDragOffsetXPx(0);
     }
@@ -757,8 +764,12 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule, weekDays
         minWidth: `${MIN_EVENT_WIDTH}px`,
         userSelect: 'none',
         touchAction: 'none',
-        transform: isDragging ? `translateX(${clampedTranslateX}px)` : undefined,
-        transition: isActive ? 'none' : 'top 0.2s ease, height 0.2s ease',
+        transform: isDragging
+          ? `translateX(${clampedTranslateX}px)`
+          : isSaving && savedTranslateX !== null
+            ? `translateX(${savedTranslateX}px)`
+            : undefined,
+        transition: isActive || isSaving ? 'none' : 'top 0.2s ease, height 0.2s ease',
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
