@@ -304,7 +304,7 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
 };
 
 // --- Month View ---
-const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate, setEditingAppointment }: any) => (
+const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate, setEditingAppointment, onEmptySlotClick }: any) => (
   <div className="flex-1 flex flex-col overflow-hidden">
     <div className="grid grid-cols-7 flex-shrink-0 bg-[#F9FAFB]">
       {['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'].map(day => (
@@ -315,7 +315,7 @@ const MonthView = ({ calendarDays, selectedDate, setSelectedDate, itemsByDate, s
       {calendarDays.map((day: Date, idx: number) => {
         const dayItems = itemsByDate[format(day, 'yyyy-MM-dd')] || [];
         return (
-          <div key={idx} className={cn("flex flex-col border p-2 cursor-pointer hover:bg-gray-50", !isSameMonth(day, selectedDate) && 'opacity-40', isSameDay(day, selectedDate) && 'bg-blue-50 border-primary-blue')} onClick={() => setSelectedDate(day)}>
+          <div key={idx} className={cn("flex flex-col border p-2 cursor-pointer hover:bg-gray-50", !isSameMonth(day, selectedDate) && 'opacity-40', isSameDay(day, selectedDate) && 'bg-blue-50 border-primary-blue')} onClick={() => { setSelectedDate(day); onEmptySlotClick?.(day); }}>
             <div className="text-sm mb-1.5 flex-shrink-0"><span className={isSameDay(day, new Date()) ? 'font-bold text-white bg-primary-blue p-1.5 rounded-md' : ''}>{format(day, 'd')}</span></div>
             <div className="flex-1 space-y-1 overflow-hidden min-h-0">
               {dayItems.slice(0, 2).map((item: any) => (
@@ -472,7 +472,7 @@ const AppointmentCalendarPage = () => {
               {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} onEmptySlotClick={handleEmptySlotClick} />}
               {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} onEmptySlotClick={handleEmptySlotClick} />}
               {currentView === 'agenda' && <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} />}
-              {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} />}
+              {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} onEmptySlotClick={handleEmptySlotClick} />}
             </div>
 
             {/* Right Sidebar */}
