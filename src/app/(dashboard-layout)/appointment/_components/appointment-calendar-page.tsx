@@ -185,7 +185,7 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
 
             {renderCurrentTimeIndicator(selectedDate)}
 
-            {/* Pass position metadata to EventBlock */}
+            {/* Pass position metadata to EventBlock — day view has no horizontal drag */}
             {processedItems.map((item: any) => (
               <EventBlock
                 key={item.id}
@@ -261,8 +261,8 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
           </div>
 
           {/* Event Columns */}
-          {weekDays.map((day: Date) => (
-            <div key={day.toString()} className="bg-white relative">
+          {weekDays.map((day: Date, dayIdx: number) => (
+            <div key={day.toString()} className="bg-white relative overflow-visible">
               {timeSlots.map((slot: any, i: number) => (
                 <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: HOUR_HEIGHT }}
                   onClick={(e) => {
@@ -292,6 +292,8 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
                     totalCols={item.totalCols}
                     onClick={() => onAppointmentClick(item)}
                     onReschedule={onReschedule}
+                    weekDays={weekDays}
+                    dayIdx={dayIdx}
                   />
                 ));
               })()}
@@ -527,7 +529,7 @@ const formatTimeLabel = (start: Date, end: Date) => {
   return `${startFormatted} - ${format(end, 'h:mm a').toLowerCase()}`;
 };
 
-const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) => {
+const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule, weekDays, dayIdx }: any) => {
   const widthPercent = 100 / totalCols;
   const leftPercent = colIndex * widthPercent;
   const rightInsetPx = totalCols > 1 ? 4 : 0;
@@ -543,8 +545,10 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
 
   // --- Move-drag state ---
   const [dragOffsetPx, setDragOffsetPx] = useState(0);
+  const [dragOffsetXPx, setDragOffsetXPx] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
   const dragStartY = useRef<number>(0);
+  const dragStartX = useRef<number>(0);
   const dragRef = useRef<HTMLDivElement>(null);
 
   // --- Resize state (bottom handle) ---
@@ -563,7 +567,28 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
   const snappedMoveSteps = Math.round(dragOffsetPx / SNAP_PX);
   const snappedMovePx = snappedMoveSteps * SNAP_PX;
   const snappedMoveMinutes = snappedMoveSteps * SNAP_MINUTES;
-  const previewStart = new Date(originalStart.getTime() + snappedMoveMinutes * 60_000);
+
+  // Horizontal drag: compute day offset from column width
+  const columnWidthRef = useRef<number>(0);
+  const dragWidthRef = useRef<number>(0);
+  useEffect(() => {
+    if (dragRef.current) {
+      const parent = dragRef.current.closest('[class*="bg-white relative"]');
+      if (parent) columnWidthRef.current = parent.getBoundingClientRect().width;
+      dragWidthRef.current = dragRef.current.getBoundingClientRect().width;
+    }
+  }, []);
+  const columnWidth = columnWidthRef.current;
+  const dayOffset = weekDays && columnWidth > 0
+    ? Math.round(dragOffsetXPx / columnWidth)
+    : 0;
+  const clampedDayOffset = weekDays
+    ? Math.max(-dayIdx, Math.min(dayOffset, weekDays.length - 1 - dayIdx))
+    : 0;
+
+  const dayShiftMs = clampedDayOffset * 24 * 60 * 60 * 1000;
+  const clampedTranslateX = clampedDayOffset * columnWidth;
+  const previewStart = new Date(originalStart.getTime() + snappedMoveMinutes * 60_000 + dayShiftMs);
   const previewEnd = new Date(previewStart.getTime() + durationMs);
 
   const rawResizeSteps = Math.round(resizeOffsetPx / SNAP_PX);
@@ -593,30 +618,34 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
     e.stopPropagation();
     e.currentTarget.setPointerCapture(e.pointerId);
     dragStartY.current = e.clientY;
+    dragStartX.current = e.clientX;
     setIsDragging(true);
     setDragOffsetPx(0);
+    setDragOffsetXPx(0);
   };
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     e.stopPropagation();
     setDragOffsetPx(e.clientY - dragStartY.current);
+    setDragOffsetXPx(e.clientX - dragStartX.current);
   };
   const handlePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
     if (!isDragging) return;
     e.stopPropagation();
     setIsDragging(false);
 
-    if (snappedMoveSteps === 0) {
+    if (snappedMoveSteps === 0 && clampedDayOffset === 0) {
       onClick();
       setDragOffsetPx(0);
+      setDragOffsetXPx(0);
       return;
     }
 
     if (onReschedule) {
-      // Lock block at dropped position while API is saving
       setSavedTopPx(baseTop + snappedMovePx);
       setIsSaving(true);
       setDragOffsetPx(0);
+      setDragOffsetXPx(0);
       try {
         await onReschedule(item, previewStart, previewEnd);
       } finally {
@@ -625,6 +654,7 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
       }
     } else {
       setDragOffsetPx(0);
+      setDragOffsetXPx(0);
     }
   };
 
@@ -710,27 +740,30 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
     <div
       ref={dragRef}
       className={cn(
-        'absolute z-10 overflow-hidden bg-[#F2F2F2] flex items-stretch',
-        isActive
-          ? 'cursor-grabbing opacity-80 shadow-lg ring-2 ring-primary ring-offset-1'
-          : isSaving
-            ? 'cursor-wait ring-2 ring-primary/40 ring-offset-1'
-            : 'cursor-grab hover:opacity-90 transition-opacity',
+        'absolute overflow-hidden bg-[#F2F2F2] flex items-stretch',
+        isDragging
+          ? 'z-50 cursor-grabbing opacity-80 shadow-lg ring-2 ring-primary ring-offset-1'
+          : isActive
+            ? 'z-10 cursor-grabbing opacity-80 shadow-lg ring-2 ring-primary ring-offset-1'
+            : isSaving
+              ? 'z-10 cursor-wait ring-2 ring-primary/40 ring-offset-1'
+              : 'z-10 cursor-grab hover:opacity-90 transition-opacity',
       )}
       style={{
         top: `${displayTop}px`,
         height: `${Math.max(displayHeight, 44)}px`,
         left: `${leftPercent}%`,
-        width: `calc(${widthPercent}% - ${rightInsetPx}px)`,
+        width: isDragging && dragWidthRef.current ? `${dragWidthRef.current}px` : `calc(${widthPercent}% - ${rightInsetPx}px)`,
         minWidth: `${MIN_EVENT_WIDTH}px`,
         userSelect: 'none',
         touchAction: 'none',
+        transform: isDragging ? `translateX(${clampedTranslateX}px)` : undefined,
         transition: isActive ? 'none' : 'top 0.2s ease, height 0.2s ease',
       }}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerCancel={() => { setIsDragging(false); setDragOffsetPx(0); }}
+      onPointerCancel={() => { setIsDragging(false); setDragOffsetPx(0); setDragOffsetXPx(0); }}
     >
       {/* Colored left border indicator */}
       <div className={cn('w-[3px] flex-shrink-0 rounded-l-sm', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'tailwind'))} />
