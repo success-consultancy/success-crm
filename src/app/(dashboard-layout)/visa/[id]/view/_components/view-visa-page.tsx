@@ -13,6 +13,7 @@ import NoteSection from './note-section';
 import VisaHistoryContent from './visa-history-content';
 import FollowUp from '@/components/organisms/follow-up';
 import Accounts from './accounts';
+import SectionLoader from '@/components/molecules/section-loader';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -29,7 +30,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const { data: visa, isLoading, isError } = useGetVisaDetailById(studentId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
+    return <SectionLoader />;
   }
 
   if (isError || !visa) {

@@ -5,6 +5,7 @@ import { LeadSchemaType } from '@/schema/lead-schema';
 import AddLeadForm from '../../../add-lead/_components/add-lead-form';
 import { transformLeadDates } from '@/utils/lead-helper';
 import { useMemo } from 'react';
+import SectionLoader from '@/components/molecules/section-loader';
 
 type Props = {
   leadId: string;
@@ -22,7 +23,7 @@ const EditLeadClient = ({ leadId }: Props) => {
   }, [leadData]);
 
   if (isLoading || !leadWithParsedDates) {
-    return <p>Loading...</p>;
+    return <SectionLoader />;
   }
 
   return <AddLeadForm mode="edit" defaultValues={leadWithParsedDates} />;

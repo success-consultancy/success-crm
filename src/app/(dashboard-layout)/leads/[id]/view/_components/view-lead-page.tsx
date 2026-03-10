@@ -13,6 +13,7 @@ import { useGetLeadById } from '@/query/get-leads';
 import Transition from './transition';
 import { History } from './history';
 import FollowUp from '@/components/organisms/follow-up';
+import SectionLoader from '@/components/molecules/section-loader';
 
 interface LeadPageContentProps {
   leadId: string;
@@ -29,7 +30,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
   const { data: lead, isLoading, isError } = useGetLeadById(leadId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
+    return <SectionLoader label="Loading lead details..." />;
   }
   if (isError || !lead) {
     return <div className="flex justify-center items-center min-h-[300px] text-red-500">Lead not found.</div>;

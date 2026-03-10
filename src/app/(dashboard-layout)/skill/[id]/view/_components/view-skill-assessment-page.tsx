@@ -13,6 +13,7 @@ import NoteSection from './note-section';
 import SkillAssessmentHistoryContent from './skill-assessment-history-content';
 import FollowUp from '@/components/organisms/follow-up';
 import Accounts from './accounts';
+import SectionLoader from '@/components/molecules/section-loader';
 
 interface SkillAssessmentPageContentProps {
   skillAssessmentId: string;
@@ -29,7 +30,7 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
   const { data: skillAssessment, isLoading, isError } = useGetSkillAssessmentById(skillAssessmentId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
+    return <SectionLoader />;
   }
 
   if (isError || !skillAssessment) {

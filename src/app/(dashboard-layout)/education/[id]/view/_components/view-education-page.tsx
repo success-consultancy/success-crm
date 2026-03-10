@@ -15,6 +15,7 @@ import CourseFeeStructure from './course-fee-structure';
 import Accounts from './accounts';
 import MiscSection from './misc-section';
 import FollowUp from '@/components/organisms/follow-up';
+import SectionLoader from '@/components/molecules/section-loader';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
 import { ACCOUNTABLE_TYPE } from '@/types/common';
@@ -271,7 +272,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   );
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
+    return <SectionLoader />;
   }
   if (isError || !education) {
     return <div className="flex justify-center items-center min-h-[300px] text-red-500">Education not found.</div>;

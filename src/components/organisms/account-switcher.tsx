@@ -30,6 +30,7 @@ import { SUPER_ADMIN_ROLE } from '@/constants/global';
 import { CountryDropdown } from './country-dropdown';
 import toast from 'react-hot-toast';
 import { useSidebarStore } from '@/store/sidebar-store';
+import SectionLoader from '@/components/molecules/section-loader';
 
 // Logo Component
 const SidebarLogo = () => {
@@ -256,7 +257,7 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
   };
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <SectionLoader minHeight="200px" />;
   }
 
   return (

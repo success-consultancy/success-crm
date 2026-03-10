@@ -12,6 +12,7 @@ import TabSelector from '@/components/atoms/tab-selector';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
+import SectionLoader from '@/components/molecules/section-loader';
 
 const TAB_CONFIG = [
   { key: 'personal_details', label: 'Personal Details' },
@@ -28,7 +29,7 @@ const Account = () => {
     setParams([{ name: 'tab', value: tabKey }]);
   };
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <SectionLoader />;
 
   return (
     <Container className="flex flex-col max-h-full overflow-hidden w-full !p-6 m-4 rounded-2xl">

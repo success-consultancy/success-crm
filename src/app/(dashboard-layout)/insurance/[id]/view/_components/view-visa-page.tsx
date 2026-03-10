@@ -13,6 +13,7 @@ import FollowUp from '@/components/organisms/follow-up';
 import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import Accounts from './accounts';
 import { useGetInsuranceById } from '@/query/get-insurance';
+import SectionLoader from '@/components/molecules/section-loader';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -29,7 +30,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const { data: insurance, isLoading, isError } = useGetInsuranceById(studentId);
 
   if (isLoading) {
-    return <div className="flex justify-center items-center min-h-[300px]">Loading...</div>;
+    return <SectionLoader />;
   }
 
   if (isError || !insurance) {
