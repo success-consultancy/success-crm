@@ -547,15 +547,46 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
   const dragStartY = useRef<number>(0);
   const dragRef = useRef<HTMLDivElement>(null);
 
+  // --- Resize state (bottom handle) ---
+  const [resizeOffsetPx, setResizeOffsetPx] = useState(0);
+  const [isResizing, setIsResizing] = useState(false);
+  const resizeStartY = useRef<number>(0);
+
+  // --- Resize state (top handle) ---
+  const [topResizeOffsetPx, setTopResizeOffsetPx] = useState(0);
+  const [isTopResizing, setIsTopResizing] = useState(false);
+  const topResizeStartY = useRef<number>(0);
+
+  const baseTop = getTopPosition(item.startTime);
+  const baseHeight = Math.max(getEventHeight(item.startTime, item.endTime), 44);
+
   const snappedMoveSteps = Math.round(dragOffsetPx / SNAP_PX);
   const snappedMovePx = snappedMoveSteps * SNAP_PX;
   const snappedMoveMinutes = snappedMoveSteps * SNAP_MINUTES;
   const previewStart = new Date(originalStart.getTime() + snappedMoveMinutes * 60_000);
   const previewEnd = new Date(previewStart.getTime() + durationMs);
-  const baseTop = getTopPosition(item.startTime);
+
+  const rawResizeSteps = Math.round(resizeOffsetPx / SNAP_PX);
+  const resizeSteps = Math.max(rawResizeSteps, 1 - Math.round(baseHeight / SNAP_PX));
+  const resizeSnappedPx = resizeSteps * SNAP_PX;
+  const resizePreviewEnd = new Date(originalEnd.getTime() + resizeSteps * SNAP_MINUTES * 60_000);
+
+  const rawTopResizeSteps = Math.round(topResizeOffsetPx / SNAP_PX);
+  const topResizeSteps = Math.min(rawTopResizeSteps, Math.round(baseHeight / SNAP_PX) - 1);
+  const topResizeSnappedPx = topResizeSteps * SNAP_PX;
+  const topResizePreviewStart = new Date(originalStart.getTime() + topResizeSteps * SNAP_MINUTES * 60_000);
+
   const displayTop = isSaving && savedTopPx !== null
     ? savedTopPx
-    : isDragging ? baseTop + snappedMovePx : baseTop;
+    : isDragging ? baseTop + snappedMovePx
+    : isTopResizing ? baseTop + topResizeSnappedPx
+    : baseTop;
+
+  const displayHeight = isSaving && savedHeightPx !== null
+    ? savedHeightPx
+    : isResizing ? Math.max(baseHeight + resizeSnappedPx, SNAP_PX)
+    : isTopResizing ? Math.max(baseHeight - topResizeSnappedPx, SNAP_PX)
+    : baseHeight;
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || isSaving) return;
@@ -597,20 +628,6 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
     }
   };
 
-  // --- Resize state (bottom handle) ---
-  const [resizeOffsetPx, setResizeOffsetPx] = useState(0);
-  const [isResizing, setIsResizing] = useState(false);
-  const resizeStartY = useRef<number>(0);
-
-  const baseHeight = Math.max(getEventHeight(item.startTime, item.endTime), 44);
-  const rawResizeSteps = Math.round(resizeOffsetPx / SNAP_PX);
-  const resizeSteps = Math.max(rawResizeSteps, 1 - Math.round(baseHeight / SNAP_PX));
-  const resizeSnappedPx = resizeSteps * SNAP_PX;
-  const resizePreviewEnd = new Date(originalEnd.getTime() + resizeSteps * SNAP_MINUTES * 60_000);
-  const displayHeight = isSaving && savedHeightPx !== null
-    ? savedHeightPx
-    : isResizing ? Math.max(baseHeight + resizeSnappedPx, SNAP_PX) : baseHeight;
-
   const handleResizePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0 || isSaving) return;
     e.stopPropagation();
@@ -645,12 +662,49 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
     }
   };
 
-  const isActive = isDragging || isResizing;
-  const activeTimeLabel = isResizing
-    ? formatTimeLabel(originalStart, resizePreviewEnd)
-    : isDragging
-      ? formatTimeLabel(previewStart, previewEnd)
-      : formatTimeLabel(originalStart, originalEnd);
+  const handleTopResizePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.button !== 0 || isSaving) return;
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    topResizeStartY.current = e.clientY;
+    setIsTopResizing(true);
+    setTopResizeOffsetPx(0);
+  };
+  const handleTopResizePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isTopResizing) return;
+    e.stopPropagation();
+    setTopResizeOffsetPx(e.clientY - topResizeStartY.current);
+  };
+  const handleTopResizePointerUp = async (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isTopResizing) return;
+    e.stopPropagation();
+    setIsTopResizing(false);
+
+    if (topResizeSteps !== 0 && onReschedule) {
+      setSavedHeightPx(Math.max(baseHeight - topResizeSnappedPx, SNAP_PX));
+      setSavedTopPx(baseTop + topResizeSnappedPx);
+      setIsSaving(true);
+      setTopResizeOffsetPx(0);
+      try {
+        await onReschedule(item, topResizePreviewStart, originalEnd);
+      } finally {
+        setIsSaving(false);
+        setSavedHeightPx(null);
+        setSavedTopPx(null);
+      }
+    } else {
+      setTopResizeOffsetPx(0);
+    }
+  };
+
+  const isActive = isDragging || isResizing || isTopResizing;
+  const activeTimeLabel = isTopResizing
+    ? formatTimeLabel(topResizePreviewStart, originalEnd)
+    : isResizing
+      ? formatTimeLabel(originalStart, resizePreviewEnd)
+      : isDragging
+        ? formatTimeLabel(previewStart, previewEnd)
+        : formatTimeLabel(originalStart, originalEnd);
 
   return (
     <div
@@ -702,6 +756,21 @@ const EventBlock = ({ item, colIndex, totalCols, onClick, onReschedule }: any) =
           />
         </div>
       )}
+
+      {/* Top resize handle */}
+      <div
+        className={cn(
+          'absolute top-0 left-0 right-0 h-3 flex items-center justify-center group cursor-n-resize',
+          isSaving && 'pointer-events-none',
+        )}
+        onPointerDown={handleTopResizePointerDown}
+        onPointerMove={handleTopResizePointerMove}
+        onPointerUp={handleTopResizePointerUp}
+        onPointerCancel={() => { setIsTopResizing(false); setTopResizeOffsetPx(0); }}
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="w-8 h-1 rounded-full bg-neutral-400 opacity-0 group-hover:opacity-60 transition-opacity" />
+      </div>
 
       {/* Bottom resize handle */}
       <div
