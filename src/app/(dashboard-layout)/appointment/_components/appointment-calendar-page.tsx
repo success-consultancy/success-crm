@@ -131,7 +131,7 @@ const getEventHeight = (startTime: Date | string, endTime: Date | string) => {
 };
 
 
-const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick, onReschedule }: any) => {
+const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppointmentClick, onReschedule, onEmptySlotClick }: any) => {
   const dateKey = format(selectedDate, 'yyyy-MM-dd');
   const selectedDateItems = itemsByDate[dateKey] || [];
 
@@ -173,7 +173,13 @@ const DayView = ({ selectedDate, timeSlots, itemsByDate, setSelectedDate, onAppo
             {timeSlots.map((slot: any, idx: number) => (
               <div key={idx} className={`h-[98px] border-b border-gray-100 hover:bg-gray-50 cursor-pointer`}
                 style={{ height: HOUR_HEIGHT }}
-                onClick={() => slot.hour !== null && setSelectedDate(new Date(selectedDate).setHours(slot.hour, 0, 0, 0))}
+                onClick={(e) => {
+                  if (slot.hour === null) return;
+                  const minutes = e.nativeEvent.offsetY >= HOUR_HEIGHT / 2 ? 30 : 0;
+                  const clickedDate = new Date(selectedDate);
+                  clickedDate.setHours(slot.hour, minutes, 0, 0);
+                  onEmptySlotClick?.(clickedDate);
+                }}
               />
             ))}
 
@@ -215,7 +221,7 @@ const renderCurrentTimeIndicator = (selectedDate: any) => {
 };
 
 // --- Week View ---
-const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick, timeSlots, onReschedule }: any) => {
+const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppointmentClick, timeSlots, onReschedule, onEmptySlotClick }: any) => {
   const [currentTime, setCurrentTime] = useState(new Date());
 
   useEffect(() => {
@@ -259,7 +265,13 @@ const WeekView = ({ weekDays, selectedDate, setSelectedDate, itemsByDate, onAppo
             <div key={day.toString()} className="bg-white relative">
               {timeSlots.map((slot: any, i: number) => (
                 <div key={i} className="border-b border-gray-100 w-full hover:bg-gray-50 cursor-pointer" style={{ height: HOUR_HEIGHT }}
-                  onClick={() => slot.hour !== null && setSelectedDate(new Date(day).setHours(slot.hour, 0, 0, 0))}
+                  onClick={(e) => {
+                    if (slot.hour === null) return;
+                    const minutes = e.nativeEvent.offsetY >= HOUR_HEIGHT / 2 ? 30 : 0;
+                    const clickedDate = new Date(day);
+                    clickedDate.setHours(slot.hour, minutes, 0, 0);
+                    onEmptySlotClick?.(clickedDate);
+                  }}
                 />
               ))}
               {isSameDay(day, new Date()) && getHours(currentTime) >= START_HOUR && getHours(currentTime) < END_HOUR && (
@@ -357,6 +369,7 @@ const AppointmentCalendarPage = () => {
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<IAppointment | null>(null);
+  const [prefilledDate, setPrefilledDate] = useState<Date | undefined>(undefined);
 
   // URL State
   const currentView = searchParams.get('view') || 'month';
@@ -388,8 +401,15 @@ const AppointmentCalendarPage = () => {
 
   const handleEdit = useCallback((appointment: IAppointment) => {
     setEditingAppointment(appointment);
+    setPrefilledDate(undefined);
     setIsFormModalOpen(true);
   }, [setEditingAppointment, setIsFormModalOpen]);
+
+  const handleEmptySlotClick = useCallback((date: Date) => {
+    setEditingAppointment(null);
+    setPrefilledDate(date);
+    setIsFormModalOpen(true);
+  }, []);
 
   const { mutateAsync: editAppointment } = useEditAppointment();
 
@@ -449,8 +469,8 @@ const AppointmentCalendarPage = () => {
           {/* Main Layout Area */}
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
             <div className={cn("flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden", currentView === 'agenda' && 'border-0')}>
-              {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} />}
-              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} />}
+              {currentView === 'day' && <DayView selectedDate={selectedDate} timeZone="Asia/Kolkata" itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} onEmptySlotClick={handleEmptySlotClick} />}
+              {(currentView === 'week' || currentView === 'work-week') && <WeekView weekDays={weekDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} onAppointmentClick={handleAppointmentClick} timeSlots={timeSlots} onReschedule={handleReschedule} onEmptySlotClick={handleEmptySlotClick} />}
               {currentView === 'agenda' && <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} />}
               {currentView === 'month' && <MonthView calendarDays={calendarDays} selectedDate={selectedDate} setSelectedDate={setSelectedDate} itemsByDate={itemsByDate} setEditingAppointment={handleEdit} />}
             </div>
@@ -489,7 +509,7 @@ const AppointmentCalendarPage = () => {
           onDelete={() => { setIsDetailModalOpen(false); setSelectedAppointment(null); }}
         />
       )}
-      <AppointmentFormModal isOpen={isFormModalOpen} onClose={() => { setIsFormModalOpen(false); setEditingAppointment(null); }} appointment={editingAppointment} selectedDate={selectedDate} />
+      <AppointmentFormModal isOpen={isFormModalOpen} onClose={() => { setIsFormModalOpen(false); setEditingAppointment(null); setPrefilledDate(undefined); }} appointment={editingAppointment} selectedDate={prefilledDate ?? selectedDate} />
     </div>
   );
 };

@@ -39,14 +39,22 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
 
   const isEditMode = !!appointment;
 
+  const getDefaultTimes = (date?: Date) => {
+    if (date && (date.getHours() !== 0 || date.getMinutes() !== 0)) {
+      const start = format(date, 'HH:mm');
+      const end = format(addMinutes(date, 30), 'HH:mm');
+      return { startTime: start, endTime: end };
+    }
+    return { startTime: '09:00', endTime: '09:30' };
+  };
+
   const form = useForm<AppointmentSchemaType>({
     resolver: zodResolver(appointmentFormSchema),
     defaultValues: {
       title: '',
       description: '',
       date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-      startTime: '09:00',
-      endTime: '09:30',
+      ...getDefaultTimes(selectedDate),
       ownerId: currentUser?.data?.id || 0,
       type: 'in-person',
       status: 'scheduled',
@@ -75,8 +83,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
         title: '',
         description: '',
         date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-        startTime: '09:00',
-        endTime: '09:30',
+        ...getDefaultTimes(selectedDate),
         ownerId: currentUser?.data?.id || 0,
         type: 'in-person',
         status: 'scheduled',
