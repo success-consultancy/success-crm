@@ -720,7 +720,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             className="ml-3"
             onClick={() => {
               reset();
-              router.push(ROUTES.SKILL_ASSESSMENT);
+              router.back();
             }}
           >
             Cancel

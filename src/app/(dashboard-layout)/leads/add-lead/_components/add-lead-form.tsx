@@ -133,7 +133,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       </div>
       <div className="flex items-center justify-start gap-4">
         <Button onClick={handleSubmit(onSubmit)}>{mode === 'edit' ? 'Update Lead' : 'Add Lead'}</Button>
-        <Button variant="outline" onClick={() => router.push('/leads')}>
+        <Button variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

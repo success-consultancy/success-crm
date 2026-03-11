@@ -762,7 +762,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           className="ml-3"
           onClick={() => {
             reset();
-            router.push(ROUTES.TRIBUNAL_REVIEW);
+            router.back();
           }}
         >
           Cancel

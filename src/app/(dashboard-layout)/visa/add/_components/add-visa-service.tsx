@@ -659,7 +659,7 @@ export function AddVisaService({ userId }: Props) {
           Add Visa Applicant
         </Button>
 
-        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.VISA)}>
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

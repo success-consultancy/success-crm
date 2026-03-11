@@ -516,7 +516,7 @@ export function AddEducationService({ userId }: Props) {
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.EDUCATION)}>
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>

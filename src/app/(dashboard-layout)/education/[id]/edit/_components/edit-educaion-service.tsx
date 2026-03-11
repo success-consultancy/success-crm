@@ -346,7 +346,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         <Button
           onClick={() => {
             reset();
-            router.push(ROUTES.EDUCATION);
+            router.back()
           }}
           type="button"
           variant="outline"

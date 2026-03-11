@@ -552,7 +552,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           className="ml-3"
           onClick={() => {
             reset();
-            router.push('/insurance');
+            router.back();
           }}
         >
           Cancel

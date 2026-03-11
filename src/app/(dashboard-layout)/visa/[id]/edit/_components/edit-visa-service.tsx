@@ -167,7 +167,6 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
     }
   }, [selectedANZSCO, occupations, setValue]);
 
-  console.log(errors);
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
@@ -582,7 +581,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
         <Button loading={isPending} loadingText="Updating" type="submit" variant="primary">
           Update Visa Applicant
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => router.push(ROUTES.VISA)}>
+        <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
           Cancel
         </Button>
       </div>
