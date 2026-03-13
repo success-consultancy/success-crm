@@ -25,6 +25,7 @@ interface AppointmentFormModalProps {
   onClose: () => void;
   appointment?: IAppointment | null;
   selectedDate?: Date;
+  selectedEndDate?: Date;
 }
 
 const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
@@ -32,6 +33,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
   onClose,
   appointment,
   selectedDate,
+  selectedEndDate,
 }) => {
   const { data: currentUser } = useGetMe();
   const { mutateAsync: addAppointment } = useAddAppointment();
@@ -39,10 +41,10 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
 
   const isEditMode = !!appointment;
 
-  const getDefaultTimes = (date?: Date) => {
+  const getDefaultTimes = (date?: Date, endDate?: Date) => {
     if (date && (date.getHours() !== 0 || date.getMinutes() !== 0)) {
       const start = format(date, 'HH:mm');
-      const end = format(addMinutes(date, 30), 'HH:mm');
+      const end = endDate ? format(endDate, 'HH:mm') : format(addMinutes(date, 30), 'HH:mm');
       return { startTime: start, endTime: end };
     }
     return { startTime: '09:00', endTime: '09:30' };
@@ -54,7 +56,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
       title: '',
       description: '',
       date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-      ...getDefaultTimes(selectedDate),
+      ...getDefaultTimes(selectedDate, selectedEndDate),
       ownerId: currentUser?.data?.id || 0,
       type: 'in-person',
       status: 'scheduled',
@@ -83,13 +85,13 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
         title: '',
         description: '',
         date: selectedDate ? format(selectedDate, 'yyyy-MM-dd') : format(new Date(), 'yyyy-MM-dd'),
-        ...getDefaultTimes(selectedDate),
+        ...getDefaultTimes(selectedDate, selectedEndDate),
         ownerId: currentUser?.data?.id || 0,
         type: 'in-person',
         status: 'scheduled',
       });
     }
-  }, [appointment, selectedDate, currentUser, form]);
+  }, [appointment, selectedDate, selectedEndDate, currentUser, form]);
 
   const onSubmit = async (data: AppointmentSchemaType) => {
     try {

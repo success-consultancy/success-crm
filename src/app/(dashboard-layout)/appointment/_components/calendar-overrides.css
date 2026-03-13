@@ -1,0 +1,227 @@
+/* === react-big-calendar Design Overrides === */
+
+.rbc-calendar {
+  background-color: white;
+  font-family: inherit;
+}
+
+/* ---- Time Grid ---- */
+.rbc-time-view {
+  border: none;
+}
+
+.rbc-timeslot-group {
+  min-height: 64px;
+  border-bottom-color: #f3f4f6;
+}
+
+.rbc-time-slot {
+  border-top-color: transparent;
+}
+
+.rbc-time-gutter.rbc-time-column {
+  width: 98px !important;
+  min-width: 98px !important;
+  max-width: 98px !important;
+}
+
+.rbc-time-header-gutter {
+  width: 98px !important;
+  min-width: 98px !important;
+  max-width: 98px !important;
+  background-color: #F9FAFB;
+}
+
+.rbc-label {
+  font-size: 12px;
+  color: #6B7280;
+  padding: 4px 8px;
+}
+
+/* ---- Headers ---- */
+.rbc-time-header {
+  background-color: #F9FAFB;
+}
+
+.rbc-time-header.rbc-overflowing {
+  border-right: none;
+}
+
+.rbc-header {
+  background-color: #F9FAFB;
+  padding: 0;
+  border-bottom-color: #E5E7EB;
+}
+
+.rbc-header + .rbc-header {
+  border-left-color: #E5E7EB;
+}
+
+/* Hide the all-day row in time views — not part of the original design */
+.rbc-allday-cell {
+  display: none !important;
+}
+
+.rbc-time-header-content .rbc-row.rbc-row-resource {
+  display: none !important;
+}
+
+/* Remove the bottom border that the hidden all-day row leaves */
+.rbc-time-header-content {
+  border-left-color: #E5E7EB;
+}
+
+/* ---- Time Content ---- */
+.rbc-time-content {
+  border-top: 1px solid #E5E7EB;
+  background-color: white;
+}
+
+.rbc-time-content > * + * > * {
+  border-left-color: #F3F4F6;
+}
+
+.rbc-day-slot {
+  background-color: white;
+}
+
+.rbc-day-slot .rbc-time-slot {
+  border-top-color: transparent;
+}
+
+.rbc-day-slot .rbc-timeslot-group {
+  border-bottom-color: #f3f4f6;
+}
+
+/* ---- Today highlight ---- */
+/* Only highlight the date circle (handled by component), not the full column */
+.rbc-time-view .rbc-day-slot.rbc-today,
+.rbc-time-view .rbc-time-column.rbc-today {
+  background-color: white !important;
+}
+
+/* In month view, keep the subtle cell highlight */
+.rbc-month-view .rbc-day-bg.rbc-today {
+  background-color: #EFF6FF !important;
+}
+
+/* Hide RBC's default floating time label — our CustomTimeEvent renders it inside the block */
+.rbc-event-label {
+  display: none !important;
+}
+
+/* ---- Events (time views) ---- */
+.rbc-day-slot .rbc-event,
+.rbc-day-slot .rbc-background-event {
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 2px !important;
+  padding: 0 !important;
+  box-shadow: none !important;
+  color: inherit !important;
+}
+
+.rbc-day-slot .rbc-event.rbc-selected {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.rbc-event:focus {
+  outline: none !important;
+}
+
+.rbc-event-content {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* ---- Events (month view) ---- */
+/* RBC sets color:#fff on .rbc-event — override to keep text dark in month cells */
+.rbc-month-view .rbc-event {
+  background-color: transparent !important;
+  border: none !important;
+  padding: 0 1px !important;
+  box-shadow: none !important;
+  color: #111827 !important;
+}
+
+.rbc-month-view .rbc-event.rbc-selected {
+  background-color: transparent !important;
+  box-shadow: none !important;
+}
+
+.rbc-month-view .rbc-event-content {
+  color: #111827 !important;
+}
+
+/* ---- Current Time Indicator ---- */
+.rbc-current-time-indicator {
+  background-color: #EF4444;
+  height: 2px;
+}
+
+.rbc-current-time-indicator::before {
+  content: '';
+  display: block;
+  position: absolute;
+  background-color: #EF4444;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  left: -5px;
+  top: -4px;
+}
+
+/* ---- Month View ---- */
+.rbc-month-view {
+  border: none;
+  background-color: white;
+}
+
+.rbc-month-header {
+  background-color: #F9FAFB;
+}
+
+.rbc-month-row {
+  border-color: #E5E7EB;
+}
+
+.rbc-day-bg {
+  border-color: #E5E7EB;
+}
+
+.rbc-day-bg + .rbc-day-bg {
+  border-left-color: #E5E7EB;
+}
+
+.rbc-off-range-bg {
+  background-color: white;
+  opacity: 0.4;
+}
+
+.rbc-row-content {
+  z-index: 4;
+}
+
+.rbc-show-more {
+  font-size: 12px;
+  color: #6B7280;
+  background: transparent;
+  padding: 1px 4px;
+}
+
+/* ---- DnD resize handles ---- */
+.rbc-addons-dnd-resize-ns-anchor {
+  text-align: center;
+}
+
+.rbc-addons-dnd-resize-ns-icon {
+  width: 32px;
+  height: 4px;
+  border-top: 2px solid rgba(0, 0, 0, 0.25);
+  margin: 0 auto;
+}
+
+.rbc-addons-dnd-drag-preview .rbc-event {
+  opacity: 0.75;
+}
