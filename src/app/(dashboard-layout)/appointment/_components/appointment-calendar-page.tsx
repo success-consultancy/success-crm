@@ -33,6 +33,7 @@ import { useCalendarData } from './use-calendar-data';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // ==========================================
 // CONSTANTS
@@ -88,10 +89,12 @@ const getUserInitials = (firstName?: string, lastName?: string) =>
 interface CalendarCtx {
   onDayClick: (date: Date) => void;
   onEditAppointment: (apt: IAppointment) => void;
+  loadingEventIds: Set<string>;
 }
 const CalendarContext = React.createContext<CalendarCtx>({
   onDayClick: () => { },
   onEditAppointment: () => { },
+  loadingEventIds: new Set(),
 });
 
 // ==========================================
@@ -100,6 +103,7 @@ const CalendarContext = React.createContext<CalendarCtx>({
 const EmptyToolbar = () => null;
 
 const CustomTimeEvent = ({ event }: any) => {
+  const { loadingEventIds } = React.useContext(CalendarContext);
   const item = event.resource as IAppointment;
   const start = event.start as Date;
   const end = event.end as Date;
@@ -108,14 +112,20 @@ const CustomTimeEvent = ({ event }: any) => {
   const startStr = startPeriod === endPeriod ? format(start, 'h:mm') : format(start, 'h:mm a').toLowerCase();
   const timeLabel = `${startStr} - ${format(end, 'h:mm a').toLowerCase()}`;
   const colorStr = getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'raw') as string;
+  const isLoading = loadingEventIds.has(event.id);
 
   return (
-    <div className="flex items-stretch h-full overflow-hidden rounded-sm">
+    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative">
       <div className="w-[3px] flex-shrink-0 rounded-l-sm" style={{ backgroundColor: colorStr }} />
       <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F2F2F2]">
         <div className="text-[11px] font-medium text-neutral-black leading-tight truncate">{timeLabel}</div>
         <div className="text-[11px] text-neutral-black mt-0.5 truncate">{item.title}</div>
       </div>
+      {isLoading && (
+        <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
+          <div className="w-3 h-3 border-2 border-primary-blue border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
     </div>
   );
 };
@@ -158,8 +168,9 @@ const WeekDayHeader = ({ date }: any) => {
 };
 
 const MonthEvent = ({ event }: any) => {
-  const { onEditAppointment } = React.useContext(CalendarContext);
+  const { onEditAppointment, loadingEventIds } = React.useContext(CalendarContext);
   const item = event.resource as IAppointment;
+  const isLoading = loadingEventIds.has(event.id);
   return (
     <AppointmentPopover setEditingAppointment={onEditAppointment} apt={item}>
       <div
@@ -171,10 +182,51 @@ const MonthEvent = ({ event }: any) => {
       >
         <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
         <span className="truncate">{format(parseISO(item.startTime), 'h:mma')} {item.title}</span>
+        {isLoading && (
+          <div className="w-2.5 h-2.5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin ml-auto flex-shrink-0" />
+        )}
       </div>
     </AppointmentPopover>
   );
 };
+
+// ==========================================
+// SKELETON COMPONENTS
+// ==========================================
+const AgendaSkeletonRow = () => (
+  <div className="flex items-start gap-4 px-1 py-4 border-b last:border-b-0">
+    <Skeleton className="w-1 h-12 rounded-full flex-shrink-0 self-stretch" />
+    <Skeleton className="h-5 w-36 flex-shrink-0 mr-8" />
+    <div className="flex-1 space-y-2">
+      <Skeleton className="h-5 w-3/4" />
+      <Skeleton className="h-4 w-1/2" />
+    </div>
+    <Skeleton className="w-8 h-8 rounded-full flex-shrink-0" />
+  </div>
+);
+
+const AgendaSkeletonCard = () => (
+  <div className="border rounded-2xl pb-4">
+    <div className="flex justify-between px-6 mb-3 bg-[#F7F8FA] py-4 rounded-t-2xl">
+      <Skeleton className="h-5 w-48" />
+      <Skeleton className="h-5 w-24" />
+    </div>
+    <div className="px-6">
+      {[1, 2, 3].map(i => <AgendaSkeletonRow key={i} />)}
+    </div>
+  </div>
+);
+
+const CalendarGridSkeleton = () => (
+  <div className="absolute inset-0 bg-white/80 z-10 pointer-events-none">
+    <Skeleton className="absolute h-6 w-24 rounded-sm" style={{ top: '18%', left: '15%' }} />
+    <Skeleton className="absolute h-10 w-32 rounded-sm" style={{ top: '30%', left: '35%' }} />
+    <Skeleton className="absolute h-6 w-20 rounded-sm" style={{ top: '30%', left: '60%' }} />
+    <Skeleton className="absolute h-14 w-28 rounded-sm" style={{ top: '48%', left: '22%' }} />
+    <Skeleton className="absolute h-6 w-24 rounded-sm" style={{ top: '55%', left: '50%' }} />
+    <Skeleton className="absolute h-10 w-20 rounded-sm" style={{ top: '68%', left: '72%' }} />
+  </div>
+);
 
 // ==========================================
 // AGENDA VIEW (original design preserved)
@@ -183,7 +235,10 @@ const AgendaView = ({ isLoading, agendaGroups, onAppointmentClick }: any) => (
   <div className="flex-1 overflow-y-auto bg-white px-6 py-4">
 
     {isLoading ? (
-      <div className="flex justify-center p-8 text-gray-500">Loading...</div>
+      <div className="divide-y divide-gray-200 space-y-4">
+        <AgendaSkeletonCard />
+        <AgendaSkeletonCard />
+      </div>
     ) : agendaGroups.length === 0 ? (
       <div className="flex justify-center p-8 text-gray-500">No appointments found</div>
     ) : (
@@ -238,6 +293,7 @@ const AppointmentCalendarPage = () => {
   );
 
   const [optimisticOverrides, setOptimisticOverrides] = useState<Record<string, { start: Date; end: Date }>>({});
+  const [loadingEventIds, setLoadingEventIds] = useState<Set<string>>(new Set());
 
   // Once the API refetch updates rbcEvents, clear overrides (API data is now authoritative)
   useEffect(() => {
@@ -299,20 +355,26 @@ const AppointmentCalendarPage = () => {
   const handleEventDrop = useCallback(async ({ event, start, end }: any) => {
     const id = event.id;
     setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
+    setLoadingEventIds(prev => new Set(prev).add(id));
     try {
       await handleReschedule(event.resource as IAppointment, start as Date, end as Date);
     } catch {
       setOptimisticOverrides(prev => { const next = { ...prev }; delete next[id]; return next; });
+    } finally {
+      setLoadingEventIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     }
   }, [handleReschedule]);
 
   const handleEventResize = useCallback(async ({ event, start, end }: any) => {
     const id = event.id;
     setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
+    setLoadingEventIds(prev => new Set(prev).add(id));
     try {
       await handleReschedule(event.resource as IAppointment, start as Date, end as Date);
     } catch {
       setOptimisticOverrides(prev => { const next = { ...prev }; delete next[id]; return next; });
+    } finally {
+      setLoadingEventIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     }
   }, [handleReschedule]);
 
@@ -326,8 +388,8 @@ const AppointmentCalendarPage = () => {
   }, [handleEmptySlotClick]);
 
   const calendarCtx = useMemo<CalendarCtx>(
-    () => ({ onDayClick: setSelectedDate, onEditAppointment: handleEdit }),
-    [handleEdit]
+    () => ({ onDayClick: setSelectedDate, onEditAppointment: handleEdit, loadingEventIds }),
+    [handleEdit, loadingEventIds]
   );
 
   // Stable component map — all components are defined at module scopeq
@@ -413,10 +475,12 @@ const AppointmentCalendarPage = () => {
 
           {/* Main Layout Area */}
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
-            <div className={cn('flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden', currentView === 'agenda' && 'border-0')}>
+            <div className={cn('relative flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden', currentView === 'agenda' && 'border-0')}>
               {currentView === 'agenda' ? (
                 <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} selectedDate={selectedDate} />
               ) : (
+                <>
+                  {isLoading && <CalendarGridSkeleton />}
                 <CalendarContext.Provider value={calendarCtx}>
                   <DnDCalendar
                     localizer={localizer}
@@ -443,6 +507,7 @@ const AppointmentCalendarPage = () => {
                     views={[Views.MONTH, Views.WEEK, Views.WORK_WEEK, Views.DAY]}
                   />
                 </CalendarContext.Provider>
+                </>
               )}
             </div>
 

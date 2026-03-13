@@ -79,7 +79,10 @@ export function useCalendarData(
     ...getSearchParamsObject(CALENDAR_FILTER_PARAMS), ...dateRange, userId, view: currentView as any,
   });
 
-  const activeItems = currentTab === 'appointment' ? (appointmentData?.rows || []) : (calendarData?.rows || []);
+  const activeItems = useMemo(
+    () => currentTab === 'appointment' ? (appointmentData?.rows || []) : (calendarData?.rows || []),
+    [currentTab, appointmentData?.rows, calendarData?.rows]
+  );
   const isLoading = currentTab === 'appointment' ? isAptLoading : isCalLoading;
 
   // 3. Generate Calendar Grids
