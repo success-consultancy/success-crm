@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
 import { Calendar, dateFnsLocalizer, Views, View as RBCView } from 'react-big-calendar';
 import withDragAndDrop from 'react-big-calendar/lib/addons/dragAndDrop';
 import {
@@ -237,6 +237,21 @@ const AppointmentCalendarPage = () => {
     [itemsByDate]
   );
 
+  const [optimisticOverrides, setOptimisticOverrides] = useState<Record<string, { start: Date; end: Date }>>({});
+
+  // Once the API refetch updates rbcEvents, clear overrides (API data is now authoritative)
+  useEffect(() => {
+    setOptimisticOverrides({});
+  }, [rbcEvents]);
+
+  const displayEvents = useMemo(
+    () => rbcEvents.map(event => {
+      const override = optimisticOverrides[event.id];
+      return override ? { ...event, ...override } : event;
+    }),
+    [rbcEvents, optimisticOverrides]
+  );
+
   const handleDateChange = (direction: 'prev' | 'next' | 'today') => {
     if (direction === 'today') return setSelectedDate(new Date());
     const amount = direction === 'next' ? 1 : -1;
@@ -281,12 +296,24 @@ const AppointmentCalendarPage = () => {
     });
   }, [editAppointment]);
 
-  const handleEventDrop = useCallback(({ event, start, end }: any) => {
-    handleReschedule(event.resource as IAppointment, start as Date, end as Date);
+  const handleEventDrop = useCallback(async ({ event, start, end }: any) => {
+    const id = event.id;
+    setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
+    try {
+      await handleReschedule(event.resource as IAppointment, start as Date, end as Date);
+    } catch {
+      setOptimisticOverrides(prev => { const next = { ...prev }; delete next[id]; return next; });
+    }
   }, [handleReschedule]);
 
-  const handleEventResize = useCallback(({ event, start, end }: any) => {
-    handleReschedule(event.resource as IAppointment, start as Date, end as Date);
+  const handleEventResize = useCallback(async ({ event, start, end }: any) => {
+    const id = event.id;
+    setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
+    try {
+      await handleReschedule(event.resource as IAppointment, start as Date, end as Date);
+    } catch {
+      setOptimisticOverrides(prev => { const next = { ...prev }; delete next[id]; return next; });
+    }
   }, [handleReschedule]);
 
   const handleSelectEvent = useCallback((event: any) => {
@@ -393,7 +420,7 @@ const AppointmentCalendarPage = () => {
                 <CalendarContext.Provider value={calendarCtx}>
                   <DnDCalendar
                     localizer={localizer}
-                    events={rbcEvents}
+                    events={displayEvents}
                     view={rbcView}
                     onView={() => { }}
                     date={selectedDate}

@@ -70,8 +70,6 @@ export function useCalendarData(
     }
   }, [selectedDate, currentView, timeZone]);
 
-  console.log({ dateRange })
-
   // 2. Fetch Data
   const { data: appointmentData, isLoading: isAptLoading } = useGetAppointments({
     ...getSearchParamsObject(APPOINTMENT_FILTER_PARAMS), ...dateRange, userId, view: currentView as any,
