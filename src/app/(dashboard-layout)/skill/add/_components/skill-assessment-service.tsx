@@ -257,7 +257,6 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         {
           onSuccess: () => {
             toast.success('Skill assessment applicant updated successfully');
-            router.push('/skill');
           },
           onError: (err: any) => {
             if (err?.response?.data?.errors) {

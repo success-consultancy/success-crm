@@ -116,7 +116,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
   return (
     <Form {...form}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">Leads</h3>
+        <h3 className="text-h4 text-content-heading font-bold">{mode === 'edit' ? 'Edit lead' : 'New lead'}</h3>
       </Portal>
       <div>
         <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1', 'item-2', 'item-3']}>
@@ -131,7 +131,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
           </FormAccordion>
         </Accordion>
       </div>
-      <div className="flex items-center justify-start gap-4">
+      <div className="flex items-center justify-end gap-4 mt-6">
         <Button onClick={handleSubmit(onSubmit)}>{mode === 'edit' ? 'Update Lead' : 'Add Lead'}</Button>
         <Button variant="outline" onClick={() => router.back()}>
           Cancel

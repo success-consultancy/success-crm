@@ -28,6 +28,8 @@ import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
 import { ROUTES } from '@/config/routes';
 import { useRouter } from 'next/navigation';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
 
 interface Props {
   visaId: number;
@@ -170,6 +172,9 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">Edit Visa Applicant</h3>
+      </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">
@@ -547,7 +552,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
                   value={field.value?.toString()}
                   label="Source"
                   placeholder="Select a source"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val ? Number(val) : null)}
                   error={errors.sourceId?.message as string | undefined}
                 />
               )}
@@ -561,7 +566,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
                   value={field.value?.toString()}
                   label="Assigned to"
                   placeholder="Select an assignee"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val ? Number(val) : null)}
                   error={errors.userId?.message}
                 />
               )}
@@ -577,7 +582,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-start mt-6">
+      <div className="flex justify-end mt-6">
         <Button loading={isPending} loadingText="Updating" type="submit" variant="primary">
           Update Visa Applicant
         </Button>

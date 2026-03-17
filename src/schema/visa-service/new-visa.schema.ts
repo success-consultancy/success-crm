@@ -1,4 +1,4 @@
-import { number, z } from 'zod';
+import { z } from 'zod';
 
 // Helper to allow null or empty string (matching Joi's .allow(null, ''))
 const nullableString = () => z.string().nullable().optional();
@@ -10,16 +10,11 @@ export const newVisaServiceSchema = z.object({
 
   firstName: z.string().min(1, 'First name is required'),
 
-  lastName: nullableString(),
+  lastName: z.string().min(1, 'Last name is required'),
 
   middleName: nullableString(),
 
-  passport: z.coerce
-    .number({ message: 'Valid passport number required' })
-    .int('Passport must be a number')
-    .gte(1, 'Passport must be a valid number')
-    .nullable()
-    .optional(),
+  passport: nullableString(),
 
   issueDate: nullableString(),
 
@@ -27,18 +22,14 @@ export const newVisaServiceSchema = z.object({
 
   email: z.string().email('Please enter a valid email address').min(1, 'Email is required'),
 
-  phone: z
-    .string()
-    ?.regex(/^[0-9+\-() ]*$/, 'Phone can only contain numbers and symbols')
-    .optional(),
+  phone: z.string().min(1, 'Phone number is required'),
 
   dob: nullableString(),
 
   occupation: nullableString(),
 
   anzsco: z
-    .string()
-    .regex(/^\d{4}(\d{2})?$/, 'ANZSCO must be a 4-digit or 6-digit code')
+    .union([z.string().regex(/^\d{4}(\d{2})?$/, 'ANZSCO must be a 4-digit or 6-digit code'), z.literal('')])
     .optional()
     .nullable(),
 
@@ -74,7 +65,7 @@ export const newVisaServiceSchema = z.object({
   payment: nullableString(),
   paymentStatus: nullableString(),
 
-  userId: number().min(1, { message: 'must be assigned to someone' }),
+  userId: nullableNumber(),
 
   assignedDate: z.date().nullable().optional(),
 
@@ -85,7 +76,7 @@ export const newVisaServiceSchema = z.object({
 
   sponsorName: nullableString(),
 
-  sponsorEmail: z.string().email('Please enter a valid sponsor email').optional(),
+  sponsorEmail: z.union([z.string().email('Please enter a valid sponsor email'), z.literal('')]).optional(),
 
   sponsorPhone: z
     .string()
@@ -97,40 +88,38 @@ export const newVisaServiceSchema = z.object({
   sbsDecisionDate: nullableString(),
   miscNote: nullableString(),
   accounts: z.object({
-    planname: z
-      .string()
-      .min(1, 'Account payment plan is required')
-      .max(50, 'Account payment plan cannot exceed 50 characters'),
+    planname: z.string().max(50, 'Account payment plan cannot exceed 50 characters').optional(),
 
     amount: z
-      .string()
-      .min(1, 'Account amount is required')
-      .max(50, 'Account amount cannot exceed 50 characters')
-      .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+      .union([
+        z.string().regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+        z.literal(''),
+      ])
+      .optional(),
 
-    duedate: z.date({
-      message: 'Account due date is required',
-    }),
+    duedate: z.string().nullable().optional(),
 
     invoicenumber: z
-      .string()
-      .min(1, 'Account invoice number is required')
-      .max(50, 'Account invoice number cannot exceed 50 characters')
-      .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+      .union([
+        z.string().regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+        z.literal(''),
+      ])
+      .optional(),
 
-    status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
+    status: z.string().nullable().optional(),
 
     discount: z
-      .string()
-      .max(50, 'Discount amount cannot exceed 50 characters')
-      .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
+      .union([
+        z.string().regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount'),
+        z.literal(''),
+      ])
       .optional(),
 
     netamount: z.string().optional(),
     gst: z.string().optional(),
     feeNote: z.string().optional(),
-    updatedBy: z.number(),
-  }),
+    updatedBy: z.number().nullable().optional(),
+  }).nullable().optional(),
 });
 
 export type NewVisaServiceType = z.infer<typeof newVisaServiceSchema>;
@@ -140,7 +129,7 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   firstName: '',
   lastName: '',
   middleName: '',
-  passport: null,
+  passport: '',
   issueDate: '',
   expiryDate: '',
   email: '',
@@ -169,7 +158,7 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   invoiceNumber: '',
   payment: '',
   paymentStatus: '',
-  userId: 0,
+  userId: null,
   assignedDate: null,
   updatedBy: null,
   // New fields default values
@@ -181,16 +170,5 @@ export const newVisaServiceDefaultValues: NewVisaServiceType = {
   sbsSubmissionDate: '',
   sbsDecisionDate: '',
   miscNote: '',
-  accounts: {
-    planname: '',
-    amount: '',
-    duedate: new Date(),
-    invoicenumber: '',
-    status: '',
-    discount: '',
-    netamount: '',
-    gst: '',
-    feeNote: '',
-    updatedBy: 0,
-  },
+  accounts: null,
 };

@@ -61,9 +61,9 @@ const EditVisaServicePage = () => {
     paymentStatus: data?.paymentStatus || '', // "Overdue"
 
     // Misc
-    userId: Number(data?.userId) || '', // 3
-    sourceId: data?.sourceId || '', // 3
-    updatedBy: data?.updatedBy || '', // 1
+    userId: data?.userId || null,
+    sourceId: data?.sourceId || null,
+    updatedBy: data?.updatedBy || null,
     remarks: data?.remarks || '', // "<p>Hello World</p>"
     assignedDate: new Date(data?.assignedDate as string) || new Date(), // "2025-11-20"
     files: data?.files || null, // null

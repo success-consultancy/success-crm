@@ -33,6 +33,8 @@ import countryList from 'react-select-country-list';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/config/routes';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
 
 interface Props {
   userId: number | undefined;
@@ -148,6 +150,9 @@ export function AddEducationService({ userId }: Props) {
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">New Student</h3>
+      </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
@@ -512,7 +517,7 @@ export function AddEducationService({ userId }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-start mt-6">
+      <div className="flex justify-end mt-6">
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
