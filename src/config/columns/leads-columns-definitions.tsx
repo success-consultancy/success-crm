@@ -1,3 +1,5 @@
+import MailIcon from '@/assets/icons/mail-01-icon';
+import TrashIcon from '@/assets/icons/trash-01-icon';
 import ColumnHeader from '@/components/molecules/column-header';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { useTableContext } from '@/components/molecules/table-context-provider';
@@ -431,7 +433,7 @@ export const useLeadColumn = (
                   <EmailDialog
                     trigger={
                       <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1">
-                        <Mail strokeWidth={1.5} className="h-5 w-5" />
+                        <MailIcon className="h-[20px] w-[20px]" />
                         <span>Send Email</span>
                       </div>
                     }
@@ -442,12 +444,18 @@ export const useLeadColumn = (
                   <DeleteDialog
                     trigger={
                       <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
-                        <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+                        <TrashIcon className="h-[20px] w-[20px]" />
                         <span>Delete Lead</span>
                       </div>
                     }
-                    title="Delete this Lead"
-                    description="Are you sure you want to delete this lead? Deleting this lead will remove all associated data, including contacts, interactions and notes."
+                    title="Delete this lead"
+                    description={
+                      <div className="flex flex-col gap-3">
+                        <p>Are you sure you want to delete this lead?</p>
+                        <p>Deleting this lead will remove all associated data, including contacts, interactions and notes.</p>
+                      </div>
+                    }
+                    confirmText="Yes, delete"
                     onConfirm={() => handleDelete(row.original.id)}
                   />
                 </div>

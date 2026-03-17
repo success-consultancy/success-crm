@@ -33,7 +33,7 @@ const AdminSidebar = ({ className }: Props) => {
         <ScrollArea className="h-full">
           <div className="flex flex-col h-full">
             <SidebarLogo />
-            <div className={!isCollapsed ? 'p-2 pt-2' : undefined}>
+            <div className={!isCollapsed ? 'p-3' : undefined}>
               <BranchSelector />
               <AdminSidebarMenuItems />
             </div>
