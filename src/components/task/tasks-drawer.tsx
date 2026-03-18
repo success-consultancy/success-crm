@@ -33,7 +33,7 @@ export function TasksDrawer() {
     resolver: zodResolver(taskFormSchema),
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: { detail: '', description: '', dueDate: undefined, dueTime: undefined, userId },
+    defaultValues: { detail: '', detailDescription: '', dueDate: undefined, dueTime: undefined, userId },
   });
 
   const { data: activeTasks = [] } = useGetTasks({
@@ -61,7 +61,7 @@ export function TasksDrawer() {
     setEditingTaskId(null);
     form.reset({
       detail: '',
-      description: '',
+      detailDescription: '',
       dueDate: undefined,
       dueTime: undefined,
       userId,
@@ -122,10 +122,7 @@ export function TasksDrawer() {
       </span>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
-        <SheetContent
-          side="right"
-          className="w-[420px] sm:w-[440px] p-0 flex flex-col bg-white border-l"
-        >
+        <SheetContent side="right" className="w-[420px] sm:w-[440px] p-0 flex flex-col bg-white border-l">
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b">
             <h2 className="text-base font-semibold text-gray-900">Tasks</h2>
@@ -171,23 +168,15 @@ export function TasksDrawer() {
                   /* All tasks completed state */
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <CheckCircle2 className="w-16 h-16 text-blue-500 mb-4" strokeWidth={1.5} />
-                    <h3 className="text-base font-semibold text-gray-800 mb-1">
-                      All tasks completed
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Great job! There are no remaining tasks
-                    </p>
+                    <h3 className="text-base font-semibold text-gray-800 mb-1">All tasks completed</h3>
+                    <p className="text-sm text-gray-500">Great job! There are no remaining tasks</p>
                   </div>
                 ) : (
                   /* Empty state */
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                     <EmptyTaskIcon />
-                    <h3 className="text-base font-semibold text-gray-800 mb-1 mt-4">
-                      No tasks yet
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      Add a task to start tracking your work
-                    </p>
+                    <h3 className="text-base font-semibold text-gray-800 mb-1 mt-4">No tasks yet</h3>
+                    <p className="text-sm text-gray-500">Add a task to start tracking your work</p>
                   </div>
                 )
               ) : null}
@@ -201,22 +190,14 @@ export function TasksDrawer() {
                     className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors w-full"
                   >
                     <ChevronDown
-                      className={cn(
-                        'w-4 h-4 transition-transform duration-200',
-                        !isCompletedExpanded && '-rotate-90',
-                      )}
+                      className={cn('w-4 h-4 transition-transform duration-200', !isCompletedExpanded && '-rotate-90')}
                     />
-                    Completed ({completedTasks.length}{' '}
-                    {completedTasks.length === 1 ? 'task' : 'tasks'})
+                    Completed ({completedTasks.length} {completedTasks.length === 1 ? 'task' : 'tasks'})
                   </button>
 
                   {isCompletedExpanded && (
                     <div className="mt-2">
-                      <TaskList
-                        tasks={completedTasks}
-                        onDelete={handleDeleteTask}
-                        isCompleted
-                      />
+                      <TaskList tasks={completedTasks} onDelete={handleDeleteTask} isCompleted />
                     </div>
                   )}
                 </div>

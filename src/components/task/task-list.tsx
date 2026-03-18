@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils';
 interface Task {
   id: number;
   detail?: string;
-  description?: string;
+  detailDescription?: string;
   dueDate?: string | Date;
   dueTime?: string;
   isCompleted?: boolean;
@@ -56,19 +56,14 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, isComplete
               onClick={() => onComplete?.(task.id, !task.isCompleted)}
               className={cn(
                 'mt-[2px] w-[18px] h-[18px] rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-colors',
-                task.isCompleted
-                  ? 'bg-blue-500 border-blue-500'
-                  : 'border-gray-300 hover:border-blue-400',
+                task.isCompleted ? 'bg-blue-500 border-blue-500' : 'border-gray-300 hover:border-blue-400',
               )}
             >
               {task.isCompleted && <Check className="w-[10px] h-[10px] text-white" strokeWidth={3} />}
             </button>
 
             {/* Task content */}
-            <div
-              className="flex-1 min-w-0 cursor-pointer"
-              onClick={() => !isCompleted && onEdit?.(task.id)}
-            >
+            <div className="flex-1 min-w-0 cursor-pointer" onClick={() => !isCompleted && onEdit?.(task.id)}>
               {/* Title */}
               <p
                 className={cn(
@@ -80,8 +75,8 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, isComplete
               </p>
 
               {/* Description */}
-              {task.description && (
-                <p className="text-xs text-gray-500 mt-0.5 leading-snug">{task.description}</p>
+              {task.detailDescription && (
+                <p className="text-xs text-gray-500 mt-0.5 leading-snug">{task.detailDescription}</p>
               )}
 
               {/* Date / Time / User chips */}
@@ -132,9 +127,7 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, isComplete
 
               {/* Completed on date */}
               {isCompleted && validDate && (
-                <p className="text-xs text-gray-400 mt-1">
-                  Completed on: {format(validDate, 'EEE, MMM d, yyyy')}
-                </p>
+                <p className="text-xs text-gray-400 mt-1">Completed on: {format(validDate, 'EEE, MMM d, yyyy')}</p>
               )}
             </div>
 
