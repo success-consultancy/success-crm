@@ -52,7 +52,7 @@ export const VisaStages = ({ insurance }: InsuranceStagesProps) => {
           <div
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/tribunal-review/${insurance.id}/edit`);
+              router.push(`/insurance/${insurance.id}/edit`);
             }}
             className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
           >

@@ -35,7 +35,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
 
   if (isError || !insurance) {
     return (
-      <div className="flex justify-center items-center min-h-[300px] text-red-500">Tribunal Review not found.</div>
+      <div className="flex justify-center items-center min-h-[300px] text-red-500">Insurance Applicant not found.</div>
     );
   }
 

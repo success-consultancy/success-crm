@@ -48,7 +48,7 @@ interface Props {
   defaultValues?: Partial<InsuranceSchemaType>;
 }
 
-export function TribunalService({ userId, formState, defaultValues }: Props) {
+export function InsuranceService({ userId, formState, defaultValues }: Props) {
   const {
     register,
     control,
@@ -551,7 +551,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           type="submit"
           variant="primary"
         >
-          {formState === FORM_STATE.ADD ? 'Add Applicant' : 'Update Tribunal Review'}
+          {formState === FORM_STATE.ADD ? 'Add Applicant' : 'Update Applicant'}
         </Button>
         <Button
           type="button"

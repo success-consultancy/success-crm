@@ -17,56 +17,51 @@ const EditVisaServicePage = () => {
   }
 
   const defaultValues = {
-    // Personal Details
-    firstName: data?.firstName || '', // "Noelani"
-    middleName: data?.middleName || '', // "Grace"
-    lastName: data?.lastName || '', // "Melissa"
-    dob: data?.dob || '', // ""
-    email: data?.email || '', // "dociqonuz@mailinator.com"
-    phone: data?.phone || '', // "Emma"
-    country: data?.country || '', // "Abel"
-    state: data?.state || '', // "Barry"
-    passport: data?.passport || '', // 1111
-    issueDate: data?.issueDate || '', // ""
-    expiryDate: data?.expiryDate || '', // ""
-    location: data?.location || '', // "Onshore"
-
-    // Visa Information
-    currentVisa: data?.currentVisa || '', // "No Visa"
-    visaExpiry: data?.visaExpiry || '', // ""
-    dueDate: data?.dueDate || '', // ""
-    proposedVisa: data?.proposedVisa || '', // "Family Visa"
-    visaStream: data?.visaStream || '', // Missing in API - empty
-    occupation: data?.occupation || '', // "Engineer"
-    anzsco: data?.anzsco || '', // ""
-    sponsorName: data?.sponsorName || '', // Missing in API - empty
-    sponsorEmail: data?.sponsorEmail || '', // Missing in API - empty
-    sponsorPhone: data?.sponsorPhone || '', // Missing in API - empty
-    csaStatus: data?.csaStatus || '', // "Rejected"
-    visaSubmitted: data?.visaSubmitted || '', // ""
-    visaGranted: data?.visaGranted || '', // ""
-    nominationStatus: data?.nominationStatus || '', // "Refused"
-    nominationLodged: data?.nominationLodged || '', // ""
-    nominationDecision: data?.nominationDecision || '', // ""
-    status: data?.status || '', // "Under Review"
-    statusDate: data?.statusDate || '', // ""
-    requestedDate: data?.requestedDate || '', // ""
-    sbsStatus: data?.sbsStatus || null, // ""
-    sbsSubmissionDate: data?.sbsSubmissionDate || '', // ""
-    sbsDecisionDate: data?.sbsDecisionDate || '', // ""
-
-    // Accounts
-    payment: data?.payment || '', // "14"
-    invoiceNumber: data?.invoiceNumber || '', // "Autumn"
-    paymentStatus: data?.paymentStatus || '', // "Overdue"
-
-    // Misc
-    userId: data?.userId || null,
-    sourceId: data?.sourceId || null,
-    updatedBy: data?.updatedBy || null,
-    remarks: data?.remarks || '', // "<p>Hello World</p>"
-    assignedDate: new Date(data?.assignedDate as string) || new Date(), // "2025-11-20"
-    files: data?.files || null, // null
+    // Required fields
+    firstName: data?.firstName || '',
+    lastName: data?.lastName || '',
+    email: data?.email || '',
+    phone: data?.phone || '',
+    // Optional fields — preserve null to avoid spurious change logs
+    middleName: data?.middleName ?? null,
+    dob: data?.dob ?? null,
+    country: data?.country ?? null,
+    state: data?.state ?? null,
+    passport: data?.passport ?? null,
+    issueDate: data?.issueDate ?? null,
+    expiryDate: data?.expiryDate ?? null,
+    location: data?.location ?? null,
+    currentVisa: data?.currentVisa ?? null,
+    visaExpiry: data?.visaExpiry ?? null,
+    dueDate: data?.dueDate ?? null,
+    proposedVisa: data?.proposedVisa ?? null,
+    visaStream: data?.visaStream ?? null,
+    occupation: data?.occupation ?? null,
+    anzsco: data?.anzsco ?? null,
+    sponsorName: data?.sponsorName ?? null,
+    sponsorEmail: data?.sponsorEmail ?? null,
+    sponsorPhone: data?.sponsorPhone ?? null,
+    csaStatus: data?.csaStatus ?? null,
+    visaSubmitted: data?.visaSubmitted ?? null,
+    visaGranted: data?.visaGranted ?? null,
+    nominationStatus: data?.nominationStatus ?? null,
+    nominationLodged: data?.nominationLodged ?? null,
+    nominationDecision: data?.nominationDecision ?? null,
+    status: data?.status ?? null,
+    statusDate: data?.statusDate ?? null,
+    requestedDate: data?.requestedDate ?? null,
+    sbsStatus: data?.sbsStatus ?? null,
+    sbsSubmissionDate: data?.sbsSubmissionDate ?? null,
+    sbsDecisionDate: data?.sbsDecisionDate ?? null,
+    payment: data?.payment ?? null,
+    invoiceNumber: data?.invoiceNumber ?? null,
+    paymentStatus: data?.paymentStatus ?? null,
+    userId: data?.userId ?? null,
+    sourceId: data?.sourceId ?? null,
+    updatedBy: data?.updatedBy ?? null,
+    remarks: data?.remarks ?? null,
+    assignedDate: data?.assignedDate ? new Date(data.assignedDate as string) : null,
+    files: data?.files ?? null,
   };
 
   return (

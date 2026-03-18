@@ -1,11 +1,10 @@
 import CardContainer from '@/components/atoms/card-container';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { useGetLeadLog } from '@/query/get-leads'; // temporarily using lead API
 import { useState } from 'react';
 import Button from '@/components/atoms/button';
 import Loading from '@/components/organisms/loading';
-import { useGetTribunalReviewLog } from '@/query/get-tribunalreview';
+import { useGetInsuranceLog } from '@/query/get-insurance';
 
 // Temporary Visa History Type (matches your structure)
 type VisaHistoryItem = {
@@ -57,7 +56,7 @@ const ExpandableDescriptions = ({ descriptions }: { descriptions: string[] }) =>
 
 const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
   // ✔️ Using lead log API for now
-  const { data, isLoading } = useGetTribunalReviewLog(visaId);
+  const { data, isLoading } = useGetInsuranceLog(visaId);
 
   const VERSION_TYPES = {
     1: 'Created',
@@ -82,7 +81,7 @@ const VisaHistoryContent = ({ visaId }: { visaId: string }) => {
                 )}
               />
               <div>
-                <p className="text-b1-b">Visa {log.versionTypeName}</p>
+                <p className="text-b1-b">Insurance Applicant {log.versionTypeName}</p>
                 <p className="text-b1 text-neutral-light-grey mt-1">
                   by {log.updatedBy}, {log.formattedDate}, {log.formattedTime}
                 </p>

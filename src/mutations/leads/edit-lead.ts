@@ -4,6 +4,8 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { LeadSchemaType } from '@/schema/lead-schema';
 import { toast } from 'sonner'
 
+const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
+
 const editLead = async (
   payload: Omit<LeadSchemaType, 'serviceType'> & {
     serviceType: string;
@@ -12,7 +14,13 @@ const editLead = async (
   },
 ) => {
   const { hasVisitedStep, branchId, id, ...filteredPayload } = payload;
-  const res = await api.put(`/lead/${id}`, filteredPayload);
+  const normalizedPayload = Object.fromEntries(
+    Object.entries(filteredPayload).map(([key, value]) => [
+      key,
+      value === '' && !REQUIRED_FIELDS.has(key) ? null : value,
+    ]),
+  );
+  const res = await api.put(`/lead/${id}`, normalizedPayload);
   return res.data;
 };
 

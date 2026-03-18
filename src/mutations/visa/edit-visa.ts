@@ -5,9 +5,17 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { toast } from 'sonner';
 import { newVisaServiceSchema, NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
 
+const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
+
 const editVisa = async (payload: NewVisaServiceType & { id: number }) => {
   const { id, ...filteredPayload } = payload;
-  const res = await api.put(`/visaApplicant/${id}`, filteredPayload);
+  const normalizedPayload = Object.fromEntries(
+    Object.entries(filteredPayload).map(([key, value]) => [
+      key,
+      value === '' && !REQUIRED_FIELDS.has(key) ? null : value,
+    ]),
+  );
+  const res = await api.put(`/visaApplicant/${id}`, normalizedPayload);
   return res.data;
 };
 

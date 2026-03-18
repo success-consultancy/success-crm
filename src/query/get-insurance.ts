@@ -59,7 +59,7 @@ const getInsuranceLog = async (id: string) => {
   return res.data as IVisa[];
 };
 
-export const useGetTribunalReviewLog = (id: string) => {
+export const useGetInsuranceLog = (id: string) => {
   return useQuery({
     queryFn: () => getInsuranceLog(id),
     queryKey: [QUERY_KEYS.GET_INSURANCE_LOG, id],
