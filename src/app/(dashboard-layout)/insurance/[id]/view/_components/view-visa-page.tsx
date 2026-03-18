@@ -57,7 +57,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
           )}
           {/* NOTE : Change this ID later */}
           {activeTab === 'history' && <VisaHistoryContent visaId={studentId} />}
-          {activeTab === 'follow-up' && <FollowUp followableType="tribunalReview" id={studentId} />}
+          {activeTab === 'follow-up' && <FollowUp followableType="insuranceApplicant" id={studentId} />}
         </div>
       </div>
     </Container>
