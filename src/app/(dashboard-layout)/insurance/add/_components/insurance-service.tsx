@@ -39,6 +39,8 @@ import insuranceFormSchema, { InsuranceSchemaType, updateInsuranceFormSchema } f
 import { useAddInsurance } from '@/mutations/insurance/add-insurance';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
 
 interface Props {
   userId: number | undefined;
@@ -168,6 +170,11 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">
+          {formState === FORM_STATE.ADD ? 'New Insurance Applicant' : 'Edit Insurance Applicant'}
+        </h3>
+      </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">

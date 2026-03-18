@@ -15,7 +15,7 @@ import React from 'react';
 interface DeleteDialogProps {
   trigger: React.ReactNode;
   title: string;
-  description?: string;
+  description?: React.ReactNode;
   confirmText?: string;
   cancelText?: string;
   onConfirm: () => void;
@@ -39,7 +39,7 @@ const DeleteDialog: React.FC<DeleteDialogProps> = ({
       <DialogContent className="sm:max-w-[425px] bg-white-100">
         <DialogHeader>
           <DialogTitle className="text-h6 font-bold">{title}</DialogTitle>
-          {description && <p className="text-b2 text-neutral-darkGrey">{description}</p>}
+          {description && <div className="text-b2 text-neutral-darkGrey">{description}</div>}
         </DialogHeader>
         {children}
         <DialogFooter>

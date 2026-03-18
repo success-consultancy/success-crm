@@ -27,13 +27,10 @@ export const passportDetailsSchema = z.object({
 
 export const serviceDetailsSchema = z.object({
   location: z.string().nullable().optional(),
-  serviceType: z
-    .array(z.string(), { message: 'Please select at least one service type' })
-    .min(1, { message: 'Please select at least one service type' })
-    .default([]),
+  serviceType: z.array(z.string()).default([]),
   sourceId: z.number().nullable().optional(),
   userId: z.number().nullable().optional(),
-  status: z.string({ message: 'Status is required' }).min(1, { message: 'Status is required' }),
+  status: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
   files: z
     .array(

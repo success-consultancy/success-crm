@@ -91,7 +91,7 @@ const Leads = () => {
   };
 
   return (
-    <Container className="flex flex-col py-4 max-h-full overflow-hidden">
+    <Container className="flex flex-col max-h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Leads</h3>
       </Portal>
@@ -126,8 +126,14 @@ const Leads = () => {
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}
-        bulkDeleteTitle="Delete Leads"
-        bulkDeleteDescription="Are you sure you want to delete the selected leads? This action cannot be undone."
+        bulkDeleteTitle="Delete this lead"
+        bulkDeleteDescription={
+          <div className="flex flex-col gap-3">
+            <p>Are you sure you want to delete the selected leads?</p>
+            <p>Deleting these leads will remove all associated data, including contacts, interactions and notes.</p>
+          </div>
+        }
+        bulkDeleteConfirmText="Yes, delete"
       />
     </Container>
   );

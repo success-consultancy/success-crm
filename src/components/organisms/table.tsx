@@ -67,7 +67,8 @@ interface Props<TData, TValue> {
   showHeaderSection?: boolean;
   showPaginationSection?: boolean;
   bulkDeleteTitle?: string;
-  bulkDeleteDescription?: string;
+  bulkDeleteDescription?: React.ReactNode;
+  bulkDeleteConfirmText?: string;
   onCellUpdate?: (row: TData, columnId: string, value: any) => void;
   meta?: any;
 }
@@ -103,6 +104,7 @@ const TableComponent = <TData, TValue>({
   onRowClick,
   bulkDeleteTitle,
   bulkDeleteDescription,
+  bulkDeleteConfirmText,
   onCellUpdate,
   meta,
 }: Props<TData, TValue>) => {
@@ -296,6 +298,7 @@ const TableComponent = <TData, TValue>({
               trigger={<Trash2 />}
               title={bulkDeleteTitle || 'Delete Leads'}
               description={bulkDeleteDescription || ''}
+              confirmText={bulkDeleteConfirmText}
               onConfirm={async () => {
                 const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
                 onBulkDelete?.(ids);

@@ -9,16 +9,16 @@ const insuranceFormSchema = z.object({
 
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string(),
-  lastName: z.string().nullable().optional(),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   middleName: z.string().nullable().optional(),
 
   passport: z.union([z.number(), z.string()]).nullable().optional(),
   passportIssueDate: z.string().nullable().optional(),
   passportExpiryDate: z.string().nullable().optional(),
 
-  email: z.string().email(),
-  phone: z.string().nullable().optional(),
+  email: z.string().email({ message: 'Please enter a valid email address' }),
+  phone: z.string().min(1, 'Phone number is required'),
   dob: z.string().nullable().optional(),
 
   currentVisa: z.string().nullable().optional(),

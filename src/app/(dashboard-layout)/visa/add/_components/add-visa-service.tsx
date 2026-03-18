@@ -28,6 +28,8 @@ import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useRouter } from 'next/navigation';
 import { ROUTES } from '@/config/routes';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
 
 interface Props {
   userId: number | undefined;
@@ -161,6 +163,9 @@ export function AddVisaService({ userId }: Props) {
 
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">New Visa Applicant</h3>
+      </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">
@@ -624,7 +629,7 @@ export function AddVisaService({ userId }: Props) {
                   value={field.value?.toString()}
                   label="Source"
                   placeholder="Select a source"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val ? Number(val) : null)}
                   error={errors.sourceId?.message?.toString()}
                 />
               )}
@@ -638,7 +643,7 @@ export function AddVisaService({ userId }: Props) {
                   value={field.value?.toString()}
                   label="Assigned to"
                   placeholder="Select an assignee"
-                  onSelect={(val) => field.onChange(Number(val))}
+                  onSelect={(val) => field.onChange(val ? Number(val) : null)}
                   error={errors.userId?.message}
                 />
               )}
@@ -654,11 +659,10 @@ export function AddVisaService({ userId }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-start mt-6">
+      <div className="flex justify-end mt-6">
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Visa Applicant
         </Button>
-
         <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
           Cancel
         </Button>

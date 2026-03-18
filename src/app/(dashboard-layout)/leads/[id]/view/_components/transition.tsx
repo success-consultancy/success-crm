@@ -206,13 +206,17 @@ const Transition = ({ lead }: { lead: ILead }) => {
     setSelectedServiceId(null);
     setIsConfirmationOpen(false);
   };
-  // TODO: Add pending state based on mutation service
-  const isPending =
-    addVisa.isPending ||
-    addSkillAssessment.isPending ||
-    addEducation.isPending ||
-    addInsurance.isPending ||
-    addTribunalReview.isPending;
+  const pendingServiceId = addVisa.isPending
+    ? 'visa'
+    : addSkillAssessment.isPending
+      ? 'skill'
+      : addEducation.isPending
+        ? 'students'
+        : addInsurance.isPending
+          ? 'insurance'
+          : addTribunalReview.isPending
+            ? 'tribunal'
+            : null;
 
   return (
     <>
@@ -240,7 +244,7 @@ const Transition = ({ lead }: { lead: ILead }) => {
               );
             })}
 
-            {isPending ? (
+            {pendingServiceId === service.id ? (
               <div className="cursor-pointer flex items-center justify-center text-b1-b text-neutral-light-grey border border-dashed rounded-md p-2 text-center gap-2">
                 <Loader2 size={20} />
               </div>
@@ -271,7 +275,7 @@ const Transition = ({ lead }: { lead: ILead }) => {
         cancelText="Cancel"
         onConfirm={handleConfirmMove}
         onCancel={handleCancelMove}
-        loading={isPending}
+        loading={pendingServiceId !== null}
       />
     </>
   );

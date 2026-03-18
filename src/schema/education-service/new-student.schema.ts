@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
 // Common validation patterns
-const phoneRegex = /^\+?\d+$/;
-const passportRegex = /^[A-Z0-9]{5,20}$/;
-const nameRegex = /^[A-Za-z\s\-']+$/;
+const phoneRegex = /^\+?[\d\s\-().]+$/;
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
 export const educationServiceSchema = z
@@ -12,175 +10,182 @@ export const educationServiceSchema = z
     firstName: z
       .string()
       .min(1, 'First name is required')
-      .max(50, 'First name cannot exceed 50 characters')
-      .regex(nameRegex, 'First name can only contain letters, spaces, hyphens, and apostrophes'),
+      .max(50, 'First name cannot exceed 50 characters'),
 
     middleName: z
       .string()
       .max(50, 'Middle name cannot exceed 50 characters')
-      .regex(nameRegex, 'Middle name can only contain letters, spaces, hyphens, and apostrophes')
       .optional(),
 
     lastName: z
       .string()
       .min(1, 'Last name is required')
-      .max(50, 'Last name cannot exceed 50 characters')
-      .regex(nameRegex, 'Last name can only contain letters, spaces, hyphens, and apostrophes'),
+      .max(50, 'Last name cannot exceed 50 characters'),
 
-    dob: z.date({
-      message: 'Date of birth is required',
-    }),
+    dob: z.date().optional(),
 
     email: z
       .string()
       .min(1, 'Email address is required')
-      .email('Please enter a valid email address')
       .max(100, 'Email address cannot exceed 100 characters'),
 
     phone: z
       .string()
       .min(1, 'Phone number is required')
-      .min(7, 'Phone number must be at least 7 digits')
       .max(20, 'Phone number cannot exceed 20 characters')
       .regex(phoneRegex, 'Please enter a valid phone number (e.g., +1 (555) 123-4567)'),
 
-    country: z.string().min(1, 'Country is required').max(50, 'Country name cannot exceed 50 characters'),
+    country: z.string().max(50, 'Country name cannot exceed 50 characters').optional(),
 
     passport: z
       .string()
-      .min(1, 'Passport number is required')
-      .min(5, 'Passport number must be at least 5 characters')
       .max(20, 'Passport number cannot exceed 20 characters')
-      .regex(passportRegex, 'Passport number can only contain uppercase letters and numbers'),
+      .optional(),
 
-    issueDate: z.date({
-      message: 'Passport issue date is required',
-    }),
+    issueDate: z.date().optional(),
 
-    expiryDate: z.date({
-      message: 'Passport expiry date is required',
-    }),
+    expiryDate: z.date().optional(),
 
-    location: z.string().min(1, 'Location is required').max(100, 'Location cannot exceed 100 characters'),
+    location: z.string().max(100, 'Location cannot exceed 100 characters').optional(),
 
     // Course Information
-    universityId: z.string().min(1, 'Please select a university').max(50, 'University selection is invalid'),
+    universityId: z.string().max(50, 'University selection is invalid').optional(),
 
-    courseId: z.string().min(1, 'Please select a course').max(50, 'Course selection is invalid'),
+    courseId: z.string().max(50, 'Course selection is invalid').optional(),
 
-    startDate: z.date({
-      message: 'Course start date is required',
-    }),
+    startDate: z.date().optional(),
 
-    endDate: z.date({
-      message: 'Course end date is required',
-    }),
+    endDate: z.date().optional(),
 
-    status: z.string().min(1, 'Please select a status').max(50, 'Status selection is invalid'),
+    status: z.string().max(50, 'Status selection is invalid').optional(),
 
     // Fee Structure
-    courseFee: z.object({
-      planname: z
-        .string()
-        .min(1, 'Payment plan name is required')
-        .max(50, 'Payment plan name cannot exceed 50 characters'),
-
-      amount: z
-        .number()
-        .min(0, 'Amount must be a positive number')
-        .max(1000000, 'Amount cannot exceed $1,000,000')
-        .refine((val) => !isNaN(val), 'Please enter a valid amount'),
-
-      duedate: z.date({
-        message: 'Payment due date is required',
-      }),
-
-      invoicenumber: z
-        .string()
-        .min(1, 'Invoice number is required')
-        .max(50, 'Invoice number cannot exceed 50 characters')
-        .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
-
-      status: z.string().min(1, 'Please select a payment status').max(50, 'Status selection is invalid'),
-
-      note: z.string().max(500, 'Notes cannot exceed 500 characters').optional(),
-
-      updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
-
-      accounts: z.object({
+    courseFee: z
+      .object({
         planname: z
           .string()
-          .min(1, 'Account payment plan is required')
-          .max(50, 'Account payment plan cannot exceed 50 characters'),
+          .max(50, 'Payment plan name cannot exceed 50 characters')
+          .optional(),
 
         amount: z
-          .string()
-          .min(1, 'Account amount is required')
-          .max(50, 'Account amount cannot exceed 50 characters')
-          .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+          .number()
+          .min(0, 'Amount must be a positive number')
+          .max(1000000, 'Amount cannot exceed $1,000,000')
+          .optional(),
 
-        duedate: z.date({
-          message: 'Account due date is required',
-        }),
+        duedate: z.date().optional(),
 
         invoicenumber: z
-          .string()
-          .min(1, 'Account invoice number is required')
-          .max(50, 'Account invoice number cannot exceed 50 characters')
-          .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
-
-        status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
-
-        comission: z
-          .string()
-          .min(1, 'Commission amount is required')
-          .max(50, 'Commission amount cannot exceed 50 characters')
-          .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid commission amount'),
-
-        discount: z
-          .string()
-          .max(50, 'Discount amount cannot exceed 50 characters')
-          .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
+          .union([
+            z.string().max(50, 'Invoice number cannot exceed 50 characters')
+              .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+            z.literal(''),
+          ])
           .optional(),
 
-        bonus: z
-          .string()
-          .max(50, 'Bonus amount cannot exceed 50 characters')
-          .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid bonus amount')
-          .optional(),
+        status: z.string().max(50, 'Status selection is invalid').optional(),
 
-        netamount: z.string().optional(),
+        note: z.string().max(500, 'Notes cannot exceed 500 characters').optional(),
 
         updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
-      }),
-    }),
+
+        accounts: z
+          .object({
+            planname: z
+              .string()
+              .max(50, 'Account payment plan cannot exceed 50 characters')
+              .optional(),
+
+            amount: z
+              .union([
+                z.string().max(50, 'Account amount cannot exceed 50 characters')
+                  .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+                z.literal(''),
+              ])
+              .optional(),
+
+            duedate: z.date().optional(),
+
+            invoicenumber: z
+              .union([
+                z.string().max(50, 'Account invoice number cannot exceed 50 characters')
+                  .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+                z.literal(''),
+              ])
+              .optional(),
+
+            status: z.string().max(50, 'Status selection is invalid').optional(),
+
+            comission: z
+              .union([
+                z.string().max(50, 'Commission amount cannot exceed 50 characters')
+                  .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid commission amount'),
+                z.literal(''),
+              ])
+              .optional(),
+
+            discount: z
+              .union([
+                z.string().max(50, 'Discount amount cannot exceed 50 characters')
+                  .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount'),
+                z.literal(''),
+              ])
+              .optional(),
+
+            bonus: z
+              .union([
+                z.string().max(50, 'Bonus amount cannot exceed 50 characters')
+                  .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid bonus amount'),
+                z.literal(''),
+              ])
+              .optional(),
+
+            netamount: z.string().optional(),
+
+            updatedBy: z.string().max(50, 'Updated by cannot exceed 50 characters').optional(),
+          })
+          .optional(),
+      })
+      .optional(),
 
     // Misc
-    userId: z.string().min(1, 'Please assign to a user').max(50, 'User selection is invalid'),
+    userId: z.string().max(50, 'User selection is invalid').optional(),
 
     sourceId: z.string().max(50, 'Source selection is invalid').optional(),
 
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 
-    statusDate: z.date({
-      message: 'Status date is required',
-    }),
+    statusDate: z.date().optional(),
   })
-  .refine((data) => data.expiryDate > data.issueDate, {
-    message: 'Passport expiry date must be after the issue date',
-    path: ['expiryDate'],
-  })
-  .refine((data) => data.endDate > data.startDate, {
-    message: 'Course end date must be after the start date',
-    path: ['endDate'],
-  })
-  .refine((data) => data.dob < new Date(), {
-    message: 'Date of birth cannot be in the future',
-    path: ['dob'],
-  })
-  .refine((data) => data.expiryDate > new Date(), {
-    message: 'Passport must not be expired',
-    path: ['expiryDate'],
+  .superRefine((data, ctx) => {
+    if (data.issueDate && data.expiryDate && !(data.expiryDate > data.issueDate)) {
+      ctx.addIssue({
+        code: "custom",
+        message: 'Passport expiry date must be after the issue date',
+        path: ['expiryDate'],
+      });
+    }
+    if (data.startDate && data.endDate && !(data.endDate > data.startDate)) {
+      ctx.addIssue({
+        code: "custom",
+        message: 'Course end date must be after the start date',
+        path: ['endDate'],
+      });
+    }
+    if (data.dob && !(data.dob < new Date())) {
+      ctx.addIssue({
+        code: "custom",
+        message: 'Date of birth cannot be in the future',
+        path: ['dob'],
+      });
+    }
+    if (data.expiryDate && !(data.expiryDate > new Date())) {
+      ctx.addIssue({
+        code: "custom",
+        message: 'Passport must not be expired',
+        path: ['expiryDate'],
+      });
+    }
   });
 
 export type EducationServiceType = z.infer<typeof educationServiceSchema>;
@@ -189,23 +194,23 @@ export const educationServiceDefaultValues: EducationServiceType = {
   firstName: '',
   middleName: '',
   lastName: '',
-  dob: new Date(),
+  dob: undefined,
   email: '',
   phone: '',
   country: '',
   passport: '',
-  issueDate: new Date(),
-  expiryDate: new Date(),
+  issueDate: undefined,
+  expiryDate: undefined,
   location: '',
   universityId: '',
   courseId: '',
-  startDate: new Date(),
-  endDate: new Date(),
+  startDate: undefined,
+  endDate: undefined,
   status: '',
   courseFee: {
     planname: '',
     amount: 0,
-    duedate: new Date(),
+    duedate: undefined,
     invoicenumber: '',
     status: '',
     note: '',
@@ -213,7 +218,7 @@ export const educationServiceDefaultValues: EducationServiceType = {
     accounts: {
       planname: '',
       amount: '',
-      duedate: new Date(),
+      duedate: undefined,
       invoicenumber: '',
       status: '',
       comission: '',
@@ -226,5 +231,5 @@ export const educationServiceDefaultValues: EducationServiceType = {
   userId: '',
   sourceId: '',
   remarks: '',
-  statusDate: new Date(),
+  statusDate: undefined,
 };

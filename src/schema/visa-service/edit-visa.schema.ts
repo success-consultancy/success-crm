@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 // Common validation patterns (same as create schema)
-const phoneRegex = /^\+?\d+$/;
+const phoneRegex = /^\+?[\d\s\-().]+$/;
 const passportRegex = /^[A-Z0-9]{5,20}$/;
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
@@ -149,8 +149,8 @@ export const editVisaServiceSchema = z
       .optional(),
 
     // Misc
-    userId: z.string().max(50, 'User selection is invalid').optional(),
-    sourceId: z.string().max(50, 'Source selection is invalid').optional(),
+    userId: z.union([z.string(), z.number()]).nullable().optional(),
+    sourceId: z.union([z.string(), z.number()]).nullable().optional(),
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
     statusDate: z.date().optional(),
     feeNote: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
@@ -160,23 +160,23 @@ export const editVisaServiceSchema = z
   .superRefine((data, ctx) => {
     if (data.issueDate && data.expiryDate && !(data.expiryDate > data.issueDate)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Passport expiry date must be after the issue date',
         path: ['expiryDate'],
       });
     }
     if (data.startDate && data.endDate && !(data.endDate > data.startDate)) {
       ctx.addIssue({
-        code: z.ZodIssueCode.custom,
+        code: "custom",
         message: 'Course end date must be after the start date',
         path: ['endDate'],
       });
     }
     if (data.dob && !(data.dob < new Date())) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Date of birth cannot be in the future', path: ['dob'] });
+      ctx.addIssue({ code: "custom", message: 'Date of birth cannot be in the future', path: ['dob'] });
     }
     if (data.expiryDate && !(data.expiryDate > new Date())) {
-      ctx.addIssue({ code: z.ZodIssueCode.custom, message: 'Passport must not be expired', path: ['expiryDate'] });
+      ctx.addIssue({ code: "custom", message: 'Passport must not be expired', path: ['expiryDate'] });
     }
   });
 

@@ -13,14 +13,10 @@ export const tribunalReviewFormSchema = z.object({
   // ========== PERSONAL DETAILS ==========
   firstName: z.string().min(1, 'First name is required').max(100, 'First name too long'),
   middleName: nullableString(),
-  lastName: nullableString(),
+  lastName: z.string().min(1, 'Last name is required'),
   dob: nullableDate(),
   email: z.string().email('Please enter a valid email address'),
-  phone: z
-    .string()
-    .regex(/^[0-9+\-() ]*$/, 'Invalid phone number format')
-    .nullable()
-    .optional(),
+  phone: z.string().min(1, 'Phone number is required'),
   country: nullableString(),
   address: nullableString(),
   passport: z.union([z.string(), z.number()]).nullable().optional(),
@@ -69,33 +65,31 @@ export const tribunalReviewFormSchema = z.object({
   // ========== ACCOUNTS & PAYMENT ==========
   accounts: z
     .object({
-      planname: z
-        .string()
-        .min(1, 'Account payment plan is required')
-        .max(50, 'Account payment plan cannot exceed 50 characters'),
+      planname: z.string().max(50, 'Account payment plan cannot exceed 50 characters').optional(),
 
       amount: z
-        .string()
-        .min(1, 'Account amount is required')
-        .max(50, 'Account amount cannot exceed 50 characters')
-        .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+        .union([
+          z.string().regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
+          z.literal(''),
+        ])
+        .optional(),
 
-      duedate: z.date({
-        message: 'Account due date is required',
-      }),
+      duedate: z.string().nullable().optional(),
 
       invoicenumber: z
-        .string()
-        .min(1, 'Account invoice number is required')
-        .max(50, 'Account invoice number cannot exceed 50 characters')
-        .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+        .union([
+          z.string().regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
+          z.literal(''),
+        ])
+        .optional(),
 
-      status: z.string().min(1, 'Please select an account status').max(50, 'Status selection is invalid'),
+      status: z.string().nullable().optional(),
 
       discount: z
-        .string()
-        .max(50, 'Discount amount cannot exceed 50 characters')
-        .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount')
+        .union([
+          z.string().regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount'),
+          z.literal(''),
+        ])
         .optional(),
 
       netamount: z.string().optional(),

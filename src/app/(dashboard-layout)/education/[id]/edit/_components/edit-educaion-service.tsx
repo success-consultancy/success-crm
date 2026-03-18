@@ -34,6 +34,8 @@ import SelectWithCommand from '@/components/molecules/select-with-command';
 import TinyEditor from '@/components/organisms/text-editor';
 import { useRouterOriginal } from '@/lib/navigation';
 import { ROUTES } from '@/config/routes';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
 
 interface Props {
   id?: number;
@@ -110,6 +112,9 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
 
   return (
     <form className="w-full" onSubmit={form.handleSubmit(submitHandler)}>
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <h3 className="text-h4 text-content-heading font-bold">Edit Student</h3>
+      </Portal>
       <Accordion
         type="multiple"
         className="w-full space-y-6"
@@ -339,7 +344,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-start mt-6">
+      <div className="flex justify-end mt-6">
         <Button loadingText="Updating..." type="submit" variant="primary">
           Update Data
         </Button>

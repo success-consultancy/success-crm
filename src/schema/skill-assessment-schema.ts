@@ -4,16 +4,16 @@ import { format } from 'date-fns';
 const skillAssessmentFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string(),
-  lastName: z.string().nullable().optional(),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
   middleName: z.string().nullable().optional(),
 
   passport: z.union([z.number(), z.string()]).nullable().optional(),
   issueDate: z.string().nullable().optional(),
   expiryDate: z.string().nullable().optional(),
 
-  email: z.string().email(),
-  phone: z.string().nullable().optional(),
+  email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email address' }),
+  phone: z.string().min(1, 'Phone number is required'),
   dob: z.string().nullable().optional(),
 
   occupation: z.string().nullable().optional(),
@@ -36,7 +36,7 @@ const skillAssessmentFormSchema = z.object({
   csaStatus: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
 
-  sourceId: z.string().min(1, 'Please select a source').max(50, 'Source selection is invalid'),
+  sourceId: z.string().max(50, 'Source selection is invalid').nullable().optional(),
 
   invoiceNumber: z.string().nullable().optional(),
   payment: z.string().nullable().optional(),
@@ -49,8 +49,10 @@ const skillAssessmentFormSchema = z.object({
 
 export type SkillAssessmentSchemaType = z.infer<typeof skillAssessmentFormSchema>;
 
-// Update schema - same as add schema for now
-export const updateSkillAssessmentFormSchema = skillAssessmentFormSchema;
+// Update schema - sourceId is optional when editing
+export const updateSkillAssessmentFormSchema = skillAssessmentFormSchema.extend({
+  sourceId: z.string().max(50, 'Source selection is invalid').nullable().optional(),
+});
 
 // Helper function to convert API response to form default values
 export const getSkillAssessmentDefaultValues = (data: any): Partial<SkillAssessmentSchemaType> => {
