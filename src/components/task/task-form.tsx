@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { addDays, format, isSameDay, startOfDay } from 'date-fns';
-import { Calendar, Clock, UserPlus, X, CalendarDays } from 'lucide-react';
+import { Calendar, Clock, UserPlus, X, CalendarDays, UserRoundCheck } from 'lucide-react';
 import * as TooltipPrimitive from '@radix-ui/react-tooltip';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Calendar as CalendarComponent } from '@/components/ui/calendar';
@@ -48,7 +48,8 @@ function IconTooltip({ label, children }: { label: string; children: React.React
 
 const iconBtnBase =
   'w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-blue-400';
-const iconBtnDefault = 'border-gray-300 bg-white text-gray-400 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-600';
+const iconBtnDefault =
+  'border-gray-300 bg-white text-gray-400 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-600';
 const iconBtnActive = 'bg-blue-50 border-blue-400 text-blue-500';
 
 interface TaskFormProps {
@@ -117,7 +118,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
 
           {/* Description */}
           <input
-            {...form.register('description')}
+            {...form.register('detailDescription')}
             placeholder="Description"
             className="w-full text-xs text-gray-500 outline-none mt-1 placeholder:text-gray-400 bg-transparent"
           />
@@ -155,7 +156,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               )}
               {selectedUser && (
                 <span className="flex items-center gap-1 text-xs bg-gray-100 rounded-md px-2 py-0.5 text-gray-700">
-                  <UserPlus className="w-3 h-3 flex-shrink-0" />
+                  <UserRoundCheck className="w-3 h-3 flex-shrink-0" />
                   <span>
                     {selectedUser.firstName} {selectedUser.lastName}
                   </span>
@@ -172,16 +173,14 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
           )}
 
           {/* Action buttons row */}
-          <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+          <div className="flex items-center gap-1.5 mt-2 ">
             {/* Today */}
             <button
               type="button"
               onClick={() => form.setValue('dueDate', today)}
               className={cn(
                 'text-xs px-2 py-0.5 rounded border transition-colors',
-                isToday
-                  ? 'bg-blue-50 border-blue-300 text-blue-600'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50',
+                isToday ? 'bg-blue-50 border-blue-300 text-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50',
               )}
             >
               Today
@@ -206,11 +205,8 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
                 <PopoverTrigger asChild>
                   <TooltipPrimitive.Trigger asChild>
-                    <button
-                      type="button"
-                      className={cn(iconBtnBase, hasCustomDate ? iconBtnActive : iconBtnDefault)}
-                    >
-                      <CalendarDays className="w-[15px] h-[15px]" />
+                    <button type="button" className={cn(iconBtnBase, hasCustomDate ? iconBtnActive : iconBtnDefault)}>
+                      <Calendar className="w-[15px] h-[15px]" />
                     </button>
                   </TooltipPrimitive.Trigger>
                 </PopoverTrigger>
@@ -236,10 +232,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               <Popover open={isTimeOpen} onOpenChange={setIsTimeOpen}>
                 <PopoverTrigger asChild>
                   <TooltipPrimitive.Trigger asChild>
-                    <button
-                      type="button"
-                      className={cn(iconBtnBase, dueTime ? iconBtnActive : iconBtnDefault)}
-                    >
+                    <button type="button" className={cn(iconBtnBase, dueTime ? iconBtnActive : iconBtnDefault)}>
                       <Clock className="w-[15px] h-[15px]" />
                     </button>
                   </TooltipPrimitive.Trigger>
@@ -275,11 +268,8 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
                 <Popover open={isUserOpen} onOpenChange={setIsUserOpen}>
                   <PopoverTrigger asChild>
                     <TooltipPrimitive.Trigger asChild>
-                      <button
-                        type="button"
-                        className={cn(iconBtnBase, selectedUser ? iconBtnActive : iconBtnDefault)}
-                      >
-                        <UserPlus className="w-[15px] h-[15px]" />
+                      <button type="button" className={cn(iconBtnBase, selectedUser ? iconBtnActive : iconBtnDefault)}>
+                        <UserRoundCheck className="w-[15px] h-[15px]" />
                       </button>
                     </TooltipPrimitive.Trigger>
                   </PopoverTrigger>
