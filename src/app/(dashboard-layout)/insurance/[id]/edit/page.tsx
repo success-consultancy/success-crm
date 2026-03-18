@@ -4,28 +4,28 @@ import React from 'react';
 import Container from '@/components/atoms/container';
 import { useParams } from 'next/navigation';
 import PageLoader from '@/components/molecules/page-loader';
-import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import { FORM_STATE } from '@/types/common';
-import { TribunalService } from '../../add/_components/insurance-service';
-import { getTribunalDefaultValues } from '@/schema/tribunal-review';
+import { InsuranceService } from '../../add/_components/insurance-service';
+import { getInsuranceDefaultValues } from '@/schema/insurance';
+import { useGetInsuranceById } from '@/query/get-insurance';
 
-const EditVisaServicePage = () => {
+const EditInsuranceServicePage = () => {
   const params = useParams<{ id: string }>();
-  const { data, isLoading: visaLoading } = useGetTribunalReviewById(params.id);
+  const { data, isLoading: insuranceLoading } = useGetInsuranceById(params.id);
 
-  if (visaLoading) {
+  if (insuranceLoading) {
     return <PageLoader />;
   }
 
   return (
     <Container className="flex flex-col py-10 gap-8">
-      <TribunalService
+      <InsuranceService
         userId={data?.userId || 0}
         formState={FORM_STATE.EDIT}
-        defaultValues={getTribunalDefaultValues(data)}
+        defaultValues={getInsuranceDefaultValues(data)}
       />
     </Container>
   );
 };
 
-export default EditVisaServicePage;
+export default EditInsuranceServicePage;

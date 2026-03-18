@@ -179,13 +179,13 @@ const Transition = ({ lead }: { lead: ILead }) => {
         }
 
         console.log('Moving to insurance service:', validatedPayload);
-        addInsurance.mutateAsync({ payload: validatedPayload, leadId: lead.id.toString() });
+        addInsurance.mutateAsync({ payload: validatedPayload as any, leadId: lead.id.toString() });
         break;
 
       case 'tribunal':
         // Handle tribunal review service - same as old moveToTribunalReview
         console.log('Moving to tribunal review service:', validatedPayload);
-        addTribunalReview.mutateAsync({ payload: validatedPayload, leadId: lead.id.toString() });
+        addTribunalReview.mutateAsync({ payload: validatedPayload as any, leadId: lead.id.toString() });
         break;
 
       default:
