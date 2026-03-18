@@ -46,7 +46,7 @@ export function AddEducationService({ userId }: Props) {
     defaultValues: educationServiceDefaultValues,
     mode: 'onChange',
   });
-  const router = useRouter()
+  const router = useRouter();
 
   const { data: sourceData, isLoading: sourceLoading } = useGetSource();
   const { data: universityData, isLoading: universityLoading } = useGetUniversity();
@@ -107,7 +107,7 @@ export function AddEducationService({ userId }: Props) {
 
   useEffect(() => {
     if (!comissionPercent && !discount && !bonus) {
-      setValue('courseFee.accounts.netamount', amount.toString());
+      setValue('courseFee.accounts.netamount', amount?.toString());
       return;
     }
     const comissionAAmount = (Number(amount) * (Number(comissionPercent) || 0)) / 100;
@@ -118,7 +118,7 @@ export function AddEducationService({ userId }: Props) {
   useEffect(() => {
     if (userId) {
       setValue('courseFee.accounts.planname', planName);
-      setValue('courseFee.accounts.amount', amount.toString());
+      setValue('courseFee.accounts.amount', amount?.toString());
       setValue('courseFee.accounts.duedate', dueDate);
       setValue('courseFee.accounts.invoicenumber', invoiceNumber);
       setValue('courseFee.accounts.status', paymentStatus);

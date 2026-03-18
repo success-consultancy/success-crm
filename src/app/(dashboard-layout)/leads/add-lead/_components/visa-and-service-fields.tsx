@@ -145,7 +145,7 @@ const VisaAndServiceStep = () => {
           render={({ field }) => (
             <SelectCommon
               options={STATUS_OPTIONS}
-              value={field.value}
+              value={field.value as any}
               label="Status"
               triggerClassName="w-full"
               onSelect={(val) => field.onChange(val)}

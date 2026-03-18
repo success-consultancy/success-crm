@@ -7,7 +7,7 @@ import PageLoader from '@/components/molecules/page-loader';
 import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import { FORM_STATE } from '@/types/common';
 import { TribunalService } from '../../add/_components/insurance-service';
-import { getTribunalDefaultValues } from '@/schema/tribunal-review';
+import { getInsuranceDefaultValues } from '@/schema/insurance';
 
 const EditVisaServicePage = () => {
   const params = useParams<{ id: string }>();
@@ -22,7 +22,7 @@ const EditVisaServicePage = () => {
       <TribunalService
         userId={data?.userId || 0}
         formState={FORM_STATE.EDIT}
-        defaultValues={getTribunalDefaultValues(data)}
+        defaultValues={getInsuranceDefaultValues(data)}
       />
     </Container>
   );

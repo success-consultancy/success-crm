@@ -579,7 +579,7 @@ export function AddVisaService({ userId }: Props) {
                 render={({ field }) => (
                   <DatePicker
                     side="top"
-                    value={field.value}
+                    value={field.value ? new Date(field.value) : undefined}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"

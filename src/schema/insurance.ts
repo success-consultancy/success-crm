@@ -96,4 +96,48 @@ export type InsuranceSchemaType = z.infer<typeof insuranceFormSchema>;
 // update schema for update without accounts
 export const updateInsuranceFormSchema = insuranceFormSchema.omit({ accounts: true });
 
+export const getInsuranceDefaultValues = (
+  data?: { [key: string]: any },
+): InsuranceSchemaType => {
+  return {
+    id: data?.id,
+    files: data?.files || null,
+    firstName: data?.firstName || '',
+    middleName: data?.middleName || '',
+    lastName: data?.lastName || '',
+    dob: data?.dob || '',
+    email: data?.email || '',
+    phone: data?.phone || '',
+    country: data?.country || '',
+    address: data?.address || '',
+    passport: data?.passport || '',
+    passportIssueDate: data?.passportIssueDate || '',
+    passportExpiryDate: data?.passportExpiryDate || '',
+    location: data?.location || '',
+    currentVisa: data?.currentVisa || '',
+    currentInsurance: data?.currentInsurance || '',
+    occupation: data?.occupation || '',
+    anzsco: data?.anzsco || '',
+    startDate: data?.startDate || '',
+    expiryDate: data?.expiryDate || '',
+    insuranceTypeId: data?.insuranceTypeId || null,
+    insuranceProviderId: data?.insuranceProviderId || null,
+    category: data?.category || null,
+    paymentPlan: data?.paymentPlan || '',
+    totalPaid: data?.totalPaid || '',
+    policyNumber: data?.policyNumber || '',
+    remarks: data?.remarks || '',
+    status: data?.status || '',
+    statusDate: data?.statusDate || '',
+    visaStream: data?.visaStream || '',
+    visaExpiry: data?.visaExpiry || '',
+    dueDate: data?.dueDate || '',
+    accounts: null,
+    sourceId: data?.sourceId || null,
+    userId: data?.userId || null,
+    assignedDate: data?.assignedDate ? new Date(data.assignedDate) : null,
+    updatedBy: data?.updatedBy || null,
+  };
+};
+
 export default insuranceFormSchema;
