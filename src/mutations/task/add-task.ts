@@ -14,7 +14,7 @@ export const useAddTask = () => {
   return useMutation({
     mutationFn: addTask,
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TASKS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TASKS], exact: false });
     },
   });
 };
@@ -33,7 +33,7 @@ export const useEditTask = () => {
   return useMutation({
     mutationFn: editTask,
     onSuccess() {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TASKS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_TASKS], exact: false });
     },
   });
 };
