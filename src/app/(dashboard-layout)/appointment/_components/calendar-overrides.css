@@ -71,6 +71,11 @@
   border-left-color: #E5E7EB;
 }
 
+/* RBC hides the header in day (single-day) view by default — show it */
+.rbc-time-header-cell-single-day {
+  display: block !important;
+}
+
 /* ---- Time Content ---- */
 .rbc-time-content {
   border-top: 1px solid #E5E7EB;
@@ -208,6 +213,11 @@
   color: #6B7280;
   background: transparent;
   padding: 1px 4px;
+}
+
+/* ---- Events container full width ---- */
+.rbc-events-container {
+  margin-right: 0 !important;
 }
 
 /* ---- DnD resize handles ---- */
