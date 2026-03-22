@@ -4,9 +4,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { AgreementSchemaType } from '@/schema/agreement-schema';
 
 const addAgreement = async (payload: AgreementSchemaType) => {
-  // Remove file field as API doesn't accept it during creation
-  const { file, ...apiPayload } = payload;
-  const res = await api.post('/agreement', apiPayload);
+  const res = await api.post('/agreement', payload);
   return res.data;
 };
 

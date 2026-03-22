@@ -47,7 +47,9 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
   const router = useRouter();
   const isEditMode = formState === FORM_STATE.EDIT;
   const [note, setNote] = useState<string>(defaultValues?.note || '');
-  const [fileUrl, setFileUrl] = useState<string | null>(defaultValues?.file || null);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFileMeta[]>(
+    (defaultValues?.files as UploadedFileMeta[]) || [],
+  );
 
   const form = useForm<AgreementSchemaType>({
     resolver: zodResolver(agreementFormSchema),
@@ -66,7 +68,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
       const values = getAgreementDefaultValues(defaultValues);
       form.reset(values);
       setNote(values.note || '');
-      setFileUrl(values.file || null);
+      setUploadedFiles((values.files as UploadedFileMeta[]) || []);
     }
   }, [defaultValues, isEditMode, form]);
 
@@ -89,6 +91,8 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
   const statusOptions = [
     { label: 'IN EFFECT', value: AgreementStatus.InEffect },
     { label: 'IN PROCESS', value: AgreementStatus.InProcess },
+    { label: 'Cancelled', value: AgreementStatus.Cancelled },
+    { label: 'Expired', value: AgreementStatus.Expired },
   ];
 
   const typeOptions = [
@@ -108,11 +112,10 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
     setValue('note', content, { shouldValidate: true });
   };
 
-  const handleFileUploadComplete = (fileUrls: any[]) => {
-    if (fileUrls.length > 0) {
-      setFileUrl(fileUrls[0]);
-      setValue('file', fileUrls[0], { shouldValidate: true });
-    }
+  const handleFileUploadComplete = (newFiles: UploadedFileMeta[]) => {
+    const merged = [...uploadedFiles, ...newFiles];
+    setUploadedFiles(merged);
+    setValue('files', merged, { shouldValidate: true });
   };
 
   const submitHandler = (data: AgreementSchemaType) => {
@@ -316,28 +319,24 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
             acceptedFiles={['.pdf', '.doc', '.docx', '.jpg', '.jpeg', '.png']}
             onUploadComplete={handleFileUploadComplete}
           />
-          {fileUrl && (
-            <div className="mt-2">
-              <p className="text-sm text-gray-600">Current file: {fileUrl.split('/').pop()}</p>
-              {isEditMode && (
-                <a
-                  href={fileUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-blue-600 hover:underline"
-                >
-                  View file
-                </a>
-              )}
+          {uploadedFiles.length > 0 && (
+            <div className="mt-2 space-y-1">
+              {uploadedFiles.map((f, i) => (
+                <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                  <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
+                    {f.name}
+                  </a>
+                </div>
+              ))}
             </div>
           )}
-          <FormErrorMessage message={errors.file?.message} />
+          <FormErrorMessage message={errors.files?.message} />
         </div>
 
         {/* Submit Button */}
         <div className="flex justify-end pt-4">
-          <Button type="submit" loading={isPending} className="bg-purple-600 hover:bg-purple-700 text-white">
-            {isEditMode ? 'UPDATE' : 'ADD'}
+          <Button type="submit" loading={isPending}>
+            {isEditMode ? 'Save Changes' : 'Add Agreement'}
           </Button>
         </div>
       </form>

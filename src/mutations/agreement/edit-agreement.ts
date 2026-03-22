@@ -4,8 +4,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { UpdateAgreementSchemaType } from '@/schema/agreement-schema';
 
 const editAgreement = async (payload: UpdateAgreementSchemaType) => {
-  const { id, file, ...apiPayload } = payload;
-  // Remove file field as API might not accept it during update
+  const { id, ...apiPayload } = payload;
   const res = await api.put(`/agreement/${id}`, apiPayload);
   return res.data;
 };

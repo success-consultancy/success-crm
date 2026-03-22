@@ -21,10 +21,12 @@ import { useAgreementColumn } from '@/config/columns/agreement-columns-definitio
 import { useExportAgreements } from '@/mutations/agreement/export-agreements';
 
 // Tab Config
-let TAB_CONFIG = [
+const BASE_TAB_CONFIG = [
   { key: 'all', label: 'All agreements' },
+  { key: 'in_process', label: 'In Progress' },
   { key: 'in_effect', label: 'In Effect' },
-  { key: 'in_process', label: 'In Process' },
+  { key: 'cancelled', label: 'Cancelled' },
+  { key: 'expired', label: 'Expired' },
 ];
 
 const AgreementPage = () => {
@@ -69,14 +71,12 @@ const AgreementPage = () => {
     ]);
   };
 
-  if (data?.count) {
-    TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === 'all') {
-        return { ...tab, count: data.count };
-      }
-      return tab;
-    });
-  }
+  const TAB_CONFIG = BASE_TAB_CONFIG.map((tab) => {
+    if (tab.key === 'all' && data?.count) {
+      return { ...tab, count: data.count };
+    }
+    return tab;
+  });
 
   const handleRowClick = useCallback(
     (agreement: IAgreement) => {
@@ -86,7 +86,7 @@ const AgreementPage = () => {
   );
 
   return (
-    <Container className="flex flex-col max-h-full overflow-hidden">
+    <Container className="flex flex-col h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Agreements</h3>
       </Portal>
