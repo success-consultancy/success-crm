@@ -25,4 +25,5 @@ export const QUERY_KEYS = {
   GET_CALENDAR: 'get-calendar',
   GET_AGREEMENTS: 'get-agreements',
   GET_AGREEMENT_BY_ID: 'get-agreement-by-id',
+  GET_DASHBOARD: 'get-dashboard',
 };
