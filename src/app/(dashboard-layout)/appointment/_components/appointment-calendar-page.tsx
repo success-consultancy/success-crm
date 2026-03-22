@@ -481,32 +481,32 @@ const AppointmentCalendarPage = () => {
               ) : (
                 <>
                   {isLoading && <CalendarGridSkeleton />}
-                <CalendarContext.Provider value={calendarCtx}>
-                  <DnDCalendar
-                    localizer={localizer}
-                    events={displayEvents}
-                    view={rbcView}
-                    onView={() => { }}
-                    date={selectedDate}
-                    onNavigate={() => { }}
-                    step={30}
-                    timeslots={2}
-                    min={MIN_TIME}
-                    max={MAX_TIME}
-                    scrollToTime={SCROLL_TO_TIME}
-                    selectable
-                    resizable
-                    onEventDrop={handleEventDrop}
-                    onEventResize={handleEventResize}
-                    onSelectEvent={handleSelectEvent}
-                    onSelectSlot={handleSelectSlot}
-                    components={components}
-                    eventPropGetter={eventPropGetter}
-                    style={{ height: '100%' }}
-                    formats={{ timeGutterFormat: 'h a' }}
-                    views={[Views.MONTH, Views.WEEK, Views.WORK_WEEK, Views.DAY]}
-                  />
-                </CalendarContext.Provider>
+                  <CalendarContext.Provider value={calendarCtx}>
+                    <DnDCalendar
+                      localizer={localizer}
+                      events={displayEvents}
+                      view={rbcView}
+                      onView={() => { }}
+                      date={selectedDate}
+                      onNavigate={() => { }}
+                      step={30}
+                      timeslots={2}
+                      min={MIN_TIME}
+                      max={MAX_TIME}
+                      scrollToTime={SCROLL_TO_TIME}
+                      selectable
+                      resizable
+                      onEventDrop={handleEventDrop}
+                      onEventResize={handleEventResize}
+                      onSelectEvent={handleSelectEvent}
+                      onSelectSlot={handleSelectSlot}
+                      components={components}
+                      eventPropGetter={eventPropGetter}
+                      style={{ height: '100%' }}
+                      formats={{ timeGutterFormat: 'h a' }}
+                      views={[Views.MONTH, Views.WEEK, Views.WORK_WEEK, Views.DAY]}
+                    />
+                  </CalendarContext.Provider>
                 </>
               )}
             </div>

@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { CheckCheck, ChevronRight, EditIcon } from 'lucide-react';
+import { Check, ChevronsUpDown, Pencil, Plus, Building2 } from 'lucide-react';
 import { useGetBranchById, useGetBranches } from '@/query/get-branches';
 import useAuthStore from '@/store/auth-store';
 import { IUser } from '@/types/user-type';
@@ -20,7 +20,7 @@ import DialogWrapper from './dialog-wrapper';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Button from '../atoms/button';
-import { FormField, FormItem, FormLabel } from '../ui/form';
+import { FormField } from '../ui/form';
 import Input from '../molecules/input';
 import branchSchema, { BranchSchemaType } from '@/schema/branch-schema';
 import { useAddBranch, useUpdateBranch } from '@/mutations/branch/add-branch';
@@ -116,54 +116,70 @@ const BranchSelector = () => {
           <div className="flex items-center gap-3 cursor-pointer select-none hover:bg-gray-50 rounded-lg px-2 py-2 transition-colors w-full">
             <div className="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center shrink-0">
               <span className="text-sm font-semibold text-neutral-darkGrey">
-                {currentBranch ? getBranchInitial(currentBranch.name) : 'C'}
+                {currentBranch ? getBranchInitial(currentBranch.name) : 'A'}
               </span>
             </div>
             <span className="flex-1 text-sm font-medium text-neutral-darkGrey">
-              {currentBranch ? capitalizeFirstLetter(currentBranch.name) : 'Canberra'}
+              {currentBranch ? capitalizeFirstLetter(currentBranch.name) : 'All Branches'}
             </span>
-            <ChevronRight className="w-4 h-4 text-neutral-darkGrey shrink-0" />
+            <ChevronsUpDown className="w-4 h-4 text-neutral-darkGrey shrink-0" />
           </div>
         </DropdownMenuTrigger>
 
         <DropdownMenuContent align="center" className="w-56">
-          {!hasBranches && <p className="px-2 py-1.5 text-sm text-gray-500">No Branches</p>}
-
-          <DropdownMenuLabel className="text-neutral-light-grey">Switch branch</DropdownMenuLabel>
+          <DropdownMenuLabel className="text-xs font-semibold text-gray-400 uppercase tracking-wide">
+            Switch branch
+          </DropdownMenuLabel>
 
           <DropdownMenuSeparator />
 
+          {!hasBranches && (
+            <p className="px-2 py-1.5 text-sm text-gray-400 text-center">No branches available</p>
+          )}
+
           {Array.isArray(branches) &&
-            branches?.map((item) => {
-              const selectedBranch = profile?.branchId === item?.id;
+            branches.map((item) => {
+              const isSelected = profile?.branchId === item?.id;
               return (
-                <div key={item.name} className="flex items-center justify-between gap-2 cursor-pointer">
+                <div key={item.id} className="flex items-center gap-1 px-1">
                   <DropdownMenuItem
-                    onClick={(e) => {
-                      handleBranchSwitch(item);
-                    }}
-                    className="flex w-full items-center justify-between gap-2 cursor-pointer"
+                    onClick={() => handleBranchSwitch(item)}
+                    className="flex-1 flex items-center gap-2 cursor-pointer rounded-md"
                   >
-                    {item.name}
-                    {selectedBranch && <CheckCheck size={20} />}
+                    <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center shrink-0">
+                      <span className="text-xs font-bold text-blue-600">
+                        {getBranchInitial(item.name)}
+                      </span>
+                    </div>
+                    <span className="flex-1 text-sm truncate">{capitalizeFirstLetter(item.name)}</span>
+                    {isSelected && <Check size={14} className="text-blue-600 shrink-0" />}
                   </DropdownMenuItem>
-                  <EditIcon
-                    size={20}
-                    className="z-10 text-gray-400 hover:text-gray-600"
+                  <button
+                    type="button"
                     onClick={(e) => {
+                      e.stopPropagation();
                       setIsEditOpen(true);
                       setBranchId(item.id);
                     }}
-                  />
+                    className="p-1.5 rounded-md text-gray-400 hover:text-gray-600 hover:bg-gray-100 transition-colors shrink-0"
+                  >
+                    <Pencil size={13} />
+                  </button>
                 </div>
               );
             })}
+
           <DropdownMenuItem
-            onClick={() => handleBranchSwitch({ id: undefined })} // switch to all branches
-            className="flex items-center justify-between gap-2"
+            onClick={() => handleBranchSwitch({ id: undefined })}
+            className="flex items-center gap-2 cursor-pointer mx-1 rounded-md"
           >
-            All Branches
+            <div className="w-6 h-6 rounded-md bg-gray-100 flex items-center justify-center shrink-0">
+              <Building2 size={12} className="text-gray-500" />
+            </div>
+            <span className="flex-1 text-sm">All Branches</span>
+            {!profile?.branchId && <Check size={14} className="text-blue-600 shrink-0" />}
           </DropdownMenuItem>
+
           <DropdownMenuSeparator />
 
           <DropdownMenuItem
@@ -171,24 +187,25 @@ const BranchSelector = () => {
               e.preventDefault();
               setIsOpen(true);
             }}
-            className="flex items-center justify-between gap-2 text-b2-b text-primary-blue cursor-pointer"
+            className="flex items-center gap-2 text-primary-blue cursor-pointer font-medium mx-1 rounded-md"
           >
+            <Plus size={14} />
             Create new branch
           </DropdownMenuItem>
-
-          {isEditOpen && (
-            <DialogWrapper title="Edit branch" isOpen={isEditOpen} setIsOpen={setIsEditOpen} canClose={false}>
-              <BranchDialog setIsOpen={setIsEditOpen} id={branchId} />
-            </DialogWrapper>
-          )}
-
-          {isOpen && (
-            <DialogWrapper title="Create new branch" isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
-              <BranchDialog setIsOpen={setIsOpen} />
-            </DialogWrapper>
-          )}
         </DropdownMenuContent>
       </DropdownMenu>
+
+      {isEditOpen && (
+        <DialogWrapper title="Edit branch" isOpen={isEditOpen} setIsOpen={setIsEditOpen} canClose={false}>
+          <BranchDialog setIsOpen={setIsEditOpen} id={branchId} />
+        </DialogWrapper>
+      )}
+
+      {isOpen && (
+        <DialogWrapper title="Create new branch" isOpen={isOpen} setIsOpen={setIsOpen} canClose={false}>
+          <BranchDialog setIsOpen={setIsOpen} />
+        </DialogWrapper>
+      )}
     </div>
   );
 };
