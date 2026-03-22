@@ -7,6 +7,13 @@ import { useAccountsColumn } from '@/config/columns/education-accounts-columns-d
 import { FormAccordion } from '@/components/organisms/form-accordion';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 
+// Column id → account field mapping — stable module-level constant
+const COLUMN_TO_ACCOUNT_FIELD: Record<string, keyof IAccount> = {
+  'accounts-commission': 'comission',
+  'accounts-discount': 'discount',
+  'accounts-bonus': 'bonus',
+};
+
 type AccountsProps = {
   courseFee: IAccount[];
   studentId?: number;
@@ -30,7 +37,6 @@ type AccountsProps = {
 
 const Accounts = ({
   courseFee,
-  studentId,
   isAdding = false,
   editingFeeId = null,
   editingAccountId = null,
@@ -53,7 +59,7 @@ const Accounts = ({
       if (isEditingLinkedAccount) return;
       const accountId = row?.id;
       if (accountId == null) return;
-      const draftPayload: CreateAccountPayload = {
+      onStartEditAccount?.(accountId, {
         planname: row.planname || '',
         amount: String(row.amount ?? ''),
         duedate: row.duedate || '',
@@ -65,34 +71,28 @@ const Accounts = ({
         netamount: String(row.netamount ?? ''),
         accountableId: row.accountableId ?? 0,
         accountableType: row.accountableType ?? '',
-      };
-      onStartEditAccount?.(accountId, draftPayload);
+      });
     },
     [isEditingLinkedAccount, onStartEditAccount],
   );
 
-  const columnIdToField: Record<string, keyof IAccount> = {
-    'accounts-commission': 'comission',
-    'accounts-discount': 'discount',
-    'accounts-bonus': 'bonus',
-  };
-
-  const handleCellUpdate = (row: IAccount, columnId: string, value: unknown) => {
-    if (activeEditingId == null || row.id !== activeEditingId || !onDraftChange) return;
-    const field = columnIdToField[columnId];
-    if (!field) return;
-    onDraftChange(field, String(value ?? ''));
-  };
+  const handleCellUpdate = useCallback(
+    (row: IAccount, columnId: string, value: unknown) => {
+      if (activeEditingId == null || row.id !== activeEditingId || !onDraftChange) return;
+      const field = COLUMN_TO_ACCOUNT_FIELD[columnId];
+      if (!field) return;
+      onDraftChange(field, String(value ?? ''));
+    },
+    [activeEditingId, onDraftChange],
+  );
 
   const AccountsColumns = useMemo(
     () =>
       useAccountsColumn({
         onEdit: handleEditRow,
         hideEditWhen: isEditingLinkedAccount,
-        editingId: activeEditingId,
-        draft,
       }),
-    [handleEditRow, isEditingLinkedAccount, activeEditingId],
+    [handleEditRow, isEditingLinkedAccount],
   );
 
   return (
@@ -112,7 +112,7 @@ const Accounts = ({
         {/* Save/Cancel when editing an account row directly (inline); no extra form. */}
         {isEditingAccountDirectly && draft && editingAccountRowId != null && (
           <div className="flex items-center gap-2 px-4 py-2 border-t bg-muted/30">
-            <Button size="sm" onClick={() => onSaveAccount?.(editingAccountRowId!, draft)} disabled={isSavingAccount}>
+            <Button size="sm" onClick={() => onSaveAccount?.(editingAccountRowId, draft)} disabled={isSavingAccount}>
               Save
             </Button>
             <Button size="sm" variant="outline" onClick={() => onCancelEditAccount?.()} disabled={isSavingAccount}>
@@ -162,10 +162,10 @@ const Accounts = ({
   );
 };
 
-const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
+const Comp = ({ children, type }: { children: React.ReactNode; type?: 'accordion' | 'default' }) => {
   if (type === 'accordion') {
     return (
-      <FormAccordion value="item-3" title="Fee Structure">
+      <FormAccordion value="item-3" title="Accounts">
         {children}
       </FormAccordion>
     );

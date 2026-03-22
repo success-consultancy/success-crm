@@ -10,8 +10,17 @@ import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
 import { CreateAccountPayload } from '@/schema/account-schema';
 import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
-import { ACCOUNTABLE_TYPE } from '@/types/common';
 import { DatePicker } from '@/components/organisms/date-picker';
+
+// Column id → draft field mapping — stable module-level constant
+const COLUMN_TO_FEE_KEY: Record<string, keyof CreateCourseFeePayload> = {
+  planname: 'planname',
+  'course-amount': 'amount',
+  'course-due-date': 'duedate',
+  'course-invoice-number': 'invoicenumber',
+  'course-status': 'status',
+  'course-note': 'note',
+};
 
 type CourseFeeStructureProps = {
   courseFee: IFeePlan[];
@@ -20,10 +29,10 @@ type CourseFeeStructureProps = {
   onToggleAdding?: (isAdding: boolean) => void;
   draft?: CreateCourseFeePayload;
   onDraftChange?: (draft: CreateCourseFeePayload) => void;
-  accountsDraft?: any;
-  onAccountsDraftChange?: (accountsDraft: any) => void;
+  accountsDraft?: CreateAccountPayload;
+  onAccountsDraftChange?: (accountsDraft: CreateAccountPayload) => void;
   onEditingIdChange?: (feeId: number | null) => void;
-  compType?: string;
+  compType?: 'accordion';
 };
 
 const CourseFeeStructure = ({
@@ -39,15 +48,20 @@ const CourseFeeStructure = ({
   compType,
 }: CourseFeeStructureProps) => {
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  const { mutate: addCourseFee, isPending } = useAddCourseFee();
+  const { mutate: updateCourseFee, isPending: isUpdating } = useUpdateCourseFee();
+  const { mutate: deleteCourseFee } = useDeleteCourseFee();
+  const user = useAuthStore((s) => s.profile);
+
+  const isBusy = isPending || isUpdating;
+
   const handleEditRow = useCallback(
     (row: IFeePlan) => {
       const feeId = row?.id || null;
       setEditingId(feeId);
-      // Set editing ID in parent first so handleFeeDraftChange knows we're editing
       onEditingIdChange?.(feeId);
 
-      // Update accounts draft when editing - use existing account data if available
-      // If account doesn't exist, parent will calculate it from fee data
       if (row.accounts && onAccountsDraftChange) {
         onAccountsDraftChange({
           planname: row.accounts.planname || '',
@@ -59,142 +73,79 @@ const CourseFeeStructure = ({
           discount: row.accounts.discount || '0',
           bonus: row.accounts.bonus || '0',
           netamount: row.accounts.netamount || '',
+          accountableId: row.id ?? 0,  // course_fee.id — Account.accountableId references CourseFee
+          accountableType: 'CourseFee',
         });
       }
 
-      // Update fee draft - this will trigger handleFeeDraftChange in parent
-      // which will calculate accounts if they don't exist
-      onDraftChange?.({
-        ...row,
-        amount: row.amount as any,
-      });
+      onDraftChange?.({ ...row, amount: row.amount as any });
     },
     [onDraftChange, onAccountsDraftChange, onEditingIdChange],
   );
-  const handleDeleteRow = (row: IFeePlan) => {
-    if (!row.id) return;
-    deleteCourseFee(row.id);
-  };
+
+  const handleDeleteRow = useCallback(
+    (row: IFeePlan) => {
+      if (!row.id) return;
+      deleteCourseFee(row.id);
+    },
+    [deleteCourseFee],
+  );
+
   const CourseFeeStrucutureColumns = useMemo(
     () => useFeeStuructureColumn({ onEdit: handleEditRow, editingId, onDelete: handleDeleteRow }),
-    [handleEditRow, editingId],
+    [handleEditRow, editingId, handleDeleteRow],
   );
-  const { mutate: addCourseFee, isPending } = useAddCourseFee();
-  const { mutate: updateCourseFee, isPending: isUpdating } = useUpdateCourseFee();
-  const { mutate: deleteCourseFee } = useDeleteCourseFee();
 
-  const user = useAuthStore((s) => s.profile);
-
-  const handleAddRow = () => {
-    if (!studentId && !(user as any)?.id) {
-      return;
-    }
+  const handleAddRow = useCallback(() => {
+    if (!studentId && !(user as any)?.id) return;
     onToggleAdding?.(true);
-  };
+  }, [studentId, user, onToggleAdding]);
 
-  const handleSave = () => {
-    if (!studentId || !draft || !accountsDraft) return;
-    const duedate = draft.duedate || new Date().toISOString().slice(0, 10);
-
-    // Use accounts draft data (with user-edited commission, discount, bonus)
-    const accountsData = {
-      planname: accountsDraft.planname,
-      amount: accountsDraft.amount,
-      duedate: accountsDraft.duedate,
-      invoicenumber: accountsDraft.invoicenumber,
-      status: accountsDraft.status,
-      comission: accountsDraft.comission,
-      discount: accountsDraft.discount,
-      bonus: accountsDraft.bonus,
-      netamount: accountsDraft.netamount,
-    };
-
-    if (editingId) {
-      updateCourseFee(
-        {
-          id: editingId,
-          payload: {
-            studentId: Number(studentId),
-            planname: draft.planname || '',
-            amount: draft.amount || '',
-            duedate: duedate,
-            invoicenumber: draft.invoicenumber || '',
-            status: draft.status || 'Pending',
-            note: draft.note || '',
-            updatedBy: Number((user as any)?.id || 0),
-            accounts: accountsData as CreateAccountPayload,
-          },
-        },
-        {
-          onSuccess: () => {
-            onToggleAdding?.(false);
-            setEditingId(null);
-            onEditingIdChange?.(null);
-            onDraftChange?.({
-              planname: '',
-              amount: '',
-              duedate: '',
-              invoicenumber: '',
-              status: 'Pending',
-              note: '',
-            } as IFeePlan);
-          },
-        },
-      );
-    } else {
-      addCourseFee(
-        {
-          studentId: Number(studentId),
-          planname: draft.planname || '',
-          amount: draft.amount || '',
-          duedate,
-          invoicenumber: draft.invoicenumber || '',
-          status: draft.status || 'Pending',
-          note: draft.note || '',
-          updatedBy: Number((user as any)?.id || 0),
-          accounts: accountsData,
-        },
-        {
-          onSuccess: () => {
-            onToggleAdding?.(false);
-            setEditingId(null);
-            onEditingIdChange?.(null);
-            onDraftChange?.({
-              planname: '',
-              amount: '',
-              duedate: '',
-              invoicenumber: '',
-              status: 'Pending',
-              note: '',
-            } as IFeePlan);
-          },
-        },
-      );
-    }
-  };
-
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     onToggleAdding?.(false);
     setEditingId(null);
     onEditingIdChange?.(null);
-  };
+  }, [onToggleAdding, onEditingIdChange]);
 
-  const columnIdToDraftKey: Record<string, keyof CreateCourseFeePayload> = {
-    planname: 'planname',
-    'course-amount': 'amount',
-    'course-due-date': 'duedate',
-    'course-invoice-number': 'invoicenumber',
-    'course-status': 'status',
-    'course-note': 'note',
-  };
+  const handleSave = useCallback(() => {
+    if (!studentId || !draft || !accountsDraft) return;
 
-  const handleCellUpdate = (row: IFeePlan, columnId: string, value: unknown) => {
-    if (editingId == null || (row as IFeePlan).id !== editingId || !draft) return;
-    const key = columnIdToDraftKey[columnId];
-    if (!key) return;
-    const nextDraft = { ...draft, [key]: value };
-    onDraftChange?.(nextDraft);
-  };
+    const duedate = draft.duedate || new Date().toISOString().slice(0, 10);
+    const { accountableId: _a, accountableType: _t, ...accountsData } = accountsDraft;
+
+    const payload: CreateCourseFeePayload = {
+      studentId: Number(studentId),
+      planname: draft.planname || '',
+      amount: draft.amount || '',
+      duedate,
+      invoicenumber: draft.invoicenumber || '',
+      status: draft.status || 'Pending',
+      note: draft.note || '',
+      updatedBy: Number((user as any)?.id || 0),
+      accounts: accountsData,
+    };
+
+    const onSuccess = () => {
+      handleCancel();
+      onDraftChange?.({ planname: '', amount: '', duedate: '', invoicenumber: '', status: 'Pending', note: '' } as IFeePlan);
+    };
+
+    if (editingId) {
+      updateCourseFee({ id: editingId, payload }, { onSuccess });
+    } else {
+      addCourseFee(payload, { onSuccess });
+    }
+  }, [studentId, draft, accountsDraft, user, editingId, handleCancel, onDraftChange, updateCourseFee, addCourseFee]);
+
+  const handleCellUpdate = useCallback(
+    (row: IFeePlan, columnId: string, value: unknown) => {
+      if (editingId == null || row.id !== editingId || !draft) return;
+      const key = COLUMN_TO_FEE_KEY[columnId];
+      if (!key) return;
+      onDraftChange?.({ ...draft, [key]: value });
+    },
+    [editingId, draft, onDraftChange],
+  );
 
   return (
     <Comp type={compType}>
@@ -256,10 +207,10 @@ const CourseFeeStructure = ({
               onChange={(e) => onDraftChange?.({ ...draft, note: e.target.value })}
             />
             <div className="flex mt-4 items-center gap-2">
-              <Button size="sm" onClick={handleSave} disabled={isPending || isUpdating}>
+              <Button size="sm" onClick={handleSave} disabled={isBusy}>
                 Save
               </Button>
-              <Button size="sm" variant="outline" onClick={handleCancel} disabled={isPending || isUpdating}>
+              <Button size="sm" variant="outline" onClick={handleCancel} disabled={isBusy}>
                 Cancel
               </Button>
             </div>
@@ -268,10 +219,10 @@ const CourseFeeStructure = ({
         {/* Save/Cancel bar when inline editing an existing row */}
         {editingId && !isAdding && draft && (
           <div className="flex items-center gap-2 px-4 py-2 border-t bg-muted/30">
-            <Button size="sm" onClick={handleSave} disabled={isPending || isUpdating}>
+            <Button size="sm" onClick={handleSave} disabled={isBusy}>
               Save
             </Button>
-            <Button size="sm" variant="outline" onClick={handleCancel} disabled={isPending || isUpdating}>
+            <Button size="sm" variant="outline" onClick={handleCancel} disabled={isBusy}>
               Cancel
             </Button>
           </div>
@@ -290,7 +241,7 @@ const CourseFeeStructure = ({
   );
 };
 
-const Comp = ({ children, type }: { children: React.ReactNode; type?: string }) => {
+const Comp = ({ children, type }: { children: React.ReactNode; type?: 'accordion' }) => {
   if (type === 'accordion') {
     return (
       <FormAccordion value="item-3" title="Fee Structure">

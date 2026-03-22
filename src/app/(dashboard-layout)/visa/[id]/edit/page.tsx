@@ -70,6 +70,7 @@ const EditVisaServicePage = () => {
         userId={data?.userId}
         visaId={Number(params.id)}
         defaultValues={defaultValues as Partial<NewVisaServiceType>}
+        accounts={data?.accounts || []}
       />
     </Container>
   );

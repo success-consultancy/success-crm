@@ -9,6 +9,7 @@ import { useGetMe } from '@/query/get-me';
 import { FORM_STATE } from '@/types/common';
 import { SkillAssessmentService } from '../../add/_components/skill-assessment-service';
 import { getSkillAssessmentDefaultValues } from '@/schema/skill-assessment-schema';
+import Accounts from '../view/_components/accounts';
 
 const EditSkillAssessmentPage = () => {
   const params = useParams<{ id: string }>();
@@ -27,6 +28,7 @@ const EditSkillAssessmentPage = () => {
         id={Number(params.id)}
         defaultValues={getSkillAssessmentDefaultValues(skillAssessment)}
       />
+      <Accounts accounts={(skillAssessment?.accounts || []) as any} skillAssessmentId={skillAssessment?.id} />
     </Container>
   );
 };

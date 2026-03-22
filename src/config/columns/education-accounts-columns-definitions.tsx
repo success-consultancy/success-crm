@@ -34,9 +34,6 @@ const StatusBadge = ({ status }: { status: string }) => {
 interface IEducationAccountsColumn {
   onEdit: (accounts: IAccount) => void;
   hideEditWhen?: boolean;
-  /** When set, this row shows inline inputs (e.g. when editing fee or this account). */
-  editingId?: number | null;
-  draft?: CreateAccountPayload | null;
 }
 
 function isEditingRow(
@@ -49,12 +46,7 @@ function isEditingRow(
   return rowId != null && Number(rowId) === Number(editingId);
 }
 
-export const useAccountsColumn = ({
-  onEdit,
-  hideEditWhen = false,
-  editingId: _editingId,
-  draft,
-}: IEducationAccountsColumn) => {
+export const useAccountsColumn = ({ onEdit, hideEditWhen = false }: IEducationAccountsColumn) => {
   const AccountsColumns: ColumnDef<IAccount>[] = [
     {
       id: 'accounts-payment-plan',

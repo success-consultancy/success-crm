@@ -8,6 +8,7 @@ import { FORM_STATE } from '@/types/common';
 import { InsuranceService } from '../../add/_components/insurance-service';
 import { getInsuranceDefaultValues } from '@/schema/insurance';
 import { useGetInsuranceById } from '@/query/get-insurance';
+import Accounts from '../view/_components/accounts';
 
 const EditInsuranceServicePage = () => {
   const params = useParams<{ id: string }>();
@@ -24,6 +25,7 @@ const EditInsuranceServicePage = () => {
         formState={FORM_STATE.EDIT}
         defaultValues={getInsuranceDefaultValues(data)}
       />
+      <Accounts accounts={data?.accounts || []} id={data?.id} />
     </Container>
   );
 };

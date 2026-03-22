@@ -13,13 +13,26 @@ import { DatePicker } from '@/components/organisms/date-picker';
 type AccountsProps = {
   accounts: IAccount[];
   skillAssessmentId?: number;
-  isAdding?: boolean;
 };
 
-const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsProps) => {
-  const [draft, setDraft] = useState<CreateAccountPayload>(createEmptyDraft());
-  const [adding, setAdding] = useState<boolean>(false);
+// Column id → draft field mapping — stable module-level constant
+const COLUMN_TO_FIELD: Record<string, keyof CreateAccountPayload> = {
+  'accounts-payment-plan': 'planname',
+  'accounts-amount': 'amount',
+  'accounts-discount': 'discount',
+  'accounts-invoice-number': 'invoicenumber',
+  'accounts-due-date': 'duedate',
+  'accounts-status': 'status',
+};
+
+const Accounts = ({ accounts, skillAssessmentId }: AccountsProps) => {
+  const [draft, setDraft] = useState<CreateAccountPayload>(createEmptyDraft);
+  const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
+
+  const { mutate: addAccount, isPending: isAdding } = useAddAccount();
+  const { mutate: updateAccount, isPending: isUpdating } = useUpdateAccount();
+  const { mutate: deleteAccount } = useDeleteAccount();
 
   const handleEditRow = useCallback((row: IAccount) => {
     const accountId = row?.id;
@@ -39,61 +52,49 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
     });
   }, []);
 
-  const handleDraftChange = (key: keyof CreateAccountPayload, value: string) => {
+  const handleDraftChange = useCallback((key: keyof CreateAccountPayload, value: string) => {
     setDraft((prev) => updateDraftField(prev, key, value));
-  };
+  }, []);
 
-  const columnIdToField: Record<string, keyof CreateAccountPayload> = {
-    'accounts-payment-plan': 'planname',
-    'accounts-amount': 'amount',
-    'accounts-discount': 'discount',
-    'accounts-invoice-number': 'invoicenumber',
-    'accounts-due-date': 'duedate',
-    'accounts-status': 'status',
-  };
-
-  const handleCellUpdate = (row: IAccount, columnId: string, value: unknown) => {
-    if (editingId == null || row.id !== editingId) return;
-    const field = columnIdToField[columnId];
-    if (!field) return;
-    handleDraftChange(field, String(value ?? ''));
-  };
-
-  const deleteAccount = useDeleteAccount();
-
-  const handleDeleteRow = (row: IAccount) => {
-    if (!row.id) return;
-    deleteAccount.mutate(row.id);
-  };
-
-  const AccountsColumns = useMemo(
-    () =>
-      useVisaAccountsColumn({
-        onEdit: handleEditRow,
-        onDelete: handleDeleteRow,
-        editingId,
-        draft,
-      }),
-    [handleEditRow, handleDeleteRow, editingId],
+  const handleCellUpdate = useCallback(
+    (row: IAccount, columnId: string, value: unknown) => {
+      if (editingId == null || row.id !== editingId) return;
+      const field = COLUMN_TO_FIELD[columnId];
+      if (!field) return;
+      handleDraftChange(field, String(value ?? ''));
+    },
+    [editingId, handleDraftChange],
   );
 
-  const createAccount = useAddAccount();
-  const updateAccount = useUpdateAccount();
+  const handleDeleteRow = useCallback(
+    (row: IAccount) => {
+      if (!row.id) return;
+      deleteAccount(row.id);
+    },
+    [deleteAccount],
+  );
 
-  const handleCancel = () => {
+  const AccountsColumns = useMemo(
+    () => useVisaAccountsColumn({ onEdit: handleEditRow, onDelete: handleDeleteRow }),
+    [handleEditRow, handleDeleteRow],
+  );
+
+  const handleCancel = useCallback(() => {
     setDraft(createEmptyDraft());
     setAdding(false);
     setEditingId(null);
-  };
+  }, []);
 
-  const handleAddRow = () => {
+  const handleAddRow = useCallback(() => {
     setAdding(true);
     setDraft(createEmptyDraft());
-  };
-  const handleSave = () => {
-    if (!skillAssessmentId || !draft) return;
+  }, []);
 
-    const accountsData = {
+  const handleSave = useCallback(() => {
+    if (!skillAssessmentId || !draft) return;
+    const payload = {
+      accountableId: skillAssessmentId,
+      accountableType: 'SkillAssessment',
       planname: draft.planname,
       amount: draft.amount,
       duedate: draft.duedate,
@@ -103,42 +104,19 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
       netamount: draft.netamount,
       gst: (0.1 * Number(draft.amount)).toLocaleString(),
     };
-
+    const onSuccess = () => {
+      setAdding(false);
+      setDraft(createEmptyDraft());
+      setEditingId(null);
+    };
     if (editingId) {
-      updateAccount.mutateAsync(
-        {
-          id: editingId,
-          payload: {
-            accountableId: skillAssessmentId,
-            accountableType: 'SkillAssessment',
-            ...accountsData,
-          },
-        },
-        {
-          onSuccess: () => {
-            setAdding(false);
-            setDraft(createEmptyDraft());
-            setEditingId(null);
-          },
-        },
-      );
+      updateAccount({ id: editingId, payload }, { onSuccess });
     } else {
-      createAccount.mutateAsync(
-        {
-          accountableId: skillAssessmentId,
-          accountableType: 'SkillAssessment',
-          ...accountsData,
-        },
-        {
-          onSuccess: () => {
-            setAdding(false);
-            setDraft(createEmptyDraft());
-            setEditingId(null);
-          },
-        },
-      );
+      addAccount(payload, { onSuccess });
     }
-  };
+  }, [skillAssessmentId, draft, editingId, updateAccount, addAccount]);
+
+  const isBusy = isAdding || isUpdating;
 
   return (
     <TitleBox title="Accounts">
@@ -156,10 +134,10 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
         />
         {editingId && draft && (
           <div className="flex items-center gap-2 px-4 py-2 border-t bg-muted/30">
-            <Button size="sm" onClick={handleSave} disabled={updateAccount.isPending}>
+            <Button size="sm" onClick={handleSave} disabled={isBusy}>
               Save
             </Button>
-            <Button size="sm" variant="outline" onClick={handleCancel} disabled={updateAccount.isPending}>
+            <Button size="sm" variant="outline" onClick={handleCancel} disabled={isBusy}>
               Cancel
             </Button>
           </div>
@@ -192,7 +170,6 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
               onChange={(e) => handleDraftChange('discount', e.target.value)}
               className="bg-white border-blue-300"
             />
-
             <Input
               placeholder="Net amount"
               value={draft.netamount}
@@ -205,7 +182,6 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
               onChange={(e) => handleDraftChange('invoicenumber', e.target.value)}
               className="bg-green-50 border-blue-300"
             />
-
             <DatePicker
               value={draft.duedate ? new Date(draft.duedate) : undefined}
               onChange={(e) => handleDraftChange('duedate', e?.toISOString() || '')}
@@ -214,7 +190,6 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
               className="h-12 text-b2"
               disablePastDates={true}
             />
-
             <Select value={draft.status} onValueChange={(val) => handleDraftChange('status', val)}>
               <SelectTrigger>
                 <SelectValue placeholder="Status" />
@@ -227,10 +202,10 @@ const Accounts = ({ accounts, skillAssessmentId, isAdding = false }: AccountsPro
               </SelectContent>
             </Select>
             <div className="flex items-center mt-4 gap-2">
-              <Button size="sm" onClick={handleSave} disabled={createAccount.isPending}>
+              <Button size="sm" onClick={handleSave} disabled={isBusy}>
                 Save
               </Button>
-              <Button size="sm" variant="outline" onClick={handleCancel}>
+              <Button size="sm" variant="outline" onClick={handleCancel} disabled={isBusy}>
                 Cancel
               </Button>
             </div>

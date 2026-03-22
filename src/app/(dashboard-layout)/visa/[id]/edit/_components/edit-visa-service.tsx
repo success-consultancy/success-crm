@@ -25,6 +25,8 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
+import Accounts from '../../view/_components/accounts';
+import { IAccount } from '@/schema/account-schema';
 import { useGetOccupations } from '@/query/get-occupations';
 import { ROUTES } from '@/config/routes';
 import { useRouter } from 'next/navigation';
@@ -35,9 +37,10 @@ interface Props {
   visaId: number;
   userId: number | undefined;
   defaultValues: Partial<NewVisaServiceType>;
+  accounts?: IAccount[];
 }
 
-export function EditVisaService({ visaId, userId, defaultValues }: Props) {
+export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }: Props) {
   const form = useForm<NewVisaServiceType>({
     resolver: zodResolver(newVisaServiceSchema) as any,
     defaultValues: defaultValues,
@@ -539,6 +542,7 @@ export function EditVisaService({ visaId, userId, defaultValues }: Props) {
         </FormAccordion>
 
         {/* Accounts */}
+        <Accounts accounts={accounts} visaApplicantId={visaId} />
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
