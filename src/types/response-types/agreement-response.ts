@@ -48,6 +48,7 @@ export interface AgreementFilterParams {
   q_field?: string;
   q?: string;
   tab?: string;
+  type?: string;
   from?: string;
   to?: string;
 }

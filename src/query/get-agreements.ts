@@ -12,6 +12,7 @@ export const AGREEMENT_FILTER_PARAMS: Array<keyof AgreementFilterParams> = [
   'q_field',
   'q',
   'tab',
+  'type',
   'from',
   'to',
 ];

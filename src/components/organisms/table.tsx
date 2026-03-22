@@ -58,6 +58,8 @@ interface Props<TData, TValue> {
   searchKey?: string;
   topRightSection?: ReactNode;
   tableHeaderSection?: ReactNode;
+  extraFilters?: ReactNode;
+  emptyState?: ReactNode;
   tableHeight?: string;
   onBulkDelete?: (ids: number[]) => void;
   onSendEmail?: (payload: SendEmailSchemaType) => void;
@@ -94,6 +96,8 @@ const TableComponent = <TData, TValue>({
   searchKey,
   topRightSection,
   tableHeaderSection,
+  extraFilters,
+  emptyState,
   tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
   onBulkDelete,
   handleDateRangeApply,
@@ -275,6 +279,7 @@ const TableComponent = <TData, TValue>({
                 placeholder={`Search data here`}
               />
               <DateRangePicker onApply={handleDateRangeApply || (() => { })} />
+              {extraFilters}
             </div>
             <div className="flex items-center gap-[14px]">
               <ColumnSelector table={table} />
@@ -412,6 +417,13 @@ const TableComponent = <TData, TValue>({
                   })}
                 </tr>
               ))}
+              {!isLoading && table.getRowModel().rows.length === 0 && emptyState && (
+                <tr>
+                  <td colSpan={columns.length}>
+                    {emptyState}
+                  </td>
+                </tr>
+              )}
               {!skeletonColumns && isLoading && (
                 <TableRow>
                   <TableCell colSpan={columns.length} className="h-24 text-center">
