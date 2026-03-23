@@ -611,59 +611,65 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           </FormAccordion>
 
           {/* Accounts */}
-          <FormAccordion value="item-3" title="Accounts">
-            <div className="grid grid-cols-3 gap-6">
-              <TextInput
-                label="Fee payment plan"
-                {...register('payment')}
-                error={errors.payment?.message}
-                placeholder="Select/enter payment plan"
-              />
-              <TextInput label="Service fee" {...register('payment')} error={errors.payment?.message} type="number" />
-              <TextInput label="GST" {...register('payment')} error={errors.payment?.message} type="number" />
-              <TextInput label="Discount" {...register('payment')} error={errors.payment?.message} type="number" />
-              <TextInput label="Net amount" {...register('payment')} error={errors.payment?.message} type="number" />
-              <TextInput label="Invoice number" {...register('invoiceNumber')} error={errors.invoiceNumber?.message} />
-              <div className="space-y-2">
-                <Label className="text-b2" htmlFor="dueDate">
-                  Due date
-                </Label>
-                <Controller
-                  name="dueDate"
-                  control={control}
-                  render={({ field }) => (
-                    <DatePicker
-                      side="top"
-                      value={getDateValue(field.value)}
-                      onChange={handleDateChange('dueDate')}
-                      placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
-                      error={!!errors.dueDate?.message}
-                    />
-                  )}
+          {formState === FORM_STATE.ADD && (
+            <FormAccordion value="item-3" title="Accounts">
+              <div className="grid grid-cols-3 gap-6">
+                <TextInput
+                  label="Fee payment plan"
+                  {...register('payment')}
+                  error={errors.payment?.message}
+                  placeholder="Select/enter payment plan"
                 />
-                <FormErrorMessage message={errors.dueDate?.message} />
+                <TextInput label="Service fee" {...register('payment')} error={errors.payment?.message} type="number" />
+                <TextInput label="GST" {...register('payment')} error={errors.payment?.message} type="number" />
+                <TextInput label="Discount" {...register('payment')} error={errors.payment?.message} type="number" />
+                <TextInput label="Net amount" {...register('payment')} error={errors.payment?.message} type="number" />
+                <TextInput
+                  label="Invoice number"
+                  {...register('invoiceNumber')}
+                  error={errors.invoiceNumber?.message}
+                />
+                <div className="space-y-2">
+                  <Label className="text-b2" htmlFor="dueDate">
+                    Due date
+                  </Label>
+                  <Controller
+                    name="dueDate"
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        side="top"
+                        value={getDateValue(field.value)}
+                        onChange={handleDateChange('dueDate')}
+                        placeholder="DD / MM / YYYY"
+                        className="h-12 text-b2 w-full"
+                        error={!!errors.dueDate?.message}
+                      />
+                    )}
+                  />
+                  <FormErrorMessage message={errors.dueDate?.message} />
+                </div>
+                <SelectField
+                  control={control}
+                  name="paymentStatus"
+                  label="Payment status"
+                  options={[
+                    { label: 'Pending', value: 'Pending' },
+                    { label: 'Paid', value: 'Paid' },
+                    { label: 'Overdue', value: 'Overdue' },
+                    { label: 'Cancelled', value: 'Cancelled' },
+                  ]}
+                  placeholder="Select a status"
+                />
               </div>
-              <SelectField
-                control={control}
-                name="paymentStatus"
-                label="Payment status"
-                options={[
-                  { label: 'Pending', value: 'Pending' },
-                  { label: 'Paid', value: 'Paid' },
-                  { label: 'Overdue', value: 'Overdue' },
-                  { label: 'Cancelled', value: 'Cancelled' },
-                ]}
-                placeholder="Select a status"
-              />
-            </div>
-            <div className="mt-6">
-              <Label className="text-b2 mb-2">Fee note:</Label>
-              <div className="w-full space-y-1" suppressHydrationWarning>
-                <TinyEditor value={feeNote} onChange={setFeeNote} />
+              <div className="mt-6">
+                <Label className="text-b2 mb-2">Fee note:</Label>
+                <div className="w-full space-y-1" suppressHydrationWarning>
+                  <TinyEditor value={feeNote} onChange={setFeeNote} />
+                </div>
               </div>
-            </div>
-          </FormAccordion>
+            </FormAccordion>
+          )}
 
           {/* Misc */}
           <FormAccordion value="item-4" title="Misc">

@@ -36,9 +36,6 @@ const StatusBadge = ({ status }: { status: string }) => {
 interface IVisaAccountsColumn {
   onEdit: (accounts: IAccount) => void;
   onDelete?: (accounts: IAccount) => void;
-  /** When set, this row shows inline inputs. */
-  editingId?: number | null;
-  draft?: CreateAccountPayload | null;
 }
 
 function isEditingRow(
@@ -51,7 +48,7 @@ function isEditingRow(
   return rowId != null && Number(rowId) === Number(editingId);
 }
 
-export const useVisaAccountsColumn = ({ onEdit, onDelete, editingId: _editingId, draft }: IVisaAccountsColumn) => {
+export const useVisaAccountsColumn = ({ onEdit, onDelete }: IVisaAccountsColumn) => {
   const VisaAccountsColumns: ColumnDef<IAccount>[] = [
     {
       id: 'accounts-payment-plan',
