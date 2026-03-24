@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, X, Plus } from 'lucide-react';
+import { ArrowLeft, X, ChevronDown } from 'lucide-react';
 import {
   universityFormSchema,
   UniversitySchemaType,
@@ -12,6 +12,7 @@ import {
 } from '@/schema/university-schema';
 import { useAddUniversity } from '@/mutations/university/add-university';
 import { useEditUniversity } from '@/mutations/university/edit-university';
+import { useGetCourse, useGetAllCourses } from '@/query/get-course';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
@@ -26,8 +27,11 @@ import TinyEditor from '@/components/organisms/text-editor';
 import FileUploader from '@/components/organisms/file-uploader';
 import { FORM_STATE, UploadedFileMeta } from '@/types/common';
 import { toast } from 'sonner';
-import { Input } from '@/components/ui/input';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
+import { cn } from '@/lib/utils';
 
 const GROUP_OPTIONS = [
   { label: 'Higher Education', value: 'Higher Education' },
@@ -50,8 +54,20 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFileMeta[]>(
     (defaultValues?.files as UploadedFileMeta[]) || [],
   );
-  const [courseInput, setCourseInput] = useState('');
-  const [courses, setCourses] = useState<string[]>([]);
+  // Courses to add (new course names not yet in DB)
+  const [newCourses, setNewCourses] = useState<string[]>([]);
+  const [courseOpen, setCourseOpen] = useState(false);
+  const [courseSearch, setCourseSearch] = useState('');
+  const triggerRef = useRef<HTMLDivElement>(null);
+  const [popoverWidth, setPopoverWidth] = useState<number>(0);
+
+  // Fetch all courses from the system for the dropdown
+  const { data: allSystemCourses = [] } = useGetAllCourses();
+  // Fetch existing linked courses for this university (edit mode)
+  const { data: allCoursesForUni = [] } = useGetCourse(isEditMode ? id : undefined);
+  const availableCourses = isEditMode
+    ? allCoursesForUni.filter((c) => c.universityId === id)
+    : [];
 
   const form = useForm<UniversitySchemaType>({
     resolver: zodResolver(universityFormSchema),
@@ -72,6 +88,12 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
     }
   }, [defaultValues, isEditMode, form]);
 
+  useEffect(() => {
+    if (courseOpen && triggerRef.current) {
+      setPopoverWidth(triggerRef.current.getBoundingClientRect().width);
+    }
+  }, [courseOpen]);
+
   const {
     register,
     control,
@@ -91,31 +113,45 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
     setValue('files', merged, { shouldValidate: true });
   };
 
-  const handleAddCourse = () => {
-    const trimmed = courseInput.trim();
-    if (trimmed && !courses.includes(trimmed)) {
-      setCourses([...courses, trimmed]);
-      setCourseInput('');
+  // Add a course name to the "to-add" list
+  const addNewCourse = (name: string) => {
+    const trimmed = name.trim();
+    if (!trimmed) return;
+    const alreadyLinked = availableCourses.some((c) => c.name.toLowerCase() === trimmed.toLowerCase());
+    const alreadyAdded = newCourses.some((c) => c.toLowerCase() === trimmed.toLowerCase());
+    if (!alreadyLinked && !alreadyAdded) {
+      setNewCourses((prev) => [...prev, trimmed]);
     }
+    setCourseSearch('');
   };
 
-  const handleRemoveCourse = (course: string) => {
-    setCourses(courses.filter((c) => c !== course));
+  const removeNewCourse = (name: string) => {
+    setNewCourses((prev) => prev.filter((c) => c !== name));
   };
 
   const handleCourseKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && courseSearch.trim()) {
       e.preventDefault();
-      handleAddCourse();
+      addNewCourse(courseSearch);
     }
   };
+
+  // Filter system courses: exclude already-linked and already-staged ones
+  const linkedNames = new Set(availableCourses.map((c) => c.name.toLowerCase()));
+  const stagedNames = new Set(newCourses.map((c) => c.toLowerCase()));
+  const filteredOptions = allSystemCourses.filter(
+    (c) =>
+      !linkedNames.has(c.name.toLowerCase()) &&
+      !stagedNames.has(c.name.toLowerCase()) &&
+      c.name.toLowerCase().includes(courseSearch.toLowerCase()),
+  );
 
   const submitHandler = (data: UniversitySchemaType) => {
     const { courses: _courses, ...payload } = data;
 
     if (isEditMode && id) {
       editUniversity(
-        { ...payload, id },
+        { ...payload, id, newCourses },
         {
           onSuccess: () => {
             toast.success('University updated successfully');
@@ -129,7 +165,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
       );
     } else {
       addUniversity(
-        { payload, courses },
+        { payload, courses: newCourses },
         {
           onSuccess: () => {
             toast.success('University created successfully');
@@ -192,40 +228,118 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
           </div>
         </div>
 
-        {/* Available courses */}
-        <div className="space-y-2">
-          <Label className="text-b2">Available courses</Label>
-          <div className="flex gap-2">
-            <Input
-              value={courseInput}
-              onChange={(e) => setCourseInput(e.target.value)}
-              onKeyDown={handleCourseKeyDown}
-              placeholder="Type a course name and press Enter or Add"
-              className="h-12"
-            />
-            <Button type="button" variant="outline" onClick={handleAddCourse} className="h-12 px-4">
-              <Plus className="h-4 w-4" />
-            </Button>
-          </div>
-          {courses.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-2">
-              {courses.map((course) => (
+        {/* University courses and Available courses */}
+        <div className="grid grid-cols-2 gap-6">
+          {/* University courses — add new ones */}
+          <div className="space-y-2">
+            <Label className="text-b2">University courses</Label>
+            <Popover open={courseOpen} onOpenChange={setCourseOpen} modal>
+              <PopoverTrigger asChild>
                 <div
-                  key={course}
-                  className="flex items-center gap-1 bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200"
+                  ref={triggerRef}
+                  role="combobox"
+                  aria-expanded={courseOpen}
+                  className={cn(
+                    'w-full min-h-[48px] border rounded-md border-gray-300 flex items-center flex-wrap gap-1 px-3 py-2 cursor-pointer',
+                  )}
+                  onClick={() => setCourseOpen(true)}
                 >
-                  <span>{course}</span>
-                  <button
-                    type="button"
-                    onClick={() => handleRemoveCourse(course)}
-                    className="ml-1 hover:text-blue-900"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
+                  {newCourses.length === 0 && (
+                    <span className="text-muted-foreground text-sm">Select university courses</span>
+                  )}
+                  {newCourses.map((name) => (
+                    <Badge key={name} variant="secondary" className="gap-1 pr-0.5 pl-2">
+                      {name}
+                      <button
+                        type="button"
+                        className="h-5 w-5 rounded-full hover:bg-muted flex items-center justify-center"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeNewCourse(name);
+                        }}
+                      >
+                        <X className="h-3 w-3" />
+                      </button>
+                    </Badge>
+                  ))}
+                  <ChevronDown className="ml-auto h-4 w-4 shrink-0 opacity-50" />
                 </div>
-              ))}
+              </PopoverTrigger>
+              <PopoverContent
+                className="p-0"
+                align="start"
+                style={{ width: popoverWidth || undefined }}
+                onCloseAutoFocus={(e) => e.preventDefault()}
+              >
+                <Command>
+                  <CommandInput
+                    placeholder="Type to search or add..."
+                    value={courseSearch}
+                    onValueChange={setCourseSearch}
+                    onKeyDown={handleCourseKeyDown}
+                  />
+                  <CommandList>
+                    <CommandEmpty>
+                      {courseSearch.trim() ? (
+                        <button
+                          type="button"
+                          className="w-full text-left px-2 py-1.5 text-sm text-primary hover:bg-accent"
+                          onClick={() => addNewCourse(courseSearch)}
+                        >
+                          Add &quot;{courseSearch.trim()}&quot;
+                        </button>
+                      ) : (
+                        'No courses found.'
+                      )}
+                    </CommandEmpty>
+                    <CommandGroup>
+                      {filteredOptions.map((course) => (
+                        <CommandItem
+                          key={course.id}
+                          value={course.name}
+                          onSelect={() => {
+                            addNewCourse(course.name);
+                            setCourseOpen(false);
+                          }}
+                        >
+                          {course.name}
+                        </CommandItem>
+                      ))}
+                      {courseSearch.trim() && filteredOptions.some(
+                        (c) => c.name.toLowerCase() === courseSearch.trim().toLowerCase(),
+                      ) === false && filteredOptions.length > 0 && (
+                        <CommandItem
+                          value={`__add__${courseSearch}`}
+                          onSelect={() => addNewCourse(courseSearch)}
+                          className="text-primary"
+                        >
+                          Add &quot;{courseSearch.trim()}&quot;
+                        </CommandItem>
+                      )}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+          </div>
+
+          {/* Available courses — existing linked courses (shown in both modes) */}
+          <div className="space-y-2">
+            <Label className="text-b2">Available courses</Label>
+            <div className="w-full min-h-[48px] border rounded-md border-gray-300 flex items-center flex-wrap gap-1 px-3 py-2 bg-gray-50">
+              {availableCourses.length === 0 ? (
+                <span className="text-muted-foreground text-sm">
+                  {isEditMode ? 'No courses linked yet' : 'Courses added above will appear here after saving'}
+                </span>
+              ) : (
+                availableCourses.map((course) => (
+                  <Badge key={course.id} variant="secondary" className="pl-2 pr-2">
+                    {course.name}
+                  </Badge>
+                ))
+              )}
             </div>
-          )}
+          </div>
         </div>
 
         {/* Track in Report */}

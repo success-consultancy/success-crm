@@ -64,7 +64,7 @@ export const useUniversityColumns = (handleDelete: (id: number) => void) => {
         if (tableCtx?.isLoading) return <Skeleton className="w-32 h-6" />;
         return <div>{row.original.educationLevel || '-'}</div>;
       },
-      size: 160,
+      size: 168,
       meta: { isVisible: true },
     },
     {
@@ -75,7 +75,7 @@ export const useUniversityColumns = (handleDelete: (id: number) => void) => {
         if (tableCtx?.isLoading) return <Skeleton className="w-32 h-6" />;
         return <div className="max-w-[200px] truncate">{row.original.location || '-'}</div>;
       },
-      size: 200,
+      size: 216,
       meta: { isVisible: true },
     },
     {
@@ -102,7 +102,7 @@ export const useUniversityColumns = (handleDelete: (id: number) => void) => {
         if (val === null || val === undefined) return <div>-</div>;
         return <div>{val ? 'TRUE' : 'FALSE'}</div>;
       },
-      size: 140,
+      size: 152,
       meta: { isVisible: true },
     },
     {
