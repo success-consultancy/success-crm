@@ -73,6 +73,7 @@ interface Props<TData, TValue> {
   bulkDeleteConfirmText?: string;
   onCellUpdate?: (row: TData, columnId: string, value: any) => void;
   meta?: any;
+  storageKey?: string;
 }
 
 declare module '@tanstack/react-table' {
@@ -111,6 +112,7 @@ const TableComponent = <TData, TValue>({
   bulkDeleteConfirmText,
   onCellUpdate,
   meta,
+  storageKey = 'column-visibility',
 }: Props<TData, TValue>) => {
   const { setParam } = useSearchParams();
 
@@ -130,7 +132,7 @@ const TableComponent = <TData, TValue>({
       let savedColumns = new Set<string>();
       if (typeof window !== 'undefined') {
         try {
-          const stored = localStorage.getItem('column-visibility');
+          const stored = localStorage.getItem(storageKey);
           if (stored) {
             savedColumns = new Set(JSON.parse(stored) as string[]);
           }
@@ -282,7 +284,7 @@ const TableComponent = <TData, TValue>({
               {extraFilters}
             </div>
             <div className="flex items-center gap-[14px]">
-              <ColumnSelector table={table} />
+              <ColumnSelector table={table} storageKey={storageKey} />
               {topRightSection}
             </div>
           </div>
@@ -318,7 +320,7 @@ const TableComponent = <TData, TValue>({
         <div className="overflow-auto flex-1 custom-scrollbar" style={{ height: tableHeight }}>
           <table
             className="w-full caption-bottom !border-none"
-            style={{ width: `${totalTableWidth}px`, tableLayout: 'fixed' }}
+            style={{ minWidth: `${totalTableWidth}px`, width: '100%', tableLayout: 'fixed' }}
             suppressHydrationWarning
           >
             <thead className="sticky top-0 z-10 bg-component-hovered-light">

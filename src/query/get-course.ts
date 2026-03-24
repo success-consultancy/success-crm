@@ -28,3 +28,11 @@ export const useGetCourse = (universityId?: number) => {
     enabled: !!universityId,
   });
 };
+
+export const useGetAllCourses = () => {
+  return useQuery({
+    queryKey: [GET_COURSE, 'all'],
+    queryFn: () => getCourse(),
+    refetchOnWindowFocus: false,
+  });
+};
