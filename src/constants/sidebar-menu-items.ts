@@ -1,5 +1,3 @@
-
-
 import type React from 'react';
 import { clearTokens } from '@/utils/token';
 import { DashboardTitle } from '@/types/sidebar-type';
@@ -85,6 +83,12 @@ export const menuItems: MenuItem[] = [
     subItems: [
       { title: 'Users', href: '#' },
       { title: 'Employees', href: '#' },
+      { title: 'Occupation', href: '#' },
+      { title: 'Visa List', href: '#' },
+      { title: 'University', href: '/university' },
+      { title: 'Course', href: '/course' },
+      { title: 'Source', href: '/source' },
+      { title: 'Settings', href: '/settings' },
     ],
   },
 ];

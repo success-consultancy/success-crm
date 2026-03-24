@@ -6,7 +6,7 @@ export interface University {
   name: string;
   educationLevel: EducationLevel | null;
   trackInReport: boolean | null;
-  files: string[] | null;
+  files: Array<{ url: string; size: number; name: string; addedDate: string }> | null;
   location: null | string;
   description: null | string;
   comment: null | string;
@@ -21,9 +21,11 @@ export enum EducationLevel {
   HigherEducation = 'Higher Education',
   PYProvider = 'PY Provider',
   VETSector = 'VET Sector',
+  Both = 'Both',
 }
 
 export const GET_UNIVERSITY = 'get-university';
+export const GET_UNIVERSITY_BY_ID = 'get-university-by-id';
 
 const getUniversity = async () => {
   const res = await api.get('/university');
@@ -35,5 +37,19 @@ export const useGetUniversity = () => {
     queryKey: [GET_UNIVERSITY],
     queryFn: getUniversity,
     refetchOnWindowFocus: false,
+  });
+};
+
+const getUniversityById = async (id: string) => {
+  const res = await api.get(`/university/${id}`);
+  return res.data as University;
+};
+
+export const useGetUniversityById = (id: string) => {
+  return useQuery({
+    queryKey: [GET_UNIVERSITY_BY_ID, id],
+    queryFn: () => getUniversityById(id),
+    refetchOnWindowFocus: false,
+    enabled: !!id,
   });
 };
