@@ -22,7 +22,7 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
     >
       <span
         className={cn(
-          'transition-all duration-300 ease-in-out whitespace-nowrap',
+          'text-b3-b transition-all duration-300 ease-in-out whitespace-nowrap',
           collapsed ? 'opacity-0 w-0' : 'opacity-100',
         )}
       >
