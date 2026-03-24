@@ -8,8 +8,8 @@ import { format, parseISO, isValid } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Edit, EllipsisVertical, Eye, Trash2, Download } from 'lucide-react';
-import { AgreementStatus, IAgreement } from '@/types/response-types/agreement-response';
+import { Edit, EllipsisVertical, Eye, Trash2 } from 'lucide-react';
+import { AGREEMENT_STATUS_COLORS, IAgreement } from '@/types/response-types/agreement-response';
 import { useRouter } from 'next/navigation';
 import { Minus } from 'lucide-react';
 
@@ -165,11 +165,14 @@ export const useAgreementColumn = (handleDelete: (id: number) => void) => {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         const status = row.original.status;
-        const isInEffect = status === AgreementStatus.InEffect;
+        const colors = AGREEMENT_STATUS_COLORS[status] ?? { bg: '#f3f4f6', text: '#374151' };
         return (
-          <Badge className={isInEffect ? 'bg-blue-500' : 'bg-blue-300'}>
+          <span
+            className="px-2 py-1 rounded text-xs font-medium whitespace-nowrap"
+            style={{ backgroundColor: colors.bg, color: colors.text }}
+          >
             {status}
-          </Badge>
+          </span>
         );
       },
       size: 120,
@@ -181,16 +184,23 @@ export const useAgreementColumn = (handleDelete: (id: number) => void) => {
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-24 h-6" />;
-        const file = row.original.file;
-        if (!file) return <div>-</div>;
+        const files = row.original.files;
+        const fileUrl = row.original.fileUrl;
+        if (files && files.length > 0) {
+          return (
+            <div className="flex flex-col gap-1">
+              {files.map((f, i) => (
+                <a key={i} href={f.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline cursor-pointer truncate max-w-[150px]">
+                  {f.name}
+                </a>
+              ))}
+            </div>
+          );
+        }
+        if (!fileUrl) return <div>-</div>;
         return (
-          <a
-            href={file}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 hover:underline cursor-pointer"
-          >
-            {file.split('/').pop() || file}
+          <a href={fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline cursor-pointer">
+            {fileUrl.split('/').pop() || fileUrl}
           </a>
         );
       },

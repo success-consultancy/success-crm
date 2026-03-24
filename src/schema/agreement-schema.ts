@@ -13,7 +13,7 @@ export const agreementFormSchema = z.object({
   location: z.string().nullable().optional(),
   status: z.nativeEnum(AgreementStatus),
   note: z.string().nullable().optional(),
-  file: z.string().nullable().optional(),
+  files: z.array(z.any()).nullable().optional(),
 });
 
 export type AgreementSchemaType = z.infer<typeof agreementFormSchema>;
@@ -53,6 +53,6 @@ export const getAgreementDefaultValues = (agreement?: any): AgreementSchemaType 
     location: agreement?.location || null,
     status: agreement?.status || AgreementStatus.InProcess,
     note: agreement?.note || null,
-    file: agreement?.file || null,
+    files: agreement?.files || null,
   };
 };
