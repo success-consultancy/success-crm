@@ -215,6 +215,75 @@
   --text-bu-s--line-height: 1.4;
   --text-bu-s--font-weight: 600;
 
+  /* Custom Typography Scales */
+  --text-h4-700: 1.125rem;
+  --text-h4-700--line-height: 1.5rem;
+  --text-h4-700--font-weight: 700;
+
+  --text-b16: 1rem;
+  --text-b16--line-height: 1.5rem;
+  --text-b16--font-weight: 400;
+
+  --text-b16-500: 1rem;
+  --text-b16-500--line-height: 1.5rem;
+  --text-b16-500--font-weight: 500;
+
+  --text-b16-600: 1rem;
+  --text-b16-600--line-height: 1.5rem;
+  --text-b16-600--font-weight: 600;
+
+  --text-b16-700: 1rem;
+  --text-b16-700--line-height: 1.5rem;
+  --text-b16-700--font-weight: 700;
+
+  --text-b14: 0.875rem;
+  --text-b14--line-height: 1.25rem;
+  --text-b14--font-weight: 400;
+
+  --text-b14-500: 0.875rem;
+  --text-b14-500--line-height: 1.25rem;
+  --text-b14-500--font-weight: 500;
+
+  --text-b14-600: 0.875rem;
+  --text-b14-600--line-height: 1.25rem;
+  --text-b14-600--font-weight: 600;
+
+  --text-b14-700: 0.875rem;
+  --text-b14-700--line-height: 1.25rem;
+  --text-b14-700--font-weight: 700;
+
+  --text-b13: 0.75rem;
+  --text-b13--line-height: 1rem;
+  --text-b13--font-weight: 400;
+
+  --text-b13-500: 0.75rem;
+  --text-b13-500--line-height: 1rem;
+  --text-b13-500--font-weight: 500;
+
+  --text-b13-600: 0.75rem;
+  --text-b13-600--line-height: 1rem;
+  --text-b13-600--font-weight: 600;
+
+  --text-b13-700: 0.75rem;
+  --text-b13-700--line-height: 1rem;
+  --text-b13-700--font-weight: 700;
+
+  --text-b12: 0.75rem;
+  --text-b12--line-height: 1rem;
+  --text-b12--font-weight: 400;
+
+  --text-b12-500: 0.75rem;
+  --text-b12-500--line-height: 1rem;
+  --text-b12-500--font-weight: 500;
+
+  --text-b12-600: 0.75rem;
+  --text-b12-600--line-height: 1rem;
+  --text-b12-600--font-weight: 600;
+
+  --text-b12-700: 0.75rem;
+  --text-b12-700--line-height: 1rem;
+  --text-b12-700--font-weight: 700;
+
   /* Animations */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
@@ -437,74 +506,6 @@
 
   .text-h4 {
     @apply text-lg font-semibold leading-6;
-  }
-
-  .text-h4-700 {
-    @apply text-lg font-bold leading-6;
-  }
-
-  .text-b16 {
-    @apply text-base font-normal leading-6;
-  }
-
-  .text-b16-500 {
-    @apply text-base font-medium leading-6;
-  }
-
-  .text-b16-600 {
-    @apply text-base font-semibold leading-6;
-  }
-
-  .text-b16-700 {
-    @apply text-base font-bold leading-6;
-  }
-
-  .text-b14 {
-    @apply text-sm font-normal leading-5;
-  }
-
-  .text-b14-500 {
-    @apply text-sm font-medium leading-5;
-  }
-
-  .text-b14-600 {
-    @apply text-sm font-semibold leading-5;
-  }
-
-  .text-b14-700 {
-    @apply text-sm font-bold leading-5;
-  }
-
-  .text-b13 {
-    @apply text-xs font-normal leading-4;
-  }
-
-  .text-b13-500 {
-    @apply text-xs font-medium leading-4;
-  }
-
-  .text-b13-600 {
-    @apply text-xs font-semibold leading-4;
-  }
-
-  .text-b13-700 {
-    @apply text-xs font-bold leading-4;
-  }
-
-  .text-b12 {
-    @apply text-xs font-normal leading-4;
-  }
-
-  .text-b12-500 {
-    @apply text-xs font-medium leading-4;
-  }
-
-  .text-b12-600 {
-    @apply text-xs font-semibold leading-4;
-  }
-
-  .text-b12-700 {
-    @apply text-xs font-bold leading-4;
   }
 }
 

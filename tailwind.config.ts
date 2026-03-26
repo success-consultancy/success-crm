@@ -263,6 +263,23 @@ export default {
             fontWeight: '600',
           },
         ], //14px semibold
+        'h4-700': ['1.125rem', { lineHeight: '1.5rem', fontWeight: '700' }],
+        'b16': ['1rem', { lineHeight: '1.5rem', fontWeight: '400' }],
+        'b16-500': ['1rem', { lineHeight: '1.5rem', fontWeight: '500' }],
+        'b16-600': ['1rem', { lineHeight: '1.5rem', fontWeight: '600' }],
+        'b16-700': ['1rem', { lineHeight: '1.5rem', fontWeight: '700' }],
+        'b14': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '400' }],
+        'b14-500': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '500' }],
+        'b14-600': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '600' }],
+        'b14-700': ['0.875rem', { lineHeight: '1.25rem', fontWeight: '700' }],
+        'b13': ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }],
+        'b13-500': ['0.75rem', { lineHeight: '1rem', fontWeight: '500' }],
+        'b13-600': ['0.75rem', { lineHeight: '1rem', fontWeight: '600' }],
+        'b13-700': ['0.75rem', { lineHeight: '1rem', fontWeight: '700' }],
+        'b12': ['0.75rem', { lineHeight: '1rem', fontWeight: '400' }],
+        'b12-500': ['0.75rem', { lineHeight: '1rem', fontWeight: '500' }],
+        'b12-600': ['0.75rem', { lineHeight: '1rem', fontWeight: '600' }],
+        'b12-700': ['0.75rem', { lineHeight: '1rem', fontWeight: '700' }],
       },
       keyframes: {
         'accordion-down': {
