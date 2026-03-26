@@ -1,7 +1,17 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { Plus, ChevronUp, ChevronDown, ChevronsUpDown, EllipsisVertical, Eye, Edit, Trash2, FileText } from 'lucide-react';
+import {
+  Plus,
+  ChevronUp,
+  ChevronDown,
+  ChevronsUpDown,
+  EllipsisVertical,
+  Eye,
+  Edit,
+  Trash2,
+  FileText,
+} from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
@@ -96,9 +106,11 @@ const UniversityListPage = () => {
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <ChevronsUpDown className="h-3.5 w-3.5 ml-1 inline opacity-60" />;
-    return sortDir === 'asc'
-      ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" />
-      : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />;
+    return sortDir === 'asc' ? (
+      <ChevronUp className="h-3.5 w-3.5 ml-1 inline" />
+    ) : (
+      <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />
+    );
   };
 
   const handleExport = useCallback(() => {
@@ -133,7 +145,10 @@ const UniversityListPage = () => {
           <Input
             placeholder="Search by university, group or location"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
             className="max-w-[22rem]"
           />
           <div className="flex items-center">
@@ -153,22 +168,13 @@ const UniversityListPage = () => {
             <thead className="sticky top-0 z-10 bg-component-hovered-light">
               <tr className="*:px-3 *:py-2 *:text-neutral-darkGrey *:text-left *:align-middle *:text-[.875rem] border-b border-neutral-border-light">
                 <th className="w-12">S.N</th>
-                <th
-                  className="min-w-[200px] cursor-pointer select-none"
-                  onClick={() => handleSort('name')}
-                >
+                <th className="min-w-[200px] cursor-pointer select-none" onClick={() => handleSort('name')}>
                   University name <SortIcon field="name" />
                 </th>
-                <th
-                  className="min-w-[140px] cursor-pointer select-none"
-                  onClick={() => handleSort('educationLevel')}
-                >
+                <th className="min-w-[140px] cursor-pointer select-none" onClick={() => handleSort('educationLevel')}>
                   Group <SortIcon field="educationLevel" />
                 </th>
-                <th
-                  className="min-w-[180px] cursor-pointer select-none"
-                  onClick={() => handleSort('location')}
-                >
+                <th className="min-w-[180px] cursor-pointer select-none" onClick={() => handleSort('location')}>
                   Location <SortIcon field="location" />
                 </th>
                 <th className="min-w-[180px]">Description</th>
@@ -179,25 +185,41 @@ const UniversityListPage = () => {
             </thead>
             <tbody>
               {isLoading
-                ? Array(pageSize).fill(null).map((_, i) => (
-                    <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-44" /></td>
-                      <td><Skeleton className="h-5 w-28" /></td>
-                      <td><Skeleton className="h-5 w-36" /></td>
-                      <td><Skeleton className="h-5 w-36" /></td>
-                      <td><Skeleton className="h-5 w-16" /></td>
-                      <td><Skeleton className="h-5 w-8" /></td>
-                      <td><Skeleton className="h-5 w-8" /></td>
-                    </tr>
-                  ))
+                ? Array(pageSize)
+                    .fill(null)
+                    .map((_, i) => (
+                      <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
+                        <td>
+                          <Skeleton className="h-5 w-6" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-44" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-28" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-36" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-36" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-16" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-8" />
+                        </td>
+                        <td>
+                          <Skeleton className="h-5 w-8" />
+                        </td>
+                      </tr>
+                    ))
                 : pageItems.flatMap((university, idx) => {
                     const isExpanded = expandedIds.has(university.id);
                     const courses = coursesByUniversity.get(university.id) ?? [];
                     const files = Array.isArray(university.files) ? university.files : [];
-                    const desc = university.description
-                      ? university.description.replace(/<[^>]*>/g, '')
-                      : null;
+                    const desc = university.description ? university.description.replace(/<[^>]*>/g, '') : null;
 
                     return [
                       <tr
@@ -208,17 +230,19 @@ const UniversityListPage = () => {
                         <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
                         <td className="font-medium">
                           <div className="flex items-center gap-2">
-                            {courses.length > 0 && (
-                              <button
-                                className="p-0.5 rounded hover:bg-gray-200 text-gray-400 flex-shrink-0"
-                                onClick={(e) => toggleExpand(university.id, e)}
-                                aria-label={isExpanded ? 'Collapse courses' : 'Expand courses'}
-                              >
-                                {isExpanded
-                                  ? <ChevronUp className="h-3.5 w-3.5" />
-                                  : <ChevronDown className="h-3.5 w-3.5" />}
-                              </button>
-                            )}
+                            {/* {courses.length > 0 && ( */}
+                            <button
+                              className="p-0.5 rounded hover:bg-gray-200 text-gray-400 flex-shrink-0"
+                              onClick={(e) => toggleExpand(university.id, e)}
+                              aria-label={isExpanded ? 'Collapse courses' : 'Expand courses'}
+                            >
+                              {isExpanded ? (
+                                <ChevronUp className="h-3.5 w-3.5" />
+                              ) : (
+                                <ChevronDown className="h-3.5 w-3.5" />
+                              )}
+                            </button>
+                            {/* )} */}
                             <span className="truncate max-w-[200px]">{university.name}</span>
                           </div>
                         </td>
@@ -263,7 +287,10 @@ const UniversityListPage = () => {
                                 </Button>
                                 <DeleteDialog
                                   trigger={
-                                    <Button variant="ghost" className="justify-start gap-2 text-red-600 hover:text-red-700 w-full">
+                                    <Button
+                                      variant="ghost"
+                                      className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
+                                    >
                                       <Trash2 className="h-4 w-4" />
                                       Delete
                                     </Button>
@@ -320,21 +347,28 @@ const UniversityListPage = () => {
           <div className="text-sm flex items-center gap-2 text-neutral-darkGrey">
             <Select
               value={String(pageSize)}
-              onValueChange={(val) => { setPageSize(Number(val)); setPage(1); }}
+              onValueChange={(val) => {
+                setPageSize(Number(val));
+                setPage(1);
+              }}
             >
               <SelectTrigger className="w-fit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((n) => (
-                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <span>Items per page</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-neutral-darkGrey">
-            <span>{rangeStart} - {rangeEnd} of {totalItems}</span>
+            <span>
+              {rangeStart} - {rangeEnd} of {totalItems}
+            </span>
             <button
               className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
