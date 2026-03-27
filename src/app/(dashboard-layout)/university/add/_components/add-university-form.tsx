@@ -136,14 +136,22 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
     }
   };
 
-  // Filter system courses: exclude already-linked and already-staged ones
+  // Filter system courses: exclude already-linked and already-staged ones, deduplicate by name
   const linkedNames = new Set(availableCourses.map((c) => c.name.toLowerCase()));
   const stagedNames = new Set(newCourses.map((c) => c.toLowerCase()));
-  const filteredOptions = allSystemCourses.filter(
-    (c) =>
-      !linkedNames.has(c.name.toLowerCase()) &&
-      !stagedNames.has(c.name.toLowerCase()) &&
-      c.name.toLowerCase().includes(courseSearch.toLowerCase()),
+  const filteredOptions = Array.from(
+    allSystemCourses
+      .filter(
+        (c) =>
+          !linkedNames.has(c.name.toLowerCase()) &&
+          !stagedNames.has(c.name.toLowerCase()) &&
+          c.name.toLowerCase().includes(courseSearch.toLowerCase()),
+      )
+      .reduce((map, c) => {
+        if (!map.has(c.name.toLowerCase())) map.set(c.name.toLowerCase(), c);
+        return map;
+      }, new Map<string, typeof allSystemCourses[0]>())
+      .values(),
   );
 
   const submitHandler = (data: UniversitySchemaType) => {
