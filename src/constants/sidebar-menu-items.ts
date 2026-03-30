@@ -35,7 +35,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.CheckIn,
     icon: Icons.CheckInIcon,
-    href: '#',
+    href: '/check-in',
   },
   {
     title: DashboardTitle.Leads,
