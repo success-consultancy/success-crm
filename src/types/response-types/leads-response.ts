@@ -1,5 +1,12 @@
 import { UploadedFileMeta } from '../common';
 
+export interface LeadStageHistoryEntry {
+  stage: string;
+  startDate: string;
+  endDate: string | null;
+  days: number | null;
+}
+
 export interface LeadsResponseType {
   count: number;
   rows: ILead[];
@@ -43,6 +50,8 @@ export interface ILead {
   remarks: null | string;
   anzsco: null | string;
   updatedBy: null | number;
+  leadStage: string | null;
+  leadStageHistory: LeadStageHistoryEntry[] | null;
   files: UploadedFileMeta[];
   user: {
     firstName: string;
