@@ -7,22 +7,66 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
-type LeadStagesProps = { lead: ILead };
-export const LeadStages = ({ lead }: LeadStagesProps) => {
+type LeadStagesProps = {
+  lead: ILead;
+  onFollowUpClick?: () => void;
+};
+
+function getDaysForStage(lead: ILead, stageName: string): number | null {
+  const history = lead.leadStageHistory;
+  if (!history || history.length === 0) return null;
+  const entry = history.find((h) => h.stage === stageName);
+  return entry?.days ?? null;
+}
+
+function formatDate(dateString: string | null | undefined): string {
+  if (!dateString) return '-';
+  try {
+    const d = new Date(dateString);
+    return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  } catch {
+    return '-';
+  }
+}
+
+function getClosingDate(lead: ILead): string {
+  const history = lead.leadStageHistory;
+  if (!history) return '-';
+  const closedEntry = history.find((h) => (h.stage === 'Converted' || h.stage === 'Not Interested') && h.startDate);
+  return closedEntry ? formatDate(closedEntry.startDate) : '-';
+}
+
+export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
 
-  const stages = [
-    { name: LeadStatusTypes.New, active: lead.status === LeadStatusTypes.New },
-    { name: LeadStatusTypes.Negotiation, active: lead.status === LeadStatusTypes.Negotiation },
-    { name: LeadStatusTypes.Converted, active: lead.status === LeadStatusTypes.Converted },
-    { name: LeadStatusTypes.NotInterested, active: lead.status === LeadStatusTypes.NotInterested },
+  const mainStages = [
+    LeadStatusTypes.New,
+    LeadStatusTypes.Negotiation,
+    LeadStatusTypes.Converted,
+    LeadStatusTypes.NotInterested,
   ];
+
+  const currentStage = lead.leadStage || lead.status || LeadStatusTypes.New;
+  const activeIndex = mainStages.findIndex((s) => s === currentStage);
+
+  // Check if lead has follow-up
+  const hasFollowUp = !!lead.followUpDate;
 
   const updateLeadStatus = useUpdateLeadStatus();
 
   const handleStageChange = (stage: string) => {
+    if (stage === 'Follow-up') {
+      onFollowUpClick?.();
+      return;
+    }
+    setPendingStage(stage);
+    setConfirmOpen(true);
+  };
+
+  const handleWonLost = (type: 'won' | 'lost') => {
+    const stage = type === 'won' ? LeadStatusTypes.Converted : LeadStatusTypes.NotInterested;
     setPendingStage(stage);
     setConfirmOpen(true);
   };
@@ -45,13 +89,14 @@ export const LeadStages = ({ lead }: LeadStagesProps) => {
     setPendingStage(null);
   };
 
-  return (
-    <div className="border rounded-lg shadow-sm ">
+  console.log(currentStage);
 
+  return (
+    <div className="border rounded-lg shadow-sm">
       <div className="border-b px-6 py-3 flex justify-between items-center">
         <p className="text-xl font-bold">Lead stages</p>
 
-        <div className='flex gap-2'>
+        <div className="flex gap-2">
           <div
             onClick={(e) => {
               e.stopPropagation();
@@ -78,33 +123,68 @@ export const LeadStages = ({ lead }: LeadStagesProps) => {
       <div className="px-6 py-3 flex justify-between items-center">
         <div className="flex flex-col">
           <p className="text-b14-600 text-neutral-black">Start</p>
-          <p className="text-b14 text-neutral-dark-grey">22/02/2025</p>
+          <p className="text-b14 text-neutral-dark-grey">{formatDate(lead.createdAt)}</p>
         </div>
         <div className="flex flex-col items-end">
           <p className="text-b14-600 text-neutral-black">Closing</p>
-          <p className="text-b14 text-neutral-dark-grey">-</p>
+          <p className="text-b14 text-neutral-dark-grey">{getClosingDate(lead)}</p>
         </div>
       </div>
 
-      <div className="px-6 pb-6 flex gap-10">
-        <div className="flex w-full">
-          {(() => {
-            const activeIndex = stages.findIndex((s) => s.active);
-            return stages.map((stage, index) => (
-              <StageItem
-                key={stage.name}
-                name={stage.name}
-                active={stage.active}
-                completed={activeIndex !== -1 && index < activeIndex}
-                isFirst={index === 0}
-                handleStageChange={handleStageChange}
-              />
-            ));
-          })()}
+      <div className="px-6 pb-6 flex gap-4 items-end">
+        <div className="flex w-full items-end">
+          {mainStages.map((stage, index) => (
+            <StageItem
+              key={stage}
+              name={stage}
+              active={stage === currentStage}
+              completed={activeIndex !== -1 && index < activeIndex}
+              isFirst={index === 0}
+              days={getDaysForStage(lead, stage)}
+              handleStageChange={handleStageChange}
+            />
+          ))}
+
+          {/* Follow-up stage indicator */}
+          <div className="relative flex flex-col items-center w-full">
+            {getDaysForStage(lead, 'Follow-up') != null && (getDaysForStage(lead, 'Follow-up') ?? 0) > 0 && (
+              <div className="mb-1">
+                <span className="inline-block bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                  {getDaysForStage(lead, 'Follow-up')} days
+                </span>
+              </div>
+            )}
+            <div
+              className={`relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full cursor-pointer ${
+                hasFollowUp ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-800'
+              }`}
+              style={{
+                clipPath: `polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%)`,
+              }}
+              onClick={() => handleStageChange('Follow-up')}
+            >
+              Follow-up
+            </div>
+          </div>
         </div>
-        <div className="flex gap-2 ml-4">
-          <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
-          <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
+
+        <div className="flex gap-2 ml-4 shrink-0">
+          <button
+            onClick={() => handleWonLost('won')}
+            className={`px-4 py-2 rounded-md font-medium ${
+              currentStage === LeadStatusTypes.Converted ? 'bg-green-500 text-white' : 'bg-green-100 text-green-700'
+            }`}
+          >
+            Won
+          </button>
+          <button
+            onClick={() => handleWonLost('lost')}
+            className={`px-4 py-2 rounded-md font-medium ${
+              currentStage === LeadStatusTypes.NotInterested ? 'bg-red-500 text-white' : 'bg-red-100 text-red-700'
+            }`}
+          >
+            Lost
+          </button>
         </div>
       </div>
 

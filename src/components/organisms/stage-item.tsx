@@ -5,10 +5,11 @@ interface StageProps {
     active?: boolean;
     completed?: boolean;
     isFirst?: boolean;
+    days?: number | null;
     handleStageChange: (stage: string) => void;
 }
 
-const StageItem = ({ name, active, completed, isFirst, handleStageChange }: StageProps) => {
+const StageItem = ({ name, active, completed, isFirst, days, handleStageChange }: StageProps) => {
     const baseClasses =
         'relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full';
     const activeClasses = 'bg-primary-blue text-white';
@@ -23,16 +24,25 @@ const StageItem = ({ name, active, completed, isFirst, handleStageChange }: Stag
     const bgStyle = completed && !active ? { backgroundColor: '#E2ECF3' } : {};
 
     return (
-        <div
-            className={cn(
-                baseClasses,
-                active ? activeClasses : completed ? completedClasses : inactiveClasses,
-                !isFirst && `-ml-[${pointSize}px]`,
+        <div className="relative flex flex-col items-center w-full">
+            {days != null && days > 0 && (
+                <div className="mb-1">
+                    <span className="inline-block bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                        {days} days
+                    </span>
+                </div>
             )}
-            style={{ clipPath: clipPathValue, ...bgStyle }}
-            onClick={() => !active && handleStageChange(name)}
-        >
-            {name}
+            <div
+                className={cn(
+                    baseClasses,
+                    active ? activeClasses : completed ? completedClasses : inactiveClasses,
+                    !isFirst && `-ml-[${pointSize}px]`,
+                )}
+                style={{ clipPath: clipPathValue, ...bgStyle }}
+                onClick={() => !active && handleStageChange(name)}
+            >
+                {name}
+            </div>
         </div>
     );
 };

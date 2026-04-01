@@ -44,7 +44,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
         <div className="mt-6">
           {activeTab === 'overview' && (
             <div className="space-y-4">
-              <LeadStages lead={lead} />
+              <LeadStages lead={lead} onFollowUpClick={() => setActiveTab('follow-up')} />
               <PersonalDetails lead={lead} />
               <PassportVisaInfo lead={lead} />
               <ServiceDetails lead={lead} />
