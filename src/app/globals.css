@@ -83,6 +83,9 @@
   --color-neutral-border-light: var(--neutral-border-light);
   --color-neutral-white: var(--neutral-white);
 
+  /* Colors - Bluish */
+  --color-bluish-grey: var(--bluish-grey);
+
   /* Colors - Primary */
   --color-primary-red: var(--primary-red);
   --color-primary-blue: var(--primary-blue);
