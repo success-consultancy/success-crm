@@ -219,11 +219,6 @@
   padding: 1px 4px;
 }
 
-/* ---- Events container full width ---- */
-.rbc-events-container {
-  margin-right: 0 !important;
-}
-
 /* ---- DnD resize handles ---- */
 .rbc-addons-dnd-resize-ns-anchor {
   text-align: center;
