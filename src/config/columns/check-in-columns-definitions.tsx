@@ -18,6 +18,33 @@ const useWaitTime = (timerStart: string) => {
   return `${hours}h ${mins}m`;
 };
 
+const formatWaitTime = (totalMinutes: string) => {
+  const mins = parseInt(totalMinutes, 10);
+  if (isNaN(mins)) return '-';
+  if (mins < 60) return `${mins} minutes`;
+  const days = Math.floor(mins / 1440);
+  const hours = Math.floor((mins % 1440) / 60);
+  const remainingMins = mins % 60;
+  const parts: string[] = [];
+  if (days > 0) parts.push(`${days}d`);
+  if (hours > 0) parts.push(`${hours}h`);
+  if (remainingMins > 0) parts.push(`${remainingMins}m`);
+  return parts.join(' ');
+};
+
+const formatDateTime = (dateStr: string | null) => {
+  if (!dateStr) return '-';
+  const date = new Date(dateStr);
+  return date.toLocaleString('en-AU', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  });
+};
+
 export const useActiveCheckInColumns = (onEndSession: (id: number) => void) => {
   const router = useRouter();
 
@@ -86,6 +113,43 @@ export const useActiveCheckInColumns = (onEndSession: (id: number) => void) => {
         return <span>{row.original.lead?.country || '-'}</span>;
       },
       size: 160,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-status',
+      header: () => <ColumnHeader title="Status" keyParam="isNew" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-20 h-5" />;
+        return row.original.isNew ? (
+          <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>
+        ) : (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Returning</Badge>
+        );
+      },
+      size: 120,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-start-time',
+      header: () => <ColumnHeader title="Start time" keyParam="timerStart" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-36 h-5" />;
+        return <span>{formatDateTime(row.original.timerStart)}</span>;
+      },
+      size: 200,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-wait-time',
+      header: () => <ColumnHeader title="Wait time" keyParam="waitTime" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-20 h-5" />;
+        return <span>{row.original.waitTime ? formatWaitTime(row.original.waitTime) : useWaitTime(row.original.timerStart)}</span>;
+      },
+      size: 120,
       meta: { isVisible: true },
     },
     {
@@ -207,6 +271,39 @@ export const useHistoryCheckInColumns = () => {
         ) : (
           <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Returning</Badge>
         );
+      },
+      size: 120,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-start-time',
+      header: () => <ColumnHeader title="Start time" keyParam="timerStart" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-36 h-5" />;
+        return <span>{formatDateTime(row.original.timerStart)}</span>;
+      },
+      size: 200,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-end-time',
+      header: () => <ColumnHeader title="End time" keyParam="timerStop" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-36 h-5" />;
+        return <span>{formatDateTime(row.original.timerStop)}</span>;
+      },
+      size: 200,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'checkin-wait-time',
+      header: () => <ColumnHeader title="Wait time" keyParam="waitTime" />,
+      cell: function Cell({ row }) {
+        const ctx = useTableContext();
+        if (ctx?.isLoading) return <Skeleton className="w-20 h-5" />;
+        return <span>{row.original.waitTime ? formatWaitTime(row.original.waitTime) : '-'}</span>;
       },
       size: 120,
       meta: { isVisible: true },
