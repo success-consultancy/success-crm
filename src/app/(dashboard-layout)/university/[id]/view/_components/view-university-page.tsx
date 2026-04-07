@@ -31,7 +31,7 @@ const formatSize = (bytes: number) => {
 };
 
 const getFileType = (name: string) => {
-  const ext = name.split('.').pop()?.toUpperCase();
+  const ext = name?.split('.')?.pop()?.toUpperCase();
   return ext || '-';
 };
 
@@ -50,7 +50,14 @@ const ViewUniversityPage = ({ id }: Props) => {
   const files: UploadedFileMeta[] = Array.isArray(rawFiles)
     ? (rawFiles as UploadedFileMeta[])
     : typeof rawFiles === 'string'
-      ? (() => { try { const p = JSON.parse(rawFiles); return Array.isArray(p) ? p : []; } catch { return []; } })()
+      ? (() => {
+          try {
+            const p = JSON.parse(rawFiles);
+            return Array.isArray(p) ? p : [];
+          } catch {
+            return [];
+          }
+        })()
       : [];
   const linkedCourses = (allCourses || []).filter((c) => c.universityId === university.id);
 
