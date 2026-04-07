@@ -179,8 +179,10 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               type="button"
               onClick={() => form.setValue('dueDate', today)}
               className={cn(
-                'text-xs px-2 py-0.5 rounded border transition-colors',
-                isToday ? 'bg-blue-50 border-blue-300 text-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50',
+                'text-c1-c px-2 py-0.5 rounded border transition-colors',
+                isToday
+                  ? 'bg-blue-50 border-blue-300 text-blue-600'
+                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
               )}
             >
               Today
@@ -191,10 +193,10 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               type="button"
               onClick={() => form.setValue('dueDate', tomorrow)}
               className={cn(
-                'text-xs px-2 py-0.5 rounded border transition-colors',
+                'text-c1-c px-2 py-0.5 rounded border transition-colors',
                 isTomorrow
                   ? 'bg-blue-50 border-blue-300 text-blue-600'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50',
+                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
               )}
             >
               Tomorrow
