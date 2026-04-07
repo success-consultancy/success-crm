@@ -74,55 +74,56 @@ const AppointmentPage = () => {
 
           {/* Step content — keyed so each transition re-mounts and plays enter animation */}
           <div key={step} className="animate-in fade-in slide-in-from-bottom-2 duration-200 ease-out">
-          {step === 1 && (
-            <StepBranch
-              selected={data.branch}
-              onSelect={(branch) => update('branch', branch)}
-              onContinue={() => setStep(2)}
-            />
-          )}
+            {step === 1 && (
+              <StepBranch
+                selected={data.branch}
+                onSelect={(branch) => update('branch', branch)}
+                onContinue={() => setStep(2)}
+              />
+            )}
 
-          {step === 2 && (
-            <StepService
-              selected={data.services}
-              onToggle={toggleService}
-              onBack={() => setStep(1)}
-              onContinue={() => setStep(3)}
-            />
-          )}
+            {step === 2 && (
+              <StepService
+                selected={data.services}
+                onToggle={toggleService}
+                onBack={() => setStep(1)}
+                onContinue={() => setStep(3)}
+              />
+            )}
 
-          {step === 3 && (
-            <StepSchedule
-              date={data.date}
-              consultantId={data.consultantId}
-              time={data.time}
-              onDateChange={(date) => update('date', date)}
-              onConsultantChange={(id) => update('consultantId', id)}
-              onTimeChange={(time) => update('time', time)}
-              onBack={() => setStep(2)}
-              onContinue={() => setStep(4)}
-            />
-          )}
+            {step === 3 && (
+              <StepSchedule
+                branch={data.branch}
+                date={data.date}
+                consultantId={data.consultantId}
+                time={data.time}
+                onDateChange={(date) => update('date', date)}
+                onConsultantChange={(id) => update('consultantId', id)}
+                onTimeChange={(time) => update('time', time)}
+                onBack={() => setStep(2)}
+                onContinue={() => setStep(4)}
+              />
+            )}
 
-          {step === 4 && (
-            <StepContact
-              fullName={data.fullName}
-              email={data.email}
-              phone={data.phone}
-              onChange={(field, value) => update(field, value)}
-              onBack={() => setStep(3)}
-              onContinue={() => setStep(5)}
-            />
-          )}
+            {step === 4 && (
+              <StepContact
+                fullName={data.fullName}
+                email={data.email}
+                phone={data.phone}
+                onChange={(field, value) => update(field, value)}
+                onBack={() => setStep(3)}
+                onContinue={() => setStep(5)}
+              />
+            )}
 
-          {step === 5 && (
-            <>
-              <div className="pt-[22px]">
-                <AppointmentStepper currentStep={5} />
-              </div>
-              <StepSuccess data={data} onGoHome={() => (window.location.href = '/')} />
-            </>
-          )}
+            {step === 5 && (
+              <>
+                <div className="pt-[22px]">
+                  <AppointmentStepper currentStep={5} />
+                </div>
+                <StepSuccess data={data} onGoHome={() => (window.location.href = '/')} />
+              </>
+            )}
           </div>
         </div>
       </div>

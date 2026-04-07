@@ -2,7 +2,16 @@
 
 import { CheckCircle2, Calendar, Clock, Briefcase, MapPin, User, Mail, Phone } from 'lucide-react';
 import StepButtons from './step-buttons';
-import { CONSULTANTS } from './step-schedule';
+import { useGetUsersForAppointment } from '@/query/get-users-for-appointment';
+
+const AVATAR_COLORS = [
+  '#007acc', '#9b7fb6', '#5a9a6f', '#d97706', '#dc2626',
+  '#0891b2', '#7c3aed', '#db2777', '#059669', '#ea580c',
+];
+
+function getInitials(firstName: string, lastName: string) {
+  return `${firstName[0] ?? ''}${lastName[0] ?? ''}`.toUpperCase();
+}
 
 const BRANCH_ADDRESSES: Record<string, string> = {
   Canberra: 'Ground Floor, Unit G06, 8 Gribble St, Gungahlin, ACT 2912',
@@ -42,7 +51,9 @@ const formatDate = (dateStr: string) => {
 };
 
 const StepSuccess = ({ data, onGoHome }: Props) => {
-  const consultant = CONSULTANTS.find((c) => c.id === data.consultantId);
+  const { data: consultants = [] } = useGetUsersForAppointment(data.branch);
+  const consultantIndex = consultants.findIndex((c) => String(c.id) === data.consultantId);
+  const consultant = consultants[consultantIndex] ?? null;
   const address = BRANCH_ADDRESSES[data.branch] || data.branch;
 
   return (
@@ -69,23 +80,35 @@ const StepSuccess = ({ data, onGoHome }: Props) => {
         {consultant && (
           <div className="bg-white px-5 pt-4 pb-5 flex items-center">
             <div className="flex flex-1 gap-3.5 items-center">
-              <div
-                className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-sm shrink-0"
-                style={{ backgroundColor: consultant.color }}
-              >
-                {consultant.initials}
-              </div>
+              {consultant.profileUrl ? (
+                <img
+                  src={consultant.profileUrl}
+                  alt={`${consultant.firstName} ${consultant.lastName}`}
+                  className="w-12 h-12 rounded-full object-cover shrink-0"
+                />
+              ) : (
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-semibold text-sm shrink-0"
+                  style={{ backgroundColor: AVATAR_COLORS[consultantIndex % AVATAR_COLORS.length] }}
+                >
+                  {getInitials(consultant.firstName, consultant.lastName)}
+                </div>
+              )}
               <div className="flex flex-col gap-0.5">
                 <p className="font-semibold text-[18px] leading-[26px] text-[#1c1c1c] whitespace-nowrap">
-                  {consultant.name}
+                  {consultant.firstName} {consultant.lastName}
                 </p>
-                <p className="text-[14px] leading-[20px] text-[#484848]">{consultant.role}</p>
+                {consultant.appointmentNote && (
+                  <p className="text-[14px] leading-[20px] text-[#484848]">{consultant.appointmentNote}</p>
+                )}
               </div>
             </div>
-            <div className="flex flex-col gap-0.5 items-end shrink-0">
-              <p className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c]">{consultant.fee}</p>
-              <p className="text-[12px] leading-[16px] text-[#1c1c1c]">Consultation Fee</p>
-            </div>
+            {consultant.isPaid && consultant.paidAmount && (
+              <div className="flex flex-col gap-0.5 items-end shrink-0">
+                <p className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c]">${consultant.paidAmount}</p>
+                <p className="text-[12px] leading-[16px] text-[#1c1c1c]">Consultation Fee</p>
+              </div>
+            )}
           </div>
         )}
 

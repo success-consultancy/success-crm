@@ -27,4 +27,5 @@ export const QUERY_KEYS = {
   GET_AGREEMENT_BY_ID: 'get-agreement-by-id',
   GET_DASHBOARD: 'get-dashboard',
   GET_CHECK_INS: 'get-check-ins',
+  GET_USERS_FOR_APPOINTMENT: 'get-users-for-appointment',
 };
