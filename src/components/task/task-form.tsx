@@ -108,7 +108,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
             placeholder="Title *"
             autoFocus
             className={cn(
-              'w-full text-sm font-medium outline-none placeholder:text-gray-400 bg-transparent',
+              'w-full text-b1-b text-neutral-darkGrey outline-none  bg-transparent',
               form.formState.errors.detail && 'placeholder:text-red-400',
             )}
           />
@@ -120,7 +120,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
           <input
             {...form.register('detailDescription')}
             placeholder="Description"
-            className="w-full text-xs text-gray-500 outline-none mt-1 placeholder:text-gray-400 bg-transparent"
+            className="w-full text-c2 text-neutral-darkGrey outline-none mt-1 placeholder:text-neutral-darkGrey bg-transparent"
           />
 
           {/* Selected chips */}
