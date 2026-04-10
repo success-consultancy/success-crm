@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import RecaptchaProvider from './_components/recaptcha-provider';
 
 const siteUrl = process.env.NEXT_PUBLIC_BASE_URL ?? '';
 
@@ -46,5 +47,5 @@ export const metadata: Metadata = {
 };
 
 export default function AppointmentsLayout({ children }: { children: React.ReactNode }) {
-  return <>{children}</>;
+  return <RecaptchaProvider>{children}</RecaptchaProvider>;
 }

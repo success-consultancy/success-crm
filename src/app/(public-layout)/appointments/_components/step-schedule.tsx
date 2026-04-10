@@ -1,11 +1,61 @@
 'use client';
 
 import { useState } from 'react';
+import axios from 'axios';
 import { ChevronDown, GraduationCap, MapPin, CreditCard } from 'lucide-react';
+import { useQuery } from '@tanstack/react-query';
 import StepButtons from './step-buttons';
 import AppointmentDatePicker from './appointment-date-picker';
 import { useGetUsersForAppointment } from '@/query/get-users-for-appointment';
 import type { UserForAppointment } from '@/query/get-users-for-appointment';
+
+const APPOINTMENT_API_BASE = 'https://api.successedu.com.au';
+
+function getBranchSlug(branch: string): string {
+  return branch
+    .toLowerCase()
+    .replace(/\s*\([^)]*\)/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+    .trim();
+}
+
+function getSlotFromISOStart(start: string): string {
+  // If no timezone suffix, treat as Sydney local time and parse directly
+  if (!start.endsWith('Z') && !/[+-]\d{2}:\d{2}$/.test(start)) {
+    const timePart = start.split('T')[1] ?? '';
+    const [h, m] = timePart.split(':').map(Number);
+    const period = h >= 12 ? 'PM' : 'AM';
+    const displayH = h === 0 ? 12 : h > 12 ? h - 12 : h;
+    return `${displayH}:${String(m).padStart(2, '0')} ${period}`;
+  }
+  return new Date(start).toLocaleTimeString('en-US', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+    timeZone: 'Australia/Sydney',
+  });
+}
+
+interface AppointmentSlot {
+  start: string;
+  end: string;
+  timezone: string;
+  userId: string[];
+  open: boolean;
+  isPaid: boolean;
+  paidAmount: string | null;
+  slotTime: number;
+}
+
+const fetchAppointmentSlots = async (branch: string, date: string, userId: string): Promise<AppointmentSlot[]> => {
+  const slug = getBranchSlug(branch);
+  const res = await axios.get<AppointmentSlot[]>(
+    `${APPOINTMENT_API_BASE}/${slug}/public/appointment`,
+    { params: { date, userId } },
+  );
+  return res.data ?? [];
+};
 
 const ALL_SLOTS = [
   '9:00 AM', '9:30 AM', '10:00 AM', '10:30 AM', '11:00 AM', '11:30 AM',
@@ -69,6 +119,17 @@ const StepSchedule = ({
 }: Props) => {
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { data: consultants = [], isLoading } = useGetUsersForAppointment(branch);
+
+  const { data: appointmentSlots = [] } = useQuery({
+    queryKey: ['appointmentSlots', branch, date, consultantId],
+    queryFn: () => fetchAppointmentSlots(branch, date, consultantId),
+    enabled: !!date && !!consultantId,
+    staleTime: 30_000,
+  });
+
+  const bookedSlots = appointmentSlots
+    .filter((slot) => !slot.open)
+    .map((slot) => getSlotFromISOStart(slot.start));
 
   const toggleExpanded = (id: string) => {
     setExpandedId(expandedId === id ? null : id);
@@ -274,18 +335,22 @@ const StepSchedule = ({
         <div role="radiogroup" aria-labelledby="time-slots-label" className="flex flex-wrap gap-2">
           {ALL_SLOTS.map((slot) => {
             const isSelected = time === slot;
+            const isBooked = bookedSlots.includes(slot);
             return (
               <button
                 key={slot}
                 type="button"
                 role="radio"
                 aria-checked={isSelected}
-                aria-label={slot}
-                onClick={() => onTimeChange(slot)}
+                aria-label={isBooked ? `${slot} — unavailable` : slot}
+                disabled={isBooked}
+                onClick={() => !isBooked && onTimeChange(slot)}
                 className={`h-10 px-4 rounded-[6px] border text-[14px] font-medium leading-[20px] transition-all duration-150 ${
-                  isSelected
-                    ? 'border-[#007acc] text-[#007acc] bg-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
-                    : 'border-[#e3e3e3] text-[#1c1c1c] bg-white cursor-pointer hover:border-[#007acc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
+                  isBooked
+                    ? 'border-[#e3e3e3] text-[#b4b4b4] bg-[#f9f9f9] cursor-not-allowed line-through'
+                    : isSelected
+                      ? 'border-[#007acc] text-[#007acc] bg-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
+                      : 'border-[#e3e3e3] text-[#1c1c1c] bg-white cursor-pointer hover:border-[#007acc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
                 }`}
               >
                 {slot}

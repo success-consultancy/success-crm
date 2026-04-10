@@ -121,7 +121,11 @@ const AppointmentPage = () => {
                 <div className="pt-[22px]">
                   <AppointmentStepper currentStep={5} />
                 </div>
-                <StepSuccess data={data} onGoHome={() => (window.location.href = '/')} />
+                <StepSuccess
+                  data={data}
+                  onGoHome={() => (window.location.href = '/')}
+                  onBack={() => setStep(4)}
+                />
               </>
             )}
           </div>

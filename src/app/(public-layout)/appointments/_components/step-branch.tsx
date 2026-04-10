@@ -44,11 +44,10 @@ const StepBranch = ({ selected, onSelect, onContinue }: Props) => {
               role="radio"
               aria-checked={isSelected}
               onClick={() => onSelect(branch)}
-              className={`flex items-center justify-between gap-4 h-14 px-5 rounded-[8px] w-[365px] border cursor-pointer transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2 ${
-                isSelected
+              className={`flex items-center justify-between gap-4 h-14 px-5 rounded-[8px] w-[365px] border cursor-pointer transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2 ${isSelected
                   ? 'border-[1.5px] border-[#484848]'
                   : 'border border-[#e3e3e3] hover:border-[#b4b4b4]'
-              } bg-white`}
+                } bg-white`}
             >
               <span className="font-medium text-[16px] leading-[24px] text-[#1c1c1c] text-left flex-1">
                 {branch}
