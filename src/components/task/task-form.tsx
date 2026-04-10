@@ -108,7 +108,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
             placeholder="Title *"
             autoFocus
             className={cn(
-              'w-full text-sm font-medium outline-none placeholder:text-gray-400 bg-transparent',
+              'w-full text-b1-b text-neutral-darkGrey outline-none  bg-transparent',
               form.formState.errors.detail && 'placeholder:text-red-400',
             )}
           />
@@ -120,7 +120,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
           <input
             {...form.register('detailDescription')}
             placeholder="Description"
-            className="w-full text-xs text-gray-500 outline-none mt-1 placeholder:text-gray-400 bg-transparent"
+            className="w-full text-c2 text-neutral-darkGrey outline-none mt-1 placeholder:text-neutral-darkGrey bg-transparent"
           />
 
           {/* Selected chips */}
@@ -179,8 +179,10 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               type="button"
               onClick={() => form.setValue('dueDate', today)}
               className={cn(
-                'text-xs px-2 py-0.5 rounded border transition-colors',
-                isToday ? 'bg-blue-50 border-blue-300 text-blue-600' : 'border-gray-200 text-gray-600 hover:bg-gray-50',
+                'text-c1-c px-2 py-0.5 rounded border transition-colors',
+                isToday
+                  ? 'bg-blue-50 border-blue-300 text-blue-600'
+                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
               )}
             >
               Today
@@ -191,10 +193,10 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
               type="button"
               onClick={() => form.setValue('dueDate', tomorrow)}
               className={cn(
-                'text-xs px-2 py-0.5 rounded border transition-colors',
+                'text-c1-c px-2 py-0.5 rounded border transition-colors',
                 isTomorrow
                   ? 'bg-blue-50 border-blue-300 text-blue-600'
-                  : 'border-gray-200 text-gray-600 hover:bg-gray-50',
+                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
               )}
             >
               Tomorrow

@@ -187,7 +187,7 @@ export function TasksDrawer() {
                   <button
                     type="button"
                     onClick={() => setIsCompletedExpanded(!isCompletedExpanded)}
-                    className="flex items-center gap-1.5 text-sm font-medium text-gray-600 hover:text-gray-800 transition-colors w-full"
+                    className="flex items-center gap-1.5 text-b3-b text-neutral-darkGray hover:text-gray-800 transition-colors w-full"
                   >
                     <ChevronDown
                       className={cn('w-4 h-4 transition-transform duration-200', !isCompletedExpanded && '-rotate-90')}
