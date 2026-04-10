@@ -25,21 +25,30 @@ const getAppointColorBasedOnUserName = (
         "bg-[#FDB602]",
     ];
 
-    const tailwindClass =
-        tailwindColors[Math.abs(hash) % tailwindColors.length];
+    const rawColors = [
+        "#ef4444",
+        "#3b82f6",
+        "#22AF6A",
+        "#FDB602",
+        "#FDB602",
+    ];
+
+    const paletteIndex = Math.abs(hash) % tailwindColors.length;
+    const tailwindClass = tailwindColors[paletteIndex];
+    const rawColor = rawColors[paletteIndex];
 
     switch (type) {
         case "tailwind":
             return tailwindClass;
 
         case "style":
-            return { backgroundColor: cssColor };
+            return { backgroundColor: rawColor };
 
         case "border":
-            return { borderColor: cssColor };
+            return { borderColor: rawColor };
 
         case "raw":
-            return cssColor;
+            return rawColor;
 
         case "css":
         default:

@@ -53,7 +53,7 @@
   border-bottom-color: #E5E7EB;
 }
 
-.rbc-header + .rbc-header {
+.rbc-header+.rbc-header {
   border-left-color: #E5E7EB;
 }
 
@@ -82,7 +82,7 @@
   background-color: white;
 }
 
-.rbc-time-content > * + * > * {
+.rbc-time-content>*+*>* {
   border-left-color: #F3F4F6;
 }
 
@@ -195,7 +195,11 @@
   border-color: #E5E7EB;
 }
 
-.rbc-day-bg + .rbc-day-bg {
+.rbc-month-view .rbc-day-bg:hover {
+  background-color: #EFF6FF;
+}
+
+.rbc-day-bg+.rbc-day-bg {
   border-left-color: #E5E7EB;
 }
 
@@ -213,11 +217,6 @@
   color: #6B7280;
   background: transparent;
   padding: 1px 4px;
-}
-
-/* ---- Events container full width ---- */
-.rbc-events-container {
-  margin-right: 0 !important;
 }
 
 /* ---- DnD resize handles ---- */

@@ -131,7 +131,7 @@ const CustomTimeEvent = ({ event }: any) => {
 };
 
 const CustomMonthDateHeader = ({ date }: any) => (
-  <div className="text-sm mb-1.5 py-1 px-1">
+  <div className="mb-1.5 py-1 px-1 text-left mt-2 ml-[10px] text-b12-500">
     <span className={isSameDay(date, new Date()) ? 'font-bold text-white bg-primary-blue p-1.5 rounded-md' : ''}>
       {format(date, 'd')}
     </span>
@@ -176,7 +176,7 @@ const MonthEvent = ({ event }: any) => {
       <div
         role="button"
         tabIndex={0}
-        className="text-xs px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 bg-bluish-grey text-gray-800"
+        className="px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 !bg-bluish-grey text-b12-500 ml-[10px] mr-[10px]"
         onClick={e => e.stopPropagation()}
         onKeyDown={e => e.stopPropagation()}
       >
@@ -608,7 +608,7 @@ const AppointmentPopover = ({ setEditingAppointment, apt, children }: { setEditi
     <>
       <Popover open={isOpen} onOpenChange={setIsOpen}>
         <PopoverTrigger asChild>{children}</PopoverTrigger>
-        <PopoverContent align="start" className="min-w-[504px]">
+        <PopoverContent align="start" className="min-w-[504px]" onClick={e => e.stopPropagation()}>
           <AppointmentPreview
             appointment={apt}
             onEdit={() => { setEditingAppointment(apt); setIsOpen(false); }}

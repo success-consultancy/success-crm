@@ -83,6 +83,9 @@
   --color-neutral-border-light: var(--neutral-border-light);
   --color-neutral-white: var(--neutral-white);
 
+  /* Colors - Bluish */
+  --color-bluish-grey: var(--bluish-grey);
+
   /* Colors - Primary */
   --color-primary-red: var(--primary-red);
   --color-primary-blue: var(--primary-blue);
@@ -184,6 +187,10 @@
   --text-c1-b: 0.75rem;
   --text-c1-b--line-height: 1.3;
   --text-c1-b--font-weight: 600;
+
+  --text-c1-c: 0.75rem;
+  --text-c1-c--line-height: 1;
+  --text-c1-c--font-weight: 500;
 
   --text-c2: 0.688rem;
   --text-c2--line-height: 1.3;
@@ -320,9 +327,7 @@
   --color-gray-50: #f0f1f4;
   --color-gray-25: #f7f8fa;
 
-  --color-card-border: #DFE3E560
-    /* Additional Colors */
-    --color-red: #e81b00;
+  --color-card-border: #dfe3e560 /* Additional Colors */ --color-red: #e81b00;
   --color-green: #3f9e60;
   --color-blue: #33a0d2;
 
@@ -410,7 +415,7 @@
   --neutral-border-light: #ebebeb;
   --neutral-white: #ffffff;
 
-  --bluish-grey: #F7F8FA;
+  --bluish-grey: #f7f8fa;
 
   --primary-red: #ed1c24;
   --primary-blue: #007acc;
@@ -459,7 +464,6 @@
 
 @layer utilities {
   .hide-number-arrows {
-
     /* Hide the arrows in most modern browsers */
     &::-webkit-outer-spin-button,
     &::-webkit-inner-spin-button {
@@ -479,10 +483,12 @@
 
   .border-gradient {
     border: 1.2px solid;
-    border-image-source: linear-gradient(163.89deg,
-        rgba(255, 255, 255, 0.14) -14.65%,
-        rgba(255, 255, 255, 0.056) 53.3%,
-        rgba(255, 255, 255, 0.14) 117.29%);
+    border-image-source: linear-gradient(
+      163.89deg,
+      rgba(255, 255, 255, 0.14) -14.65%,
+      rgba(255, 255, 255, 0.056) 53.3%,
+      rgba(255, 255, 255, 0.14) 117.29%
+    );
     border-image-slice: 1;
     border-radius: 12px;
   }
@@ -490,7 +496,6 @@
   .grid-layout {
     @apply lg:gap-x-4.5 grid grid-cols-4 gap-x-5 md:grid-cols-8 lg:grid-cols-12;
   }
-
 
   .text-h1 {
     @apply text-3xl font-bold leading-10;
@@ -687,7 +692,7 @@ body {
     opacity: 0;
   }
 
-  *:hover>.resizer {
+  *:hover > .resizer {
     opacity: 1;
   }
 }
