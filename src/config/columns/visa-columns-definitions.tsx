@@ -73,7 +73,7 @@ export const useVisaColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/visa/${row.original.id}/view`)}>
+          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/dashboard/visa/${row.original.id}/view`)}>
             {row.original.id}
           </span>
         );
@@ -331,7 +331,7 @@ export const useVisaColumn = (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/visa/${row.original.id}/edit`);
+                      router.push(`/dashboard/visa/${row.original.id}/edit`);
                     }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
@@ -341,7 +341,7 @@ export const useVisaColumn = (
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
-                      router.push(`/visa/${row.original.id}/view`);
+                      router.push(`/dashboard/visa/${row.original.id}/view`);
                     }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >

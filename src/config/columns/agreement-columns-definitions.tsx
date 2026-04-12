@@ -225,7 +225,7 @@ export const useAgreementColumn = (handleDelete: (id: number) => void) => {
                 <Button
                   variant="ghost"
                   className="justify-start gap-2"
-                  onClick={() => router.push(`/agreement/${row.original.id}/view`)}
+                  onClick={() => router.push(`/dashboard/agreement/${row.original.id}/view`)}
                 >
                   <Eye className="h-4 w-4" />
                   View
@@ -233,7 +233,7 @@ export const useAgreementColumn = (handleDelete: (id: number) => void) => {
                 <Button
                   variant="ghost"
                   className="justify-start gap-2"
-                  onClick={() => router.push(`/agreement/${row.original.id}/edit`)}
+                  onClick={() => router.push(`/dashboard/agreement/${row.original.id}/edit`)}
                 >
                   <Edit className="h-4 w-4" />
                   Edit

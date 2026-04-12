@@ -165,7 +165,7 @@ export const useActiveCheckInColumns = (onEndSession: (id: number) => void) => {
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                router.push(`/leads/${row.original.leadId}/view`);
+                router.push(`/dashboard/leads/${row.original.leadId}/view`);
               }}
             >
               View
@@ -320,7 +320,7 @@ export const useHistoryCheckInColumns = () => {
             size="sm"
             onClick={(e) => {
               e.stopPropagation();
-              router.push(`/leads/${row.original.leadId}/view`);
+              router.push(`/dashboard/leads/${row.original.leadId}/view`);
             }}
           >
             View
