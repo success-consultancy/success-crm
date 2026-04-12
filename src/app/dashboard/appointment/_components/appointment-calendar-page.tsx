@@ -115,9 +115,9 @@ const CustomTimeEvent = ({ event }: any) => {
   const isLoading = loadingEventIds.has(event.id);
 
   return (
-    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative">
+    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border" style={{ borderColor: "#F2F2F2" }}>
       <div className="w-[3px] flex-shrink-0 rounded-l-sm" style={{ backgroundColor: colorStr }} />
-      <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F2F2F2]">
+      <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F7F8FA]">
         <div className="text-[11px] font-medium text-neutral-black leading-tight truncate">{timeLabel}</div>
         <div className="text-[11px] text-neutral-black mt-0.5 truncate">{item.title}</div>
       </div>
