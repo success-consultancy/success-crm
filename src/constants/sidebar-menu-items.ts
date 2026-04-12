@@ -12,6 +12,7 @@ export type MenuItem = {
   title: string;
   icon: React.ElementType;
   href?: string;
+  exact?: boolean;
   onClick?: () => void;
   subItems?: SubMenuItem[];
 };
@@ -21,6 +22,7 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.Dashboard,
     icon: Icons.DashboardIcon,
     href: '/dashboard',
+    exact: true,
   },
   {
     title: DashboardTitle.FiscalReport,
