@@ -88,11 +88,13 @@ const getUserInitials = (firstName?: string, lastName?: string) =>
 // ==========================================
 interface CalendarCtx {
   onDayClick: (date: Date) => void;
+  onDayViewNavigate: (date: Date) => void;
   onEditAppointment: (apt: IAppointment) => void;
   loadingEventIds: Set<string>;
 }
 const CalendarContext = React.createContext<CalendarCtx>({
   onDayClick: () => { },
+  onDayViewNavigate: () => { },
   onEditAppointment: () => { },
   loadingEventIds: new Set(),
 });
@@ -134,13 +136,22 @@ const CustomTimeEvent = ({ event }: any) => {
   );
 };
 
-const CustomMonthDateHeader = ({ date }: any) => (
-  <div className="mb-1.5 py-1 px-1 text-left mt-2 ml-[10px] text-b12-500">
-    <span className={isSameDay(date, new Date()) ? 'font-bold text-white bg-primary-blue p-1.5 rounded-md' : ''}>
-      {format(date, 'd')}
-    </span>
-  </div>
-);
+const CustomMonthDateHeader = ({ date }: any) => {
+  const { onDayViewNavigate } = React.useContext(CalendarContext);
+  return (
+    <div className="mb-1.5 py-1 px-1 text-left mt-2 ml-[10px] text-b12-500">
+      <span
+        role="button"
+        tabIndex={0}
+        className={cn('cursor-pointer hover:underline', isSameDay(date, new Date()) ? 'font-bold text-white bg-primary-blue p-1.5 rounded-md' : '')}
+        onClick={e => { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); onDayViewNavigate(date); }}
+        onKeyDown={e => { if (e.key === 'Enter') { e.stopPropagation(); e.nativeEvent.stopImmediatePropagation(); onDayViewNavigate(date); } }}
+      >
+        {format(date, 'd')}
+      </span>
+    </div>
+  );
+};
 
 const CustomMonthColumnHeader = ({ label }: any) => {
   const fullNames: Record<string, string> = {
@@ -153,14 +164,14 @@ const CustomMonthColumnHeader = ({ label }: any) => {
 };
 
 const WeekDayHeader = ({ date }: any) => {
-  const { onDayClick } = React.useContext(CalendarContext);
+  const { onDayViewNavigate } = React.useContext(CalendarContext);
   return (
     <div
       role="button"
       tabIndex={0}
       className="flex flex-col items-center p-2 cursor-pointer hover:bg-gray-50"
-      onClick={() => onDayClick(date)}
-      onKeyDown={e => e.key === 'Enter' && onDayClick(date)}
+      onClick={() => onDayViewNavigate(date)}
+      onKeyDown={e => e.key === 'Enter' && onDayViewNavigate(date)}
     >
       <div className="text-[12px] font-medium text-neutral-dark-grey mb-1">{format(date, 'EEE')}</div>
       <div className={`text-lg font-semibold w-[36px] h-[36px] flex justify-center items-center
@@ -277,6 +288,7 @@ const AgendaView = ({ isLoading, agendaGroups, onAppointmentClick }: any) => (
 const AppointmentCalendarPage = () => {
   const { getSearchParamsObject, searchParams, setParams } = useSearchParams();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const isDayNavigating = React.useRef(false);
 
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
@@ -391,13 +403,21 @@ const AppointmentCalendarPage = () => {
   }, [handleAppointmentClick]);
 
   const handleSelectSlot = useCallback(({ start, end }: { start: Date; end: Date }) => {
+    if (isDayNavigating.current) return;
     setSelectedDate(start);
     handleEmptySlotClick(start, end);
   }, [handleEmptySlotClick]);
 
+  const handleDayViewNavigate = useCallback((date: Date) => {
+    isDayNavigating.current = true;
+    setSelectedDate(date);
+    setParams([{ name: 'view', value: 'day' }]);
+    setTimeout(() => { isDayNavigating.current = false; }, 0);
+  }, [setParams]);
+
   const calendarCtx = useMemo<CalendarCtx>(
-    () => ({ onDayClick: setSelectedDate, onEditAppointment: handleEdit, loadingEventIds }),
-    [handleEdit, loadingEventIds]
+    () => ({ onDayClick: setSelectedDate, onDayViewNavigate: handleDayViewNavigate, onEditAppointment: handleEdit, loadingEventIds }),
+    [handleEdit, handleDayViewNavigate, loadingEventIds]
   );
 
   // Stable component map — all components are defined at module scopeq
