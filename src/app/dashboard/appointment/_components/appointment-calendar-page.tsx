@@ -113,13 +113,17 @@ const CustomTimeEvent = ({ event }: any) => {
   const timeLabel = `${startStr} - ${format(end, 'h:mm a').toLowerCase()}`;
   const colorStr = getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'raw') as string;
   const isLoading = loadingEventIds.has(event.id);
+  const client = item.client ?? item.lead;
+  const clientName = client ? `${client.firstName} ${client.lastName}` : '';
+  const userName = item.user ? `${item.user.firstName} ${item.user.lastName}` : '';
+  const eventLabel = `${clientName ? `${clientName} - ` : ''}${item.title}${userName ? ` x ${userName}` : ''}`;
 
   return (
-    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border" style={{ borderColor: "#F2F2F2" }}>
+    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border transition-colors hover:brightness-95 hover:bg-blue-50" style={{ borderColor: "#F2F2F2" }}>
       <div className="w-[3px] flex-shrink-0 rounded-l-sm" style={{ backgroundColor: colorStr }} />
       <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F7F8FA]">
         <div className="text-[11px] font-medium text-neutral-black leading-tight truncate">{timeLabel}</div>
-        <div className="text-[11px] text-neutral-black mt-0.5 truncate">{item.title}</div>
+        <div className="text-[11px] text-neutral-black mt-0.5 truncate">{eventLabel}</div>
       </div>
       {isLoading && (
         <div className="absolute inset-0 bg-white/60 flex items-center justify-center">
@@ -171,17 +175,21 @@ const MonthEvent = ({ event }: any) => {
   const { onEditAppointment, loadingEventIds } = React.useContext(CalendarContext);
   const item = event.resource as IAppointment;
   const isLoading = loadingEventIds.has(event.id);
+  const client = item.client ?? item.lead;
+  const clientName = client ? `${client.firstName} ${client.lastName}` : '';
+  const userName = item.user ? `${item.user.firstName} ${item.user.lastName}` : '';
+  const label = `${clientName ? `${clientName} - ` : ''}${item.title}${userName ? ` x ${userName}` : ''}`;
   return (
     <AppointmentPopover setEditingAppointment={onEditAppointment} apt={item}>
       <div
         role="button"
         tabIndex={0}
-        className="px-1 py-0.5 rounded truncate cursor-pointer hover:opacity-80 flex items-center gap-1.5 !bg-bluish-grey text-b12-500 ml-[10px] mr-[10px]"
+        className="px-1 py-0.5 rounded cursor-pointer transition-colors hover:brightness-95 hover:!bg-blue-100 flex items-center gap-1.5 !bg-bluish-grey text-b12-500 ml-[10px] mr-[10px]"
         onClick={e => e.stopPropagation()}
         onKeyDown={e => e.stopPropagation()}
       >
         <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
-        <span className="truncate">{format(parseISO(item.startTime), 'h:mma')} {item.title}</span>
+        <span className="truncate">{label}</span>
         {isLoading && (
           <div className="w-2.5 h-2.5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin ml-auto flex-shrink-0" />
         )}
