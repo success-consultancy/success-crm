@@ -7,18 +7,19 @@ interface Props {
   fullName: string;
   email: string;
   phone: string;
-  onChange: (field: 'fullName' | 'email' | 'phone', value: string) => void;
+  description: string;
+  onChange: (field: 'fullName' | 'email' | 'phone' | 'description', value: string) => void;
   onBack: () => void;
   onContinue: () => void;
 }
 
-const StepContact = ({ fullName, email, phone, onChange, onBack, onContinue }: Props) => {
+const StepContact = ({ fullName, email, phone, description, onChange, onBack, onContinue }: Props) => {
   const isValid = fullName.trim() && email.trim() && phone.trim();
 
   return (
     <div className="flex flex-col h-full">
       {/* Headline */}
-      <div className="mt-[98px] px-9">
+      <div className="mt-[24px] px-9">
         <h2 className="font-bold text-[24px] leading-[32px] text-[#1c1c1c]">Your contact details</h2>
         <p className="text-[14px] leading-[20px] text-[#484848] mt-1">
           We&apos;ll use this information to confirm your appointment
@@ -62,6 +63,20 @@ const StepContact = ({ fullName, email, phone, onChange, onBack, onContinue }: P
           onChange={(val) => onChange('phone', val)}
           placeholder="000 000 000"
         />
+
+        {/* Description */}
+        <div className="flex flex-col gap-2">
+          <label className="font-semibold text-[14px] leading-[20px] text-[#1c1c1c] tracking-[-0.14px]">
+            Message <span className="font-normal text-[#757575]">(optional)</span>
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => onChange('description', e.target.value)}
+            placeholder="Let us know what you'd like to discuss..."
+            rows={4}
+            className="border border-[#b4b4b4] rounded-[6px] px-3 py-2.5 text-[16px] text-[#1c1c1c] placeholder:text-[#757575] bg-white focus:outline-none focus:border-[#007acc] focus:ring-1 focus:ring-[#007acc]/20 transition-colors tracking-[-0.16px] resize-none"
+          />
+        </div>
       </div>
 
       {/* Buttons */}

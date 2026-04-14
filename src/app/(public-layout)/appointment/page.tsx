@@ -18,6 +18,7 @@ interface AppointmentData {
   fullName: string;
   email: string;
   phone: string;
+  description: string;
 }
 
 const INITIAL_DATA: AppointmentData = {
@@ -29,6 +30,7 @@ const INITIAL_DATA: AppointmentData = {
   fullName: '',
   email: '',
   phone: '',
+  description: '',
 };
 
 // Steps where the card is shorter and should be vertically centered
@@ -110,6 +112,7 @@ const AppointmentPage = () => {
                 fullName={data.fullName}
                 email={data.email}
                 phone={data.phone}
+                description={data.description}
                 onChange={(field, value) => update(field, value)}
                 onBack={() => setStep(3)}
                 onContinue={() => setStep(5)}

@@ -150,9 +150,8 @@ const StepSchedule = ({
     return (
       <div
         key={id}
-        className={`bg-white border rounded-[8px] overflow-hidden transition-colors duration-150 ${
-          isSelected ? 'border-[#007acc]/30' : 'border-[#e3e3e3]'
-        }`}
+        className={`bg-white border rounded-[8px] overflow-hidden transition-colors duration-150 ${isSelected ? 'border-[#007acc]/30' : 'border-[#e3e3e3]'
+          }`}
       >
         {/* Main row */}
         <div className="flex gap-6 items-center px-5 py-4">
@@ -194,9 +193,8 @@ const StepSchedule = ({
                     {isExpanded ? 'Hide details' : 'View credentials & details'}
                   </span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-[#007acc] transition-transform duration-250 ease-in-out ${
-                      isExpanded ? 'rotate-180' : 'rotate-0'
-                    }`}
+                    className={`w-3.5 h-3.5 text-[#007acc] transition-transform duration-250 ease-in-out ${isExpanded ? 'rotate-180' : 'rotate-0'
+                      }`}
                     strokeWidth={2}
                   />
                 </button>
@@ -234,9 +232,8 @@ const StepSchedule = ({
         {/* Expanded details */}
         <div
           id={`consultant-details-${id}`}
-          className={`grid transition-[grid-template-rows] duration-250 ease-in-out ${
-            isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
-          }`}
+          className={`grid transition-[grid-template-rows] duration-250 ease-in-out ${isExpanded ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'
+            }`}
         >
           <div className="overflow-hidden min-h-0">
             <div className="border-t border-[#e3e3e3] px-5 pt-4 pb-5 flex flex-col gap-4">
@@ -291,7 +288,7 @@ const StepSchedule = ({
   return (
     <div className="flex flex-col">
       {/* Headline */}
-      <div className="mt-[98px] px-9">
+      <div className="mt-[24px] px-9">
         <h2 className="font-bold text-[24px] leading-[32px] text-[#1c1c1c]">Pick a date and time</h2>
         <p className="text-[14px] leading-[20px] text-[#484848] mt-1">
           Choose when you&apos;d like to meet with us
@@ -309,56 +306,59 @@ const StepSchedule = ({
       </div>
 
       {/* Choose consultant */}
-      <div className="mt-6 px-9">
-        <p className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c] mb-3.5">Choose consultant</p>
-        {isLoading ? (
-          <div className="flex flex-col gap-3.5">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="h-20 rounded-[8px] bg-[#f3f4f6] animate-pulse" />
-            ))}
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3.5">
-            {consultants.map((consultant, index) => renderConsultant(consultant, index))}
-          </div>
-        )}
-      </div>
+      {date && (
+        <div className="mt-6 px-9">
+          <p className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c] mb-3.5">Choose consultant</p>
+          {isLoading ? (
+            <div className="flex flex-col gap-3.5">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-20 rounded-[8px] bg-[#f3f4f6] animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div className="flex flex-col gap-3.5">
+              {consultants.map((consultant, index) => renderConsultant(consultant, index))}
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Available time slots */}
-      <div className="mt-6 px-9">
-        <p
-          id="time-slots-label"
-          className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c] mb-3.5"
-        >
-          Available time slots
-        </p>
-        <div role="radiogroup" aria-labelledby="time-slots-label" className="flex flex-wrap gap-2">
-          {ALL_SLOTS.map((slot) => {
-            const isSelected = time === slot;
-            const isBooked = bookedSlots.includes(slot);
-            return (
-              <button
-                key={slot}
-                type="button"
-                role="radio"
-                aria-checked={isSelected}
-                aria-label={isBooked ? `${slot} — unavailable` : slot}
-                disabled={isBooked}
-                onClick={() => !isBooked && onTimeChange(slot)}
-                className={`h-10 px-4 rounded-[6px] border text-[14px] font-medium leading-[20px] transition-all duration-150 ${
-                  isBooked
+      {date && (
+        <div className="mt-6 px-9">
+          <p
+            id="time-slots-label"
+            className="font-semibold text-[16px] leading-[24px] text-[#1c1c1c] mb-3.5"
+          >
+            Available time slots
+          </p>
+          <div role="radiogroup" aria-labelledby="time-slots-label" className="flex flex-wrap gap-2">
+            {ALL_SLOTS.map((slot) => {
+              const isSelected = time === slot;
+              const isBooked = bookedSlots.includes(slot);
+              return (
+                <button
+                  key={slot}
+                  type="button"
+                  role="radio"
+                  aria-checked={isSelected}
+                  aria-label={isBooked ? `${slot} — unavailable` : slot}
+                  disabled={isBooked}
+                  onClick={() => !isBooked && onTimeChange(slot)}
+                  className={`h-10 px-4 rounded-[6px] border text-[14px] font-medium leading-[20px] transition-all duration-150 ${isBooked
                     ? 'border-[#e3e3e3] text-[#b4b4b4] bg-[#f9f9f9] cursor-not-allowed line-through'
                     : isSelected
                       ? 'border-[#007acc] text-[#007acc] bg-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
                       : 'border-[#e3e3e3] text-[#1c1c1c] bg-white cursor-pointer hover:border-[#007acc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
-                }`}
-              >
-                {slot}
-              </button>
-            );
-          })}
+                    }`}
+                >
+                  {slot}
+                </button>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Buttons */}
       <div className="mt-8">

@@ -3,7 +3,7 @@
 import { useState, useCallback } from 'react';
 import axios from 'axios';
 import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
-import { CheckCircle2, Calendar, Clock, Briefcase, MapPin, User, Mail, Phone } from 'lucide-react';
+import { CheckCircle2, Calendar, Clock, Briefcase, MapPin, User, Mail, Phone, MessageSquare } from 'lucide-react';
 import StepButtons from './step-buttons';
 import { useGetUsersForAppointment } from '@/query/get-users-for-appointment';
 
@@ -37,6 +37,7 @@ interface AppointmentData {
   fullName: string;
   email: string;
   phone: string;
+  description: string;
 }
 
 interface Props {
@@ -213,7 +214,7 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
       const paidAmount = consultant?.isPaid ? (consultant.paidAmount ?? null) : null;
       const fee = paidAmount ? ` (Fee: $${paidAmount})` : '';
       const title = `${data.fullName} - Online Appointment${fee}`;
-      const description = `Name: ${data.fullName}\nEmail: ${data.email}\nPhone: ${data.phone}\nSelected Services: ${data.services.join(', ')}`;
+      const description = `Name: ${data.fullName}\nEmail: ${data.email}\nPhone: ${data.phone}\nSelected Services: ${data.services.join(', ')}${data.description ? `\nMessage: ${data.description}` : ''}`;
 
       // Book the appointment
       const appointmentRes = await axios.post(
@@ -255,9 +256,9 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
             name: data.fullName,
             phone: data.phone,
             country: '',
-            message: '',
             googleLink,
             iCalLink,
+            message: data.description,
           },
         },
       );
@@ -270,34 +271,37 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
     }
   }, [executeRecaptcha, data, consultant, address]);
 
-  return (
-    <div className="flex flex-col">
-      {/* Success header — only shown after confirmed booking */}
-      {isBooked ? (
-        <div className="mt-[90px] flex flex-col items-center gap-[18px] px-[18px] pt-10 pb-5">
-          <CheckCircle2
-            className="w-8 h-8 text-[#22af6a] animate-in zoom-in-75 fade-in duration-500 ease-out"
-            strokeWidth={1.5}
-          />
-          <div className="flex flex-col gap-1.5 items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-400 ease-out delay-100">
-            <h2 className="font-bold text-[24px] leading-[32px] text-[#1c1c1c]">
-              Your appointment is scheduled
-            </h2>
-            <p className="text-[14px] leading-[20px] text-[#484848] max-w-[428px]">
-              A confirmation email has been sent to {data.email}. Please arrive 5 minutes early.
-            </p>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-[90px] px-9 pt-10 pb-5">
+  if (isBooked) {
+    return (
+      <div className="mt-[145px] flex flex-col items-center gap-[18px] px-[18px] pt-10 pb-5">
+        <CheckCircle2
+          className="w-8 h-8 text-[#22af6a] animate-in zoom-in-75 fade-in duration-500 ease-out"
+          strokeWidth={1.5}
+        />
+        <div className="flex flex-col gap-1.5 items-center text-center animate-in fade-in slide-in-from-bottom-2 duration-400 ease-out delay-100">
           <h2 className="font-bold text-[24px] leading-[32px] text-[#1c1c1c]">
-            Review your appointment
+            Your appointment is scheduled
           </h2>
-          <p className="text-[14px] leading-[20px] text-[#484848] mt-1">
-            Please review the details below before confirming
+          <p className="text-[14px] leading-[20px] text-[#484848] max-w-[428px]">
+            A confirmation email has been sent to {data.email}. Please arrive 5 minutes early.
           </p>
         </div>
-      )}
+      </div>
+    )
+  }
+
+  return (
+    <div className="flex flex-col">
+
+      <div className="mt-[90px] px-9 pt-10 pb-5">
+        <h2 className="font-bold text-[24px] leading-[32px] text-[#1c1c1c]">
+          Review your appointment
+        </h2>
+        <p className="text-[14px] leading-[20px] text-[#484848] mt-1">
+          Please review the details below before confirming
+        </p>
+      </div>
+
 
       {/* Details card */}
       <div className="mx-9 border border-[#ebebeb] rounded-[8px] overflow-hidden mb-6 animate-in fade-in slide-in-from-bottom-3 duration-400 ease-out delay-200">
@@ -397,6 +401,15 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
                 <p className="text-[14px] leading-[20px] text-[#484848]">+61 {data.phone}</p>
               </div>
             </div>
+            {data.description && (
+              <div className="flex gap-2 items-start w-full">
+                <MessageSquare className="w-4 h-4 text-[#484848] mt-0.5 shrink-0" strokeWidth={1.5} />
+                <div className="flex flex-col gap-1">
+                  <p className="font-semibold text-[14px] leading-[20px] text-[#1c1c1c]">Message</p>
+                  <p className="text-[14px] leading-[20px] text-[#484848] whitespace-pre-wrap">{data.description}</p>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
