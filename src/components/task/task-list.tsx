@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { addDays, format, isSameDay, startOfDay } from 'date-fns';
 import { Calendar, Check, Clock, GripVertical, Trash2, UserPlus } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -37,12 +37,12 @@ const formatTaskDate = (date: Date): string => {
 
 const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, onReorder, isCompleted }: TaskListProps) => {
   const [orderedTasks, setOrderedTasks] = useState<Task[]>(tasks ?? []);
-  const [draggingId, setDraggingId] = useState<number | null>(null);
-  const [dragOverId, setDragOverId] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
+  const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
 
-  const containerRef = useRef<HTMLDivElement>(null);
-  const rowRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-  const draggingIdRef = useRef<number | null>(null);
+  // Refs to track drag source and target — avoids stale closure issues
+  const dragItem = useRef<number | null>(null);
+  const dragOverItem = useRef<number | null>(null);
 
   // Keep local order in sync when the incoming task list changes (add/remove/refetch).
   useEffect(() => {
@@ -60,94 +60,58 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, onReorder,
     });
   }, [tasks]);
 
-  const handlePointerMove = useCallback((e: PointerEvent) => {
-    const id = draggingIdRef.current;
-    if (id === null) return;
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    dragItem.current = index;
+    setDraggingIndex(index);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.setData('text/plain', String(index));
+  };
 
-    // Find which row the pointer is over
-    for (const [taskId, el] of rowRefs.current) {
-      if (taskId === id) continue;
-      const rect = el.getBoundingClientRect();
-      if (e.clientY >= rect.top && e.clientY <= rect.bottom) {
-        setDragOverId(taskId);
-        return;
-      }
-    }
-    setDragOverId(null);
-  }, []);
+  const handleDragEnter = (index: number) => {
+    dragOverItem.current = index;
+    setDragOverIndex(index);
+  };
 
-  const handlePointerUp = useCallback(() => {
-    const sourceId = draggingIdRef.current;
-    const targetId = dragOverId;
-
-    if (sourceId !== null && targetId !== null && sourceId !== targetId) {
-      setOrderedTasks((prev) => {
-        const fromIndex = prev.findIndex((t) => t.id === sourceId);
-        const toIndex = prev.findIndex((t) => t.id === targetId);
-        if (fromIndex === -1 || toIndex === -1) return prev;
-        const next = [...prev];
-        const [moved] = next.splice(fromIndex, 1);
-        next.splice(toIndex, 0, moved);
-        onReorder?.(next);
-        return next;
-      });
+  const handleDragEnd = () => {
+    if (dragItem.current !== null && dragOverItem.current !== null && dragItem.current !== dragOverItem.current) {
+      const newList = [...orderedTasks];
+      const [draggedTask] = newList.splice(dragItem.current, 1);
+      newList.splice(dragOverItem.current, 0, draggedTask);
+      setOrderedTasks(newList);
+      onReorder?.(newList);
     }
 
-    draggingIdRef.current = null;
-    setDraggingId(null);
-    setDragOverId(null);
-
-    document.removeEventListener('pointermove', handlePointerMove);
-    document.removeEventListener('pointerup', handlePointerUp);
-  }, [dragOverId, handlePointerMove, onReorder]);
-
-  // Attach/detach global listeners when dragging starts
-  useEffect(() => {
-    if (draggingId !== null) {
-      document.addEventListener('pointermove', handlePointerMove);
-      document.addEventListener('pointerup', handlePointerUp);
-      return () => {
-        document.removeEventListener('pointermove', handlePointerMove);
-        document.removeEventListener('pointerup', handlePointerUp);
-      };
-    }
-  }, [draggingId, handlePointerMove, handlePointerUp]);
-
-  const startDrag = (taskId: number) => {
-    draggingIdRef.current = taskId;
-    setDraggingId(taskId);
+    dragItem.current = null;
+    dragOverItem.current = null;
+    setDraggingIndex(null);
+    setDragOverIndex(null);
   };
 
   return (
-    <div className="space-y-0.5" ref={containerRef}>
-      {orderedTasks?.map((task) => {
+    <div className="space-y-0.5">
+      {orderedTasks?.map((task, index) => {
         const parsedDate = task.dueDate ? new Date(task.dueDate) : undefined;
         const validDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : undefined;
-        const isDragging = draggingId === task.id;
-        const isDragOver = dragOverId === task.id && draggingId !== task.id;
+        const isDragging = draggingIndex === index;
+        const isDragOver = dragOverIndex === index && draggingIndex !== index;
 
         return (
           <div
             key={task.id}
-            ref={(el) => {
-              if (el) rowRefs.current.set(task.id, el);
-              else rowRefs.current.delete(task.id);
-            }}
+            draggable={!isCompleted}
+            onDragStart={(e) => handleDragStart(e, index)}
+            onDragEnter={() => handleDragEnter(index)}
+            onDragOver={(e) => e.preventDefault()}
+            onDragEnd={handleDragEnd}
             className={cn(
               'group relative flex items-start gap-2 py-3 px-2 rounded-md hover:bg-gray-50 transition-colors',
               isDragging && 'opacity-40 bg-gray-50',
               isDragOver && 'border-t-2 border-blue-400',
             )}
           >
-            {/* Drag handle — visible on hover, initiates pointer-based drag */}
+            {/* Drag handle — visible on hover */}
             {!isCompleted && (
-              <div
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  startDrag(task.id);
-                }}
-                className="opacity-0 group-hover:opacity-100 flex-shrink-0 cursor-grab active:cursor-grabbing text-gray-400 mt-0.5 touch-none select-none"
-              >
+              <div className="opacity-0 group-hover:opacity-100 flex-shrink-0 cursor-grab active:cursor-grabbing text-gray-400 mt-0.5 select-none">
                 <GripVertical className="w-4 h-4" />
               </div>
             )}
@@ -182,7 +146,7 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, onReorder,
               {(validDate || task.dueTime || task.user) && (
                 <div className="flex flex-wrap gap-1 mt-1.5">
                   {validDate && (
-                    <span className="flex items-center gap-1 text-c1-c bg-gray-100 rounded-md px-2 py-0.5  text-neutral-black">
+                    <span className="flex items-center gap-1 text-c1-c bg-gray-100 rounded-md px-2 py-0.5 text-neutral-black">
                       <Calendar className="w-3 h-3 flex-shrink-0" />
                       <span>{formatTaskDate(validDate)}</span>
                       {task.dueTime && (
