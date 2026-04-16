@@ -15,7 +15,8 @@ const AdminSidebarMenuItems = () => {
     if (item.href) {
       // Strip query parameters from item.href before comparison
       const [itemPath] = item.href.split('?');
-      return pathName.startsWith(itemPath) && itemPath !== '/';
+      if (item.exact) return pathName === itemPath;
+      return (pathName === itemPath || pathName.startsWith(itemPath + '/')) && itemPath !== '/';
     }
 
     if (item.subItems) return item.subItems.some((subItem) => pathName === subItem.href);

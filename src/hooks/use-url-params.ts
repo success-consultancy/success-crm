@@ -12,7 +12,7 @@ export function useUrlParams() {
     (key: string, value: string) => {
       const params = new URLSearchParams(searchParams.toString());
       params.set(key, value);
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+      router.push(`/dashboard${pathname}?${params.toString()}`, { scroll: false });
     },
     [router, pathname, searchParams],
   );

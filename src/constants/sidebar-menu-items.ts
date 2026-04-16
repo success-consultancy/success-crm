@@ -12,6 +12,7 @@ export type MenuItem = {
   title: string;
   icon: React.ElementType;
   href?: string;
+  exact?: boolean;
   onClick?: () => void;
   subItems?: SubMenuItem[];
 };
@@ -21,6 +22,7 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.Dashboard,
     icon: Icons.DashboardIcon,
     href: '/dashboard',
+    exact: true,
   },
   {
     title: DashboardTitle.FiscalReport,
@@ -30,47 +32,47 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.AppointmentCalendar,
     icon: Icons.AppointmentCalendarIcon,
-    href: '/appointment?view=work-week',
+    href: '/dashboard/appointment?view=work-week',
   },
   {
     title: DashboardTitle.CheckIn,
     icon: Icons.CheckInIcon,
-    href: '/check-in',
+    href: '/dashboard/check-in',
   },
   {
     title: DashboardTitle.Leads,
     icon: Icons.LeadsIcon,
-    href: '/leads',
+    href: '/dashboard/leads',
   },
   {
     title: DashboardTitle.EducationService,
     icon: Icons.EducationIcon,
-    href: '/education',
+    href: '/dashboard/education',
   },
   {
     title: DashboardTitle.VisaService,
     icon: Icons.VisaIcon,
-    href: '/visa',
+    href: '/dashboard/visa',
   },
   {
     title: DashboardTitle.SkillAssessmentService,
     icon: Icons.SkillAssessmentIcon,
-    href: '/skill',
+    href: '/dashboard/skill',
   },
   {
     title: DashboardTitle.TribunalReview,
     icon: Icons.TribunalReviewIcon,
-    href: '/tribunal-review',
+    href: '/dashboard/tribunal-review',
   },
   {
     title: DashboardTitle.InsuranceService,
     icon: Icons.InsuranceIcon,
-    href: '/insurance',
+    href: '/dashboard/insurance',
   },
   {
     title: DashboardTitle.AgencyAgreement,
     icon: Icons.AgencyAgreementIcon,
-    href: '/agreement',
+    href: '/dashboard/agreement',
   },
   {
     title: DashboardTitle.NewsAndUpdates,
@@ -85,10 +87,10 @@ export const menuItems: MenuItem[] = [
       { title: 'Employees', href: '#' },
       { title: 'Occupation', href: '#' },
       { title: 'Visa List', href: '#' },
-      { title: 'University', href: '/university' },
-      { title: 'Course', href: '/course' },
-      { title: 'Source', href: '/source' },
-      { title: 'Settings', href: '/settings' },
+      { title: 'University', href: '/dashboard/university' },
+      { title: 'Course', href: '/dashboard/course' },
+      { title: 'Source', href: '/dashboard/source' },
+      { title: 'Settings', href: '/dashboard/settings' },
     ],
   },
 ];

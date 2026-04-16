@@ -142,7 +142,7 @@ export const useUniversityColumns = (handleDelete: (id: number) => void) => {
                 <Button
                   variant="ghost"
                   className="justify-start gap-2"
-                  onClick={() => router.push(`/university/${row.original.id}/view`)}
+                  onClick={() => router.push(`/dashboard/university/${row.original.id}/view`)}
                 >
                   <Eye className="h-4 w-4" />
                   View
@@ -150,7 +150,7 @@ export const useUniversityColumns = (handleDelete: (id: number) => void) => {
                 <Button
                   variant="ghost"
                   className="justify-start gap-2"
-                  onClick={() => router.push(`/university/${row.original.id}/edit`)}
+                  onClick={() => router.push(`/dashboard/university/${row.original.id}/edit`)}
                 >
                   <Edit className="h-4 w-4" />
                   Edit
