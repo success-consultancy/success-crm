@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useGetTasks } from '@/query/get-tasks';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import useAuthStore from '@/store/auth-store';
 import { useGetUsers } from '@/query/get-user';
 import taskFormSchema, { TaskSchemaType } from '@/schema/task-schema';
@@ -128,7 +127,7 @@ export function TasksDrawer() {
             <h2 className="text-base font-semibold text-gray-900">Tasks</h2>
           </div>
 
-          <ScrollArea className="flex-1 overflow-hidden">
+          <div className="flex-1 overflow-y-auto">
             <div className="px-5 py-4">
               {/* Add task link */}
               {!isAddFormVisible && (
@@ -203,7 +202,7 @@ export function TasksDrawer() {
                 </div>
               )}
             </div>
-          </ScrollArea>
+          </div>
         </SheetContent>
       </Sheet>
     </>

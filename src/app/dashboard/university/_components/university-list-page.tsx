@@ -205,7 +205,7 @@ const UniversityListPage = () => {
         <h3 className="text-h5 text-content-heading font-bold">University</h3>
       </Portal>
 
-      <div className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 h-full overflow-hidden">
+      <div className="flex flex-col p-4 bg-white-100 rounded-xl border border-gray-50 h-full overflow-hidden">
         {/* Header */}
         <div className="flex w-full items-center justify-between pb-5 gap-5">
           <Input

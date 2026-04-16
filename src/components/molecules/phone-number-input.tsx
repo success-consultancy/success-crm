@@ -30,12 +30,13 @@ interface PhoneNumberInputProps extends Omit<InputProps, 'type' | 'onChange'> {
   error?: string;
   label?: string;
   optionalText?: boolean;
+  defaultCountry?: CountryIso2;
 }
 
 const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberInputProps>(
-  ({ value, onValueChange, className, classNames, optionalText, onChange, ...inputProps }, ref) => {
+  ({ value, onValueChange, className, classNames, optionalText, onChange, defaultCountry = 'au', ...inputProps }, ref) => {
     const { inputValue, handlePhoneValueChange, country, setCountry } = usePhoneInput({
-      defaultCountry: 'us',
+      defaultCountry,
       disableDialCodeAndPrefix: true,
       disableDialCodePrefill: true,
       value: value || '',
