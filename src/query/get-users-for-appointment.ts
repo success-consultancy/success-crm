@@ -1,6 +1,6 @@
 import { QUERY_KEYS } from '@/constants/query-keys';
-import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
+import { api } from '@/lib/api';
 
 export interface UserForAppointment {
   id: number;
@@ -14,12 +14,9 @@ export interface UserForAppointment {
   profileUrl: string | null;
 }
 
-const BASE_URL = 'https://x7jchqrlnkwu4lll5p77mmkk7i0obrgv.lambda-url.us-east-1.on.aws';
-
 const getUsersForAppointment = async (branch: string): Promise<UserForAppointment[]> => {
-  const branchSlug = branch.toLowerCase().replace(/\s+/g, '-');
-  const res = await axios.get<UserForAppointment[]>(
-    `${BASE_URL}/${branchSlug}/public/userForAppointment`,
+  const res = await api.get<UserForAppointment[]>(
+    `/public/userForAppointment`,
   );
   return res.data;
 };

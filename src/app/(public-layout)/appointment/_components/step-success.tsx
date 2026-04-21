@@ -6,6 +6,8 @@ import { useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { CheckCircle2, Calendar, Clock, Briefcase, MapPin, User, Mail, Phone, MessageSquare } from 'lucide-react';
 import StepButtons from './step-buttons';
 import { useGetUsersForAppointment } from '@/query/get-users-for-appointment';
+import { custom_api } from '@/lib/api';
+import { BRANCH_SLUG } from '@/constants/global';
 
 const AVATAR_COLORS = [
   '#007acc', '#9b7fb6', '#5a9a6f', '#d97706', '#dc2626',
@@ -206,7 +208,6 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
     }
 
     try {
-      const branchSlug = getBranchSlug(data.branch);
       const time24 = time12to24(data.time);
       const endTime24 = addThirtyMinutes(time24);
       const [firstName, ...lastParts] = data.fullName.trim().split(' ');
@@ -217,8 +218,8 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
       const description = `Name: ${data.fullName}\nEmail: ${data.email}\nPhone: ${data.phone}\nSelected Services: ${data.services.join(', ')}${data.description ? `\nMessage: ${data.description}` : ''}`;
 
       // Book the appointment
-      const appointmentRes = await axios.post(
-        `${APPOINTMENT_API_BASE}/${branchSlug}/public/appointment`,
+      const appointmentRes = await custom_api.post(
+        `/public/appointment`,
         {
           title,
           start: `${data.date}T${time24}:00`,
@@ -245,7 +246,7 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
 
       // Send confirmation email
       await axios.post(
-        `${APPOINTMENT_API_BASE}/${branchSlug}-email-sms/appointmentConfirmation`,
+        `${APPOINTMENT_API_BASE}/${BRANCH_SLUG}-email-sms/appointmentConfirmation`,
         {
           email: data.email,
           data: {
