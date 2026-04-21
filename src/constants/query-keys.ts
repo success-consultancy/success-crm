@@ -28,4 +28,5 @@ export const QUERY_KEYS = {
   GET_DASHBOARD: 'get-dashboard',
   GET_CHECK_INS: 'get-check-ins',
   GET_USERS_FOR_APPOINTMENT: 'get-users-for-appointment',
+  GET_FISCAL_REPORT: 'get-fiscal-report',
 };

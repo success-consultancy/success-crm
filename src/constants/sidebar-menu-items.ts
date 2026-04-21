@@ -27,7 +27,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.FiscalReport,
     icon: Icons.FiscalReportIcon,
-    href: '#',
+    href: '/dashboard/fiscal-report',
   },
   {
     title: DashboardTitle.AppointmentCalendar,
