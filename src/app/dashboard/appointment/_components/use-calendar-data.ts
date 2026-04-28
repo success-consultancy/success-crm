@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
-import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, parseISO } from 'date-fns';
+import { startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, parseISO, isWithinInterval } from 'date-fns';
 import { APPOINTMENT_FILTER_PARAMS, useGetAppointments } from '@/query/get-appointments';
-import { CALENDAR_FILTER_PARAMS, useGetCalendar } from '@/query/get-calendar';
 import { IAppointment } from '@/types/response-types/appointment-response';
 import { fromZonedTime, formatInTimeZone } from 'date-fns-tz';
+import { useVisaExpiries, VisaExpiryEvent } from './use-visa-expiries';
+
+export type CalendarItem = IAppointment | VisaExpiryEvent;
+
 export function useCalendarData(
   selectedDate: Date,
   currentView: string,
@@ -16,19 +19,10 @@ export function useCalendarData(
 
   // 1. Calculate API Date Range using strict timezone boundaries
   const dateRange = useMemo(() => {
-    // Helper: Takes a local date and returns the UTC ISO string 
-    // for the EXACT start/end of that day in the specific Timezone.
     const getBoundary = (date: Date, type: 'start' | 'end') => {
-      // 1. Get the date string in the target timezone (e.g., "2026-02-22")
       const dateStr = formatInTimeZone(date, timeZone, 'yyyy-MM-dd');
-
-      // 2. Create a string for the boundary
       const timeStr = type === 'start' ? '00:00:00' : '23:59:59.999';
-
-      // 3. Convert that "Wall Clock" time in that TZ back to a UTC Date object
       const zonedDate = fromZonedTime(`${dateStr} ${timeStr}`, timeZone);
-
-      // 4. Return the full ISO string for the API
       return zonedDate.toISOString();
     };
 
@@ -37,36 +31,14 @@ export function useCalendarData(
 
     switch (currentView) {
       case 'day':
-        return {
-          from: getBoundary(selectedDate, 'start'), // "2026-02-22T05:00:00.000Z" (if EST)
-          to: getBoundary(selectedDate, 'end')      // "2026-02-23T04:59:59.999Z"
-        };
-
+        return { from: getBoundary(selectedDate, 'start'), to: getBoundary(selectedDate, 'end') };
       case 'week':
-
-        return {
-          from: getBoundary(weekStart, 'start'),
-          to: getBoundary(weekEnd, 'end')
-        };
-
       case 'work-week':
-        return {
-          from: getBoundary(weekStart, 'start'),
-          to: getBoundary(weekEnd, 'end')
-        };
-
+        return { from: getBoundary(weekStart, 'start'), to: getBoundary(weekEnd, 'end') };
       case 'month':
-        return {
-          from: getBoundary(startOfMonth(selectedDate), 'start'),
-          to: getBoundary(endOfMonth(selectedDate), 'end')
-        };
-
+        return { from: getBoundary(startOfMonth(selectedDate), 'start'), to: getBoundary(endOfMonth(selectedDate), 'end') };
       default:
-        // Fallback for work-week or agenda using similar logic
-        return {
-          from: getBoundary(selectedDate, 'start'),
-          to: getBoundary(addDays(selectedDate, 30), 'end')
-        };
+        return { from: getBoundary(selectedDate, 'start'), to: getBoundary(addDays(selectedDate, 30), 'end') };
     }
   }, [selectedDate, currentView, timeZone]);
 
@@ -75,22 +47,36 @@ export function useCalendarData(
     ...getSearchParamsObject(APPOINTMENT_FILTER_PARAMS), ...dateRange, userId, view: currentView as any,
   });
 
-  const { data: calendarData, isLoading: isCalLoading } = useGetCalendar({
-    ...getSearchParamsObject(CALENDAR_FILTER_PARAMS), ...dateRange, userId, view: currentView as any,
-  });
+  // Calendar tab pulls visa expiries from existing entities (no /calendar backend route)
+  const { events: visaEvents, isLoading: isCalLoading } = useVisaExpiries(currentTab === 'calendar');
 
-  const activeItems = useMemo(
-    () => currentTab === 'appointment' ? (appointmentData?.rows || []) : (calendarData?.rows || []),
-    [currentTab, appointmentData?.rows, calendarData?.rows]
+  // Filter visa events to the visible window so we don't render thousands across views
+  const visibleVisaEvents = useMemo(() => {
+    if (currentTab !== 'calendar') return [];
+    const fromDate = parseISO(dateRange.from);
+    const toDate = parseISO(dateRange.to);
+    return visaEvents.filter((evt) => {
+      try {
+        const expiryDate = parseISO(evt.visaExpiry);
+        return isWithinInterval(expiryDate, { start: fromDate, end: toDate });
+      } catch {
+        return false;
+      }
+    });
+  }, [currentTab, visaEvents, dateRange.from, dateRange.to]);
+
+  const activeItems: CalendarItem[] = useMemo(
+    () => currentTab === 'appointment' ? (appointmentData?.rows || []) : visibleVisaEvents,
+    [currentTab, appointmentData?.rows, visibleVisaEvents]
   );
   const isLoading = currentTab === 'appointment' ? isAptLoading : isCalLoading;
 
-  // 3. Generate Calendar Grids
+  // 3. Calendar Grid metadata
   const timeSlots = useMemo(() => [
     { hour: null, label: 'All day', isAllDay: true },
     ...Array.from({ length: 14 }, (_, i) => ({
       hour: i + 7,
-      label: formatInTimeZone(new Date().setHours(i + 7, 0, 0, 0), timeZone, 'h a'), // Apply TZ to labels
+      label: formatInTimeZone(new Date().setHours(i + 7, 0, 0, 0), timeZone, 'h a'),
       isAllDay: false
     }))
   ], [timeZone]);
@@ -109,20 +95,18 @@ export function useCalendarData(
     return days;
   }, [selectedDate]);
 
-  // 4. Group Items strictly by Target Timezone
+  // 4. Group items by target timezone date
   const itemsByDate = useMemo(() => {
     return activeItems.reduce((acc, item) => {
-      // Parse the ISO string (UTC) and format it into the TARGET timezone.
-      // This prevents late-night UTC events from shifting into the wrong day locally.
-      const dateKey = formatInTimeZone(parseISO(item.date || item.startTime), timeZone, 'yyyy-MM-dd');
-
+      const dateSource = (item as any).date || item.startTime || (item as VisaExpiryEvent).visaExpiry;
+      const dateKey = formatInTimeZone(parseISO(dateSource), timeZone, 'yyyy-MM-dd');
       if (!acc[dateKey]) acc[dateKey] = [];
-      acc[dateKey].push(item as IAppointment);
+      acc[dateKey].push(item);
       return acc;
-    }, {} as Record<string, IAppointment[]>);
+    }, {} as Record<string, CalendarItem[]>);
   }, [activeItems, timeZone]);
 
-  // 5. Generate Agenda
+  // 5. Agenda groups
   const agendaGroups = useMemo(() => {
     return Object.keys(itemsByDate).sort().map(date => ({
       date,
@@ -130,5 +114,5 @@ export function useCalendarData(
     }));
   }, [itemsByDate]);
 
-  return { isLoading, timeSlots, weekDays, calendarDays, itemsByDate, agendaGroups, timeZone };
+  return { isLoading, timeSlots, weekDays, calendarDays, itemsByDate, agendaGroups, timeZone, activeItems };
 }
