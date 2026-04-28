@@ -23,13 +23,16 @@ import { IAppointment } from '@/types/response-types/appointment-response';
 import AppointmentList from './appointment-list';
 import AppointmentDetailModal from './appointment-detail-modal';
 import AppointmentFormModal from './appointment-form-modal';
+import VisaExpiryList from './visa-expiry-list';
+import VisaExpiryPopover from './visa-expiry-popover';
 import TabSelector from '@/components/atoms/tab-selector';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import AppointmentPreview from './appointment-preview';
 import { cn } from '@/lib/utils';
 import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
-import { useCalendarData } from './use-calendar-data';
+import { useCalendarData, type CalendarItem } from './use-calendar-data';
+import { VisaExpiryEvent, getCategoryColor } from './use-visa-expiries';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
@@ -62,11 +65,14 @@ const MIN_TIME = new Date(1970, 1, 1, 6, 0, 0);
 const MAX_TIME = new Date(1970, 1, 1, 20, 0, 0);
 const SCROLL_TO_TIME = new Date(1970, 1, 1, 7, 0, 0);
 
-const toRBCEvent = (item: IAppointment) => ({
-  id: item.id,
+const isVisaExpiry = (item: CalendarItem): item is VisaExpiryEvent => 'category' in item && 'visaExpiry' in item;
+
+const toRBCEvent = (item: CalendarItem) => ({
+  id: String(item.id),
   title: item.title,
   start: parseISO(item.startTime),
   end: parseISO(item.endTime),
+  allDay: isVisaExpiry(item),
   resource: item,
 });
 
@@ -90,13 +96,17 @@ interface CalendarCtx {
   onDayClick: (date: Date) => void;
   onDayViewNavigate: (date: Date) => void;
   onEditAppointment: (apt: IAppointment) => void;
+  onVisaExpiryClick: (evt: VisaExpiryEvent) => void;
   loadingEventIds: Set<string>;
+  currentTab: string;
 }
 const CalendarContext = React.createContext<CalendarCtx>({
   onDayClick: () => { },
   onDayViewNavigate: () => { },
   onEditAppointment: () => { },
+  onVisaExpiryClick: () => { },
   loadingEventIds: new Set(),
+  currentTab: 'appointment',
 });
 
 // ==========================================
@@ -104,24 +114,46 @@ const CalendarContext = React.createContext<CalendarCtx>({
 // ==========================================
 const EmptyToolbar = () => null;
 
+const VisaExpiryEventBlock = ({ event, onClick }: { event: VisaExpiryEvent; onClick: () => void }) => {
+  const color = getCategoryColor(event.category);
+  return (
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={(e) => { e.stopPropagation(); onClick(); }}
+      onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); onClick(); } }}
+      className="px-1 py-0.5 rounded cursor-pointer transition-colors hover:brightness-95 hover:!bg-blue-100 flex items-center gap-1.5 !bg-bluish-grey text-b12-500 ml-[10px] mr-[10px]"
+    >
+      <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: color }} />
+      <span className="truncate">{event.firstName}'s Visa Expires ({event.category})</span>
+    </div>
+  );
+};
+
 const CustomTimeEvent = ({ event }: any) => {
-  const { loadingEventIds } = React.useContext(CalendarContext);
-  const item = event.resource as IAppointment;
+  const { loadingEventIds, onVisaExpiryClick, currentTab } = React.useContext(CalendarContext);
+  const item = event.resource as CalendarItem;
+
+  if (currentTab === 'calendar' && isVisaExpiry(item)) {
+    return <VisaExpiryEventBlock event={item} onClick={() => onVisaExpiryClick(item)} />;
+  }
+
+  const apt = item as IAppointment;
   const start = event.start as Date;
   const end = event.end as Date;
   const startPeriod = format(start, 'a').toLowerCase();
   const endPeriod = format(end, 'a').toLowerCase();
   const startStr = startPeriod === endPeriod ? format(start, 'h:mm') : format(start, 'h:mm a').toLowerCase();
   const timeLabel = `${startStr} - ${format(end, 'h:mm a').toLowerCase()}`;
-  const colorStr = getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '', 'raw') as string;
+  const colorStr = getAppointColorBasedOnUserName(apt.user?.firstName || '', apt.user?.lastName || '', 'raw') as string;
   const isLoading = loadingEventIds.has(event.id);
-  const client = item.client ?? item.lead;
+  const client = apt.client ?? apt.lead;
   const clientName = client ? `${client.firstName} ${client.lastName}` : '';
-  const userName = item.user ? `${item.user.firstName} ${item.user.lastName}` : '';
-  const eventLabel = `${clientName ? `${clientName} - ` : ''}${item.title}${userName ? ` x ${userName}` : ''}`;
+  const userName = apt.user ? `${apt.user.firstName} ${apt.user.lastName}` : '';
+  const eventLabel = `${clientName ? `${clientName} - ` : ''}${apt.title}${userName ? ` x ${userName}` : ''}`;
 
   return (
-    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border transition-colors hover:brightness-95 hover:bg-blue-50" style={{ borderColor: "#F2F2F2" }}>
+    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border transition-colors hover:brightness-95 hover:bg-blue-50" style={{ borderColor: '#F2F2F2' }}>
       <div className="w-[3px] flex-shrink-0 rounded-l-sm" style={{ backgroundColor: colorStr }} />
       <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F7F8FA]">
         <div className="text-[11px] font-medium text-neutral-black leading-tight truncate">{timeLabel}</div>
@@ -183,15 +215,21 @@ const WeekDayHeader = ({ date }: any) => {
 };
 
 const MonthEvent = ({ event }: any) => {
-  const { onEditAppointment, loadingEventIds } = React.useContext(CalendarContext);
-  const item = event.resource as IAppointment;
+  const { onEditAppointment, loadingEventIds, onVisaExpiryClick, currentTab } = React.useContext(CalendarContext);
+  const item = event.resource as CalendarItem;
+
+  if (currentTab === 'calendar' && isVisaExpiry(item)) {
+    return <VisaExpiryEventBlock event={item} onClick={() => onVisaExpiryClick(item)} />;
+  }
+
+  const apt = item as IAppointment;
   const isLoading = loadingEventIds.has(event.id);
-  const client = item.client ?? item.lead;
+  const client = apt.client ?? apt.lead;
   const clientName = client ? `${client.firstName} ${client.lastName}` : '';
-  const userName = item.user ? `${item.user.firstName} ${item.user.lastName}` : '';
-  const label = `${clientName ? `${clientName} - ` : ''}${item.title}${userName ? ` x ${userName}` : ''}`;
+  const userName = apt.user ? `${apt.user.firstName} ${apt.user.lastName}` : '';
+  const label = `${clientName ? `${clientName} - ` : ''}${apt.title}${userName ? ` x ${userName}` : ''}`;
   return (
-    <AppointmentPopover setEditingAppointment={onEditAppointment} apt={item}>
+    <AppointmentPopover setEditingAppointment={onEditAppointment} apt={apt}>
       <div
         role="button"
         tabIndex={0}
@@ -199,7 +237,7 @@ const MonthEvent = ({ event }: any) => {
         onClick={e => e.stopPropagation()}
         onKeyDown={e => e.stopPropagation()}
       >
-        <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || ''))} />
+        <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', getAppointColorBasedOnUserName(apt.user?.firstName || '', apt.user?.lastName || ''))} />
         <span className="truncate">{label}</span>
         {isLoading && (
           <div className="w-2.5 h-2.5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin ml-auto flex-shrink-0" />
@@ -248,39 +286,48 @@ const CalendarGridSkeleton = () => (
 );
 
 // ==========================================
-// AGENDA VIEW (original design preserved)
+// AGENDA VIEW
 // ==========================================
-const AgendaView = ({ isLoading, agendaGroups, onAppointmentClick }: any) => (
-  <div className="flex-1 overflow-y-auto bg-white px-6 py-4">
-
-    {isLoading ? (
-      <div className="divide-y divide-gray-200 space-y-4">
-        <AgendaSkeletonCard />
-        <AgendaSkeletonCard />
-      </div>
-    ) : agendaGroups.length === 0 ? (
-      <div className="flex justify-center p-8 text-gray-500">No appointments found</div>
-    ) : (
-      <div className="divide-y divide-gray-200">
-        {agendaGroups.map(({ date, items }: any, index: number) => (
-          <div key={date} className={cn('border rounded-2xl pb-4', index > 0 && 'mt-2 mb-10')}>
-            <div className="flex justify-between px-6 mb-3 bg-[#F7F8FA] py-4 rounded-t-2xl">
-              <div className={`text-b14-600 ${isSameDay(parseISO(date), new Date()) ? 'text-primary-blue' : 'text-neutral-dark-grey'}`}>
-                {format(parseISO(date), 'MMM d, yyyy - EEEE')}
+const AgendaView = ({
+  isLoading, agendaGroups, onAppointmentClick, onVisaExpiryClick, currentTab,
+}: any) => {
+  const itemLabel = currentTab === 'calendar' ? 'visa expiries' : 'appointments';
+  const emptyLabel = currentTab === 'calendar' ? 'No visa expiries found' : 'No appointments found';
+  return (
+    <div className="flex-1 overflow-y-auto bg-white px-6 py-4">
+      {isLoading ? (
+        <div className="divide-y divide-gray-200 space-y-4">
+          <AgendaSkeletonCard />
+          <AgendaSkeletonCard />
+        </div>
+      ) : agendaGroups.length === 0 ? (
+        <div className="flex justify-center p-8 text-gray-500">{emptyLabel}</div>
+      ) : (
+        <div className="divide-y divide-gray-200">
+          {agendaGroups.map(({ date, items }: any, index: number) => (
+            <div key={date} className={cn('border rounded-2xl pb-4', index > 0 && 'mt-2 mb-10')}>
+              <div className="flex justify-between px-6 mb-3 bg-[#F7F8FA] py-4 rounded-t-2xl">
+                <div className={`text-b14-600 ${isSameDay(parseISO(date), new Date()) ? 'text-primary-blue' : 'text-neutral-dark-grey'}`}>
+                  {format(parseISO(date), 'MMM d, yyyy - EEEE')}
+                </div>
+                <div className="text-sm text-neutral-dark-grey">{items.length} {itemLabel}</div>
               </div>
-              <div className="text-sm text-neutral-dark-grey">{items.length} appointments</div>
+              <div className="space-y-2 px-6">
+                {items.map((item: CalendarItem) => (
+                  isVisaExpiry(item) ? (
+                    <VisaExpiryAgendaCard key={item.id} event={item} onClick={() => onVisaExpiryClick(item)} />
+                  ) : (
+                    <AgendaCard key={item.id} item={item as IAppointment} onClick={() => onAppointmentClick(item)} />
+                  )
+                ))}
+              </div>
             </div>
-            <div className="space-y-2 px-6">
-              {items.map((item: any) => (
-                <AgendaCard key={item.id} item={item} onClick={() => onAppointmentClick(item)} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-    )}
-  </div>
-);
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
 
 // ==========================================
 // MAIN COMPONENT
@@ -290,12 +337,16 @@ const AppointmentCalendarPage = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isDayNavigating = React.useRef(false);
 
+  // Appointment state
   const [selectedAppointment, setSelectedAppointment] = useState<IAppointment | null>(null);
   const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
   const [editingAppointment, setEditingAppointment] = useState<IAppointment | null>(null);
   const [prefilledDate, setPrefilledDate] = useState<Date | undefined>(undefined);
   const [prefilledEndDate, setPrefilledEndDate] = useState<Date | undefined>(undefined);
+
+  // Visa expiry popover state (controlled by main page; popover trigger is virtual)
+  const [activeExpiry, setActiveExpiry] = useState<VisaExpiryEvent | null>(null);
 
   const currentView = searchParams.get('view') || 'month';
   const currentTab = searchParams.get('tab') || 'appointment';
@@ -315,7 +366,6 @@ const AppointmentCalendarPage = () => {
   const [optimisticOverrides, setOptimisticOverrides] = useState<Record<string, { start: Date; end: Date }>>({});
   const [loadingEventIds, setLoadingEventIds] = useState<Set<string>>(new Set());
 
-  // Once the API refetch updates rbcEvents, clear overrides (API data is now authoritative)
   useEffect(() => {
     setOptimisticOverrides({});
   }, [rbcEvents]);
@@ -342,6 +392,10 @@ const AppointmentCalendarPage = () => {
     setIsDetailModalOpen(true);
   }, []);
 
+  const handleVisaExpiryClick = useCallback((evt: VisaExpiryEvent) => {
+    setActiveExpiry(evt);
+  }, []);
+
   const handleEdit = useCallback((appointment: IAppointment) => {
     setEditingAppointment(appointment);
     setPrefilledDate(undefined);
@@ -349,11 +403,12 @@ const AppointmentCalendarPage = () => {
   }, []);
 
   const handleEmptySlotClick = useCallback((date: Date, endDate?: Date) => {
+    if (currentTab === 'calendar') return; // calendar tab is read-only
     setEditingAppointment(null);
     setPrefilledDate(date);
     setPrefilledEndDate(endDate);
     setIsFormModalOpen(true);
-  }, []);
+  }, [currentTab]);
 
   const { mutateAsync: editAppointment } = useEditAppointment();
 
@@ -373,6 +428,7 @@ const AppointmentCalendarPage = () => {
   }, [editAppointment]);
 
   const handleEventDrop = useCallback(async ({ event, start, end }: any) => {
+    if (currentTab === 'calendar') return; // read-only
     const id = event.id;
     setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
     setLoadingEventIds(prev => new Set(prev).add(id));
@@ -383,9 +439,10 @@ const AppointmentCalendarPage = () => {
     } finally {
       setLoadingEventIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     }
-  }, [handleReschedule]);
+  }, [handleReschedule, currentTab]);
 
   const handleEventResize = useCallback(async ({ event, start, end }: any) => {
+    if (currentTab === 'calendar') return; // read-only
     const id = event.id;
     setOptimisticOverrides(prev => ({ ...prev, [id]: { start: start as Date, end: end as Date } }));
     setLoadingEventIds(prev => new Set(prev).add(id));
@@ -396,11 +453,16 @@ const AppointmentCalendarPage = () => {
     } finally {
       setLoadingEventIds(prev => { const next = new Set(prev); next.delete(id); return next; });
     }
-  }, [handleReschedule]);
+  }, [handleReschedule, currentTab]);
 
   const handleSelectEvent = useCallback((event: any) => {
-    handleAppointmentClick(event.resource as IAppointment);
-  }, [handleAppointmentClick]);
+    const item = event.resource as CalendarItem;
+    if (isVisaExpiry(item)) {
+      handleVisaExpiryClick(item);
+    } else {
+      handleAppointmentClick(item as IAppointment);
+    }
+  }, [handleAppointmentClick, handleVisaExpiryClick]);
 
   const handleSelectSlot = useCallback(({ start, end }: { start: Date; end: Date }) => {
     if (isDayNavigating.current) return;
@@ -416,18 +478,24 @@ const AppointmentCalendarPage = () => {
   }, [setParams]);
 
   const calendarCtx = useMemo<CalendarCtx>(
-    () => ({ onDayClick: setSelectedDate, onDayViewNavigate: handleDayViewNavigate, onEditAppointment: handleEdit, loadingEventIds }),
-    [handleEdit, handleDayViewNavigate, loadingEventIds]
+    () => ({
+      onDayClick: setSelectedDate,
+      onDayViewNavigate: handleDayViewNavigate,
+      onEditAppointment: handleEdit,
+      onVisaExpiryClick: handleVisaExpiryClick,
+      loadingEventIds,
+      currentTab,
+    }),
+    [handleEdit, handleDayViewNavigate, handleVisaExpiryClick, loadingEventIds, currentTab]
   );
 
-  // Stable component map — all components are defined at module scopeq
   const components = useMemo(() => ({
     toolbar: EmptyToolbar,
     event: CustomTimeEvent,
-    header: WeekDayHeader,   // week / work_week
-    day: { header: WeekDayHeader },        // day view
-    week: { header: WeekDayHeader },       // explicit for week
-    work_week: { header: WeekDayHeader },  // explicit for work_week
+    header: WeekDayHeader,
+    day: { header: WeekDayHeader },
+    week: { header: WeekDayHeader },
+    work_week: { header: WeekDayHeader },
     month: {
       header: CustomMonthColumnHeader,
       dateHeader: CustomMonthDateHeader,
@@ -440,6 +508,7 @@ const AppointmentCalendarPage = () => {
   }), []);
 
   const rbcView = currentView !== 'agenda' ? getRBCView(currentView) : Views.MONTH;
+  const isCalendarTab = currentTab === 'calendar';
 
   return (
     <div className="flex flex-col h-[calc(100vh-66px)] overflow-hidden">
@@ -465,19 +534,21 @@ const AppointmentCalendarPage = () => {
                 </span>
                 <Button variant="ghost" size="icon" onClick={() => handleDateChange('next')}><ChevronRight className="h-4 w-4" /></Button>
               </div>
-              <div className="flex items-center gap-2">
-                <UserSelectWithCommand
-                  value={userId || ''}
-                  placeholder={userId ? 'Selected' : 'User Selection: All selected'}
-                  onSelect={(val) => { if (val) setParams([{ name: 'userId', value: val }]); }}
-                  className="w-[240px]"
-                />
-                {userId && (
-                  <Button variant="ghost" size="icon" onClick={() => setParams([{ name: 'userId', value: '' }])} className="flex-shrink-0" title="Clear filter">
-                    <X className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
+              {!isCalendarTab && (
+                <div className="flex items-center gap-2">
+                  <UserSelectWithCommand
+                    value={userId || ''}
+                    placeholder={userId ? 'Selected' : 'User Selection: All selected'}
+                    onSelect={(val) => { if (val) setParams([{ name: 'userId', value: val }]); }}
+                    className="w-[240px]"
+                  />
+                  {userId && (
+                    <Button variant="ghost" size="icon" onClick={() => setParams([{ name: 'userId', value: '' }])} className="flex-shrink-0" title="Clear filter">
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              )}
             </div>
             <div className="flex items-center rounded-3xl p-1 bg-[#F7F8FA] border border-light-grey">
               {VIEW_OPTIONS.map(view => (
@@ -505,7 +576,13 @@ const AppointmentCalendarPage = () => {
           <div className="flex gap-4 flex-1 min-h-0 overflow-hidden">
             <div className={cn('relative flex-1 flex flex-col min-w-0 border rounded-lg overflow-hidden', currentView === 'agenda' && 'border-0')}>
               {currentView === 'agenda' ? (
-                <AgendaView isLoading={isLoading} agendaGroups={agendaGroups} onAppointmentClick={handleAppointmentClick} selectedDate={selectedDate} />
+                <AgendaView
+                  isLoading={isLoading}
+                  agendaGroups={agendaGroups}
+                  onAppointmentClick={handleAppointmentClick}
+                  onVisaExpiryClick={handleVisaExpiryClick}
+                  currentTab={currentTab}
+                />
               ) : (
                 <>
                   {isLoading && <CalendarGridSkeleton />}
@@ -522,8 +599,9 @@ const AppointmentCalendarPage = () => {
                       min={MIN_TIME}
                       max={MAX_TIME}
                       scrollToTime={SCROLL_TO_TIME}
-                      selectable
-                      resizable
+                      selectable={!isCalendarTab}
+                      resizable={!isCalendarTab}
+                      draggableAccessor={() => !isCalendarTab}
                       onEventDrop={handleEventDrop}
                       onEventResize={handleEventResize}
                       onSelectEvent={handleSelectEvent}
@@ -544,23 +622,22 @@ const AppointmentCalendarPage = () => {
               <div className="w-80 flex flex-col flex-shrink-0 rounded-lg p-4 overflow-hidden">
                 <div className="flex items-center justify-between mb-4 flex-shrink-0">
                   <h4 className="text-b14-600">{format(selectedDate, 'd MMM, yyyy')}</h4>
-                  {currentTab === 'appointment' && (
+                  {!isCalendarTab && (
                     <Button LeftIcon={Plus} onClick={() => setIsFormModalOpen(true)} size="sm" className="text-primary" variant="ghost">Add</Button>
                   )}
                 </div>
-                {currentTab === 'appointment' ? (
-                  <AppointmentList appointments={selectedDateItems} onAppointmentClick={handleAppointmentClick} isLoading={isLoading} />
+                {isCalendarTab ? (
+                  <VisaExpiryList
+                    events={selectedDateItems as VisaExpiryEvent[]}
+                    onEventClick={handleVisaExpiryClick}
+                    isLoading={isLoading}
+                  />
                 ) : (
-                  <div className="flex-1 overflow-y-auto space-y-2">
-                    {selectedDateItems.length === 0 ? (
-                      <div className="text-center text-gray-500 py-8">No events</div>
-                    ) : selectedDateItems.map((evt: any) => (
-                      <div key={evt.id} className="p-3 border rounded-lg hover:bg-gray-50 cursor-pointer" onClick={() => handleAppointmentClick(evt)}>
-                        <div className="font-semibold text-sm">{evt.title}</div>
-                        <div className="text-xs text-gray-600 mt-1">{format(parseISO(evt.startTime), 'h:mm a')} - {format(parseISO(evt.endTime), 'h:mm a')}</div>
-                      </div>
-                    ))}
-                  </div>
+                  <AppointmentList
+                    appointments={selectedDateItems as IAppointment[]}
+                    onAppointmentClick={handleAppointmentClick}
+                    isLoading={isLoading}
+                  />
                 )}
               </div>
             )}
@@ -584,6 +661,18 @@ const AppointmentCalendarPage = () => {
         selectedDate={prefilledDate ?? selectedDate}
         selectedEndDate={prefilledEndDate}
       />
+
+      {/* Visa Expiry Popover (centered modal-like overlay) */}
+      {activeExpiry && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/30"
+          onClick={() => setActiveExpiry(null)}
+        >
+          <div className="bg-white rounded-lg shadow-lg p-4" onClick={(e) => e.stopPropagation()}>
+            <VisaExpiryPopover event={activeExpiry} onClose={() => setActiveExpiry(null)} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -612,6 +701,23 @@ const AgendaCard = ({ item, onClick }: { item: IAppointment; onClick: () => void
     )}
   </div>
 );
+
+const VisaExpiryAgendaCard = ({ event, onClick }: { event: VisaExpiryEvent; onClick: () => void }) => {
+  const color = getCategoryColor(event.category);
+  return (
+    <div className="flex items-start gap-4 px-1 py-3 border-gray-200 cursor-pointer border-b last:border-b-0" onClick={onClick}>
+      <div className="w-1 rounded-full flex-shrink-0 self-stretch" style={{ backgroundColor: color }} />
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-b14-600 mb-1">
+          {event.firstName}'s Visa Expires ({event.category})
+        </div>
+        <div className="text-b13 text-neutral-dark-grey">
+          {event.email} | {event.phone}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const AppointmentPopover = ({ setEditingAppointment, apt, children }: { setEditingAppointment: (appointment: any) => void; apt: any; children: React.ReactNode }) => {
   const [isOpen, setIsOpen] = useState(false);
