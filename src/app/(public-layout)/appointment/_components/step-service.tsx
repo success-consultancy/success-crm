@@ -9,6 +9,7 @@ const SERVICES = [
   'Skill Assessment Service',
   'Health Insurance Service',
   'Tribunal Service',
+  'Other Service'
 ];
 
 interface Props {
@@ -45,8 +46,8 @@ const StepService = ({ selected, onToggle, onBack, onContinue }: Props) => {
               aria-checked={isSelected}
               onClick={() => onToggle(service)}
               className={`flex items-center gap-2.5 h-14 pl-5 pr-3.5 rounded-[8px] w-[364px] border cursor-pointer transition-all duration-150 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2 ${isSelected
-                  ? 'border-[1.5px] border-[#484848]'
-                  : 'border border-[#e3e3e3] hover:border-[#b4b4b4]'
+                ? 'border-[1.5px] border-[#484848]'
+                : 'border border-[#e3e3e3] hover:border-[#b4b4b4]'
                 } bg-white`}
             >
               <span className="font-medium text-[16px] leading-[24px] text-[#1c1c1c] text-left flex-1">
