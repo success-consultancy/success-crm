@@ -414,10 +414,18 @@ const UniversityListPage = () => {
                             <div className="ml-18">
                               <p className="text-b3-b text-neutral-darkGrey mb-2">Available courses</p>
                               <table className="w-full text-sm">
+                                <thead>
+                                  <tr className="*:py-1.5 *:text-left text-neutral-darkGrey">
+                                    <th className="w-12">S.N</th>
+                                    <th className="w-1/2">Course name</th>
+                                    <th>Description</th>
+                                  </tr>
+                                </thead>
                                 <tbody>
-                                  {courses.map((course) => (
+                                  {courses.map((course, courseIdx) => (
                                     <tr key={course.id} className="*:py-1.5">
-                                      <td className="text-neutral-black w-1/2">{course.name}</td>
+                                      <td className="text-neutral-black">{courseIdx + 1}</td>
+                                      <td className="text-neutral-black">{course.name}</td>
                                       <td className="text-gray-500">{course.description || '-'}</td>
                                     </tr>
                                   ))}
