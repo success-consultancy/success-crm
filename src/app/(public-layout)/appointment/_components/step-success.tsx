@@ -99,13 +99,11 @@ function formatSlotInfoShort(dateStr: string, time: string): string {
 
 // Returns UTC datetime string like "20260422T230000Z"
 function getUTCDatetimeStr(dateStr: string, time24: string): string {
-  const [year, month, day] = dateStr.split('-').map(Number);
-  const [hours, minutes] = time24.split(':').map(Number);
-  const monthIdx = month - 1;
-  // AEDT (UTC+11): Oct–Mar; AEST (UTC+10): Apr–Sep
-  const isDST = monthIdx >= 9 || monthIdx <= 2;
-  const offset = isDST ? 11 : 10;
-  const utcDate = new Date(Date.UTC(year, monthIdx, day, hours - offset, minutes, 0));
+  const utcDate = new Date(`${dateStr}T${time24}:00${
+    new Intl.DateTimeFormat('en', { timeZone: 'Australia/Sydney', timeZoneName: 'longOffset' })
+      .formatToParts(new Date(`${dateStr}T${time24}:00`))
+      .find((p) => p.type === 'timeZoneName')!.value.replace('GMT', '')
+  }`);
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     `${utcDate.getUTCFullYear()}${pad(utcDate.getUTCMonth() + 1)}${pad(utcDate.getUTCDate())}` +
@@ -210,6 +208,9 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
     try {
       const time24 = time12to24(data.time);
       const endTime24 = addThirtyMinutes(time24);
+      const tzOffset = new Intl.DateTimeFormat('en', { timeZone: 'Australia/Sydney', timeZoneName: 'longOffset' })
+        .formatToParts(new Date(`${data.date}T${time24}:00`))
+        .find((p) => p.type === 'timeZoneName')!.value.replace('GMT', '');
       const [firstName, ...lastParts] = data.fullName.trim().split(' ');
       const lastName = lastParts.join(' ');
       const paidAmount = consultant?.isPaid ? (consultant.paidAmount ?? null) : null;
@@ -222,8 +223,8 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
         `/public/appointment`,
         {
           title,
-          start: `${data.date}T${time24}:00`,
-          end: `${data.date}T${endTime24}:00`,
+          start: `${data.date}T${time24}:00${tzOffset}`,
+          end: `${data.date}T${endTime24}:00${tzOffset}`,
           timezone: 'Australia/Sydney',
           userId: [data.consultantId],
           description,

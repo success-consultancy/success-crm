@@ -1,13 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import axios from 'axios';
 import { ChevronDown, GraduationCap, MapPin, CreditCard } from 'lucide-react';
 import { useQuery } from '@tanstack/react-query';
 import StepButtons from './step-buttons';
 import AppointmentDatePicker from './appointment-date-picker';
 import { useGetUsersForAppointment } from '@/query/get-users-for-appointment';
 import type { UserForAppointment } from '@/query/get-users-for-appointment';
+import { BRANCH_SLUG } from '@/constants/global';
+import { api } from '@/lib/api';
 
 const APPOINTMENT_API_BASE = 'https://api.successedu.com.au';
 
@@ -48,10 +49,9 @@ interface AppointmentSlot {
   slotTime: number;
 }
 
-const fetchAppointmentSlots = async (branch: string, date: string, userId: string): Promise<AppointmentSlot[]> => {
-  const slug = getBranchSlug(branch);
-  const res = await axios.get<AppointmentSlot[]>(
-    `${APPOINTMENT_API_BASE}/${slug}/public/appointment`,
+const fetchAppointmentSlots = async (date: string, userId: string): Promise<AppointmentSlot[]> => {
+  const res = await api.get<AppointmentSlot[]>(
+    `/public/appointment`,
     { params: { date, userId } },
   );
   return res.data ?? [];
@@ -121,8 +121,8 @@ const StepSchedule = ({
   const { data: consultants = [], isLoading } = useGetUsersForAppointment(branch);
 
   const { data: appointmentSlots = [] } = useQuery({
-    queryKey: ['appointmentSlots', branch, date, consultantId],
-    queryFn: () => fetchAppointmentSlots(branch, date, consultantId),
+    queryKey: ['appointmentSlots', date, consultantId],
+    queryFn: () => fetchAppointmentSlots(date, consultantId),
     enabled: !!date && !!consultantId,
     staleTime: 30_000,
   });
