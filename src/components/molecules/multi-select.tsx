@@ -17,8 +17,8 @@ type Props = {
   error?: string;
 };
 
-const MultiSelect = ({ value = [], ...props }: Props) => {
-  const [selected, setSelected] = useState(value);
+const MultiSelect = ({ value, ...props }: Props) => {
+  const [selected, setSelected] = useState<string[]>(Array.isArray(value) ? value : []);
 
   const handleSelectionChange = (newSelection: string[]) => {
     setSelected(newSelection);
@@ -34,7 +34,7 @@ const MultiSelect = ({ value = [], ...props }: Props) => {
             <span className="grow text-left">
               {selected?.length > 0 ? `${selected.length} items selected` : props.placeholder || 'Select items'}
             </span>
-            {selected.length > 0 && (
+            {selected?.length > 0 && (
               <X
                 className="size-4 cursor-pointer"
                 onClick={(e) => {

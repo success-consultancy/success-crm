@@ -29,7 +29,7 @@ export interface MeUser {
   firstName: string;
   lastName: string;
   detail: null;
-  clockInCode: null;
+  clockInCode: string | null;
   email: string;
   phone: string;
   address: string;

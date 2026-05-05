@@ -9,6 +9,7 @@ import { Camera } from 'lucide-react';
 import { MeUser } from '@/query/get-me';
 import { ProfileSchema, ProfileSchemaType } from '@/schema/profile-schema';
 import { useUserUpdate } from '@/mutations/auth/profile-update';
+import { useGenerateClockInCode } from '@/mutations/auth/generate-clockin-code';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Input from '@/components/molecules/input';
 import Button from '@/components/atoms/button';
@@ -55,6 +56,12 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
   } = form;
 
   const { mutate: updateUser, isPending } = useUserUpdate();
+  const { mutate: generateCode, isPending: isGeneratingCode } = useGenerateClockInCode();
+
+  const handleGenerateCode = () => {
+    if (!user?.id) return;
+    generateCode(user.id);
+  };
 
   const onSubmit = (data: ProfileSchemaType) => {
     // Add the selected image to the form data if available
@@ -224,6 +231,27 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
               />
             )}
           />
+        </div>
+
+        <div className="flex items-end gap-5">
+          <div className="flex-1">
+            <Input
+              label="Clock In-Out Code"
+              value={user?.clockInCode || ''}
+              readOnly
+              disabled
+              placeholder="No code generated yet"
+            />
+          </div>
+          <Button
+            type="button"
+            onClick={handleGenerateCode}
+            loading={isGeneratingCode}
+            disabled={isGeneratingCode || !user?.id}
+            className="btn btn-primary"
+          >
+            {isGeneratingCode ? 'Generating...' : 'Generate Code'}
+          </Button>
         </div>
 
         <FormField

@@ -31,7 +31,7 @@ const menuItems: MenuItem[] = [
   {
     label: 'Time Sheet',
     icon: Document,
-    href: '/#',
+    href: '/dashboard/timesheet',
   },
   {
     label: 'Sign Out',
