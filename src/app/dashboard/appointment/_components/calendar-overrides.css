@@ -11,7 +11,7 @@
 }
 
 .rbc-timeslot-group {
-  min-height: 64px;
+  min-height: 72px;
   border-bottom-color: #f3f4f6;
 }
 
@@ -121,7 +121,7 @@
   background-color: transparent !important;
   border: none !important;
   border-radius: 2px !important;
-  padding: 0 !important;
+  padding: 0 2px 0 0 !important;
   box-shadow: none !important;
   color: inherit !important;
 }
