@@ -14,6 +14,7 @@ import { ICheckIn } from '@/types/response-types/check-in-response';
 import { useMemo } from 'react';
 import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
+import CheckInStats from './check-in-stats';
 
 const CheckInPage = () => {
   const { getSearchParamsObject, searchParams, setParams } = useSearchParams();
@@ -77,6 +78,7 @@ const CheckInPage = () => {
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">Check-in</h3>
       </Portal>
+      <CheckInStats />
       <TableComponent
         data={(data?.rows as ICheckIn[]) || []}
         columns={columns}

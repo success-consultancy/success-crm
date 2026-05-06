@@ -14,6 +14,7 @@ export const useEndCheckInSession = () => {
     mutationFn: endCheckInSession,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_CHECK_INS] });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_CHECK_IN_STATS] });
       toast.success('Session ended successfully');
     },
     onError: () => {

@@ -26,6 +26,7 @@ export const QUERY_KEYS = {
   GET_AGREEMENT_BY_ID: 'get-agreement-by-id',
   GET_DASHBOARD: 'get-dashboard',
   GET_CHECK_INS: 'get-check-ins',
+  GET_CHECK_IN_STATS: 'get-check-in-stats',
   GET_USERS_FOR_APPOINTMENT: 'get-users-for-appointment',
   GET_FISCAL_REPORT: 'get-fiscal-report',
   GET_CLOCK_RECORDS: 'get-clock-records',
