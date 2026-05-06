@@ -23,6 +23,7 @@
   width: 98px !important;
   min-width: 98px !important;
   max-width: 98px !important;
+  background-color: #F9FAFB;
 }
 
 .rbc-time-header-gutter {
@@ -34,6 +35,7 @@
 
 .rbc-label {
   font-size: 12px;
+  font-weight: 600;
   color: #6B7280;
   padding: 4px 8px;
 }

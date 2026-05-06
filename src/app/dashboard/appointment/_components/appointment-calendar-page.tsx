@@ -153,7 +153,7 @@ const CustomTimeEvent = ({ event }: any) => {
   const eventLabel = `${clientName ? `${clientName} - ` : ''}${apt.title}${userName ? ` x ${userName}` : ''}`;
 
   return (
-    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border transition-colors hover:brightness-95 hover:bg-blue-50" style={{ borderColor: '#F2F2F2' }}>
+    <div className="flex items-stretch h-full overflow-hidden rounded-sm relative border transition-colors hover:brightness-95 hover:bg-blue-100" style={{ borderColor: '#C7CDD6' }}>
       <div className="w-[3px] flex-shrink-0 rounded-l-sm" style={{ backgroundColor: colorStr }} />
       <div className="flex flex-col overflow-hidden px-2 py-1 flex-1 bg-[#F7F8FA]">
         <div className="text-[11px] font-medium text-neutral-black leading-tight truncate">{timeLabel}</div>
