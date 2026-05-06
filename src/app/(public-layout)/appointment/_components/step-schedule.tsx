@@ -120,7 +120,7 @@ const StepSchedule = ({
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const { data: consultants = [], isLoading } = useGetUsersForAppointment(branch);
 
-  const { data: appointmentSlots = [] } = useQuery({
+  const { data: appointmentSlots = [], isFetching: isFetchingSlots } = useQuery({
     queryKey: ['appointmentSlots', date, consultantId],
     queryFn: () => fetchAppointmentSlots(date, consultantId),
     enabled: !!date && !!consultantId,
@@ -332,31 +332,39 @@ const StepSchedule = ({
           >
             Available time slots
           </p>
-          <div role="radiogroup" aria-labelledby="time-slots-label" className="flex flex-wrap gap-2">
-            {ALL_SLOTS.map((slot) => {
-              const isSelected = time === slot;
-              const isBooked = bookedSlots.includes(slot);
-              return (
-                <button
-                  key={slot}
-                  type="button"
-                  role="radio"
-                  aria-checked={isSelected}
-                  aria-label={isBooked ? `${slot} — unavailable` : slot}
-                  disabled={isBooked}
-                  onClick={() => !isBooked && onTimeChange(slot)}
-                  className={`h-10 px-4 rounded-[6px] border text-[14px] font-medium leading-[20px] transition-all duration-150 ${isBooked
-                    ? 'border-[#e3e3e3] text-[#b4b4b4] bg-[#f9f9f9] cursor-not-allowed line-through'
-                    : isSelected
-                      ? 'border-[#007acc] text-[#007acc] bg-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
-                      : 'border-[#e3e3e3] text-[#1c1c1c] bg-white cursor-pointer hover:border-[#007acc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
-                    }`}
-                >
-                  {slot}
-                </button>
-              );
-            })}
-          </div>
+          {isFetchingSlots ? (
+            <div className="flex flex-wrap gap-2">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="h-10 w-24 rounded-[6px] bg-[#f3f4f6] animate-pulse" />
+              ))}
+            </div>
+          ) : (
+            <div role="radiogroup" aria-labelledby="time-slots-label" className="flex flex-wrap gap-2">
+              {ALL_SLOTS.map((slot) => {
+                const isSelected = time === slot;
+                const isBooked = bookedSlots.includes(slot);
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    role="radio"
+                    aria-checked={isSelected}
+                    aria-label={isBooked ? `${slot} — unavailable` : slot}
+                    disabled={isBooked}
+                    onClick={() => !isBooked && onTimeChange(slot)}
+                    className={`h-10 px-4 rounded-[6px] border text-[14px] font-medium leading-[20px] transition-all duration-150 ${isBooked
+                      ? 'border-[#e3e3e3] text-[#b4b4b4] bg-[#f9f9f9] cursor-not-allowed line-through'
+                      : isSelected
+                        ? 'border-[#007acc] text-[#007acc] bg-white cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
+                        : 'border-[#e3e3e3] text-[#1c1c1c] bg-white cursor-pointer hover:border-[#007acc] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#007acc]/50 focus-visible:ring-offset-2'
+                      }`}
+                  >
+                    {slot}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       )}
 
