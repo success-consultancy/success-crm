@@ -24,6 +24,8 @@ interface TaskListProps {
   onClearDate?: (id: number) => void;
   onReorder?: (tasks: Task[]) => void;
   isCompleted?: boolean;
+  editingTaskId?: number | null;
+  renderEditForm?: () => React.ReactNode;
 }
 
 const formatTaskDate = (date: Date): string => {
@@ -35,7 +37,17 @@ const formatTaskDate = (date: Date): string => {
   return format(date, 'EEE, MMM d, yyyy');
 };
 
-const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, onReorder, isCompleted }: TaskListProps) => {
+const TaskList = ({
+  tasks,
+  onEdit,
+  onDelete,
+  onComplete,
+  onClearDate,
+  onReorder,
+  isCompleted,
+  editingTaskId,
+  renderEditForm,
+}: TaskListProps) => {
   const [orderedTasks, setOrderedTasks] = useState<Task[]>(tasks ?? []);
   const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
   const [draggingIndex, setDraggingIndex] = useState<number | null>(null);
@@ -90,6 +102,10 @@ const TaskList = ({ tasks, onEdit, onDelete, onComplete, onClearDate, onReorder,
   return (
     <div className="space-y-0.5">
       {orderedTasks?.map((task, index) => {
+        if (editingTaskId === task.id && renderEditForm) {
+          return <div key={task.id}>{renderEditForm()}</div>;
+        }
+
         const parsedDate = task.dueDate ? new Date(task.dueDate) : undefined;
         const validDate = parsedDate && !isNaN(parsedDate.getTime()) ? parsedDate : undefined;
         const isDragging = draggingIndex === index;

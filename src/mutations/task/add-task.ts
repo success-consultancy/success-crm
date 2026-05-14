@@ -24,7 +24,13 @@ export type UpdateTaskPayload = { id: number } & Partial<Omit<TaskSchemaType, 'i
 
 const editTask = async (payload: UpdateTaskPayload) => {
   const { id, ...rest } = payload;
-  const res = await api.put(`/todo/${id}`, rest);
+  const body: Record<string, unknown> = { ...rest };
+  // Axios drops `undefined`, so the backend would never see the field and the
+  // service skips updates when the key is missing. Send explicit `null` for
+  // clearable fields so "clear date/time" actually persists.
+  if ('dueDate' in rest && rest.dueDate === undefined) body.dueDate = null;
+  if ('dueTime' in rest && rest.dueTime === undefined) body.dueTime = null;
+  const res = await api.put(`/todo/${id}`, body);
   return res.data;
 };
 

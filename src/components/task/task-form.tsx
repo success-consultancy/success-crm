@@ -46,11 +46,14 @@ function IconTooltip({ label, children }: { label: string; children: React.React
   );
 }
 
-const iconBtnBase =
-  'w-8 h-8 rounded-full border flex items-center justify-center transition-all duration-150 outline-none focus-visible:ring-2 focus-visible:ring-blue-400';
-const iconBtnDefault =
-  'border-gray-300 bg-white text-gray-400 hover:bg-gray-50 hover:border-gray-400 hover:text-gray-600';
-const iconBtnActive = 'bg-blue-50 border-blue-400 text-blue-500';
+const pillBase =
+  'h-7 px-3 rounded-2xl border border-[#EBEBEB] flex items-center justify-center text-c1-c transition-colors duration-150 outline-none focus-visible:ring-2 focus-visible:ring-[#007ACC]/40';
+const pillDefault = 'bg-white text-neutral-black hover:bg-[#EBF1F4]';
+const pillActive = 'bg-[#DCF1FF] text-[#007ACC]';
+
+const iconBtnBase = `${pillBase} text-[#007ACC]`;
+const iconBtnDefault = 'bg-white hover:bg-[#EBF1F4]';
+const iconBtnActive = 'bg-[#DCF1FF]';
 
 interface TaskFormProps {
   form: any;
@@ -96,7 +99,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
   );
 
   return (
-    <div className="border border-gray-200 rounded-lg p-3 mb-4 bg-white shadow-sm">
+    <div className="border border-[#EBEBEB] rounded-lg p-3 mb-4 bg-[#F4F7FA]">
       <div className="flex items-start gap-2">
         {/* Circle radio decoration */}
         <div className="mt-[3px] w-[18px] h-[18px] rounded-full border-2 border-gray-300 flex-shrink-0" />
@@ -173,17 +176,12 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
           )}
 
           {/* Action buttons row */}
-          <div className="flex items-center gap-1.5 mt-2 ">
+          <div className="flex items-center gap-2 mt-2">
             {/* Today */}
             <button
               type="button"
               onClick={() => form.setValue('dueDate', today)}
-              className={cn(
-                'text-c1-c px-2 py-0.5 rounded border transition-colors',
-                isToday
-                  ? 'bg-blue-50 border-blue-300 text-blue-600'
-                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
-              )}
+              className={cn(pillBase, isToday ? pillActive : pillDefault)}
             >
               Today
             </button>
@@ -192,12 +190,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
             <button
               type="button"
               onClick={() => form.setValue('dueDate', tomorrow)}
-              className={cn(
-                'text-c1-c px-2 py-0.5 rounded border transition-colors',
-                isTomorrow
-                  ? 'bg-blue-50 border-blue-300 text-blue-600'
-                  : 'border-gray-200 text-neutral-black hover:bg-gray-50',
-              )}
+              className={cn(pillBase, isTomorrow ? pillActive : pillDefault)}
             >
               Tomorrow
             </button>
@@ -208,7 +201,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
                 <PopoverTrigger asChild>
                   <TooltipPrimitive.Trigger asChild>
                     <button type="button" className={cn(iconBtnBase, hasCustomDate ? iconBtnActive : iconBtnDefault)}>
-                      <Calendar className="w-[15px] h-[15px]" />
+                      <Calendar className="w-4 h-4" />
                     </button>
                   </TooltipPrimitive.Trigger>
                 </PopoverTrigger>
@@ -235,7 +228,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
                 <PopoverTrigger asChild>
                   <TooltipPrimitive.Trigger asChild>
                     <button type="button" className={cn(iconBtnBase, dueTime ? iconBtnActive : iconBtnDefault)}>
-                      <Clock className="w-[15px] h-[15px]" />
+                      <Clock className="w-4 h-4" />
                     </button>
                   </TooltipPrimitive.Trigger>
                 </PopoverTrigger>
@@ -271,7 +264,7 @@ const TaskForm = ({ form, onSubmit, onCancel, isEditMode, superAdmin, users }: T
                   <PopoverTrigger asChild>
                     <TooltipPrimitive.Trigger asChild>
                       <button type="button" className={cn(iconBtnBase, selectedUser ? iconBtnActive : iconBtnDefault)}>
-                        <UserRoundCheck className="w-[15px] h-[15px]" />
+                        <UserRoundCheck className="w-4 h-4" />
                       </button>
                     </TooltipPrimitive.Trigger>
                   </PopoverTrigger>

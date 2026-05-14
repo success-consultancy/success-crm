@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import { useGetTasks } from '@/query/get-tasks';
 import useAuthStore from '@/store/auth-store';
@@ -32,7 +32,7 @@ export function TasksDrawer() {
     resolver: zodResolver(taskFormSchema),
     mode: 'onSubmit',
     reValidateMode: 'onChange',
-    defaultValues: { detail: '', detailDescription: '', dueDate: undefined, dueTime: undefined, userId },
+    defaultValues: { detail: '', detailDescription: '', dueDate: undefined, dueTime: undefined, userId: undefined },
   });
 
   const { data: activeTasks = [] } = useGetTasks({
@@ -50,12 +50,6 @@ export function TasksDrawer() {
   const editTask = useEditTask();
   const deleteTask = useDeleteTask();
 
-  useEffect(() => {
-    if (profile) {
-      form.setValue('userId', profile.id as unknown as number);
-    }
-  }, [profile]);
-
   const openAddForm = () => {
     setEditingTaskId(null);
     form.reset({
@@ -63,7 +57,7 @@ export function TasksDrawer() {
       detailDescription: '',
       dueDate: undefined,
       dueTime: undefined,
-      userId,
+      userId: undefined,
     });
     setIsAddFormVisible(true);
   };
@@ -78,9 +72,15 @@ export function TasksDrawer() {
     const task = activeTasks.find((t: any) => t.id === taskId);
     if (task) {
       setEditingTaskId(taskId);
+      // Only seed the fields the form/schema knows about. Nulls from the API
+      // would otherwise fail zod's .optional() validation and silently block submit.
       form.reset({
-        ...task,
+        detail: task.detail ?? '',
+        detailDescription: task.detailDescription ?? '',
         dueDate: task.dueDate ? new Date(task.dueDate) : undefined,
+        dueTime: task.dueTime ?? undefined,
+        userId: task.userId ?? undefined,
+        isCompleted: task.isCompleted ?? false,
       });
       setIsAddFormVisible(true);
     }
@@ -92,12 +92,18 @@ export function TasksDrawer() {
       userId: data.userId ?? userId,
     };
 
-    if (editingTaskId) {
-      await editTask.mutateAsync({ ...payload, id: editingTaskId });
-    } else {
-      await addTask.mutateAsync(payload);
+    try {
+      if (editingTaskId) {
+        console.log('[task] PUT /todo/' + editingTaskId, payload);
+        await editTask.mutateAsync({ ...payload, id: editingTaskId });
+      } else {
+        console.log('[task] POST /todo', payload);
+        await addTask.mutateAsync(payload);
+      }
+      closeAddForm();
+    } catch (err: any) {
+      console.error('[task] save failed', err?.response?.status, err?.response?.data || err);
     }
-    closeAddForm();
   };
 
   const completeTask = (taskId: number, isCompleted: boolean) => {
@@ -141,13 +147,13 @@ export function TasksDrawer() {
                 </button>
               )}
 
-              {/* Inline add / edit form */}
-              {isAddFormVisible && (
+              {/* Inline add form (top); edit form is rendered in-place inside the list */}
+              {isAddFormVisible && !editingTaskId && (
                 <TaskForm
                   form={form}
                   onSubmit={form.handleSubmit(saveTask)}
                   onCancel={closeAddForm}
-                  isEditMode={!!editingTaskId}
+                  isEditMode={false}
                   superAdmin={superAdmin}
                   users={users}
                 />
@@ -161,6 +167,17 @@ export function TasksDrawer() {
                   onDelete={handleDeleteTask}
                   onComplete={completeTask}
                   onClearDate={handleClearDate}
+                  editingTaskId={editingTaskId}
+                  renderEditForm={() => (
+                    <TaskForm
+                      form={form}
+                      onSubmit={form.handleSubmit(saveTask)}
+                      onCancel={closeAddForm}
+                      isEditMode
+                      superAdmin={superAdmin}
+                      users={users}
+                    />
+                  )}
                 />
               ) : !isAddFormVisible ? (
                 allCompleted ? (
