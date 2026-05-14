@@ -10,6 +10,7 @@ import CodeLoginScreen from './_components/code-login-screen';
 import WelcomeScreen from './_components/welcome-screen';
 import ActionsScreen, { ActionChoice } from './_components/actions-screen';
 import StatusScreen from './_components/status-screen';
+import ConfirmActionDialog from './_components/confirm-action-dialog';
 import { ClockInRecord, ClockInUser, ClockLoginResponse } from '@/mutations/clock-in/clock-login';
 import { ClockActionType, useClockAction } from '@/mutations/clock-in/clock-action';
 import { extractErrorMessage } from '@/utils/clock-in-errors';
@@ -28,6 +29,37 @@ type View =
   | 'break-ended'
   | 'clocked-out';
 
+type PendingAction = {
+  action: ClockActionType;
+  nextView: View;
+  title: string;
+  description: string;
+  confirmLabel: string;
+};
+
+const PENDING_ACTION_COPY: Record<ClockActionType, Omit<PendingAction, 'action' | 'nextView'>> = {
+  in: {
+    title: 'Clock In?',
+    description: 'This will start your shift and record the current time as your clock-in.',
+    confirmLabel: 'Clock In',
+  },
+  'break-start': {
+    title: 'Start Break?',
+    description: 'Your timer will be paused until you end your break.',
+    confirmLabel: 'Start Break',
+  },
+  'break-end': {
+    title: 'End Break?',
+    description: 'This will resume your shift and record the end of your break.',
+    confirmLabel: 'End Break',
+  },
+  out: {
+    title: 'Clock Out?',
+    description: 'This will end your shift for today. You won’t be able to clock back in until tomorrow.',
+    confirmLabel: 'Clock Out',
+  },
+};
+
 const formatTime = (iso: string | null) => {
   if (!iso) return '';
   return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit', hour12: true });
@@ -39,6 +71,7 @@ const ClockInPage = () => {
   const [view, setView] = useState<View>('verify-identity');
   const [user, setUser] = useState<ClockInUser | null>(null);
   const [clockIn, setClockIn] = useState<ClockInRecord | null>(null);
+  const [pendingAction, setPendingAction] = useState<PendingAction | null>(null);
 
   const { mutate: clockAction, isPending: actionPending } = useClockAction();
 
@@ -58,10 +91,10 @@ const ClockInPage = () => {
     setAdminUnlocked(true);
   };
 
-  const resetSession = useCallback(() => {
+  const resetSession = useCallback((target: View = 'verify-identity') => {
     setUser(null);
     setClockIn(null);
-    setView('verify-identity');
+    setView(target);
   }, []);
 
   const handleLoginSuccess = (data: ClockLoginResponse) => {
@@ -81,7 +114,8 @@ const ClockInPage = () => {
     setView('actions');
   };
 
-  // Auto-dismiss success states
+  // Auto-dismiss success states — every action returns the kiosk to the code-entry screen
+  // so the next person must re-authenticate before doing anything.
   useEffect(() => {
     if (
       view !== 'clocked-in' &&
@@ -92,11 +126,7 @@ const ClockInPage = () => {
       return;
     }
     const id = setTimeout(() => {
-      if (view === 'clocked-out') {
-        resetSession();
-      } else {
-        setView('actions');
-      }
+      resetSession('code-login');
     }, SUCCESS_DISMISS_MS);
     return () => clearTimeout(id);
   }, [view, resetSession]);
@@ -109,10 +139,12 @@ const ClockInPage = () => {
         onSuccess: (result) => {
           setClockIn(result.clockIn);
           setView(nextView);
+          setPendingAction(null);
         },
         onError: (err) => {
           const message = extractErrorMessage(err, 'Could not complete that action. Please try again.');
           toast.error(message);
+          setPendingAction(null);
           // 403 means the kiosk JWT was rejected — drop the session so the user re-logs in.
           if (axios.isAxiosError(err) && err.response?.status === 403) {
             resetSession();
@@ -122,14 +154,28 @@ const ClockInPage = () => {
     );
   };
 
-  const handleClockIn = () => performAction('in', 'clocked-in');
+  const requestAction = (action: ClockActionType, nextView: View) => {
+    setPendingAction({ action, nextView, ...PENDING_ACTION_COPY[action] });
+  };
+
+  const handleConfirmPending = () => {
+    if (!pendingAction) return;
+    performAction(pendingAction.action, pendingAction.nextView);
+  };
+
+  const handleCancelPending = () => {
+    if (actionPending) return;
+    setPendingAction(null);
+  };
+
+  const handleClockIn = () => requestAction('in', 'clocked-in');
 
   const handleActionsSubmit = (choice: ActionChoice, _note: string) => {
     // Backend currently ignores notes — accept the parameter for parity with the form.
     void _note;
-    if (choice === 'break-start') performAction('break-start', 'break-started');
-    else if (choice === 'break-end') performAction('break-end', 'break-ended');
-    else if (choice === 'out') performAction('out', 'clocked-out');
+    if (choice === 'break-start') requestAction('break-start', 'break-started');
+    else if (choice === 'break-end') requestAction('break-end', 'break-ended');
+    else if (choice === 'out') requestAction('out', 'clocked-out');
   };
 
   // Avoid SSR/CSR mismatch on first render — wait until localStorage is read
@@ -212,6 +258,16 @@ const ClockInPage = () => {
           }
         />
       )}
+
+      <ConfirmActionDialog
+        open={!!pendingAction}
+        title={pendingAction?.title ?? ''}
+        description={pendingAction?.description ?? ''}
+        confirmLabel={pendingAction?.confirmLabel ?? 'Confirm'}
+        loading={actionPending}
+        onConfirm={handleConfirmPending}
+        onCancel={handleCancelPending}
+      />
     </ClockInFrame>
   );
 };
