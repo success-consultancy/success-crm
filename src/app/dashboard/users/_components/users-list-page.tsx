@@ -142,63 +142,62 @@ const UsersListPage = () => {
             <tbody>
               {isLoading
                 ? Array(8)
-                    .fill(null)
-                    .map((_, i) => (
-                      <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                        <td><Skeleton className="h-5 w-6" /></td>
-                        <td><Skeleton className="h-5 w-36" /></td>
-                        <td><Skeleton className="h-5 w-44" /></td>
-                        <td><Skeleton className="h-5 w-28" /></td>
-                        <td><Skeleton className="h-5 w-20" /></td>
-                        <td><Skeleton className="h-5 w-16" /></td>
-                        <td><Skeleton className="h-5 w-8" /></td>
-                      </tr>
-                    ))
-                : pageItems.map((user, idx) => (
-                    <tr
-                      key={user.id}
-                      className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-darkGrey last:border-none"
-                    >
-                      <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
-                      <td>
-                        <div className="flex items-center gap-2">
-                          <span
-                            className="flex-shrink-0 w-3 h-3 rounded-full"
-                            style={{
-                              backgroundColor: (user as any).color ||
-                                getAppointColorBasedOnUserName(user.firstName, user.lastName, 'raw') as string,
-                            }}
-                          />
-                          <span className="font-medium">{user.firstName} {user.lastName}</span>
-                        </div>
-                      </td>
-                      <td className="truncate max-w-[220px] text-gray-600">{user.email}</td>
-                      <td>{user.phone}</td>
-                      <td>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                          {ROLES[user.roleId] ?? `Role ${user.roleId}`}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                            user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
-                          }`}
-                        >
-                          {user.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td className="text-right">
-                        <button
-                          className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
-                          onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
-                          aria-label="Edit user"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
-                      </td>
+                  .fill(null)
+                  .map((_, i) => (
+                    <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
+                      <td><Skeleton className="h-5 w-6" /></td>
+                      <td><Skeleton className="h-5 w-36" /></td>
+                      <td><Skeleton className="h-5 w-44" /></td>
+                      <td><Skeleton className="h-5 w-28" /></td>
+                      <td><Skeleton className="h-5 w-20" /></td>
+                      <td><Skeleton className="h-5 w-16" /></td>
+                      <td><Skeleton className="h-5 w-8" /></td>
                     </tr>
-                  ))}
+                  ))
+                : pageItems.map((user, idx) => (
+                  <tr
+                    key={user.id}
+                    className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-darkGrey last:border-none"
+                  >
+                    <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
+                    <td>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="flex-shrink-0 w-3 h-3 rounded-full"
+                          style={{
+                            backgroundColor: (user as any).color ||
+                              getAppointColorBasedOnUserName(user.firstName, user.lastName, 'raw') as string,
+                          }}
+                        />
+                        <span className="font-medium">{user.firstName} {user.lastName}</span>
+                      </div>
+                    </td>
+                    <td className="truncate max-w-[220px]">{user.email}</td>
+                    <td>{user.phone}</td>
+                    <td>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                        {ROLES[user.roleId] ?? `Role ${user.roleId}`}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                          }`}
+                      >
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td className="text-right">
+                      <button
+                        className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                        onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
+                        aria-label="Edit user"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
 
               {!isLoading && pageItems.length === 0 && (
                 <tr>
