@@ -2,6 +2,8 @@ export const ROUTES = {
   DASHBOARD: '/dashboard',
   FACE_UPLOAD: `/dashboard/face-upload`,
   FISCAL_REPORT: '/dashboard/fiscal-report',
+  FISCAL_REPORT_VISA: '/dashboard/fiscal-report/visa-application',
+  FISCAL_REPORT_STUDENT: '/dashboard/fiscal-report/student-enrollment',
   APPOINTMENT: '/dashboard/appointment',
   CHECK_IN: '/dashboard/check-in',
   PUBLIC_CHECK_IN: '/dashboard/checkin',

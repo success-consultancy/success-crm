@@ -16,16 +16,21 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
     <Link
       href={subItem.href}
       className={cn(
-        'relative flex items-center py-1 px-[25px] text-sm transition-colors hover:bg-component-active rounded-md overflow-hidden',
-        isSubActive ? 'text-primary font-medium bg-component-active' : 'text-neutral-black hover:text-primary',
+        'relative flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
+        isSubActive
+          ? 'bg-component-active text-primary font-semibold'
+          : 'text-neutral-black hover:bg-component-active/60 hover:text-neutral-black font-medium',
+        collapsed && 'opacity-0 pointer-events-none',
       )}
     >
-      <span
+      <div
         className={cn(
-          'text-b3-b transition-all duration-300 ease-in-out whitespace-nowrap',
-          collapsed ? 'opacity-0 w-0' : 'opacity-100',
+          'flex items-center justify-center w-10 h-10 transition-colors duration-300',
         )}
       >
+      </div>
+      {/* Left accent bar — visible only when active */}
+      <span className={cn('pl-3 pr-3 text-[13.5px] whitespace-nowrap leading-none', collapsed && 'opacity-0 w-0')}>
         {subItem.title}
       </span>
     </Link>

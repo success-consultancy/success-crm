@@ -50,7 +50,7 @@ export const AccordionMenuItem = ({ item, index, isActive, pathName }: Accordion
       </AccordionTrigger>
 
       <AccordionContent className={cn('pb-1 transition-all duration-300', isCollapsed && 'hidden')}>
-        <div className="ml-[26px] mr-[14.5px]">
+        <div className="flex flex-col gap-0.5 mt-2">
           {item.subItems.map((subItem, subIndex: number) => (
             <SubMenuItemComponent key={subIndex} subItem={subItem} pathName={pathName} collapsed={isCollapsed} />
           ))}

@@ -27,7 +27,10 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.FiscalReport,
     icon: Icons.FiscalReportIcon,
-    href: '/dashboard/fiscal-report',
+    subItems: [
+      { title: 'Visa application', href: '/dashboard/fiscal-report/visa-application' },
+      { title: 'Student enrollment', href: '/dashboard/fiscal-report/student-enrollment' },
+    ],
   },
   {
     title: DashboardTitle.AppointmentCalendar,

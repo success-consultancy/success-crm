@@ -1,5 +1,5 @@
-import FiscalReportPage from './_components/fiscal-report-page';
+import { redirect } from 'next/navigation';
 
 export default function FiscalReport() {
-  return <FiscalReportPage />;
+  redirect('/dashboard/fiscal-report/visa-application');
 }

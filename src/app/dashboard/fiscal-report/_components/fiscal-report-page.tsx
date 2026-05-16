@@ -5,20 +5,12 @@ import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import Button from '@/components/atoms/button';
-import TabSelector from '@/components/atoms/tab-selector';
 import KpiCard from './kpi-card';
 import PerformanceTable, { ReportRow } from './performance-table';
 import CreateFiscalReportModal from './create-fiscal-report-modal';
 import { useGetFiscalReport } from '@/query/get-fiscal-report';
 import { useUpdateFiscalReport } from '@/mutations/fiscal-report/update-fiscal-report';
 import { FiscalReportRow } from '@/types/response-types/fiscal-report-response';
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-
-const TABS = [
-  { key: 'visa_application', label: 'Visa application' },
-  { key: 'student_enrollment', label: 'Student enrollment' },
-];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -68,8 +60,11 @@ function KpiSkeleton() {
 
 // ─── Page component ────────────────────────────────────────────────────────────
 
-export default function FiscalReportPage() {
-  const [activeTab, setActiveTab] = useState('visa_application');
+interface FiscalReportPageProps {
+  type: 'visa_application' | 'student_enrollment';
+}
+
+export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   const [fiscalYear, setFiscalYear] = useState('2025-2026');
   const [search, setSearch] = useState('');
   const [isEdit, setIsEdit] = useState(false);
@@ -78,7 +73,7 @@ export default function FiscalReportPage() {
 
   const { initialYear, finalYear } = parseYear(fiscalYear);
 
-  const { data: allReports = [], isLoading } = useGetFiscalReport({ type: activeTab });
+  const { data: allReports = [], isLoading } = useGetFiscalReport({ type });
   const { mutate: updateReport, isPending: isSaving } = useUpdateFiscalReport();
 
   const fiscalYears = React.useMemo(
@@ -101,8 +96,11 @@ export default function FiscalReportPage() {
   }, [fiscalYear]);
 
   const report = React.useMemo(
-    () => allReports.find((r) => r.year === fiscalYear) ?? null,
-    [allReports, fiscalYear],
+    () =>
+      allReports.find((r) => r.year === fiscalYear && (!r.type || r.type === type)) ??
+      allReports.find((r) => r.year === fiscalYear) ??
+      null,
+    [allReports, fiscalYear, type],
   );
 
   const prevReport = React.useMemo(
@@ -137,12 +135,6 @@ export default function FiscalReportPage() {
   const actualChange = prevTotalActual > 0 ? Math.round(((totalActual - prevTotalActual) / prevTotalActual) * 100) : 0;
   const achievementChange = Number((achievementRate - prevAchievementRate).toFixed(1));
 
-  const handleTabChange = (tab: string) => {
-    setActiveTab(tab);
-    setIsEdit(false);
-    setSearch('');
-  };
-
   const handleFiscalYearChange = (year: string) => {
     setFiscalYear(year);
     setIsEdit(false);
@@ -155,15 +147,15 @@ export default function FiscalReportPage() {
       prev.map((row) =>
         row.name === name
           ? {
-            ...row,
-            target: {
-              ...row.target,
-              [monthKey]: value,
-              total: Object.entries({ ...row.target, [monthKey]: value })
-                .filter(([k]) => k !== 'total')
-                .reduce((s, [, v]) => s + (Number(v) || 0), 0),
-            },
-          }
+              ...row,
+              target: {
+                ...row.target,
+                [monthKey]: value,
+                total: Object.entries({ ...row.target, [monthKey]: value })
+                  .filter(([k]) => k !== 'total')
+                  .reduce((s, [, v]) => s + (Number(v) || 0), 0),
+              },
+            }
           : row,
       ),
     );
@@ -206,10 +198,14 @@ export default function FiscalReportPage() {
     URL.revokeObjectURL(url);
   };
 
+  const pageTitle = type === 'visa_application' ? 'Visa application' : 'Student enrollment';
+  const tableTitle = type === 'visa_application' ? 'Visa application performance' : 'Student enrollment performance';
+  const nameColumnHeader = type === 'visa_application' ? 'Visa name' : 'Course name';
+
   return (
     <Container className="flex flex-col max-h-full overflow-hidden p-0">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h5 text-content-heading font-bold">Fiscal report</h3>
+        <h3 className="text-h5 text-content-heading font-bold">{pageTitle}</h3>
       </Portal>
 
       <div className="flex flex-col flex-1 bg-white rounded-lg border border-stroke-divider overflow-hidden mx-4 my-4">
@@ -222,8 +218,6 @@ export default function FiscalReportPage() {
 
         {/* ── Body ── */}
         <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
-          <TabSelector activeTab={activeTab} onTabChange={handleTabChange} tabs={TABS} />
-
           {/* KPI Cards */}
           <div className="flex gap-4">
             {isLoading ? (
@@ -243,8 +237,8 @@ export default function FiscalReportPage() {
 
           {/* Performance Table */}
           <PerformanceTable
-            title={activeTab === 'visa_application' ? 'Visa application performance' : 'Student enrollment performance'}
-            nameColumnHeader={activeTab === 'visa_application' ? 'Visa name' : 'Course name'}
+            title={tableTitle}
+            nameColumnHeader={nameColumnHeader}
             data={tableData}
             initialYear={initialYear}
             finalYear={finalYear}
