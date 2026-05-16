@@ -30,6 +30,7 @@ export interface MeUser {
   lastName: string;
   detail: null;
   clockInCode: string | null;
+  clockInFaceId: string | null;
   email: string;
   phone: string;
   address: string;

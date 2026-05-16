@@ -4,6 +4,7 @@ import React from 'react';
 
 import PersonalDetailsTab from './_components/personal-details-tab';
 import SecurityTab from './_components/security-tab';
+import FaceLoginTab from './_components/face-login-tab';
 
 import useSearchParams from '@/hooks/use-search-params';
 
@@ -17,6 +18,7 @@ import SectionLoader from '@/components/molecules/section-loader';
 const TAB_CONFIG = [
   { key: 'personal_details', label: 'Personal Details' },
   { key: 'security', label: 'Security' },
+  { key: 'face_login', label: 'Face Login' },
 ];
 
 const Account = () => {
@@ -40,7 +42,9 @@ const Account = () => {
       <div className="container bg-white rounded-xl py-2 px-4">
         <TabSelector className="mb-4" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
-        {currentTab === 'personal_details' ? <PersonalDetailsTab user={user?.data as MeUser} /> : <SecurityTab />}
+        {currentTab === 'personal_details' && <PersonalDetailsTab user={user?.data as MeUser} />}
+        {currentTab === 'security' && <SecurityTab />}
+        {currentTab === 'face_login' && <FaceLoginTab user={user?.data as MeUser} />}
       </div>
     </Container>
   );

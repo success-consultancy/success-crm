@@ -28,6 +28,7 @@ export interface ClockLoginResponse {
 export interface ClockLoginPayload {
   clockInCode?: string;
   id?: number;
+  faceId?: string;
 }
 
 const clockLogin = async (payload: ClockLoginPayload): Promise<ClockLoginResponse> => {

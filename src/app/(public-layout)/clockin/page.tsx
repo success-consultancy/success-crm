@@ -192,7 +192,10 @@ const ClockInPage = () => {
   return (
     <ClockInFrame>
       {view === 'verify-identity' && (
-        <VerifyIdentityScreen onCodeLogin={() => setView('code-login')} />
+        <VerifyIdentityScreen
+          onCodeLogin={() => setView('code-login')}
+          onFaceLoginSuccess={handleLoginSuccess}
+        />
       )}
 
       {view === 'code-login' && (
