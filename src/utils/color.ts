@@ -1,59 +1,59 @@
 
+type ColorUser = {
+  color?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+};
+
 type ColorOutputType = "tailwind" | "css" | "style" | "border" | "raw";
 
 const getAppointColorBasedOnUserName = (
-    firstName: string,
-    lastName: string,
-    type: ColorOutputType = "css"
-) => {
-    const fullName = `${firstName} ${lastName}`.toLowerCase();
-
-    let hash = 0;
-    for (let i = 0; i < fullName.length; i++) {
-        hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
-    }
-
-    const hue = Math.abs(hash) % 360;
-    const cssColor = `hsl(${hue}, 65%, 55%)`;
-
-    // Tailwind-safe fixed palette
-    const tailwindColors = [
-        "bg-red-500",
-        "bg-blue-500",
-        "bg-[#22AF6A]",
-        "bg-[#FDB602]",
-        "bg-[#FDB602]",
-    ];
-
-    const rawColors = [
-        "#ef4444",
-        "#3b82f6",
-        "#22AF6A",
-        "#FDB602",
-        "#FDB602",
-    ];
-
-    const paletteIndex = Math.abs(hash) % tailwindColors.length;
-    const tailwindClass = tailwindColors[paletteIndex];
-    const rawColor = rawColors[paletteIndex];
-
+  user: ColorUser | null | undefined,
+  type: ColorOutputType = "raw"
+): string | { backgroundColor: string } | { borderColor: string } => {
+  if (user?.color) {
     switch (type) {
-        case "tailwind":
-            return tailwindClass;
-
-        case "style":
-            return { backgroundColor: rawColor };
-
-        case "border":
-            return { borderColor: rawColor };
-
-        case "raw":
-            return rawColor;
-
-        case "css":
-        default:
-            return tailwindClass;
+      case "style": return { backgroundColor: user.color };
+      case "border": return { borderColor: user.color };
+      default: return user.color;
     }
+  }
+
+  const firstName = user?.firstName || '';
+  const lastName = user?.lastName || '';
+  const fullName = `${firstName} ${lastName}`.toLowerCase();
+
+  let hash = 0;
+  for (let i = 0; i < fullName.length; i++) {
+    hash = fullName.charCodeAt(i) + ((hash << 5) - hash);
+  }
+
+  const tailwindColors = [
+    "bg-red-500",
+    "bg-blue-500",
+    "bg-[#22AF6A]",
+    "bg-[#FDB602]",
+    "bg-[#FDB602]",
+  ];
+
+  const rawColors = [
+    "#ef4444",
+    "#3b82f6",
+    "#22AF6A",
+    "#FDB602",
+    "#FDB602",
+  ];
+
+  const paletteIndex = Math.abs(hash) % rawColors.length;
+
+  switch (type) {
+    case "tailwind":
+    case "css": return tailwindColors[paletteIndex];
+    case "style": return { backgroundColor: rawColors[paletteIndex] };
+    case "border": return { borderColor: rawColors[paletteIndex] };
+    default: return rawColors[paletteIndex];
+  }
 };
 
+export type { ColorUser };
 export { getAppointColorBasedOnUserName };

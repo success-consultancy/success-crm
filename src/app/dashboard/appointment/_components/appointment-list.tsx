@@ -3,7 +3,6 @@
 import React from 'react';
 import { format, parseISO } from 'date-fns';
 import { IAppointment } from '@/types/response-types/appointment-response';
-import { cn } from '@/lib/utils';
 import { Avatar } from '@/components/ui/avatar';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -55,7 +54,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
       {appointments.map((appointment) => {
         const startTime = format(parseISO(appointment.startTime), 'h:mm a');
         const endTime = format(parseISO(appointment.endTime), 'h:mm a');
-
+        const userColor = getAppointColorBasedOnUserName(appointment.user, 'raw') as string;
 
         return (
           <div
@@ -64,7 +63,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
             onClick={() => onAppointmentClick(appointment)}
           >
             <div className="flex items-start gap-3">
-              <div className={cn('w-2 h-2 rounded-full mt-2 flex-shrink-0', getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))} />
+              <div className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: userColor }} />
               <div className="flex-1 min-w-0">
                 <h5 className="text-b13-500 text-neutral-black mb-1 truncate">{appointment.title}</h5>
                 {appointment.description && (
@@ -77,7 +76,8 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
                   {appointment.user && (
                     <Avatar
                       title={`${appointment.user?.firstName} ${appointment.user?.lastName}`}
-                      className={cn("w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-medium text-white", getAppointColorBasedOnUserName(appointment.user?.firstName || '', appointment.user?.lastName || ''))}
+                      className="w-[26px] h-[26px] rounded-full flex items-center justify-center text-[10px] font-medium text-white"
+                      style={{ backgroundColor: userColor }}
                     >
                       {getInitials(appointment.user?.firstName, appointment.user?.lastName)}
                     </Avatar>

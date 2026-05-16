@@ -36,6 +36,7 @@ interface ApiAppointment {
     lastName: string;
     email: string;
     phone: string;
+    color?: string;
     avatar: string;
     deletedAt: string | null;
   };

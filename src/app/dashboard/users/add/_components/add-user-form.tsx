@@ -117,7 +117,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
 
   const activeColor = selectedColor ||
     (firstName || lastName
-      ? getAppointColorBasedOnUserName(firstName || '', lastName || '', 'raw') as string
+      ? getAppointColorBasedOnUserName({ firstName, lastName }, 'raw') as string
       : '');
 
   const onSubmit: SubmitHandler<UserFormType> = (data) => {

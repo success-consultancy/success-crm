@@ -25,6 +25,7 @@ export interface IAppointment {
     lastName: string;
     email: string;
     phone: string;
+    color?: string;
   };
   lead?: {
     id: number;

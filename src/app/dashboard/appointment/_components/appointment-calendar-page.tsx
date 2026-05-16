@@ -145,7 +145,7 @@ const CustomTimeEvent = ({ event }: any) => {
   const endPeriod = format(end, 'a').toLowerCase();
   const startStr = startPeriod === endPeriod ? format(start, 'h:mm') : format(start, 'h:mm a').toLowerCase();
   const timeLabel = `${startStr} - ${format(end, 'h:mm a').toLowerCase()}`;
-  const colorStr = getAppointColorBasedOnUserName(apt.user?.firstName || '', apt.user?.lastName || '', 'raw') as string;
+  const colorStr = getAppointColorBasedOnUserName(apt.user, 'raw') as string;
   const isLoading = loadingEventIds.has(event.id);
   const client = apt.client ?? apt.lead;
   const clientName = client ? `${client.firstName} ${client.lastName}` : '';
@@ -228,6 +228,7 @@ const MonthEvent = ({ event }: any) => {
   const clientName = client ? `${client.firstName} ${client.lastName}` : '';
   const userName = apt.user ? `${apt.user.firstName} ${apt.user.lastName}` : '';
   const label = `${clientName ? `${clientName} - ` : ''}${apt.title}${userName ? ` x ${userName}` : ''}`;
+  const dotColor = getAppointColorBasedOnUserName(apt.user, 'raw') as string;
   return (
     <AppointmentPopover setEditingAppointment={onEditAppointment} apt={apt}>
       <div
@@ -237,7 +238,7 @@ const MonthEvent = ({ event }: any) => {
         onClick={e => e.stopPropagation()}
         onKeyDown={e => e.stopPropagation()}
       >
-        <span className={cn('w-1.5 h-1.5 rounded-full flex-shrink-0', getAppointColorBasedOnUserName(apt.user?.firstName || '', apt.user?.lastName || ''))} />
+        <span className="w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ backgroundColor: dotColor }} />
         <span className="truncate">{label}</span>
         {isLoading && (
           <div className="w-2.5 h-2.5 border-2 border-gray-500 border-t-transparent rounded-full animate-spin ml-auto flex-shrink-0" />
@@ -680,27 +681,30 @@ const AppointmentCalendarPage = () => {
 // ==========================================
 // SUB-COMPONENTS
 // ==========================================
-const AgendaCard = ({ item, onClick }: { item: IAppointment; onClick: () => void }) => (
-  <div className="flex items-start gap-4 px-1 py-4 border-gray-200 cursor-pointer border-b last:border-b-0" onClick={onClick}>
-    <div className={`w-1 ${getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '')} rounded-full flex-shrink-0 self-stretch`} />
-    <div className="flex-shrink-0 text-sm font-medium text-neutral-black min-w-[148px] flex items-center gap-2 mr-8">
-      <Clock className="h-4 w-4" /> {format(parseISO(item.startTime), 'h:mm a')} - {format(parseISO(item.endTime), 'h:mm a')}
-    </div>
-    <div className="flex-1 min-w-0">
-      <div className="font-semibold text-b14-600 mb-1">{item.title}</div>
-      {item.description && <div className="text-b13 text-neutral-dark-grey mb-1">{item.description}</div>}
-      {item?.lead && <div className="text-b13 text-neutral-dark-grey">{item.lead?.firstName} {item.lead?.lastName} | {item.lead?.email} | {item.lead?.phone}</div>}
-    </div>
-    {item?.user && (
-      <div className="flex-shrink-0 flex items-center gap-2">
-        <div className="text-sm text-neutral-dark-grey font-medium">{item.user.firstName} {item.user.lastName}</div>
-        <div className={`w-8 h-8 rounded-full ${getAppointColorBasedOnUserName(item.user?.firstName || '', item.user?.lastName || '')} text-white flex items-center justify-center text-xs font-semibold border-2`}>
-          {getUserInitials(item.user.firstName, item.user.lastName)}
-        </div>
+const AgendaCard = ({ item, onClick }: { item: IAppointment; onClick: () => void }) => {
+  const userColor = getAppointColorBasedOnUserName(item.user, 'raw') as string;
+  return (
+    <div className="flex items-start gap-4 px-1 py-4 border-gray-200 cursor-pointer border-b last:border-b-0" onClick={onClick}>
+      <div className="w-1 rounded-full flex-shrink-0 self-stretch" style={{ backgroundColor: userColor }} />
+      <div className="flex-shrink-0 text-sm font-medium text-neutral-black min-w-[148px] flex items-center gap-2 mr-8">
+        <Clock className="h-4 w-4" /> {format(parseISO(item.startTime), 'h:mm a')} - {format(parseISO(item.endTime), 'h:mm a')}
       </div>
-    )}
-  </div>
-);
+      <div className="flex-1 min-w-0">
+        <div className="font-semibold text-b14-600 mb-1">{item.title}</div>
+        {item.description && <div className="text-b13 text-neutral-dark-grey mb-1">{item.description}</div>}
+        {item?.lead && <div className="text-b13 text-neutral-dark-grey">{item.lead?.firstName} {item.lead?.lastName} | {item.lead?.email} | {item.lead?.phone}</div>}
+      </div>
+      {item?.user && (
+        <div className="flex-shrink-0 flex items-center gap-2">
+          <div className="text-sm text-neutral-dark-grey font-medium">{item.user.firstName} {item.user.lastName}</div>
+          <div className="w-8 h-8 rounded-full text-white flex items-center justify-center text-xs font-semibold border-2" style={{ backgroundColor: userColor }}>
+            {getUserInitials(item.user.firstName, item.user.lastName)}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const VisaExpiryAgendaCard = ({ event, onClick }: { event: VisaExpiryEvent; onClick: () => void }) => {
   const color = getCategoryColor(event.category);

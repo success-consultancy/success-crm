@@ -164,10 +164,7 @@ const UsersListPage = () => {
                       <div className="flex items-center gap-2">
                         <span
                           className="flex-shrink-0 w-3 h-3 rounded-full"
-                          style={{
-                            backgroundColor: (user as any).color ||
-                              getAppointColorBasedOnUserName(user.firstName, user.lastName, 'raw') as string,
-                          }}
+                          style={{ backgroundColor: getAppointColorBasedOnUserName(user as any, 'raw') as string }}
                         />
                         <span className="font-medium">{user.firstName} {user.lastName}</span>
                       </div>

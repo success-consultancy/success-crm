@@ -7,7 +7,6 @@ import DialogWrapper from '@/components/organisms/dialog-wrapper';
 import Button from '@/components/atoms/button';
 import { Cross, Pencil, Trash2, X } from 'lucide-react';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
-import { cn } from '@/lib/utils';
 import { CloseCircle } from 'iconsax-reactjs';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
@@ -75,7 +74,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         <>
           <div className='flex w-full justify-between py-4'>
             <div className='flex'>
-              <span className={cn('h-[10px] w-[10px] rounded-full mt-2', getAppointColorBasedOnUserName(appointment?.user?.firstName || '', appointment?.user?.lastName || ''))}></span>
+              <span className="h-[10px] w-[10px] rounded-full mt-2" style={{ backgroundColor: getAppointColorBasedOnUserName(appointment?.user, 'raw') as string }}></span>
               <div className='ml-3'>
                 <h4 className='text-neutral-black font-bold text-[18px] mb-1'>{appointment.title} {appointment?.type ? `- ${appointment.type}` : ''}</h4>
                 <div className='text-neutral-dark-grey text-b12'>{date}</div>
@@ -132,7 +131,7 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
           <div className='flex'>
             <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner: </h4>
             <div className="flex items-center gap-2">
-              <div className={cn("w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium", getAppointColorBasedOnUserName(appointment.user.firstName, appointment.user.lastName))}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium" style={{ backgroundColor: getAppointColorBasedOnUserName(appointment.user, 'raw') as string }}>
                 {getInitials(appointment.user.firstName, appointment.user.lastName)}
               </div>
               <p className="text-sm">
