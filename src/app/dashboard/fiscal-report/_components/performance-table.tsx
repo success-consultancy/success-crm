@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { cn } from '@/lib/utils';
-import { ChevronDown, Download, Pencil, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsUpDown, Download, Pencil, Search } from 'lucide-react';
 import Button from '@/components/atoms/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -72,6 +72,16 @@ const S_TOTAL_W = 213;
 const LEFT_SHADOW = '[box-shadow:2px_0_5px_-2px_rgba(0,0,0,0.08)]';
 const RIGHT_SHADOW = '[box-shadow:-2px_0_5px_-2px_rgba(0,0,0,0.08)]';
 
+type SortField = 'sn' | 'name';
+type SortDir = 'asc' | 'desc';
+
+function SortIcon({ field, sortField, sortDir }: { field: SortField; sortField: SortField | null; sortDir: SortDir }) {
+  if (sortField !== field) return <ChevronsUpDown className="w-3 h-3 opacity-40 flex-shrink-0" />;
+  return sortDir === 'asc'
+    ? <ChevronUp className="w-3 h-3 flex-shrink-0" />
+    : <ChevronDown className="w-3 h-3 flex-shrink-0" />;
+}
+
 export default function PerformanceTable({
   title,
   nameColumnHeader = 'Visa name',
@@ -92,10 +102,36 @@ export default function PerformanceTable({
   fiscalYears,
   onExport,
 }: PerformanceTableProps) {
+  const [sortField, setSortField] = React.useState<SortField | null>(null);
+  const [sortDir, setSortDir] = React.useState<SortDir>('asc');
+
+  function handleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir((d) => (d === 'asc' ? 'desc' : 'asc'));
+    } else {
+      setSortField(field);
+      setSortDir('asc');
+    }
+  }
+
   const allMonths = React.useMemo(() => [
     ...MONTHS_INITIAL.map((key) => ({ key, year: initialYear })),
     ...MONTHS_FINAL.map((key) => ({ key, year: finalYear })),
   ], [initialYear, finalYear]);
+
+  const sortedData = React.useMemo(() => {
+    if (!sortField) return data;
+    return [...data].sort((a, b) => {
+      let cmp = 0;
+      if (sortField === 'name') {
+        cmp = a.name.localeCompare(b.name);
+      } else {
+        // 'sn' — original index order; ascending = as-received, descending = reversed
+        cmp = data.indexOf(a) - data.indexOf(b);
+      }
+      return sortDir === 'asc' ? cmp : -cmp;
+    });
+  }, [data, sortField, sortDir]);
 
   const totals = React.useMemo(() => {
     if (!data.length) return null;
@@ -118,13 +154,13 @@ export default function PerformanceTable({
   }, [data, allMonths]);
 
   return (
-    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)] px-4">
+    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)]">
       {/* Card header */}
-      <div className={cn('border-b', BD)}>
-        <div className={cn('px-4 py-3 border-b', BD)}>
+      <div className={cn('border-b mx-4', BD)}>
+        <div className={cn('py-4 border-b', BD)}>
           <h3 className="text-[15px] font-semibold text-content-heading">{title}</h3>
         </div>
-        <div className="flex items-center justify-between gap-2 px-4 py-3">
+        <div className="flex items-center justify-between gap-2 py-3">
           {/* Left: search + fiscal year */}
           <div className="flex items-center gap-2">
             <div className="relative">
@@ -177,34 +213,36 @@ export default function PerformanceTable({
       </div>
 
       {/* Scrollable table — all 12 months render; overflow-x-auto drives horizontal scroll */}
-      <div className="overflow-x-auto">
-        <table className="border-collapse" style={{ width: 'max-content', minWidth: '100%' }}>
+      <div className="overflow-x-auto px-4">
+        <table className="border border-spacing-0" style={{ width: 'max-content', minWidth: '100%' }}>
           <thead>
             {/* ── Row 1: group headers ── */}
             <tr>
               {/* S.N — sticky left, spans 2 rows */}
               <th
                 rowSpan={2}
+                onClick={() => handleSort('sn')}
                 className={cn(
-                  'sticky left-0 z-20 w-[48px] min-w-[48px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle',
+                  'sticky left-0 z-20 w-[48px] min-w-[48px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
                   BD, H_BG,
                 )}
               >
-                <div className="flex items-center gap-0.5">
-                  S.N <ChevronDown className="w-3 h-3 opacity-40 flex-shrink-0" />
+                <div className="flex items-center gap-4">
+                  S.N <SortIcon field="sn" sortField={sortField} sortDir={sortDir} />
                 </div>
               </th>
 
               {/* Name column — sticky left, spans 2 rows */}
               <th
                 rowSpan={2}
+                onClick={() => handleSort('name')}
                 className={cn(
-                  'sticky left-[48px] z-20 w-[200px] min-w-[200px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle',
+                  'sticky left-[48px] z-20 w-[200px] min-w-[200px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
                   BD, H_BG, LEFT_SHADOW,
                 )}
               >
-                <div className="flex items-center gap-0.5">
-                  {nameColumnHeader} <ChevronDown className="w-3 h-3 opacity-40 flex-shrink-0" />
+                <div className="flex items-center justify-between">
+                  {nameColumnHeader} <SortIcon field="name" sortField={sortField} sortDir={sortDir} />
                 </div>
               </th>
 
@@ -302,7 +340,7 @@ export default function PerformanceTable({
             ))}
 
             {/* Data rows — all white, hover #F4F7FA */}
-            {!isLoading && data.map((row, i) => (
+            {!isLoading && sortedData.map((row, i) => (
               <tr key={row.name} className="group h-[46px] bg-white hover:bg-[#F4F7FA] transition-colors">
                 <td className={cn('sticky left-0 z-10 px-3 text-[13px] text-content-subtitle border-b border-r bg-white group-hover:bg-[#F4F7FA] transition-colors', BD)}>
                   {i + 1}

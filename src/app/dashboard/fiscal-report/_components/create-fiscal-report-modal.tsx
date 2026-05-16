@@ -9,13 +9,14 @@ import { useCreateFiscalReport } from '@/mutations/fiscal-report/create-fiscal-r
 interface Props {
   isOpen: boolean;
   onClose: () => void;
+  type: 'visa_application' | 'student_enrollment';
 }
 
-function buildPayload(startYear: string) {
+function buildPayload(startYear: string, type: Props['type']) {
   const start = parseInt(startYear, 10);
   const year = `${start}-${start + 1}`;
   const name = `${start} - ${start + 1} Student Enrollment`;
-  return { year, name };
+  return { year, name, type };
 }
 
 function isValidYear(val: string) {
@@ -23,16 +24,16 @@ function isValidYear(val: string) {
   return /^\d{4}$/.test(val) && n > 2018 && n < 2050;
 }
 
-export default function CreateFiscalReportModal({ isOpen, onClose }: Props) {
+export default function CreateFiscalReportModal({ isOpen, onClose, type }: Props) {
   const [startYear, setStartYear] = useState('');
   const { mutate: create, isPending } = useCreateFiscalReport();
 
   const valid = isValidYear(startYear);
-  const { year, name } = valid ? buildPayload(startYear) : { year: '', name: '' };
+  const { year, name } = valid ? buildPayload(startYear, type) : { year: '', name: '' };
 
   const handleSubmit = () => {
     if (!valid) return;
-    create(buildPayload(startYear), {
+    create(buildPayload(startYear, type), {
       onSuccess: () => {
         setStartYear('');
         onClose();
@@ -45,8 +46,13 @@ export default function CreateFiscalReportModal({ isOpen, onClose }: Props) {
     onClose();
   };
 
+  const title =
+    type === 'visa_application'
+      ? 'Create visa application report'
+      : 'Create student enrollment report';
+
   return (
-    <DialogWrapper title="Create fiscal report" isOpen={isOpen} setIsOpen={(open) => !open && handleClose()}>
+    <DialogWrapper title={title} isOpen={isOpen} setIsOpen={(open) => !open && handleClose()}>
       <div className="flex flex-col gap-5 pt-4">
         <Input
           label="Starting year"

@@ -6,6 +6,7 @@ import { toast } from 'sonner';
 interface CreateFiscalReportPayload {
   year: string;
   name: string;
+  type: string;
 }
 
 const createFiscalReport = async (payload: CreateFiscalReportPayload) => {

@@ -214,7 +214,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
           <Button variant="outline" size="sm" onClick={() => setIsCreateOpen(true)}>New report</Button>
         </div>
 
-        <CreateFiscalReportModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
+        <CreateFiscalReportModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} type={type} />
 
         {/* ── Body ── */}
         <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
