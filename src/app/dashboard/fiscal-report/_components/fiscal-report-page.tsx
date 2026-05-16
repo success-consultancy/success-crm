@@ -87,9 +87,21 @@ export default function FiscalReportPage() {
   const { data: report, isLoading } = useGetFiscalReport({ year: fiscalYear, type: activeTab });
   const { mutate: updateReport, isPending: isSaving } = useUpdateFiscalReport();
 
+  const prevFiscalYear = React.useMemo(() => {
+    const [start, end] = fiscalYear.split('-').map(Number);
+    return `${start - 1}-${end - 1}`;
+  }, [fiscalYear]);
+
+  const { data: prevReport } = useGetFiscalReport({ year: prevFiscalYear, type: activeTab });
+
   const serverRows: ReportRow[] = React.useMemo(
     () => (report?.data ?? []).map(toReportRow),
     [report],
+  );
+
+  const prevServerRows: ReportRow[] = React.useMemo(
+    () => (prevReport?.data ?? []).map(toReportRow),
+    [prevReport],
   );
 
   React.useEffect(() => {
@@ -103,12 +115,11 @@ export default function FiscalReportPage() {
   }, [search, isEdit, editData, serverRows]);
 
   const { totalTarget, totalActual, achievementRate } = computeKpi(serverRows);
-  const prevYearTarget = Math.round(totalTarget * 0.6);
-  const prevYearActual = Math.round(totalActual * 0.4);
-  const prevAchievement = prevYearTarget > 0 ? (prevYearActual / prevYearTarget) * 100 : 0;
-  const targetChange = prevYearTarget > 0 ? Math.round(((totalTarget - prevYearTarget) / prevYearTarget) * 100) : 0;
-  const actualChange = prevYearActual > 0 ? Math.round(((totalActual - prevYearActual) / prevYearActual) * 100) : 0;
-  const achievementChange = prevAchievement > 0 ? Number((achievementRate - prevAchievement).toFixed(1)) : 0;
+  const { totalTarget: prevTotalTarget, totalActual: prevTotalActual, achievementRate: prevAchievementRate } = computeKpi(prevServerRows);
+
+  const targetChange = prevTotalTarget > 0 ? Math.round(((totalTarget - prevTotalTarget) / prevTotalTarget) * 100) : 0;
+  const actualChange = prevTotalActual > 0 ? Math.round(((totalActual - prevTotalActual) / prevTotalActual) * 100) : 0;
+  const achievementChange = Number((achievementRate - prevAchievementRate).toFixed(1));
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
