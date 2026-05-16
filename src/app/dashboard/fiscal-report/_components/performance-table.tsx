@@ -14,7 +14,7 @@ const MONTH_LABEL: Record<string, string> = {
 };
 
 const now = new Date();
-const CURRENT_MONTH_KEY = `${['jan','feb','mar','apr','may','jun','jul','aug','sep','oct','nov','dec'][now.getMonth()]}${now.getFullYear()}`;
+const CURRENT_MONTH_KEY = `${['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'][now.getMonth()]}${now.getFullYear()}`;
 
 export interface ReportRow {
   name: string;
@@ -118,7 +118,7 @@ export default function PerformanceTable({
   }, [data, allMonths]);
 
   return (
-    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)] px-4">
       {/* Card header */}
       <div className={cn('border-b', BD)}>
         <div className={cn('px-4 py-3 border-b', BD)}>
@@ -281,7 +281,7 @@ export default function PerformanceTable({
 
           <tbody>
             {/* Loading skeleton */}
-            {isLoading && Array.from({ length: 5 }).map((_, i) => (
+            {isLoading && Array.from({ length: 10 }).map((_, i) => (
               <tr key={`skel-${i}`} className="h-[46px] bg-white border-b border-stroke-divider">
                 <td className="sticky left-0 z-10 px-3 border-b border-r bg-white border-stroke-divider">
                   <div className="h-3 w-4 bg-gray-100 rounded animate-pulse" />
