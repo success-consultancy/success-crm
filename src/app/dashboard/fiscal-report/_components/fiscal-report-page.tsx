@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Search } from 'lucide-react';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import Button from '@/components/atoms/button';
 import TabSelector from '@/components/atoms/tab-selector';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import KpiCard from './kpi-card';
 import PerformanceTable, { ReportRow } from './performance-table';
 import CreateFiscalReportModal from './create-fiscal-report-modal';
@@ -89,9 +87,21 @@ export default function FiscalReportPage() {
   const { data: report, isLoading } = useGetFiscalReport({ year: fiscalYear, type: activeTab });
   const { mutate: updateReport, isPending: isSaving } = useUpdateFiscalReport();
 
+  const prevFiscalYear = React.useMemo(() => {
+    const [start, end] = fiscalYear.split('-').map(Number);
+    return `${start - 1}-${end - 1}`;
+  }, [fiscalYear]);
+
+  const { data: prevReport } = useGetFiscalReport({ year: prevFiscalYear, type: activeTab });
+
   const serverRows: ReportRow[] = React.useMemo(
     () => (report?.data ?? []).map(toReportRow),
     [report],
+  );
+
+  const prevServerRows: ReportRow[] = React.useMemo(
+    () => (prevReport?.data ?? []).map(toReportRow),
+    [prevReport],
   );
 
   React.useEffect(() => {
@@ -105,12 +115,11 @@ export default function FiscalReportPage() {
   }, [search, isEdit, editData, serverRows]);
 
   const { totalTarget, totalActual, achievementRate } = computeKpi(serverRows);
-  const prevYearTarget = Math.round(totalTarget * 0.6);
-  const prevYearActual = Math.round(totalActual * 0.4);
-  const prevAchievement = prevYearTarget > 0 ? (prevYearActual / prevYearTarget) * 100 : 0;
-  const targetChange = prevYearTarget > 0 ? Math.round(((totalTarget - prevYearTarget) / prevYearTarget) * 100) : 0;
-  const actualChange = prevYearActual > 0 ? Math.round(((totalActual - prevYearActual) / prevYearActual) * 100) : 0;
-  const achievementChange = prevAchievement > 0 ? Number((achievementRate - prevAchievement).toFixed(1)) : 0;
+  const { totalTarget: prevTotalTarget, totalActual: prevTotalActual, achievementRate: prevAchievementRate } = computeKpi(prevServerRows);
+
+  const targetChange = prevTotalTarget > 0 ? Math.round(((totalTarget - prevTotalTarget) / prevTotalTarget) * 100) : 0;
+  const actualChange = prevTotalActual > 0 ? Math.round(((totalActual - prevTotalActual) / prevTotalActual) * 100) : 0;
+  const achievementChange = Number((achievementRate - prevAchievementRate).toFixed(1));
 
   const handleTabChange = (tab: string) => {
     setActiveTab(tab);
@@ -158,6 +167,29 @@ export default function FiscalReportPage() {
     setIsEdit(false);
   };
 
+  const handleExport = () => {
+    if (!serverRows.length) return;
+    const months = [
+      ...['jul','aug','sep','oct','nov','dec'].map((k) => ({ key: `${k}${initialYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${initialYear}` })),
+      ...['jan','feb','mar','apr','may','jun'].map((k) => ({ key: `${k}${finalYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${finalYear}` })),
+    ];
+    const header = ['Name', ...months.flatMap((m) => [`${m.label} Target`, `${m.label} Actual`]), 'Total Target', 'Total Actual'];
+    const rows = serverRows.map((row) => [
+      row.name,
+      ...months.flatMap((m) => [row.target[m.key] ?? 0, row.actual[m.key] ?? 0]),
+      row.target.total ?? 0,
+      row.actual.total ?? 0,
+    ]);
+    const csv = [header, ...rows].map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `fiscal-report-${fiscalYear}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Container className="flex flex-col max-h-full overflow-hidden p-0">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -166,37 +198,8 @@ export default function FiscalReportPage() {
 
       <div className="flex flex-col flex-1 bg-white rounded-lg border border-stroke-divider overflow-hidden mx-4 my-4">
         {/* ── Toolbar ── */}
-        <div className="flex items-center justify-between px-4 py-4 border-b border-stroke-divider flex-shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-content-subtitle pointer-events-none" />
-              <input
-                type="text"
-                placeholder="Search by name"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 pr-3 h-9 w-60 border border-input rounded-md text-sm bg-transparent focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
-              />
-            </div>
-
-            <Select value={fiscalYear} onValueChange={handleFiscalYearChange}>
-              <SelectTrigger className="w-[140px] h-9">
-                <SelectValue placeholder="Fiscal year" />
-              </SelectTrigger>
-              <SelectContent>
-                {FISCAL_YEARS.map((y) => (
-                  <SelectItem key={y.value} value={y.value}>
-                    {y.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => setIsCreateOpen(true)}>New report</Button>
-            <Button size="sm">Export</Button>
-          </div>
+        <div className="flex items-center justify-end px-4 py-4 border-b border-stroke-divider flex-shrink-0">
+          <Button variant="outline" size="sm" onClick={() => setIsCreateOpen(true)}>New report</Button>
         </div>
 
         <CreateFiscalReportModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} />
@@ -236,6 +239,12 @@ export default function FiscalReportPage() {
             onSave={handleSave}
             onCancel={handleCancel}
             onCellChange={handleCellChange}
+            search={search}
+            onSearchChange={setSearch}
+            fiscalYear={fiscalYear}
+            onFiscalYearChange={handleFiscalYearChange}
+            fiscalYears={FISCAL_YEARS}
+            onExport={handleExport}
           />
         </div>
       </div>
