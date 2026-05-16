@@ -4,14 +4,12 @@ import { FiscalReport } from '@/types/response-types/fiscal-report-response';
 import { useQuery } from '@tanstack/react-query';
 
 interface FiscalReportParams {
-  year: string;
   type: string;
 }
 
-const getFiscalReport = async (params: FiscalReportParams): Promise<FiscalReport | null> => {
+const getFiscalReport = async (params: FiscalReportParams): Promise<FiscalReport[]> => {
   const res = await api.get('/fiscalReport', { params });
-  const list = res.data as FiscalReport[];
-  return list?.[0] ?? null;
+  return (res.data as FiscalReport[]) ?? [];
 };
 
 export const useGetFiscalReport = (params: FiscalReportParams) => {

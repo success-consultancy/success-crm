@@ -12,6 +12,7 @@ import { Label } from '@/components/ui/label';
 import Portal from '@/components/atoms/portal';
 import Button from '@/components/atoms/button';
 import Input from '@/components/molecules/input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import SelectCommon from '@/components/molecules/select-common';
 import { PortalIds } from '@/config/portal';
 import userFormSchema, { UserFormType } from '@/schema/user-schema';
@@ -244,7 +245,12 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
               control={control}
               name="phone"
               render={({ field }) => (
-                <Input label="Phone number" {...field} error={errors.phone?.message} />
+                <PhoneNumberInput
+                  label="Phone number"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.phone?.message}
+                />
               )}
             />
             {mode === 'add' && (

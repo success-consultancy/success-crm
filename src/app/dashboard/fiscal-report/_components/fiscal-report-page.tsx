@@ -20,12 +20,6 @@ const TABS = [
   { key: 'student_enrollment', label: 'Student enrollment' },
 ];
 
-const FISCAL_YEARS = [
-  { value: '2025-2026', label: '2025 - 2026' },
-  { value: '2024-2025', label: '2024 - 2025' },
-  { value: '2023-2024', label: '2023 - 2024' },
-];
-
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 function parseYear(fiscalYear: string) {
@@ -84,15 +78,37 @@ export default function FiscalReportPage() {
 
   const { initialYear, finalYear } = parseYear(fiscalYear);
 
-  const { data: report, isLoading } = useGetFiscalReport({ year: fiscalYear, type: activeTab });
+  const { data: allReports = [], isLoading } = useGetFiscalReport({ type: activeTab });
   const { mutate: updateReport, isPending: isSaving } = useUpdateFiscalReport();
+
+  const fiscalYears = React.useMemo(
+    () =>
+      [...allReports]
+        .sort((a, b) => b.year.localeCompare(a.year))
+        .map((r) => ({ value: r.year, label: r.year.replace('-', ' - ') })),
+    [allReports],
+  );
+
+  React.useEffect(() => {
+    if (fiscalYears.length > 0 && !fiscalYears.find((y) => y.value === fiscalYear)) {
+      setFiscalYear(fiscalYears[0].value);
+    }
+  }, [fiscalYears]);
 
   const prevFiscalYear = React.useMemo(() => {
     const [start, end] = fiscalYear.split('-').map(Number);
     return `${start - 1}-${end - 1}`;
   }, [fiscalYear]);
 
-  const { data: prevReport } = useGetFiscalReport({ year: prevFiscalYear, type: activeTab });
+  const report = React.useMemo(
+    () => allReports.find((r) => r.year === fiscalYear) ?? null,
+    [allReports, fiscalYear],
+  );
+
+  const prevReport = React.useMemo(
+    () => allReports.find((r) => r.year === prevFiscalYear) ?? null,
+    [allReports, prevFiscalYear],
+  );
 
   const serverRows: ReportRow[] = React.useMemo(
     () => (report?.data ?? []).map(toReportRow),
@@ -139,15 +155,15 @@ export default function FiscalReportPage() {
       prev.map((row) =>
         row.name === name
           ? {
-              ...row,
-              target: {
-                ...row.target,
-                [monthKey]: value,
-                total: Object.entries({ ...row.target, [monthKey]: value })
-                  .filter(([k]) => k !== 'total')
-                  .reduce((s, [, v]) => s + (Number(v) || 0), 0),
-              },
-            }
+            ...row,
+            target: {
+              ...row.target,
+              [monthKey]: value,
+              total: Object.entries({ ...row.target, [monthKey]: value })
+                .filter(([k]) => k !== 'total')
+                .reduce((s, [, v]) => s + (Number(v) || 0), 0),
+            },
+          }
           : row,
       ),
     );
@@ -170,8 +186,8 @@ export default function FiscalReportPage() {
   const handleExport = () => {
     if (!serverRows.length) return;
     const months = [
-      ...['jul','aug','sep','oct','nov','dec'].map((k) => ({ key: `${k}${initialYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${initialYear}` })),
-      ...['jan','feb','mar','apr','may','jun'].map((k) => ({ key: `${k}${finalYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${finalYear}` })),
+      ...['jul', 'aug', 'sep', 'oct', 'nov', 'dec'].map((k) => ({ key: `${k}${initialYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${initialYear}` })),
+      ...['jan', 'feb', 'mar', 'apr', 'may', 'jun'].map((k) => ({ key: `${k}${finalYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${finalYear}` })),
     ];
     const header = ['Name', ...months.flatMap((m) => [`${m.label} Target`, `${m.label} Actual`]), 'Total Target', 'Total Actual'];
     const rows = serverRows.map((row) => [
@@ -243,7 +259,7 @@ export default function FiscalReportPage() {
             onSearchChange={setSearch}
             fiscalYear={fiscalYear}
             onFiscalYearChange={handleFiscalYearChange}
-            fiscalYears={FISCAL_YEARS}
+            fiscalYears={fiscalYears}
             onExport={handleExport}
           />
         </div>
