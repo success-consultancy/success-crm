@@ -30,7 +30,9 @@ export interface MeUser {
   lastName: string;
   detail: null;
   clockInCode: string | null;
-  clockInFaceId: string | null;
+  // 128-d face-api.js descriptor (null = not enrolled). Used only as an
+  // "is enrolled?" flag client-side; the raw vector is only matched server-side.
+  clockInFaceDescriptor: number[] | null;
   email: string;
   phone: string;
   address: string;
