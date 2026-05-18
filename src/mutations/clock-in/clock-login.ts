@@ -28,7 +28,8 @@ export interface ClockLoginResponse {
 export interface ClockLoginPayload {
   clockInCode?: string;
   id?: number;
-  faceId?: string;
+  // 128-element face-api.js descriptor (server matches by Euclidean distance).
+  descriptor?: number[];
 }
 
 const clockLogin = async (payload: ClockLoginPayload): Promise<ClockLoginResponse> => {

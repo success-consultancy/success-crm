@@ -46,6 +46,7 @@
     "country-data-list": "^1.5.4",
     "date-fns": "^4.1.0",
     "date-fns-tz": "^3.2.0",
+    "face-api.js": "^0.22.2",
     "iconsax-react": "^0.0.8",
     "iconsax-reactjs": "^0.0.8",
     "lodash": "^4.17.21",

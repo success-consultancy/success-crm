@@ -3,11 +3,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_ME } from '@/query/get-me';
 
 export interface UpdateClockInFacePayload {
-  faceId: string | null;
+  // 128 floats produced by face-api.js, or null to remove enrollment.
+  descriptor: number[] | null;
 }
 
 const updateClockInFace = async (payload: UpdateClockInFacePayload) => {
-  const res = await api.patch('/user/me/clock-face-id', payload);
+  const res = await api.patch('/user/me/clock-face-descriptor', payload);
   return res.data;
 };
 

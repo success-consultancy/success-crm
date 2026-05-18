@@ -5,55 +5,46 @@ import { ScanFace, ShieldCheck, ShieldOff } from 'lucide-react';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import Button from '@/components/atoms/button';
+import FaceCaptureModal from '@/components/face-capture-modal';
 import { MeUser } from '@/query/get-me';
 import { useUpdateClockInFace } from '@/mutations/clock-in/update-clockin-face';
-import { enrollFace, describeFaceIOError, isFaceIOConfigured } from '@/lib/faceio';
 
 interface Props {
   user: MeUser | undefined;
 }
 
 const FaceLoginTab = ({ user }: Props) => {
-  const enrolled = !!user?.clockInFaceId;
-  const configured = isFaceIOConfigured();
-  const [busy, setBusy] = useState(false);
+  const enrolled = !!user?.clockInFaceDescriptor;
+  const [modalOpen, setModalOpen] = useState(false);
 
-  const { mutateAsync: saveFaceId, isPending: saving } = useUpdateClockInFace();
+  const { mutateAsync: saveFace, isPending: saving } = useUpdateClockInFace();
 
-  const handleEnroll = async () => {
-    if (!user) return;
-    setBusy(true);
+  // Called by FaceCaptureModal after a descriptor has been captured. Throwing
+  // here keeps the modal open and surfaces the error inline so the user can
+  // retry without re-opening.
+  const handleCapture = async (descriptor: number[]) => {
     try {
-      const result = await enrollFace({
-        userId: user.id,
-        email: user.email,
-        name: `${user.firstName} ${user.lastName}`.trim(),
-      });
-      await saveFaceId({ faceId: result.facialId });
+      await saveFace({ descriptor });
       toast.success('Face login enabled.');
     } catch (err) {
-      console.error('[faceio] enroll error:', err);
       if (axios.isAxiosError(err) && err.response?.status === 409) {
-        toast.error(err.response.data?.message || 'This face is already registered to another user.');
-      } else {
-        toast.error(describeFaceIOError(err));
+        throw new Error(
+          err.response.data?.message ?? 'This face is already registered to another user.',
+        );
       }
-    } finally {
-      setBusy(false);
+      throw new Error('Could not save face. Please try again.');
     }
   };
 
   const handleRemove = async () => {
     if (!user) return;
     try {
-      await saveFaceId({ faceId: null });
+      await saveFace({ descriptor: null });
       toast.success('Face login removed.');
     } catch {
       toast.error('Could not remove face login. Please try again.');
     }
   };
-
-  const pending = busy || saving;
 
   return (
     <div className="flex flex-col gap-4 max-w-xl">
@@ -63,13 +54,6 @@ const FaceLoginTab = ({ user }: Props) => {
           Enroll your face once, then clock in or out at the kiosk by scanning your face — no PIN required.
         </p>
       </div>
-
-      {!configured && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 text-amber-900 text-sm px-3 py-2">
-          Face login is not configured for this environment. Ask an administrator to set
-          <code className="mx-1 px-1 rounded bg-amber-100">NEXT_PUBLIC_FACEIO_PUBLIC_ID</code>.
-        </div>
-      )}
 
       <div className="flex items-center gap-3 rounded-lg border border-gray-200 p-4">
         <div
@@ -95,9 +79,9 @@ const FaceLoginTab = ({ user }: Props) => {
         {!enrolled ? (
           <Button
             type="button"
-            onClick={handleEnroll}
-            disabled={!configured || !user || pending}
-            loading={pending}
+            onClick={() => setModalOpen(true)}
+            disabled={!user || saving}
+            loading={saving}
             LeftIcon={ScanFace}
           >
             Enroll My Face
@@ -107,8 +91,8 @@ const FaceLoginTab = ({ user }: Props) => {
             type="button"
             variant="outline"
             onClick={handleRemove}
-            disabled={pending}
-            loading={pending}
+            disabled={saving}
+            loading={saving}
             LeftIcon={ShieldOff}
           >
             Remove Face Login
@@ -117,8 +101,15 @@ const FaceLoginTab = ({ user }: Props) => {
       </div>
 
       <p className="text-xs text-gray-400">
-        Face data is processed by FaceIO. Only the resulting opaque ID is stored on our servers.
+        Face data is processed on your device. Only a numeric vector is sent to our servers.
       </p>
+
+      <FaceCaptureModal
+        mode="enroll"
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onCapture={handleCapture}
+      />
     </div>
   );
 };
