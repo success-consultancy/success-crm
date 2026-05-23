@@ -82,18 +82,14 @@ const SelectWithCommand = ({ options: initialOptions, label, value, onSelect, pl
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
         <SelectTrigger className={cn(['w-full', error && 'border-primary-red'])}>
-          <SelectValue>
-            {initialOptions.find((option) => option.value === value)?.label
-              ? initialOptions.find((option) => option.value === value)?.label
-              : `Select a ${label.toLowerCase()}`}
-          </SelectValue>
+          <SelectValue placeholder={placeholder ?? `Select a ${label.toLowerCase()}`} />
         </SelectTrigger>
         <SelectContent className="w-full">
           <Input
             ref={(el) => {
               inputRef.current = el;
             }} // Assign ref dynamically
-            placeholder="Type to search..."
+            placeholder={placeholder ?? 'Type to search...'}
             onChange={handleSearch}
             value={searchTerm}
             LeftIcon={Search}

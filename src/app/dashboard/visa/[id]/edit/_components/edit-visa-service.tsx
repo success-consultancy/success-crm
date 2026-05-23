@@ -186,14 +186,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
             <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dob">
-                Date of birth
-              </Label>
               <Controller
                 name="dob"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Date of birth"
                     error={!!errors.dob?.message}
                     side="top"
                     value={getDateValue(field.value)}
@@ -212,14 +210,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
             <TextInput label="Address" {...register('state')} error={errors.state?.message} />
             <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="issueDate">
-                Passport issue date
-              </Label>
               <Controller
                 name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Passport issue date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('issueDate')}
@@ -232,14 +228,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               <FormErrorMessage message={errors.issueDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="expiryDate">
-                Passport expiry date
-              </Label>
               <Controller
                 name="expiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Passport expiry date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('expiryDate')}
@@ -281,14 +275,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               placeholder="Select current visa type"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaExpiry">
-                Visa expiry date
-              </Label>
               <Controller
                 name="visaExpiry"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Visa expiry date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaExpiry')}
@@ -301,14 +293,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               <FormErrorMessage message={errors.visaExpiry?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dueDate">
-                Due date
-              </Label>
               <Controller
                 name="dueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Due date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dueDate')}
@@ -382,14 +372,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaSubmitted">
-                Date submitted
-              </Label>
               <Controller
                 name="visaSubmitted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Date submitted"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmitted')}
@@ -402,14 +390,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               <FormErrorMessage message={errors.visaSubmitted?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaGranted">
-                Decision date
-              </Label>
               <Controller
                 name="visaGranted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Decision date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaGranted')}
@@ -439,14 +425,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="nominationLodged">
-                Nomination date submitted
-              </Label>
               <Controller
                 name="nominationLodged"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Nomination date submitted"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationLodged')}
@@ -459,14 +443,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               <FormErrorMessage message={errors.nominationLodged?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="nominationDecision">
-                Nomination decision date
-              </Label>
               <Controller
                 name="nominationDecision"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Nomination decision date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationDecision')}
@@ -491,14 +473,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               placeholder="Select a status"
             />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaSubmitted">
-                Visa date submitted
-              </Label>
               <Controller
                 name="visaSubmitted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Visa date submitted"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmitted')}
@@ -511,14 +491,12 @@ export function EditVisaService({ visaId, userId, defaultValues, accounts = [] }
               <FormErrorMessage message={errors.visaSubmitted?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="visaGranted">
-                Visa decision date
-              </Label>
               <Controller
                 name="visaGranted"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Visa decision date"
                     side="top"
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaGranted')}

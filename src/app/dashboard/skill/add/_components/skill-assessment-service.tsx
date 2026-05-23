@@ -35,7 +35,6 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { ArrowLeft, Code2 } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
-import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -337,14 +336,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
               />
               <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="dob">
-                  Date of birth
-                </Label>
                 <Controller
                   name="dob"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Date of birth"
                       error={!!errors.dob?.message}
                       side="top"
                       value={getDateValue(field.value)}
@@ -370,7 +367,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 name="country"
                 render={({ field }) => (
                   <div className="space-y-2">
-                    <Label className="text-b2">Nationality</Label>
+                    <Label className="text-b3-b font-medium">Nationality</Label>
                     <CountryDropdown
                       onChange={(country) => field.onChange(country?.alpha3 || null)}
                       defaultValue={field.value || undefined}
@@ -383,14 +380,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
               <TextInput label="Address" value={address} onChange={(e) => setAddress(e.target.value)} />
               <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="issueDate">
-                  Passport issue date
-                </Label>
                 <Controller
                   name="issueDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Passport issue date"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('issueDate')}
@@ -403,14 +398,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 <FormErrorMessage message={errors.issueDate?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="expiryDate">
-                  Passport expiry date
-                </Label>
                 <Controller
                   name="expiryDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Passport expiry date"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('expiryDate')}
@@ -453,19 +446,16 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 placeholder="Select current visa type"
               />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="visaExpiry">
-                  Visa expiry date
-                </Label>
                 <Controller
                   name="visaExpiry"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Visa expiry date"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('visaExpiry')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
                       error={!!errors.visaExpiry?.message}
                       disablePastDates={true}
                     />
@@ -474,19 +464,16 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 <FormErrorMessage message={errors.visaExpiry?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="dueDate">
-                  Due date
-                </Label>
                 <Controller
                   name="dueDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Due date"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('dueDate')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
                       error={!!errors.dueDate?.message}
                       disablePastDates={true}
                     />
@@ -539,14 +526,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 />
               )}
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="submittedDate">
-                  Date submitted
-                </Label>
                 <Controller
                   name="submittedDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Date submitted"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('submittedDate')}
@@ -559,14 +544,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 <FormErrorMessage message={errors.submittedDate?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="decisionDate">
-                  Decision date
-                </Label>
                 <Controller
                   name="decisionDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Decision date"
                       side="top"
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('decisionDate')}
@@ -603,7 +586,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
               />
             </div>
             <div className="mt-6">
-              <Label className="text-b2 mb-2">Visa & service note:</Label>
+              <Label className="text-b3-b mb-2">Visa & service note:</Label>
               <div className="w-full space-y-1" suppressHydrationWarning>
                 <TinyEditor value={visaServiceNote} onChange={setVisaServiceNote} />
               </div>
@@ -630,14 +613,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                   error={errors.invoiceNumber?.message}
                 />
                 <div className="space-y-2">
-                  <Label className="text-b2" htmlFor="dueDate">
-                    Due date
-                  </Label>
                   <Controller
                     name="dueDate"
                     control={control}
                     render={({ field }) => (
                       <DatePicker
+                        label="Due date"
                         side="top"
                         value={getDateValue(field.value)}
                         onChange={handleDateChange('dueDate')}
