@@ -69,8 +69,8 @@ const S_ACTUAL_R = 89;
 const S_PROGRESS_R = 0;
 const S_TOTAL_W = 213;
 
-const LEFT_SHADOW = '[box-shadow:2px_0_5px_-2px_rgba(0,0,0,0.08)]';
-const RIGHT_SHADOW = '[box-shadow:-2px_0_5px_-2px_rgba(0,0,0,0.08)]';
+const LEFT_SHADOW = '[box-shadow:4px_0_8px_-2px_rgba(0,0,0,0.18)]';
+const RIGHT_SHADOW = '[box-shadow:-4px_0_8px_-2px_rgba(0,0,0,0.18)]';
 
 type SortField = 'sn' | 'name';
 type SortDir = 'asc' | 'desc';
@@ -104,6 +104,25 @@ export default function PerformanceTable({
 }: PerformanceTableProps) {
   const [sortField, setSortField] = React.useState<SortField | null>(null);
   const [sortDir, setSortDir] = React.useState<SortDir>('asc');
+
+  const scrollRef = React.useRef<HTMLDivElement>(null);
+  const [showLeftShadow, setShowLeftShadow] = React.useState(false);
+  const [showRightShadow, setShowRightShadow] = React.useState(false);
+
+  React.useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    function update() {
+      const { scrollLeft, scrollWidth, clientWidth } = el!;
+      setShowLeftShadow(scrollLeft > 0);
+      setShowRightShadow(scrollLeft < scrollWidth - clientWidth - 1);
+    }
+    update();
+    el.addEventListener('scroll', update, { passive: true });
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => { el.removeEventListener('scroll', update); ro.disconnect(); };
+  }, []);
 
   function handleSort(field: SortField) {
     if (sortField === field) {
@@ -213,7 +232,7 @@ export default function PerformanceTable({
       </div>
 
       {/* Scrollable table — all 12 months render; overflow-x-auto drives horizontal scroll */}
-      <div className="overflow-x-auto px-4">
+      <div ref={scrollRef} className="overflow-x-auto">
         <table className="border border-spacing-0" style={{ width: 'max-content', minWidth: '100%' }}>
           <thead>
             {/* ── Row 1: group headers ── */}
@@ -222,8 +241,9 @@ export default function PerformanceTable({
               <th
                 rowSpan={2}
                 onClick={() => handleSort('sn')}
+                style={{ width: 48, minWidth: 48 }}
                 className={cn(
-                  'sticky left-0 z-20 w-[48px] min-w-[48px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
+                  'sticky left-0 z-20 px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
                   BD, H_BG,
                 )}
               >
@@ -236,9 +256,10 @@ export default function PerformanceTable({
               <th
                 rowSpan={2}
                 onClick={() => handleSort('name')}
+                style={{ width: 260, minWidth: 260 }}
                 className={cn(
-                  'sticky left-[48px] z-20 w-[200px] min-w-[200px] px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
-                  BD, H_BG, LEFT_SHADOW,
+                  'sticky left-[48px] z-20 px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
+                  BD, H_BG, showLeftShadow && LEFT_SHADOW,
                 )}
               >
                 <div className="flex items-center justify-between">
@@ -270,7 +291,7 @@ export default function PerformanceTable({
                 colSpan={3}
                 className={cn(
                   'sticky z-20 text-center text-[11px] font-bold text-content-heading border-b border-l h-9',
-                  BD, H_BG, RIGHT_SHADOW,
+                  BD, H_BG, showRightShadow && RIGHT_SHADOW,
                 )}
                 style={{ right: S_PROGRESS_R, minWidth: `${S_TOTAL_W}px` }}
               >
@@ -321,10 +342,10 @@ export default function PerformanceTable({
             {/* Loading skeleton */}
             {isLoading && Array.from({ length: 10 }).map((_, i) => (
               <tr key={`skel-${i}`} className="h-[46px] bg-white border-b border-stroke-divider">
-                <td className="sticky left-0 z-10 px-3 border-b border-r bg-white border-stroke-divider">
+                <td style={{ minWidth: 48, width: 48 }} className="sticky left-0 z-10 px-3 border-b border-r bg-white border-stroke-divider">
                   <div className="h-3 w-4 bg-gray-100 rounded animate-pulse" />
                 </td>
-                <td className="sticky left-[48px] z-10 px-3 border-b border-r bg-white border-stroke-divider">
+                <td style={{ minWidth: 260, width: 260 }} className="sticky left-[48px] z-10 px-3 border-b border-r bg-white border-stroke-divider">
                   <div className="h-3 w-32 bg-gray-100 rounded animate-pulse" />
                 </td>
                 {allMonths.map((m) => (
@@ -342,11 +363,11 @@ export default function PerformanceTable({
             {/* Data rows — all white, hover #F4F7FA */}
             {!isLoading && sortedData.map((row, i) => (
               <tr key={row.name} className="group h-[46px] bg-white hover:bg-[#F4F7FA] transition-colors">
-                <td className={cn('sticky left-0 z-10 px-3 text-[13px] text-content-subtitle border-b border-r bg-white group-hover:bg-[#F4F7FA] transition-colors', BD)}>
+                <td style={{ minWidth: 48, width: 48 }} className={cn('sticky left-0 z-10 px-3 text-[13px] text-content-subtitle border-b border-r bg-white group-hover:bg-[#F4F7FA] transition-colors', BD)}>
                   {i + 1}
                 </td>
-                <td className={cn('sticky left-[48px] z-10 px-3 text-[13px] text-content-heading border-b border-r bg-white group-hover:bg-[#F4F7FA] transition-colors', BD, LEFT_SHADOW)}>
-                  <span className="block w-[176px] truncate">{row.name}</span>
+                <td style={{ minWidth: 260, width: 260 }} className={cn('sticky left-[48px] z-10 px-3 text-[13px] text-content-heading border-b border-r bg-white group-hover:bg-[#F4F7FA] transition-colors', BD, showLeftShadow && LEFT_SHADOW)}>
+                  <span className="block w-[236px] truncate">{row.name}</span>
                 </td>
 
                 {allMonths.map((m) => {
@@ -376,7 +397,7 @@ export default function PerformanceTable({
                 })}
 
                 <td
-                  className={cn('sticky z-10 text-center text-[13px] text-content-subtitle border-b border-l px-2 bg-white group-hover:bg-[#F4F7FA] transition-colors', BD, RIGHT_SHADOW)}
+                  className={cn('sticky z-10 text-center text-[13px] text-content-subtitle border-b border-l px-2 bg-white group-hover:bg-[#F4F7FA] transition-colors', BD, showRightShadow && RIGHT_SHADOW)}
                   style={{ right: `${S_TARGET_R}px` }}
                 >
                   {row.target.total ?? '-'}
@@ -401,7 +422,8 @@ export default function PerformanceTable({
               <tr className={cn('h-[46px]', TOTAL_BG)}>
                 <td
                   colSpan={2}
-                  className={cn('sticky left-0 z-10 px-3 text-[13px] font-semibold text-content-heading border-b border-r', BD, TOTAL_BG, LEFT_SHADOW)}
+                  style={{ minWidth: 308 }}
+                  className={cn('sticky left-0 z-10 px-3 text-[13px] font-semibold text-content-heading border-b border-r', BD, TOTAL_BG, showLeftShadow && LEFT_SHADOW)}
                 >
                   Total
                 </td>
@@ -427,7 +449,7 @@ export default function PerformanceTable({
                   );
                 })}
                 <td
-                  className={cn('sticky z-10 text-center text-[13px] font-semibold text-content-heading border-b border-l px-2', BD, TOTAL_BG, RIGHT_SHADOW)}
+                  className={cn('sticky z-10 text-center text-[13px] font-semibold text-content-heading border-b border-l px-2', BD, TOTAL_BG, showRightShadow && RIGHT_SHADOW)}
                   style={{ right: `${S_TARGET_R}px` }}
                 >
                   {totals.totalTarget}

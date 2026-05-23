@@ -18,8 +18,8 @@ export const useUpdateFiscalReport = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateFiscalReport,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FISCAL_REPORT] });
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FISCAL_REPORT] });
       toast('Success!', { description: 'Report targets have been updated.' });
     },
     onError: () => {

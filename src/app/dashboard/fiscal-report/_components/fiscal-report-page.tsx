@@ -119,8 +119,10 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   );
 
   React.useEffect(() => {
-    setEditData(serverRows);
-  }, [serverRows]);
+    if (!isEdit) {
+      setEditData(serverRows);
+    }
+  }, [serverRows, isEdit]);
 
   const tableData = React.useMemo(() => {
     const base = isEdit ? editData : serverRows;
@@ -163,11 +165,25 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
 
   const handleSave = () => {
     if (!report) return;
-    const payload = report.data.map((original, i) => ({
-      ...original,
-      target: editData[i]?.target ?? original.target,
-    }));
-    updateReport({ id: report.id, data: payload }, { onSuccess: () => setIsEdit(false) });
+    const editMap = new Map(editData.map((r) => [r.name, r.target]));
+    const payload = report.data
+      .map((original) => {
+        const editTarget = editMap.get(original.name);
+        // Strip the computed "total" key before sending to the backend
+        const { total: _t, ...cleanTarget } = editTarget ?? original.target;
+        return {
+          ...original,
+          target: cleanTarget,
+        };
+      })
+      .sort((a, b) => a.id - b.id);
+    updateReport({ id: report.id, data: payload }, {
+      onSuccess: () => {
+        // Query refetch is awaited inside the mutation's onSuccess,
+        // so by the time this callback runs, serverRows is already up-to-date.
+        setIsEdit(false);
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -188,7 +204,16 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
       row.target.total ?? 0,
       row.actual.total ?? 0,
     ]);
-    const csv = [header, ...rows].map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
+    const totalRow = [
+      'Total',
+      ...months.flatMap((m) => [
+        serverRows.reduce((s, row) => s + (row.target[m.key] ?? 0), 0),
+        serverRows.reduce((s, row) => s + (row.actual[m.key] ?? 0), 0),
+      ]),
+      serverRows.reduce((s, row) => s + (row.target.total ?? 0), 0),
+      serverRows.reduce((s, row) => s + (row.actual.total ?? 0), 0),
+    ];
+    const csv = [header, ...rows, totalRow].map((r) => r.map((c) => `"${c}"`).join(',')).join('\n');
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
