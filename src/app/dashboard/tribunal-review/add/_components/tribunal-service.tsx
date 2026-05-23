@@ -8,8 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format } from 'date-fns';
 
-import { cn } from '@/lib/utils';
-
 import TextInput from '@/components/molecules/text-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -218,7 +216,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dob')}
                     placeholder="DD/MM/YYYY"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     disableFutureDates={true}
                     label="Date of birth"
                   />
@@ -233,8 +231,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               name="country"
               render={({ field }) => (
                 <div className="space-y-2">
-                  <Label className="text-b2">Country</Label>
                   <CountryDropdown
+                    label="Country"
                     onChange={(country) => field.onChange(country?.alpha3 || null)}
                     defaultValue={field.value || undefined}
                     placeholder="Select a country"
@@ -255,7 +253,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('passportIssueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.passportIssueDate?.message}
                     label="Passport issue date"
                   />
@@ -273,7 +271,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('passportExpiryDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.passportExpiryDate?.message}
                     label="Passport expiry date"
                     disablePastDates={true}
@@ -321,7 +319,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaExpiry')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaExpiry?.message}
                     label="Visa expiry date"
                     disablePastDates={true}
@@ -340,7 +338,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.dueDate?.message}
                     label="Due date"
                     disablePastDates={true}
@@ -421,7 +419,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('sbsSubmissionDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.sbsSubmissionDate?.message}
                     label="Date submitted"
                   />
@@ -439,7 +437,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('sbsDecisionDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.sbsDecisionDate?.message}
                     label="Decision date"
                     disablePastDates={true}
@@ -475,7 +473,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationSubmittedDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.nominationSubmittedDate?.message}
                     label="Nomination date submitted"
                   />
@@ -493,7 +491,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationDecisionDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.nominationDecisionDate?.message}
                     label="Nomination decision date"
                     disablePastDates={true}
@@ -525,7 +523,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmittedDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaSubmittedDate?.message}
                   />
                 )}
@@ -543,7 +541,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaDecisionDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaDecisionDate?.message}
                     disablePastDates={true}
                   />
@@ -569,7 +567,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   value={getDateValue(field.value)}
                   onChange={handleDateChange('tribunalSubmittedDate')}
                   placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
+                  className="w-full"
                   error={!!errors.tribunalSubmittedDate?.message}
                   label="Date submitted"
                 />
@@ -585,7 +583,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   value={getDateValue(field.value)}
                   onChange={handleDateChange('hearingDate')}
                   placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
+                  className="w-full"
                   label="Hearing date"
                   error={!!errors.hearingDate?.message}
                   disablePastDates={true}
@@ -602,7 +600,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   value={getDateValue(field.value)}
                   onChange={handleDateChange('tribunalDecisionDate')}
                   placeholder="DD/MM/YYYY"
-                  className="h-12 text-b2 w-full"
+                  className="w-full"
                   label="Tribunal decision date"
                   error={!!errors.tribunalDecisionDate?.message}
                   disablePastDates={true}
@@ -654,19 +652,17 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                 error={errors.accounts?.invoicenumber?.message}
               />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                  Due Date
-                </Label>
                 <Controller
                   name="accounts.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Due Date"
                       side="top"
                       value={field.value ? new Date(field.value) : undefined}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                     />
                   )}

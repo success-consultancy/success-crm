@@ -8,8 +8,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format } from 'date-fns';
 
-import { cn } from '@/lib/utils';
-
 import TextInput from '@/components/molecules/text-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -193,7 +191,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dob')}
                     placeholder="DD/MM/YYYY"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     disableFutureDates={true}
                     label="Date of birth"
                   />
@@ -216,7 +214,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('passportIssueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.passportIssueDate?.message}
                     label="Passport issue date"
                   />
@@ -234,7 +232,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('passportExpiryDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.passportExpiryDate?.message}
                     label="Passport expiry date"
                     disablePastDates={true}
@@ -282,7 +280,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaExpiry')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaExpiry?.message}
                     label="Visa expiry date"
                     disablePastDates={true}
@@ -301,7 +299,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.dueDate?.message}
                     label="Due date"
                     disablePastDates={true}
@@ -356,7 +354,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('startDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.startDate?.message}
                     label="Policy start date"
                     disablePastDates={true}
@@ -376,7 +374,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('expiryDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.expiryDate?.message}
                     label="Policy end date"
                     disablePastDates={true}
@@ -444,19 +442,17 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                 error={errors.accounts?.invoicenumber?.message}
               />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                  Due Date
-                </Label>
                 <Controller
                   name="accounts.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Due Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                     />
                   )}

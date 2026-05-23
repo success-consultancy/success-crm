@@ -5,7 +5,6 @@ import { FormField } from '@/components/ui/form';
 import { useFormContext } from 'react-hook-form';
 import type { LeadSchemaType } from '@/schema/lead-schema';
 
-import { Label } from '@/components/ui/label';
 import countryList from 'react-select-country-list';
 import { useGetVisa, useGetVisaConst } from '@/query/get-visa';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -80,18 +79,16 @@ const VisaAndServiceStep = () => {
           control={control}
           name="visaExpiry"
           render={({ field }) => (
-            <div className=" flex flex-col gap-2 flex-1">
-              <Label className="text-b3-b font-semibold">Visa expiry date</Label>
-              <DatePicker
-                side="top"
-                value={field.value || undefined}
-                onChange={(date) => setValue('visaExpiry', date)}
-                placeholder="DD/MM/YYYY"
-                className="h-12 text-b2 w-full"
-                error={!!errors.visaExpiry?.message}
-                disablePastDates={true}
-              />
-            </div>
+            <DatePicker
+              label="Visa expiry date"
+              side="top"
+              value={field.value || undefined}
+              onChange={(date) => setValue('visaExpiry', date)}
+              placeholder="DD/MM/YYYY"
+              className="w-full"
+              error={!!errors.visaExpiry?.message}
+              disablePastDates={true}
+            />
           )}
         />
         <FormField

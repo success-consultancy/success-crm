@@ -75,7 +75,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className={cn(['inline-grid w-full items-center gap-1', className, classNames?.wrapper])}>
+      <div className={cn(['inline-grid w-full items-center gap-2', className, classNames?.wrapper])}>
         {label && (
           <label
             className={cn(['text-b3-b font-semibold', props.disabled && 'text-content-disabled', classNames?.label])}

@@ -138,7 +138,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     disableFutureDates={true}
                   />
                 )}
@@ -152,8 +152,8 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
               name="country"
               render={({ field }) => (
                 <div className="space-y-2">
-                  <Label className="text-b2">Country</Label>
                   <CountryDropdown
+                    label="Country"
                     onChange={(country) => field.onChange(country?.alpha3 || null)}
                     defaultValue={field.value || undefined}
                     placeholder="Select a country"
@@ -175,7 +175,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.issueDate?.message}
                     disableFutureDates={true}
                   />
@@ -194,7 +194,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.expiryDate?.message}
                     disablePastDates={true}
                   />
@@ -256,7 +256,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       error={!!errors.startDate?.message}
                     />
@@ -275,7 +275,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       error={!!errors.endDate?.message}
                     />

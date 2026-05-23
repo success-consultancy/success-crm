@@ -5,8 +5,9 @@ import Container from '@/components/atoms/container';
 import { useParams } from 'next/navigation';
 import { useGetVisaDetailById } from '@/query/get-visa';
 import PageLoader from '@/components/molecules/page-loader';
-import { EditVisaService } from './_components/edit-visa-service';
+import { VisaService } from '../../add/_components/visa-service';
 import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
+import { FORM_STATE } from '@/types/common';
 
 const EditVisaServicePage = () => {
   const params = useParams<{ id: string }>();
@@ -66,9 +67,10 @@ const EditVisaServicePage = () => {
 
   return (
     <Container className="flex flex-col py-10 gap-8">
-      <EditVisaService
+      <VisaService
         userId={data?.userId}
-        visaId={Number(params.id)}
+        formState={FORM_STATE.EDIT}
+        id={Number(params.id)}
         defaultValues={defaultValues as Partial<NewVisaServiceType>}
         accounts={data?.accounts || []}
       />

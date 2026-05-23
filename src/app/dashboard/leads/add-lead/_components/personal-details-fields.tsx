@@ -7,7 +7,6 @@ import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
 
 import { format } from 'date-fns';
-import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import SelectCommon from '@/components/molecules/select-common';
 import { Location, Services } from '@/constants/lead-constants';
@@ -57,19 +56,17 @@ const PersonalDetailsStep = () => {
           control={control}
           name="dob"
           render={({ field }) => (
-            <div className=" flex flex-col gap-2 flex-1">
-              <Label className="text-b3-b font-semibold">Date of birth</Label>
-              <DatePicker
-                side="top"
-                value={!!field.value ? new Date(field.value) : undefined}
-                onChange={(date) => {
-                  if (date) field.onChange(format(date, 'MM/dd/yyyy'));
-                }}
-                placeholder="DD/MM/YYYY"
-                className="h-12 text-b2 w-full"
-                error={!!errors.dob?.message}
-              />
-            </div>
+            <DatePicker
+              label="Date of birth"
+              side="top"
+              value={!!field.value ? new Date(field.value) : undefined}
+              onChange={(date) => {
+                if (date) field.onChange(format(date, 'MM/dd/yyyy'));
+              }}
+              placeholder="DD/MM/YYYY"
+              className="w-full"
+              error={!!errors.dob?.message}
+            />
           )}
         />
         <FormField
@@ -86,15 +83,13 @@ const PersonalDetailsStep = () => {
           control={control}
           name="country"
           render={({ field }) => (
-            <div className="space-y-2">
-              <CountryDropdown
-                label="Country"
-                onChange={(country) => field.onChange(country?.alpha3 || null)}
-                defaultValue={field.value || undefined}
-                placeholder="Select a country"
-                error={errors.country?.message}
-              />
-            </div>
+            <CountryDropdown
+              label="Country"
+              onChange={(country) => field.onChange(country?.alpha3 || null)}
+              defaultValue={field.value || undefined}
+              placeholder="Select a country"
+              error={errors.country?.message}
+            />
           )}
         />
         <FormField
@@ -130,36 +125,32 @@ const PersonalDetailsStep = () => {
           control={control}
           name="issueDate"
           render={({ field }) => (
-            <div className=" flex flex-col gap-2 flex-1">
-              <DatePicker
-                side="top"
-                value={field.value || undefined}
-                onChange={(date) => setValue('issueDate', date)}
-                label="Passport issue date"
-                placeholder="DD/MM/YYYY"
-                className="h-12 text-b2 w-full"
-                error={!!errors.issueDate?.message}
-                disableFutureDates={true}
-              />
-            </div>
+            <DatePicker
+              side="top"
+              value={field.value || undefined}
+              onChange={(date) => setValue('issueDate', date)}
+              label="Passport issue date"
+              placeholder="DD/MM/YYYY"
+              className="w-full"
+              error={!!errors.issueDate?.message}
+              disableFutureDates={true}
+            />
           )}
         />
         <FormField
           control={control}
           name="expiryDate"
           render={({ field }) => (
-            <div className=" flex flex-col gap-2 flex-1">
-              <DatePicker
-                label="Passport expiry date"
-                side="top"
-                value={field.value || undefined}
-                onChange={(date) => setValue('expiryDate', date)}
-                placeholder="DD/MM/YYYY"
-                className="h-12 text-b2 w-full"
-                error={!!errors.expiryDate?.message}
-                disablePastDates={true}
-              />
-            </div>
+            <DatePicker
+              label="Passport expiry date"
+              side="top"
+              value={field.value || undefined}
+              onChange={(date) => setValue('expiryDate', date)}
+              placeholder="DD/MM/YYYY"
+              className="w-full"
+              error={!!errors.expiryDate?.message}
+              disablePastDates={true}
+            />
           )}
         />
 

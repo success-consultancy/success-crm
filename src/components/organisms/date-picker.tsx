@@ -66,12 +66,12 @@ export function DatePicker({
   return (
     <div>
       {label && (
-        <Label htmlFor="dueDate" className="text-b3-b font-semibold">
+        <Label htmlFor="dueDate" className="text-b3-b mb-1 font-semibold block">
           {label}
         </Label>
       )}
       <div className={cn('flex gap-4 w-full', !needTime && 'w-full')}>
-        <div className={cn('flex w-full flex-col gap-3', needTime ? 'flex-1' : 'w-full')}>
+        <div className={cn('flex w-full flex-col gap-4', needTime ? 'flex-1' : 'w-full')}>
           <Popover modal={true} open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
             <PopoverTrigger asChild className="!w-[100%] text-sm !h-10" disabled={disabled}>
               <div
@@ -117,7 +117,7 @@ export function DatePicker({
           </Popover>
         </div>
         {needTime && (
-          <div className="flex !w-[100px] flex-col gap-3 flex-1">
+          <div className="flex !w-[100px] flex-col flex-1">
             <Input
               type="time"
               id={timeId}

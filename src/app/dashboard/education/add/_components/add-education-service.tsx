@@ -161,20 +161,18 @@ export function AddEducationService({ userId }: Props) {
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="dob">
-                Birth Date
-              </Label>
               <Controller
                 name="dob"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Birth Date"
                     error={!!errors.dob?.message}
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     disableFutureDates={true}
                   />
                 )}
@@ -188,8 +186,8 @@ export function AddEducationService({ userId }: Props) {
               name="country"
               render={({ field }) => (
                 <div className="space-y-2">
-                  <Label className="text-b2">Country</Label>
                   <CountryDropdown
+                    label="Country"
                     onChange={(country) => field.onChange(country?.alpha3 || null)}
                     defaultValue={field.value || undefined}
                     placeholder="Select a country"
@@ -201,19 +199,17 @@ export function AddEducationService({ userId }: Props) {
             <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
 
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="issueDate">
-                Passport Issue Date
-              </Label>
               <Controller
                 name="issueDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Passport Issue Date"
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.issueDate?.message}
                     disableFutureDates={true}
                   />
@@ -222,19 +218,17 @@ export function AddEducationService({ userId }: Props) {
               <FormErrorMessage message={errors.issueDate?.message} />
             </div>
             <div className="space-y-2">
-              <Label className="text-b2" htmlFor="expiryDate">
-                Passport Expiry Date
-              </Label>
               <Controller
                 name="expiryDate"
                 control={control}
                 render={({ field }) => (
                   <DatePicker
+                    label="Passport Expiry Date"
                     side="top"
                     value={field.value}
                     onChange={field.onChange}
                     placeholder="Pick a date"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.expiryDate?.message}
                     disablePastDates={true}
                   />
@@ -286,19 +280,17 @@ export function AddEducationService({ userId }: Props) {
             </div>
             <div className="grid grid-cols-3 gap-6 mt-6">
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="startDate">
-                  Start Date
-                </Label>
                 <Controller
                   name="startDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Start Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       error={!!errors.startDate?.message}
                     />
@@ -307,19 +299,17 @@ export function AddEducationService({ userId }: Props) {
                 <FormErrorMessage message={errors.startDate?.message} />
               </div>
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="endDate">
-                  End Date
-                </Label>
                 <Controller
                   name="endDate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="End Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       error={!!errors.endDate?.message}
                     />
@@ -360,19 +350,17 @@ export function AddEducationService({ userId }: Props) {
               />
 
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.duedate">
-                  Due Date
-                </Label>
                 <Controller
                   name="courseFee.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Due Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       error={!!errors.courseFee?.duedate?.message}
                     />
@@ -417,19 +405,17 @@ export function AddEducationService({ userId }: Props) {
               <TextInput disabled label="Plan Name" {...register('courseFee.accounts.planname')} />
               <TextInput label="Amount" disabled {...register('courseFee.accounts.amount')} />
               <div className="space-y-2">
-                <Label className="text-b2" htmlFor="courseFee.accounts.duedate">
-                  Due Date
-                </Label>
                 <Controller
                   name="courseFee.accounts.duedate"
                   control={control}
                   render={({ field }) => (
                     <DatePicker
+                      label="Due Date"
                       side="top"
                       value={field.value}
                       onChange={field.onChange}
                       placeholder="Pick a date"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       disablePastDates={true}
                       disabled
                     />

@@ -78,11 +78,11 @@ const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error, cla
   };
 
   return (
-    <div className="flex flex-col gap-1 flex-1">
+    <div className="flex flex-col gap-2 flex-1">
       {label && <Label className="text-b3-b font-semibold">{label}</Label>}
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
-        <SelectTrigger className={cn(['w-full', error && 'border-primary-red', className])}>
+        <SelectTrigger className={cn(['w-full h-10', error && 'border-primary-red', className])}>
           {selectedUserData?.firstName && (
             <div className="w-2 rounded-full flex-shrink-0 self-stretch" style={{ backgroundColor: getAppointColorBasedOnUserName(selectedUserData, 'raw') as string }} />
           )}

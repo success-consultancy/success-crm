@@ -29,12 +29,12 @@ const SelectCommon = ({ maxHeight = 200, ...props }: Props) => {
   const listHeight = Math.min(calculatedHeight, maxHeight);
 
   return (
-    <div className="flex flex-col gap-1 flex-1">
-      <Label className="text-b3-b font-semibold mb-1.5">{props.label}</Label>
+    <div className="flex flex-col gap-2 flex-1">
+      <Label className="text-b3-b font-semibold">{props.label}</Label>
 
       <Select value={props.value} onValueChange={props.onSelect}>
         <SelectTrigger
-          className={cn([props.error && 'border-primary-red'], props.triggerClassName)}
+          className={cn(['h-10', props.error && 'border-primary-red'], props.triggerClassName)}
           aria-label={props.label}
         >
           <SelectValue placeholder={props.placeholder || `Select a ${props.label.toLowerCase()}`} />

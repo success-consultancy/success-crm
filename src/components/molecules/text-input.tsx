@@ -14,9 +14,9 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ label, id, error, requi
   const inputId = id || 'text-input';
 
   return (
-    <div className="space-y-1">
+    <div className="flex flex-col gap-2">
       {label && (
-        <Label htmlFor={inputId} className="font-medium">
+        <Label htmlFor={inputId} className="text-b3-b font-semibold">
           {label}
           {required && <span className="text-red-500"> *</span>}
         </Label>
@@ -28,7 +28,7 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ label, id, error, requi
         required={required}
         {...rest}
         className={cn(
-          'w-full mt-1 rounded-md border px-3 py-2 focus:border-primary',
+          'w-full rounded-md border px-3 py-2 focus:border-primary',
           error ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-primary',
           className,
         )}

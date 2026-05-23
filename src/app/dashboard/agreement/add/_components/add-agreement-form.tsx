@@ -213,7 +213,6 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         {/* Start Date and End Date Row */}
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-2">
-            <Label className="text-b2">Start Date</Label>
             <Controller
               name="startDate"
               control={control}
@@ -225,6 +224,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
                   : undefined;
                 return (
                   <DatePicker
+                    label="Start Date"
                     value={dateValue instanceof Date && !isNaN(dateValue.getTime()) ? dateValue : undefined}
                     onChange={(date) => {
                       if (date) {
@@ -235,7 +235,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
                       }
                     }}
                     placeholder="DD/MM/YYYY"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     error={!!errors.startDate?.message}
                   />
                 );
@@ -245,7 +245,6 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
           </div>
 
           <div className="space-y-2">
-            <Label className="text-b2">End Date</Label>
             <Controller
               name="endDate"
               control={control}
@@ -257,6 +256,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
                   : undefined;
                 return (
                   <DatePicker
+                    label="End Date"
                     value={dateValue instanceof Date && !isNaN(dateValue.getTime()) ? dateValue : undefined}
                     onChange={(date) => {
                       if (date) {
@@ -267,7 +267,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
                       }
                     }}
                     placeholder="DD/MM/YYYY"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     error={!!errors.endDate?.message}
                   />
                 );

@@ -75,11 +75,11 @@ const LeadSelectWithCommand = ({ label, value, onSelect, placeholder, error }: P
   };
 
   return (
-    <div className="flex flex-col gap-1 flex-1">
+    <div className="flex flex-col gap-2 flex-1">
       <Label className="text-b3-b font-semibold">{label}</Label>
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
-        <SelectTrigger className={cn(['w-full', error && 'border-primary-red'])}>
+        <SelectTrigger className={cn(['w-full h-10', error && 'border-primary-red'])}>
           <SelectValue placeholder={placeholder}>{selectedLabel || placeholder}</SelectValue>
         </SelectTrigger>
         <SelectContent className="w-full">

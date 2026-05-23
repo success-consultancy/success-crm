@@ -52,8 +52,8 @@ const ComboboxField = <T extends FieldValues>({
   const selectedOption = options.find((opt) => opt.value === field.value);
 
   return (
-    <div className={`flex flex-col gap-1 -mt-1 w-full ${className || ''}`}>
-      <Label htmlFor={name} className="font-medium">
+    <div className={`flex flex-col gap-2 w-full ${className || ''}`}>
+      <Label htmlFor={name} className="text-b3-b font-semibold">
         {label}
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>

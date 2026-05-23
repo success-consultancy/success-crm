@@ -11,8 +11,6 @@ import { format, parse } from 'date-fns';
 import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/lib/utils';
-
 import TextInput from '@/components/molecules/text-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -35,6 +33,7 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { ArrowLeft, Code2 } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -218,7 +217,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         {
           onSuccess: () => {
             toast.success('Skill assessment applicant added successfully');
-            router.push('/skill');
+            router.push(ROUTES.SKILL_ASSESSMENT);
           },
           onError: (err: any) => {
             if (err?.response?.data?.errors) {
@@ -347,7 +346,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('dob')}
                       placeholder="DD / MM / YYYY"
-                      className={cn('h-12 text-b2 w-full')}
+                      className="w-full"
                       disableFutureDates={true}
                     />
                   )}
@@ -367,8 +366,8 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 name="country"
                 render={({ field }) => (
                   <div className="space-y-2">
-                    <Label className="text-b3-b font-medium">Nationality</Label>
                     <CountryDropdown
+                      label="Nationality"
                       onChange={(country) => field.onChange(country?.alpha3 || null)}
                       defaultValue={field.value || undefined}
                       placeholder="Select a country"
@@ -390,7 +389,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('issueDate')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       error={!!errors.issueDate?.message}
                     />
                   )}
@@ -408,7 +407,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('expiryDate')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       error={!!errors.expiryDate?.message}
                       disablePastDates={true}
                     />
@@ -536,7 +535,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('submittedDate')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       error={!!errors.submittedDate?.message}
                     />
                   )}
@@ -554,7 +553,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       value={getDateValue(field.value)}
                       onChange={handleDateChange('decisionDate')}
                       placeholder="DD / MM / YYYY"
-                      className="h-12 text-b2 w-full"
+                      className="w-full"
                       error={!!errors.decisionDate?.message}
                       disablePastDates={true}
                     />
@@ -623,7 +622,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                         value={getDateValue(field.value)}
                         onChange={handleDateChange('dueDate')}
                         placeholder="DD / MM / YYYY"
-                        className="h-12 text-b2 w-full"
+                        className="w-full"
                         error={!!errors.dueDate?.message}
                       />
                     )}
