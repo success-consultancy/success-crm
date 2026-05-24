@@ -387,11 +387,7 @@ export function AddEducationService({ userId }: Props) {
               />
             </div>
             <div className="mt-6">
-              <Label className="text-b2 mb-2" htmlFor="courseFee.note">
-                Fee Notes
-              </Label>
-
-              <TinyEditor value={watch('courseFee.note')} onChange={handleFeeStructureEditorChange} />
+              <TinyEditor label="Fee Notes" value={watch('courseFee.note')} onChange={handleFeeStructureEditorChange} />
 
               {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
             </div>
@@ -492,12 +488,7 @@ export function AddEducationService({ userId }: Props) {
               placeholder="Select source"
             />
             <div className="col-span-2">
-              <div className="w-full space-y-1" suppressHydrationWarning>
-                <Label className="text-b3-b font-semibold">Note</Label>
-
-                <TinyEditor value={remarks} onChange={handleMiscEditorChange} />
-                {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
-              </div>
+              <TinyEditor label="Note" value={remarks} onChange={handleMiscEditorChange} error={errors.remarks?.message} />
             </div>
           </div>
         </FormAccordion>

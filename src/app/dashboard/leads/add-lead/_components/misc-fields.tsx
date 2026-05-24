@@ -89,15 +89,12 @@ const MiscStep = () => {
           )}
         />
       </div>
-      <div className="w-full space-y-1" suppressHydrationWarning>
-        <Label className="text-b3-b font-semibold">Note</Label>
-
-        <TinyEditor
-          value={remarks || ''}
-          onChange={(content) => setLead('remarks', content, { shouldValidate: true })}
-        />
-        {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
-      </div>
+      <TinyEditor
+        label="Note"
+        value={remarks || ''}
+        onChange={(content) => setLead('remarks', content, { shouldValidate: true })}
+        error={errors.remarks?.message}
+      />
 
       <div className="space-y-1">
         <Label className="text-b3-b font-semibold">Documents</Label>

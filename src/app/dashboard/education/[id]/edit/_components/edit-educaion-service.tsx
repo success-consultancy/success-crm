@@ -333,11 +333,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             />
             <div className="col-span-2">
               <div className="mt-6">
-                <Label className="text-b2 mb-2" htmlFor="courseFee.note">
-                  Note
-                </Label>
-                <TinyEditor value={remarks} onChange={handleMiscEditorChange} />
-                {errors.remarks && <FormErrorMessage message={errors.remarks.message} />}
+                <TinyEditor label="Note" value={remarks} onChange={handleMiscEditorChange} error={errors.remarks?.message} />
               </div>{' '}
             </div>
           </div>

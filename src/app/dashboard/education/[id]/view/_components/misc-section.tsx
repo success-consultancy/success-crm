@@ -6,7 +6,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import toast from 'react-hot-toast';
 
-import { Label } from '@/components/ui/label';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import SelectField from '@/components/organisms/select-field';
@@ -119,16 +118,12 @@ const MiscSection = ({ education }: { education: IEducation }) => {
             />
           </div>
           <div>
-            <Label className="text-b2 mb-2">Note</Label>
-            <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor
-                value={remarks || ''}
-                onChange={(content) => setValue('remarks', content, { shouldValidate: true })}
-              />
-              {errors.remarks?.message && (
-                <p className="text-sm text-red-500">{errors.remarks.message}</p>
-              )}
-            </div>
+            <TinyEditor
+              label="Note"
+              value={remarks || ''}
+              onChange={(content) => setValue('remarks', content, { shouldValidate: true })}
+              error={errors.remarks?.message}
+            />
           </div>
         </form>
       ) : (

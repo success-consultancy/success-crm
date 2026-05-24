@@ -305,8 +305,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
 
         {/* Note */}
         <div className="space-y-2">
-          <Label className="text-b2">Note:</Label>
-          <TinyEditor value={note} onChange={handleNoteChange} />
+          <TinyEditor label="Note" value={note} onChange={handleNoteChange} />
           <FormErrorMessage message={errors.note?.message} />
         </div>
 

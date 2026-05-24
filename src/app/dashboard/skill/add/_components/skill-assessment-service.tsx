@@ -585,10 +585,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
               />
             </div>
             <div className="mt-6">
-              <Label className="text-b3-b mb-2">Visa & service note:</Label>
-              <div className="w-full space-y-1" suppressHydrationWarning>
-                <TinyEditor value={visaServiceNote} onChange={setVisaServiceNote} />
-              </div>
+              <TinyEditor label="Visa & service note" value={visaServiceNote} onChange={setVisaServiceNote} />
             </div>
           </FormAccordion>
 
@@ -643,10 +640,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 />
               </div>
               <div className="mt-6">
-                <Label className="text-b2 mb-2">Fee note:</Label>
-                <div className="w-full space-y-1" suppressHydrationWarning>
-                  <TinyEditor value={feeNote} onChange={setFeeNote} />
-                </div>
+                <TinyEditor label="Fee note" value={feeNote} onChange={setFeeNote} />
               </div>
             </FormAccordion>
           )}
@@ -682,10 +676,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
               />
             </div>
             <div className="mt-6">
-              <Label className="text-b2 mb-2">Note:</Label>
-              <div className="w-full space-y-1" suppressHydrationWarning>
-                <TinyEditor value={miscNote} onChange={setMiscNote} />
-              </div>
+              <TinyEditor label="Note" value={miscNote} onChange={setMiscNote} />
             </div>
           </FormAccordion>
         </Accordion>

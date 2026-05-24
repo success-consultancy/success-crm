@@ -528,14 +528,12 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
             />
           </div>
           <div>
-            <Label>Note</Label>
-            <div className="w-full space-y-1 mt-2" suppressHydrationWarning>
-              <TinyEditor
-                value={remarks || ''}
-                onChange={(content) => setValue('remarks', content, { shouldValidate: true })}
-              />
-              {errors.remarks?.message && <p className="text-sm text-red-500">{errors.remarks.message}</p>}
-            </div>
+            <TinyEditor
+              label="Note"
+              value={remarks || ''}
+              onChange={(content) => setValue('remarks', content, { shouldValidate: true })}
+              error={errors.remarks?.message}
+            />
           </div>
         </FormAccordion>
       </Accordion>
