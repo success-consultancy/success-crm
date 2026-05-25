@@ -258,12 +258,13 @@ export const useEducationColumn = (
           switch (status) {
             case EducationStatusTypes.New:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case EducationStatusTypes.Coereceived:
+            case EducationStatusTypes.CoeReceived:
               return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
             case EducationStatusTypes.Withdrawn:
+            case EducationStatusTypes.Discontinued:
               return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case EducationStatusTypes.ChecklistSent:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
+            case EducationStatusTypes.Checklist:
+              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Checklist</Badge>;
             default:
               return <span>{status}</span>;
           }

@@ -37,10 +37,13 @@ type InsuranceStagesProps = { insurance: IInsurance };
 export const VisaStages = ({ insurance }: InsuranceStagesProps) => {
   const router = useRouter();
   const stages = [
-    { name: 'New Applicant', active: insurance.status === InsuranceStatusTypes.New },
-    { name: 'In Progress', active: insurance.status === InsuranceStatusTypes.Processing },
-    { name: 'Completed', active: insurance.status === InsuranceStatusTypes.Completed },
-    { name: 'Discoutinued', active: insurance.status === InsuranceStatusTypes.Discontinued },
+    { name: InsuranceStatusTypes.New, active: insurance.status === InsuranceStatusTypes.New },
+    { name: InsuranceStatusTypes.CollectingDocs, active: insurance.status === InsuranceStatusTypes.CollectingDocs },
+    { name: InsuranceStatusTypes.InProgress, active: insurance.status === InsuranceStatusTypes.InProgress },
+    { name: InsuranceStatusTypes.Completed, active: insurance.status === InsuranceStatusTypes.Completed },
+    { name: InsuranceStatusTypes.Discontinued, active: insurance.status === InsuranceStatusTypes.Discontinued },
+    { name: InsuranceStatusTypes.RefundInProgress, active: insurance.status === InsuranceStatusTypes.RefundInProgress },
+    { name: InsuranceStatusTypes.Refunded, active: insurance.status === InsuranceStatusTypes.Refunded },
   ];
 
   return (

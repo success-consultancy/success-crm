@@ -39,6 +39,7 @@ import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
+import { InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 
 interface Props {
   userId: number | undefined;
@@ -388,13 +389,10 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
               control={control}
               name="status"
               label="Status"
-              options={[
-                { label: 'New', value: 'New' },
-                { label: 'Processing', value: 'Processing' },
-                { label: 'Completed', value: 'Completed' },
-                { label: 'Discontinued', value: 'Discontinued' },
-                { label: 'Refunded', value: 'Refunded' },
-              ]}
+              options={Object.values(InsuranceStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
           </div>

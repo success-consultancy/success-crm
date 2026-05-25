@@ -5,21 +5,24 @@ export interface ITribunalReviewResponseType {
   rows: ITribunalReview[];
 }
 
+// Source of truth for tribunal-review status strings used in the UI.
+// Backend grouping (converted / in-progress / not-converted) lives in
+// crm-hbg-be/src/util/const.js — keep both files in sync when adding,
+// renaming, or removing a status.
 export enum TribunalStatusTypes {
-  NewTribunal = "New Tribunal",
+  New = "New",
   CollectingDocs = "Collecting Docs",
-  ReadyToSubmit = "Ready to Submit",
+  ReadyToSubmit = "Ready To Submit",
   Submitted = "Submitted",
   InfoRequested = "Info Requested",
   Remitted = "Remitted",
   Withdrawn = "Withdrawn",
   Refused = "Refused",
   Discontinued = "Discontinued",
-  MinisterialApproved = "Ministerial Approved",
   MinisterialIntervention = "Ministerial Intervention",
+  MinisterialApproved = "Ministerial Approved",
   MinisterialRefused = "Ministerial Refused",
   Other = "Other",
-  FollowUp = "Follow-up",
 }
 
 export interface ITribunalReview {

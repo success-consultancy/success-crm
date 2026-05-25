@@ -291,7 +291,7 @@ export const useVisaColumn = (
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
-            case VisaStatusTypes.NewApplicant:
+            case VisaStatusTypes.New:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
             case VisaStatusTypes.Approved:
               return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>;

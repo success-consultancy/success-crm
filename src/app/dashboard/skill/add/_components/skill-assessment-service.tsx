@@ -567,11 +567,8 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 label="Status"
                 required
                 options={[
-                  { label: SkillAssessmentStatusTypes.NewApplicant, value: SkillAssessmentStatusTypes.NewApplicant },
-                  {
-                    label: SkillAssessmentStatusTypes.CollectingDocs,
-                    value: SkillAssessmentStatusTypes.CollectingDocs,
-                  },
+                  { label: SkillAssessmentStatusTypes.New, value: SkillAssessmentStatusTypes.New },
+                  { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
                   { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
                   { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
                   { label: SkillAssessmentStatusTypes.InfoRequested, value: SkillAssessmentStatusTypes.InfoRequested },
@@ -579,7 +576,6 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                   { label: SkillAssessmentStatusTypes.Withdrawn, value: SkillAssessmentStatusTypes.Withdrawn },
                   { label: SkillAssessmentStatusTypes.Refused, value: SkillAssessmentStatusTypes.Refused },
                   { label: SkillAssessmentStatusTypes.Discontinued, value: SkillAssessmentStatusTypes.Discontinued },
-                  { label: SkillAssessmentStatusTypes.FollowUp, value: SkillAssessmentStatusTypes.FollowUp },
                 ]}
                 placeholder="Select a status"
               />

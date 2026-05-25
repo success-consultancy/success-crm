@@ -36,6 +36,7 @@ import { isAxiosError } from 'axios';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
+import { TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 
 interface Props {
   userId: number | undefined;
@@ -402,11 +403,10 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               control={control}
               name="sbsStatus"
               label="SBS/TAS status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-              ]}
+              options={Object.values(TribunalStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -450,17 +450,10 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               control={control}
               name="nominationStatus"
               label="Nomination status"
-              options={[
-                { label: 'New', value: 'New' },
-                { label: 'Collecting docs', value: 'Collecting docs' },
-                { label: 'Ready to submit', value: 'Ready to submit' },
-                { label: 'Submitted', value: 'Submitted' },
-                { label: 'Info requested', value: 'Info requested' },
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Withdrawn', value: 'Withdrawn' },
-                { label: 'Refused', value: 'Refused' },
-                { label: 'Discontinued', value: 'Discontinued' },
-              ]}
+              options={Object.values(TribunalStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -504,12 +497,10 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               control={control}
               name="visaStatus"
               label="Visa status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-                { label: 'Under Review', value: 'Under Review' },
-              ]}
+              options={Object.values(TribunalStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -557,7 +548,16 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           <div className="grid grid-cols-3 gap-6">
             {/* date submitted, hearing date, tribunal decision date */}
 
-            <TextInput label="Tribunal Status" {...register('tribunalStatus')} error={errors.tribunalStatus?.message} />
+            <SelectField
+              control={control}
+              name="tribunalStatus"
+              label="Tribunal Status"
+              options={Object.values(TribunalStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
+              placeholder="Select a status"
+            />
             <Controller
               name="tribunalSubmittedDate"
               control={control}

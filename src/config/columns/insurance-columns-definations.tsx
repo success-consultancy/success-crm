@@ -268,15 +268,16 @@ export const useInsuranceColumn = (
         const getStatusBadge = () => {
           switch (status) {
             case InsuranceStatusTypes.Completed:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Completed</Badge>;
+              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
             case InsuranceStatusTypes.New:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">New</Badge>;
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
+            case InsuranceStatusTypes.CollectingDocs:
+            case InsuranceStatusTypes.InProgress:
+              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{status}</Badge>;
             case InsuranceStatusTypes.Discontinued:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Discontinued</Badge>;
+            case InsuranceStatusTypes.RefundInProgress:
             case InsuranceStatusTypes.Refunded:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Refunded</Badge>;
-            case InsuranceStatusTypes.Processing:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Processing</Badge>;
+              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">{status}</Badge>;
             default:
               return <span>{status}</span>;
           }

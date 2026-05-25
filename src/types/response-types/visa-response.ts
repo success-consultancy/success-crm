@@ -5,14 +5,17 @@ export interface IVisaResponseType {
   rows: IVisa[];
 }
 
+// Source of truth for visa status strings used in the UI.
+// Backend grouping (converted / in-progress / not-converted) lives in
+// crm-hbg-be/src/util/const.js — keep both files in sync when adding,
+// renaming, or removing a status.
 export enum VisaStatusTypes {
-  NewApplicant = 'New Applicant',
+  New = 'New',
   CollectingDocs = 'Collecting Docs',
-  ReadyToSubmit = 'Ready to Submit',
+  ReadyToSubmit = 'Ready To Submit',
   Submitted = 'Submitted',
   InfoRequested = 'Info Requested',
   Approved = 'Approved',
-  FeePaid = 'Fee Paid',
   Withdrawn = 'Withdrawn',
   Refused = 'Refused',
   Discontinued = 'Discontinued',

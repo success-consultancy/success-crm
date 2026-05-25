@@ -282,10 +282,10 @@ export const useSkillAssessmentColumn = (
         const status = row.original.status;
         const getStatusBadge = () => {
           switch (status) {
-            case SkillAssessmentStatusTypes.NewApplicant:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New Applicant</Badge>;
+            case SkillAssessmentStatusTypes.New:
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
             case SkillAssessmentStatusTypes.CollectingDocs:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Collecting Docs</Badge>;
+              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Collecting docs</Badge>;
             case SkillAssessmentStatusTypes.ReadyToSubmit:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Ready to Submit</Badge>;
             case SkillAssessmentStatusTypes.Submitted:
@@ -296,8 +296,6 @@ export const useSkillAssessmentColumn = (
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Approved</Badge>;
             case SkillAssessmentStatusTypes.Discontinued:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Discontinued</Badge>;
-            case SkillAssessmentStatusTypes.FollowUp:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Follow Up</Badge>;
             case SkillAssessmentStatusTypes.Withdrawn:
               return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Withdrawn</Badge>;
             case SkillAssessmentStatusTypes.Refused:

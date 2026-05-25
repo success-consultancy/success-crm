@@ -16,7 +16,7 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
   const [pendingStage, setPendingStage] = useState<string | null>(null);
 
   const stages = [
-    { name: SkillAssessmentStatusTypes.NewApplicant, active: skillAssessment.status === SkillAssessmentStatusTypes.NewApplicant },
+    { name: SkillAssessmentStatusTypes.New, active: skillAssessment.status === SkillAssessmentStatusTypes.New },
     { name: SkillAssessmentStatusTypes.CollectingDocs, active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs },
     { name: SkillAssessmentStatusTypes.ReadyToSubmit, active: skillAssessment.status === SkillAssessmentStatusTypes.ReadyToSubmit },
     { name: SkillAssessmentStatusTypes.Submitted, active: skillAssessment.status === SkillAssessmentStatusTypes.Submitted },
@@ -25,7 +25,6 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
     { name: SkillAssessmentStatusTypes.Withdrawn, active: skillAssessment.status === SkillAssessmentStatusTypes.Withdrawn },
     { name: SkillAssessmentStatusTypes.Refused, active: skillAssessment.status === SkillAssessmentStatusTypes.Refused },
     { name: SkillAssessmentStatusTypes.Discontinued, active: skillAssessment.status === SkillAssessmentStatusTypes.Discontinued },
-    { name: SkillAssessmentStatusTypes.FollowUp, active: skillAssessment.status === SkillAssessmentStatusTypes.FollowUp },
   ];
 
   const updateSkillStatus = useUpdateSkillStatus();

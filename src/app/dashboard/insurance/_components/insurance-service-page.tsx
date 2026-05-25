@@ -27,7 +27,7 @@ const DEFAULT_TAB = 'all_applicant';
 // Tab Config
 let TAB_CONFIG = [
   { key: 'all_applicant', label: 'All applicant' },
-  { key: 'in_progress', label: 'In progress' }, // New, Collecting Docs, Ready to Submit, Submitted, Info Requested
+  { key: 'in_progress', label: 'In Progress' }, // New, Collecting Docs, Ready To Submit, Submitted, Info Requested
   { key: 'completed', label: 'Completed' },
   { key: 'discontinued', label: 'Discontinued' },
   { key: 'redunds', label: 'Refunds' }, // Withdrawn,  Refused, Discontinued

@@ -13,7 +13,7 @@ import ComboboxField from '@/components/organisms/combobox-field';
 
 import EditableTitleBox from './editable-title-box';
 import { buildEducationSectionPayload } from './education-section-payload';
-import { IEducation } from '@/types/response-types/education-response';
+import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 import { useEditEducation } from '@/mutations/education/edit-education';
 import { useGetUniversity } from '@/query/get-university';
 import { useGetCourse } from '@/query/get-course';
@@ -184,12 +184,10 @@ const CourseInfo = ({ education }: { education: IEducation }) => {
               control={control}
               name="status"
               label="Status"
-              options={[
-                { label: 'Consultation', value: 'Consultation' },
-                { label: 'Application', value: 'Application' },
-                { label: 'Enrolled', value: 'Enrolled' },
-                { label: 'Completed', value: 'Completed' },
-              ]}
+              options={Object.values(EducationStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select status"
             />
           </div>

@@ -36,6 +36,7 @@ import { useRouterOriginal } from '@/lib/navigation';
 import { ROUTES } from '@/config/routes';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
+import { EducationStatusTypes } from '@/types/response-types/education-response';
 
 interface Props {
   id?: number;
@@ -287,12 +288,10 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 control={control}
                 name="status"
                 label="Status"
-                options={[
-                  { label: 'Consultation', value: 'Consultation' },
-                  { label: 'Application', value: 'Application' },
-                  { label: 'Enrolled', value: 'Enrolled' },
-                  { label: 'Completed', value: 'Completed' },
-                ]}
+                options={Object.values(EducationStatusTypes).map((value) => ({
+                  label: value,
+                  value,
+                }))}
                 placeholder="Select status"
               />
             </div>

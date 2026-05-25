@@ -25,7 +25,7 @@ import { useExportSkillAssessments } from '@/mutations/skill-assessment/export-s
 // Tab Config
 let TAB_CONFIG = [
   { key: 'all_applicants', label: 'All applicants' },
-  { key: 'in_progress', label: 'In progress' },
+  { key: 'in_progress', label: 'In Progress' },
   { key: 'approved', label: 'Approved' },
   { key: 'closed', label: 'Closed' },
   { key: 'follow_up', label: 'Follow-up' },

@@ -16,10 +16,13 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
 
   const stages = [
     { name: EducationStatusTypes.New, active: education.status === EducationStatusTypes.New },
-    { name: EducationStatusTypes.ChecklistSent, active: education.status === EducationStatusTypes.ChecklistSent },
+    { name: EducationStatusTypes.Checklist, active: education.status === EducationStatusTypes.Checklist },
     { name: EducationStatusTypes.ApplicationReady, active: education.status === EducationStatusTypes.ApplicationReady },
     { name: EducationStatusTypes.ApplicationSubmitted, active: education.status === EducationStatusTypes.ApplicationSubmitted },
     { name: EducationStatusTypes.OfferReceived, active: education.status === EducationStatusTypes.OfferReceived },
+    { name: EducationStatusTypes.WaitingPayment, active: education.status === EducationStatusTypes.WaitingPayment },
+    { name: EducationStatusTypes.FeePaid, active: education.status === EducationStatusTypes.FeePaid },
+    { name: EducationStatusTypes.CoeReceived, active: education.status === EducationStatusTypes.CoeReceived },
   ];
 
   const updateStatus = useUpdateEducationStatus();

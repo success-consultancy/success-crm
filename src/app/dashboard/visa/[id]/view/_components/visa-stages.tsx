@@ -19,7 +19,7 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
 
 
   const stages = [
-    { name: VisaStatusTypes.NewApplicant, active: visa.status === VisaStatusTypes.NewApplicant },
+    { name: VisaStatusTypes.New, active: visa.status === VisaStatusTypes.New },
     { name: VisaStatusTypes.CollectingDocs, active: visa.status === VisaStatusTypes.CollectingDocs },
     { name: VisaStatusTypes.ReadyToSubmit, active: visa.status === VisaStatusTypes.ReadyToSubmit },
     { name: VisaStatusTypes.Submitted, active: visa.status === VisaStatusTypes.Submitted },

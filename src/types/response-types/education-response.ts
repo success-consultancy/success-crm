@@ -6,15 +6,19 @@ export interface EducationsResponseType {
   rows: IEducation[];
 }
 
+// Source of truth for education status strings used in the UI.
+// Backend grouping (converted / in-progress / not-converted) lives in
+// crm-hbg-be/src/util/const.js — keep both files in sync when adding,
+// renaming, or removing a status.
 export enum EducationStatusTypes {
   New = 'New',
-  ChecklistSent = 'Checklist Sent',
+  Checklist = 'Checklist',
   ApplicationReady = 'Application Ready',
   ApplicationSubmitted = 'Application Submitted',
-  OfferReceived = 'Offer received',
+  OfferReceived = 'Offer Received',
   WaitingPayment = 'Waiting Payment',
   FeePaid = 'Fee Paid',
-  Coereceived = 'Coe received',
+  CoeReceived = 'Coe Received',
   Withdrawn = 'Withdrawn',
   Discontinued = 'Discontinued',
 }

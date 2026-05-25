@@ -5,12 +5,18 @@ export interface IInsuranceResponseType {
   rows: IInsurance[];
 }
 
+// Source of truth for insurance status strings used in the UI.
+// Backend grouping (converted / in-progress / not-converted) lives in
+// crm-hbg-be/src/util/const.js — keep both files in sync when adding,
+// renaming, or removing a status.
 export enum InsuranceStatusTypes {
+  New = 'New',
+  CollectingDocs = 'Collecting Docs',
+  InProgress = 'In Progress',
   Completed = 'Completed',
   Discontinued = 'Discontinued',
+  RefundInProgress = 'Refund In Progress',
   Refunded = 'Refunded',
-  New = 'New',
-  Processing = 'Processing',
 }
 export interface IInsurance {
   id: number;

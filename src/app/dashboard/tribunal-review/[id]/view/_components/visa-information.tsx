@@ -19,7 +19,7 @@ import { FormField } from '@/components/ui/form';
 import EditableTitleBox from './editable-title-box';
 import { buildTribunalSectionPayload } from './tribunal-section-payload';
 import tribunalReviewFormSchema from '@/schema/tribunal-review';
-import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
+import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetOccupations } from '@/query/get-occupations';
 
@@ -303,17 +303,10 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
               control={control}
               name="nominationStatus"
               label="Nomination status"
-              options={[
-                { label: 'New', value: 'New' },
-                { label: 'Collecting docs', value: 'Collecting docs' },
-                { label: 'Ready to submit', value: 'Ready to submit' },
-                { label: 'Submitted', value: 'Submitted' },
-                { label: 'Info requested', value: 'Info requested' },
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Withdrawn', value: 'Withdrawn' },
-                { label: 'Refused', value: 'Refused' },
-                { label: 'Discontinued', value: 'Discontinued' },
-              ]}
+              options={Object.values(TribunalStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
             <div className="space-y-2">

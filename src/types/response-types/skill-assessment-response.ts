@@ -3,17 +3,20 @@ export interface ISkillAssessmentResponseType {
   rows: ISkillAssessment[];
 }
 
+// Source of truth for skill-assessment status strings used in the UI.
+// Backend grouping (converted / in-progress / not-converted) lives in
+// crm-hbg-be/src/util/const.js — keep both files in sync when adding,
+// renaming, or removing a status.
 export enum SkillAssessmentStatusTypes {
-  NewApplicant = "New Applicant",
+  New = "New",
   CollectingDocs = "Collecting Docs",
-  ReadyToSubmit = "Ready to Submit",
+  ReadyToSubmit = "Ready To Submit",
   Submitted = "Submitted",
   InfoRequested = "Info Requested",
   Approved = "Approved",
   Withdrawn = "Withdrawn",
   Refused = "Refused",
   Discontinued = "Discontinued",
-  FollowUp = "Follow-up",
 }
 
 

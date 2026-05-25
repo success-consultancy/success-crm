@@ -1,5 +1,3 @@
-import { cn } from '@/lib/utils';
-import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import { useRouter } from 'next/navigation';
 import { Edit, MessageCircle } from 'lucide-react';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
@@ -19,7 +17,7 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
   const [pendingStage, setPendingStage] = useState<string | null>(null);
 
   const stages = [
-    { name: TribunalStatusTypes.NewTribunal, active: visa.status === TribunalStatusTypes.NewTribunal },
+    { name: TribunalStatusTypes.New, active: visa.status === TribunalStatusTypes.New },
     { name: TribunalStatusTypes.CollectingDocs, active: visa.status === TribunalStatusTypes.CollectingDocs },
     { name: TribunalStatusTypes.ReadyToSubmit, active: visa.status === TribunalStatusTypes.ReadyToSubmit },
     { name: TribunalStatusTypes.Submitted, active: visa.status === TribunalStatusTypes.Submitted },
@@ -28,11 +26,10 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
     { name: TribunalStatusTypes.Withdrawn, active: visa.status === TribunalStatusTypes.Withdrawn },
     { name: TribunalStatusTypes.Refused, active: visa.status === TribunalStatusTypes.Refused },
     { name: TribunalStatusTypes.Discontinued, active: visa.status === TribunalStatusTypes.Discontinued },
-    { name: TribunalStatusTypes.MinisterialApproved, active: visa.status === TribunalStatusTypes.MinisterialApproved },
     { name: TribunalStatusTypes.MinisterialIntervention, active: visa.status === TribunalStatusTypes.MinisterialIntervention },
+    { name: TribunalStatusTypes.MinisterialApproved, active: visa.status === TribunalStatusTypes.MinisterialApproved },
     { name: TribunalStatusTypes.MinisterialRefused, active: visa.status === TribunalStatusTypes.MinisterialRefused },
     { name: TribunalStatusTypes.Other, active: visa.status === TribunalStatusTypes.Other },
-    { name: TribunalStatusTypes.FollowUp, active: visa.status === TribunalStatusTypes.FollowUp },
   ];
 
   const updateStatus = useUpdateTribunalStatus();

@@ -380,9 +380,15 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               name="csaStatus"
               label="SBS/TAS status"
               options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
+                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
+                { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
+                { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
+                { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
+                { label: VisaStatusTypes.InfoRequested, value: VisaStatusTypes.InfoRequested },
+                { label: VisaStatusTypes.Approved, value: VisaStatusTypes.Approved },
+                { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
+                { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
+                { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
               ]}
               placeholder="Select a status"
             />
@@ -428,15 +434,15 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               name="nominationStatus"
               label="Nomination status"
               options={[
-                { label: 'New', value: 'New' },
-                { label: 'Collecting docs', value: 'Collecting docs' },
-                { label: 'Ready to submit', value: 'Ready to submit' },
-                { label: 'Submitted', value: 'Submitted' },
-                { label: 'Info requested', value: 'Info requested' },
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Withdrawn', value: 'Withdrawn' },
-                { label: 'Refused', value: 'Refused' },
-                { label: 'Discontinued', value: 'Discontinued' },
+                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
+                { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
+                { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
+                { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
+                { label: VisaStatusTypes.InfoRequested, value: VisaStatusTypes.InfoRequested },
+                { label: VisaStatusTypes.Approved, value: VisaStatusTypes.Approved },
+                { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
+                { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
+                { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
               ]}
               placeholder="Select a status"
             />
@@ -482,7 +488,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               name="status"
               label="Visa status"
               options={[
-                { label: VisaStatusTypes.NewApplicant, value: VisaStatusTypes.NewApplicant },
+                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
                 { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
                 { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
                 { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
@@ -491,7 +497,6 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                 { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
                 { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
                 { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
-                { label: VisaStatusTypes.FollowUp, value: VisaStatusTypes.FollowUp },
               ]}
               placeholder="Select a status"
             />
@@ -677,12 +682,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
       </Accordion>
 
       <div className="flex justify-end mt-6">
-        <Button
-          loading={isPending}
-          loadingText={isAdd ? 'Processing' : 'Updating'}
-          type="submit"
-          variant="primary"
-        >
+        <Button loading={isPending} loadingText={isAdd ? 'Processing' : 'Updating'} type="submit" variant="primary">
           {isAdd ? 'Add Visa Applicant' : 'Update Visa Applicant'}
         </Button>
         <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>

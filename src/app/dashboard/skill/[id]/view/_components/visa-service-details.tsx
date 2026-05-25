@@ -293,7 +293,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
               name="status"
               label="Status"
               options={[
-                { label: SkillAssessmentStatusTypes.NewApplicant, value: SkillAssessmentStatusTypes.NewApplicant },
+                { label: SkillAssessmentStatusTypes.New, value: SkillAssessmentStatusTypes.New },
                 { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
                 { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
                 { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
@@ -302,7 +302,6 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
                 { label: SkillAssessmentStatusTypes.Withdrawn, value: SkillAssessmentStatusTypes.Withdrawn },
                 { label: SkillAssessmentStatusTypes.Refused, value: SkillAssessmentStatusTypes.Refused },
                 { label: SkillAssessmentStatusTypes.Discontinued, value: SkillAssessmentStatusTypes.Discontinued },
-                { label: SkillAssessmentStatusTypes.FollowUp, value: SkillAssessmentStatusTypes.FollowUp },
               ]}
               placeholder="Select a status"
             />
