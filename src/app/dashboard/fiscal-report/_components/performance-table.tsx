@@ -10,7 +10,7 @@ import {
   type SortingState,
 } from '@tanstack/react-table';
 import { cn } from '@/lib/utils';
-import { ChevronDown, ChevronUp, ChevronsUpDown, Download, Pencil, Search } from 'lucide-react';
+import { ChevronDown, ChevronUp, ChevronsUpDown, Download, Pencil, Plus, Search } from 'lucide-react';
 import Button from '@/components/atoms/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
@@ -51,6 +51,7 @@ interface PerformanceTableProps {
   onFiscalYearChange?: (value: string) => void;
   fiscalYears?: Array<{ value: string; label: string }>;
   onExport?: () => void;
+  onCreateNew?: () => void;
 }
 
 function ProgressBar({ actual, target }: { actual: number; target: number }) {
@@ -111,6 +112,7 @@ export default function PerformanceTable({
   onFiscalYearChange,
   fiscalYears,
   onExport,
+  onCreateNew,
 }: PerformanceTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
@@ -228,9 +230,13 @@ export default function PerformanceTable({
                   <Pencil className="w-3.5 h-3.5" />
                   Edit targets
                 </Button>
-                <Button size="sm" onClick={onExport}>
+                <Button variant="outline" size="sm" onClick={onExport}>
                   <Download className="w-3.5 h-3.5" />
                   Export
+                </Button>
+                <Button size="sm" onClick={onCreateNew}>
+                  <Plus className="w-3.5 h-3.5" />
+                  Create new report
                 </Button>
               </>
             ) : (

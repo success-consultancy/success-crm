@@ -18,6 +18,7 @@ import { FormAccordion } from '@/components/organisms/form-accordion';
 import { useAddVisaService } from '@/mutations/visa/add-visa';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
+import { useGetVisaConst } from '@/query/get-visa';
 import { useEffect, useMemo } from 'react';
 import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
@@ -65,6 +66,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
   const discount = watch('accounts.discount');
   const amount = watch('accounts.amount');
 
@@ -78,6 +80,10 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
       };
     });
   }, [occupations]);
+
+  const visaOptions = useMemo(() => {
+    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
+  }, [visas]);
 
   useEffect(() => {
     if (userId) {
@@ -96,7 +102,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
   const { mutate: updateTribunalReview, isPending: updateTribunalReviewPending } = useUpdateTribunalReview();
 
   const submitHandler = (data: TribunalReviewSchemaType) => {
-    console.log(errors);
     if (formState === FORM_STATE.ADD) {
       addTribunalReview(
         { payload: { ...data, sourceId: data.sourceId } },
@@ -297,18 +302,19 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
         {/* Visa Information */}
         <FormAccordion value="item-2" title="Visa & service details">
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Controller
@@ -348,18 +354,19 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               />
               <FormErrorMessage message={errors.dueDate?.message} />
             </div>
-            <SelectField
+            <FormField
               control={control}
               name="proposedVisa"
-              label="Proposed visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Skilled Migration', value: 'Skilled Migration' },
-                { label: 'Family Visa', value: 'Family Visa' },
-                { label: 'Business Visa', value: 'Business Visa' },
-              ]}
-              placeholder="Select proposed visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Proposed visa"
+                  placeholder="Select proposed visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.proposedVisa?.message}
+                />
+              )}
             />
             <SelectField
               control={control}

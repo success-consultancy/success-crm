@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
-import Button from '@/components/atoms/button';
 import KpiCard from './kpi-card';
 import PerformanceTable, { ReportRow } from './performance-table';
 import CreateFiscalReportModal from './create-fiscal-report-modal';
@@ -149,15 +148,15 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
       prev.map((row) =>
         row.name === name
           ? {
-              ...row,
-              target: {
-                ...row.target,
-                [monthKey]: value,
-                total: Object.entries({ ...row.target, [monthKey]: value })
-                  .filter(([k]) => k !== 'total')
-                  .reduce((s, [, v]) => s + (Number(v) || 0), 0),
-              },
-            }
+            ...row,
+            target: {
+              ...row.target,
+              [monthKey]: value,
+              total: Object.entries({ ...row.target, [monthKey]: value })
+                .filter(([k]) => k !== 'total')
+                .reduce((s, [, v]) => s + (Number(v) || 0), 0),
+            },
+          }
           : row,
       ),
     );
@@ -234,11 +233,6 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
       </Portal>
 
       <div className="flex flex-col flex-1 bg-white rounded-lg border border-stroke-divider overflow-hidden mx-4 my-4">
-        {/* ── Toolbar ── */}
-        <div className="flex items-center justify-end px-4 py-4 border-b border-stroke-divider flex-shrink-0">
-          <Button variant="outline" size="sm" onClick={() => setIsCreateOpen(true)}>New report</Button>
-        </div>
-
         <CreateFiscalReportModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} type={type} />
 
         {/* ── Body ── */}
@@ -280,6 +274,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
             onFiscalYearChange={handleFiscalYearChange}
             fiscalYears={fiscalYears}
             onExport={handleExport}
+            onCreateNew={() => setIsCreateOpen(true)}
           />
         </div>
       </div>
