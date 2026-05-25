@@ -37,7 +37,6 @@ type ExportLeads = {
   phone: string;
   note: string;
   status: string;
-  followUpDate: string | null;
   visa: string | null;
   visaExpiry: string | null;
   serviceType: string;

@@ -1,6 +1,7 @@
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import StageItem from '@/components/organisms/stage-item';
 import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
+import { useGetFollowUp } from '@/query/get-leads';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 import { Edit, MessageCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -51,8 +52,8 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   const currentStage = lead.leadStage || lead.status || LeadStatusTypes.New;
   const activeIndex = mainStages.findIndex((s) => s === currentStage);
 
-  // Check if lead has follow-up
-  const hasFollowUp = !!lead.followUpDate;
+  const { data: followUps } = useGetFollowUp(lead.id.toString(), 'lead');
+  const hasFollowUp = Array.isArray(followUps) && followUps.length > 0;
 
   const updateLeadStatus = useUpdateLeadStatus();
 

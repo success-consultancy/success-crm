@@ -62,6 +62,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
   });
   const [upcoming, setUpcoming] = React.useState<FollowUp[]>([]);
   const [previous, setPrevious] = React.useState<FollowUp[]>([]);
+  const [addDialogOpen, setAddDialogOpen] = React.useState(false);
   const [editDialogOpen, setEditDialogOpen] = React.useState(false);
   const [editData, setEditData] = React.useState<{ id: number | null; date: Date | null; time: string; note: string }>({
     id: null,
@@ -129,26 +130,28 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     setUpcoming(upcomingList.sort(byEventAsc));
     setPrevious(previousList.sort(byEventDesc));
   }, [followUp]);
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    addFollowUp.mutateAsync({
-      date: formData?.date ? formData.date?.toString() : '',
-      time: formData.time,
-      note: formData.note || null,
-      followableId: Number(id),
-      followableType: followableType,
-    });
-    // Reset form
-    setFormData({
-      date: null,
-      time: '',
-      note: '',
-      remindMe: false,
-      remindClient: false,
-    });
-
-    setEditDialogOpen(false);
+    try {
+      await addFollowUp.mutateAsync({
+        date: formData?.date ? formData.date?.toString() : '',
+        time: formData.time,
+        note: formData.note || null,
+        followableId: Number(id),
+        followableType: followableType,
+      });
+      setFormData({
+        date: null,
+        time: '',
+        note: '',
+        remindMe: false,
+        remindClient: false,
+      });
+      setAddDialogOpen(false);
+    } catch {
+      // mutation's onError surfaces a toast; keep the dialog open so the user can retry
+    }
   };
 
   const handleCancel = () => {
@@ -213,7 +216,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       <CardContainer>
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="font-semibold text-lg">Upcoming</h2>
-          <Dialog>
+          <Dialog open={addDialogOpen} onOpenChange={setAddDialogOpen}>
             <DialogTrigger asChild>
               <span className="text-b3-b text-primary-blue cursor-pointer">Add follow-up</span>
             </DialogTrigger>

@@ -49,7 +49,6 @@ export interface IEducation {
   createdAt: string;
   deletedAt: null | string;
   updatedAt: string;
-  followUpDate: null;
   country: null | string;
   visa: null | string;
   visaExpiry: null | string;
