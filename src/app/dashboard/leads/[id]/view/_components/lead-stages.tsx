@@ -32,7 +32,7 @@ function formatDate(dateString: string | null | undefined): string {
 function getClosingDate(lead: ILead): string {
   const history = lead.leadStageHistory;
   if (!history) return '-';
-  const closedEntry = history.find((h) => (h.stage === 'Converted' || h.stage === 'Not Interested') && h.startDate);
+  const closedEntry = history.find((h) => (h.stage === LeadStatusTypes.Converted || h.stage === LeadStatusTypes.NotInterested) && h.startDate);
   return closedEntry ? formatDate(closedEntry.startDate) : '-';
 }
 
@@ -57,7 +57,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   const updateLeadStatus = useUpdateLeadStatus();
 
   const handleStageChange = (stage: string) => {
-    if (stage === 'Follow-up') {
+    if (stage === LeadStatusTypes.FollowUp) {
       onFollowUpClick?.();
       return;
     }
@@ -147,10 +147,10 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
 
           {/* Follow-up stage indicator */}
           <div className="relative flex flex-col items-center w-full">
-            {getDaysForStage(lead, 'Follow-up') != null && (getDaysForStage(lead, 'Follow-up') ?? 0) > 0 && (
+            {getDaysForStage(lead, LeadStatusTypes.FollowUp) != null && (getDaysForStage(lead, LeadStatusTypes.FollowUp) ?? 0) > 0 && (
               <div className="mb-1">
                 <span className="inline-block bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                  {getDaysForStage(lead, 'Follow-up')} days
+                  {getDaysForStage(lead, LeadStatusTypes.FollowUp)} days
                 </span>
               </div>
             )}
@@ -160,7 +160,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
               style={{
                 clipPath: `polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%)`,
               }}
-              onClick={() => handleStageChange('Follow-up')}
+              onClick={() => handleStageChange(LeadStatusTypes.FollowUp)}
             >
               Follow-up
             </div>
