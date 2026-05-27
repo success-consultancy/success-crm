@@ -83,7 +83,7 @@ const ViewUniversityPage = ({ id }: Props) => {
   };
 
   return (
-    <Container className="flex flex-col py-10 gap-6">
+    <Container className="flex flex-col py-10 gap-4">
       <Portal rootId={PortalIds.DashboardHeader}>
         <div className="flex items-center gap-4">
           <ButtonLink href={ROUTES.UNIVERSITY} variant="ghost" size="icon">
@@ -94,21 +94,21 @@ const ViewUniversityPage = ({ id }: Props) => {
       </Portal>
 
       {/* Details Card */}
-      <div className="bg-white rounded-lg border border-[#EBEBEB]">
-        <div className="flex items-center justify-between border-b border-[#EBEBEB] px-6 py-3">
-          <p className="text-xl font-bold">University details</p>
-          <div className="flex items-center gap-2">
+      <div className="bg-white-100 rounded-lg border border-neutral-border-light">
+        <div className="flex items-center justify-between border-b border-neutral-border-light px-6 py-3">
+          <p className="text-b16-700 text-neutral-black">University details</p>
+          <div className="flex items-center gap-0.5">
             <Button
               variant="ghost"
               size="icon"
               onClick={() => router.push(`/dashboard/university/${id}/edit`)}
-              className="h-8 w-8 text-gray-500 hover:text-gray-700"
+              className="h-9 w-9 text-neutral-dark-grey hover:text-neutral-black"
             >
               <Pencil className="h-4 w-4" />
             </Button>
             <DeleteDialog
               trigger={
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-red-500 hover:text-red-600">
+                <Button variant="ghost" size="icon" className="h-9 w-9 text-utility-red hover:text-primary-red">
                   <Trash2 className="h-4 w-4" />
                 </Button>
               }
@@ -118,20 +118,20 @@ const ViewUniversityPage = ({ id }: Props) => {
             />
           </div>
         </div>
-        <div className="p-6 grid grid-cols-3 gap-6">
+        <div className="px-6 py-5 grid grid-cols-3 gap-x-6 gap-y-5">
           <InfoField title="University name" value={university.name} />
           <InfoField title="Group" value={university.educationLevel || '-'} />
           <InfoField title="Location" value={university.location || '-'} />
           {linkedCourses.length > 0 && (
-            <div className="col-span-3">
-              <span className="text-neutral-black text-b14-600 font-medium">Available courses</span>
-              <ul className="mt-2 flex flex-wrap gap-x-8 gap-y-1 list-disc list-inside">
+            <div className="col-span-3 flex flex-col gap-1">
+              <span className="text-neutral-black text-b14-600">Available courses</span>
+              <div className="flex flex-wrap gap-x-10 gap-y-3">
                 {linkedCourses.map((course) => (
-                  <li key={course.id} className="text-sm text-gray-700">
+                  <span key={course.id} className="text-b14 text-neutral-dark-grey">
                     {course.name}
-                  </li>
+                  </span>
                 ))}
-              </ul>
+              </div>
             </div>
           )}
           <InfoField title="Comment" value={university.comment || '-'} />
@@ -140,24 +140,24 @@ const ViewUniversityPage = ({ id }: Props) => {
 
       {/* Description */}
       {university.description && (
-        <div className="bg-white rounded-lg border border-[#EBEBEB]">
-          <div className="border-b border-[#EBEBEB] px-6 py-3">
-            <p className="text-xl font-bold">Description</p>
+        <div className="bg-white-100 rounded-lg border border-neutral-border-light">
+          <div className="border-b border-neutral-border-light px-6 py-3">
+            <p className="text-b16-700 text-neutral-black">Description</p>
           </div>
           <div
-            className="p-6 text-sm text-neutral-dark-grey prose max-w-none"
+            className="px-6 py-5 text-b14 text-neutral-dark-grey prose max-w-none"
             dangerouslySetInnerHTML={{ __html: university.description }}
           />
         </div>
       )}
 
       {/* Documents Card */}
-      <div className="bg-white rounded-lg border border-[#EBEBEB]">
-        <div className="flex items-center justify-between border-b border-[#EBEBEB] px-6 py-3">
-          <p className="text-xl font-bold">Documents</p>
+      <div className="bg-white-100 rounded-lg border border-neutral-border-light">
+        <div className="flex items-center justify-between border-b border-neutral-border-light px-6 py-3">
+          <p className="text-b16-700 text-neutral-black">Documents</p>
           <Button
             variant="ghost"
-            className="text-blue-600 hover:text-blue-700 font-medium p-0 h-auto"
+            className="text-primary-blue hover:text-component-hovered-blue text-b14-600 p-0 h-auto"
             onClick={() => setShowUploader((v) => !v)}
           >
             Add document
@@ -175,39 +175,39 @@ const ViewUniversityPage = ({ id }: Props) => {
           </div>
         )}
 
-        <div className="p-6">
+        <div className="px-6 py-5">
           {files.length === 0 ? (
-            <p className="text-sm text-gray-400">No documents attached.</p>
+            <p className="text-b14 text-neutral-in-active-grey">No documents attached.</p>
           ) : (
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#EBEBEB]">
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">
-                    <span className="flex items-center gap-1">
-                      Document name <ChevronDown className="h-3 w-3" />
+                <tr className="bg-[#EDF3F7] border-b border-neutral-border-light">
+                  <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">
+                    <span className="flex items-center gap-3">
+                      Document name <ChevronDown className="h-4 w-4" />
                     </span>
                   </th>
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">Size</th>
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">Type</th>
-                  <th className="text-left py-2 px-3 text-gray-500 font-medium">Date added</th>
+                  <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Size</th>
+                  <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Type</th>
+                  <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Date added</th>
                 </tr>
               </thead>
               <tbody>
                 {files.map((file, i) => (
-                  <tr key={i} className="border-b border-[#EBEBEB] last:border-0">
+                  <tr key={i} className="border-b border-neutral-border-light last:border-0">
                     <td className="py-3 px-3">
                       <a
                         href={file.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="hover:underline text-gray-800"
+                        className="hover:underline text-neutral-black text-b14"
                       >
                         {file.name}
                       </a>
                     </td>
-                    <td className="py-3 px-3 text-gray-600">{formatSize(file.size)}</td>
-                    <td className="py-3 px-3 text-gray-600">{getFileType(file.name)}</td>
-                    <td className="py-3 px-3 text-gray-600">
+                    <td className="py-3 px-3 text-neutral-dark-grey text-b14">{formatSize(file.size)}</td>
+                    <td className="py-3 px-3 text-neutral-dark-grey text-b14">{getFileType(file.name)}</td>
+                    <td className="py-3 px-3 text-neutral-dark-grey text-b14">
                       {file.addedDate ? format(new Date(file.addedDate), 'dd/MM/yyyy') : '-'}
                     </td>
                   </tr>
