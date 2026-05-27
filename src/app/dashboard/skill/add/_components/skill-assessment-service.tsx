@@ -22,6 +22,7 @@ import { useAddSkillAssessment } from '@/mutations/skill-assessment/add-skill-as
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
+import { useGetVisaConst } from '@/query/get-visa';
 import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
@@ -153,6 +154,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
 
   const ANZSCOOccupationOptions = useMemo(() => {
     return occupations?.map((occupation) => {
@@ -164,6 +166,10 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
       };
     });
   }, [occupations]);
+
+  const visaOptions = useMemo(() => {
+    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
+  }, [visas]);
 
   // Reset form when defaultValues change (when data loads for edit mode)
   useEffect(() => {
@@ -431,18 +437,19 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           {/* Visa & Service Details */}
           <FormAccordion value="item-2" title="Visa & service details">
             <div className="grid grid-cols-3 gap-6">
-              <SelectField
+              <FormField
                 control={control}
                 name="currentVisa"
-                label="Current visa"
-                options={[
-                  { label: 'Student Visa', value: 'Student Visa' },
-                  { label: 'Work Visa', value: 'Work Visa' },
-                  { label: 'Tourist Visa', value: 'Tourist Visa' },
-                  { label: 'Permanent Resident', value: 'Permanent Resident' },
-                  { label: 'No Visa', value: 'No Visa' },
-                ]}
-                placeholder="Select current visa type"
+                render={({ field }) => (
+                  <SelectWithCommand
+                    options={visaOptions}
+                    value={field.value ?? undefined}
+                    label="Current visa"
+                    placeholder="Select current visa type"
+                    onSelect={(val) => field.onChange(val)}
+                    error={errors.currentVisa?.message}
+                  />
+                )}
               />
               <div className="space-y-2">
                 <Controller

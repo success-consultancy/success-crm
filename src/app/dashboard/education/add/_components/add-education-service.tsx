@@ -90,6 +90,7 @@ export function AddEducationService({ userId }: Props) {
         onSuccess: () => {
           toast.success('Student added successfully');
           form.reset();
+          router.push(ROUTES.EDUCATION);
         },
       },
     );

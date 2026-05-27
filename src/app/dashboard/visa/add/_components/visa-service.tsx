@@ -30,6 +30,7 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
+import { useGetVisaConst } from '@/query/get-visa';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { FORM_STATE } from '@/types/common';
@@ -66,6 +67,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
 
   const discount = watch('accounts.discount');
   const amount = watch('accounts.amount');
@@ -79,6 +81,10 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
       label: occupation.title + ' - ' + occupation.code,
     }));
   }, [occupations]);
+
+  const visaOptions = useMemo(() => {
+    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
+  }, [visas]);
 
   useEffect(() => {
     if (userId) {
@@ -274,18 +280,19 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         {/* Visa Information */}
         <FormAccordion value="item-2" title="Visa Information">
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Controller
@@ -325,18 +332,19 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               />
               <FormErrorMessage message={errors.dueDate?.message} />
             </div>
-            <SelectField
+            <FormField
               control={control}
               name="proposedVisa"
-              label="Proposed visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Skilled Migration', value: 'Skilled Migration' },
-                { label: 'Family Visa', value: 'Family Visa' },
-                { label: 'Business Visa', value: 'Business Visa' },
-              ]}
-              placeholder="Select proposed visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Proposed visa"
+                  placeholder="Select proposed visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.proposedVisa?.message}
+                />
+              )}
             />
             <SelectField
               control={control}

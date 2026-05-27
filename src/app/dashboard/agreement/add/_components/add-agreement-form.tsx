@@ -137,6 +137,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
       addAgreement(data, {
         onSuccess: () => {
           toast.success('Agreement created successfully');
+          form.reset();
           router.push(ROUTES.AGENCY_AGREEMENT);
         },
         onError: (error: any) => {

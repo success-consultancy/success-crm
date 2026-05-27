@@ -22,6 +22,7 @@ import { Accordion } from '@/components/ui/accordion';
 import PersonalDetailsStep from './personal-details-fields';
 import MiscStep from './misc-fields';
 import VisaAndServiceStep from './visa-and-service-fields';
+import { ROUTES } from '@/config/routes';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -85,7 +86,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       addLead.mutate(payload, {
         onSuccess: () => {
           toast.success('Lead added successfully');
-          router.push('/leads');
+          router.push(ROUTES.LEADS);
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message;
