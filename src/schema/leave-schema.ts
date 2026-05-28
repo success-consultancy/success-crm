@@ -23,7 +23,7 @@ export const leaveRequestSchema = z
       .min(0.5, 'Must be at least 0.5')
       .max(24, 'Cannot exceed 24'),
     note: z.string().max(1024, 'Reason is too long').optional().or(z.literal('')),
-    attachmentURL: z.string().url().optional().or(z.literal('')),
+    attachmentURL: z.url().optional().or(z.literal('')),
   })
   .refine((data) => data.endDate.getTime() >= data.startDate.getTime(), {
     message: 'End date must be on or after start date',
