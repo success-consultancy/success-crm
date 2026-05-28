@@ -87,9 +87,9 @@ export const menuItems: MenuItem[] = [
     icon: Icons.SetupIcon,
     subItems: [
       { title: 'Users', href: '/dashboard/users' },
-      { title: 'Employees', href: '#' },
-      { title: 'Occupation', href: '#' },
-      { title: 'Visa List', href: '#' },
+      { title: 'Employees', href: '/dashboard/employees' },
+      { title: 'Occupation', href: '/dashboard/occupation' },
+      { title: 'Visa List', href: '/dashboard/visa-list' },
       { title: 'University', href: '/dashboard/university' },
       { title: 'Course', href: '/dashboard/course' },
       { title: 'Source', href: '/dashboard/source' },
