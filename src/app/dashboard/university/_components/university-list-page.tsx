@@ -235,7 +235,7 @@ const UniversityListPage = () => {
         <div className="overflow-auto flex-1 custom-scrollbar">
           <table className="min-w-full w-max caption-bottom border-none text-sm">
             <thead className="sticky top-0 z-10 bg-[#EDF3F7]">
-              <tr className="*:px-3 *:py-3 *:text-neutral-darkGrey *:text-left *:align-middle *:text-b14-600 border-b border-neutral-border-light">
+              <tr className="*:px-3 *:py-3 *:text-neutral-dark-grey *:text-left *:align-middle *:text-b14-600 border-b border-neutral-border-light">
                 {isColVisible('university-sn') && <th className="w-12">S.N</th>}
                 {isColVisible('university-name') && (
                   <th className="min-w-[200px] cursor-pointer select-none" onClick={() => handleSort('name')}>
@@ -313,7 +313,7 @@ const UniversityListPage = () => {
                     return [
                       <tr
                         key={university.id}
-                        className={`border-b border-neutral-border-light hover:bg-[#F4F7FA] transition-colors *:px-3 *:py-3 *:text-neutral-darkGrey *:text-b14 cursor-pointer ${
+                        className={`border-b border-neutral-border-light hover:bg-[#F4F7FA] transition-colors *:px-3 *:py-3 *:text-neutral-dark-grey *:text-b14 cursor-pointer ${
                           isExpanded ? 'bg-[#F4F7FA]' : ''
                         }`}
                         onClick={() => router.push(`/dashboard/university/${university.id}/view`)}
@@ -348,7 +348,7 @@ const UniversityListPage = () => {
                         {isColVisible('university-documents') && (
                           <td>
                             {files.length > 0 ? (
-                              <div className="flex items-center gap-1.5 text-neutral-darkGrey">
+                              <div className="flex items-center gap-1.5 text-neutral-dark-grey">
                                 <FileText className="h-4 w-4" />
                                 <span className="text-b14">{files.length}</span>
                               </div>
@@ -409,7 +409,7 @@ const UniversityListPage = () => {
                                 <div className="ml-10 bg-white-100 border border-neutral-border-light rounded-xl overflow-hidden">
                                   <table className="w-full text-sm">
                                     <thead>
-                                      <tr className="*:py-3 *:px-5 *:text-left *:text-b14-600 text-neutral-darkGrey border-b border-neutral-border-light">
+                                      <tr className="*:py-3 *:px-5 *:text-left *:text-b14-600 text-neutral-dark-grey border-b border-neutral-border-light">
                                         <th className="w-12">S.N</th>
                                         <th>Available courses</th>
                                         <th>Description</th>
@@ -420,7 +420,7 @@ const UniversityListPage = () => {
                                         <tr key={course.id} className="*:py-3 *:px-5">
                                           <td className="text-b14 text-neutral-black">{courseIdx + 1}</td>
                                           <td className="text-b14 text-neutral-black">{course.name}</td>
-                                          <td className="text-b14 text-neutral-darkGrey">
+                                          <td className="text-b14 text-neutral-dark-grey">
                                             {course.description || '-'}
                                           </td>
                                         </tr>
@@ -456,7 +456,7 @@ const UniversityListPage = () => {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="h-8 px-2.5 rounded text-b14-500 text-neutral-darkGrey border-neutral-border">
+              <SelectTrigger className="h-8 px-2.5 rounded text-b14-500 text-neutral-dark-grey border-neutral-border">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -471,18 +471,18 @@ const UniversityListPage = () => {
           </div>
           <div className="flex items-center gap-1.5">
             <button
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-neutral-darkGrey hover:bg-neutral-border-light disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              className="h-8 w-8 flex items-center justify-center rounded-lg text-neutral-dark-grey hover:bg-neutral-border-light disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
               aria-label="Previous page"
             >
               <ChevronLeft className="h-4 w-4" />
             </button>
-            <span className="text-b14-500 text-neutral-darkGrey px-1.5">
+            <span className="text-b14-500 text-neutral-dark-grey px-1.5">
               {rangeStart} - {rangeEnd} of {totalItems}
             </span>
             <button
-              className="h-8 w-8 flex items-center justify-center rounded-lg text-neutral-darkGrey hover:bg-neutral-border-light disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
+              className="h-8 w-8 flex items-center justify-center rounded-lg text-neutral-dark-grey hover:bg-neutral-border-light disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-transparent"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page >= totalPages}
               aria-label="Next page"

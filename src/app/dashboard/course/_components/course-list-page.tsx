@@ -199,7 +199,7 @@ const CourseListPage = () => {
         <div className="overflow-auto flex-1 custom-scrollbar">
           <table className="w-full caption-bottom border-none text-sm">
             <thead className="sticky top-0 z-10 bg-component-hovered-light">
-              <tr className="*:px-3 *:py-2 *:text-neutral-darkGrey *:text-left *:align-middle *:text-[.875rem] border-b border-neutral-border-light">
+              <tr className="*:px-3 *:py-2 *:text-neutral-dark-grey *:text-left *:align-middle *:text-[.875rem] border-b border-neutral-border-light">
                 <th className="w-12">S.N</th>
                 <th
                   className="min-w-[160px] cursor-pointer select-none"
@@ -301,14 +301,14 @@ const CourseListPage = () => {
                     ) : (
                       <tr
                         key={course.id}
-                        className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-darkGrey last:border-none"
+                        className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-dark-grey last:border-none"
                       >
                         <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
                         <td className="font-medium truncate max-w-[200px]">
                           {universityMap.get(course.universityId) ?? '-'}
                         </td>
                         <td className="truncate max-w-[240px]">{course.name}</td>
-                        <td className="truncate max-w-[160px] text-gray-600">
+                        <td className="truncate max-w-[160px]">
                           {course.description ?? '-'}
                         </td>
                         <td className="whitespace-nowrap">
@@ -320,7 +320,7 @@ const CourseListPage = () => {
                         <td className="text-right">
                           <div className="flex items-center justify-end gap-1">
                             <button
-                              className="p-1.5 rounded hover:bg-gray-100 text-gray-500 hover:text-gray-700 transition-colors"
+                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
                               onClick={() => openEdit(course)}
                               aria-label="Edit course"
                             >
@@ -329,7 +329,7 @@ const CourseListPage = () => {
                             <DeleteDialog
                               trigger={
                                 <button
-                                  className="p-1.5 rounded hover:bg-red-50 text-gray-500 hover:text-red-600 transition-colors"
+                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
                                   aria-label="Delete course"
                                 >
                                   <Trash2 className="h-4 w-4" />
@@ -421,7 +421,7 @@ const CourseListPage = () => {
 
         {/* Pagination */}
         <div className="flex w-full items-center justify-between pt-5 gap-5 mt-auto">
-          <div className="text-sm flex items-center gap-2 text-neutral-darkGrey">
+          <div className="text-sm flex items-center gap-2 text-neutral-dark-grey">
             <Select
               value={String(pageSize)}
               onValueChange={(val) => { setPageSize(Number(val)); setPage(1); }}
@@ -437,7 +437,7 @@ const CourseListPage = () => {
             </Select>
             <span>Items per page</span>
           </div>
-          <div className="flex items-center gap-2 text-sm text-neutral-darkGrey">
+          <div className="flex items-center gap-2 text-sm text-neutral-dark-grey">
             <span>{rangeStart} - {rangeEnd} of {totalItems}</span>
             <button
               className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"

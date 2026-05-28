@@ -32,26 +32,32 @@ const ProfileHeader = ({ user, todayRecord, onRequestLeave, onClockAction }: Pro
   const breakLabel = onBreak ? 'End break' : clockedIn ? 'Start break' : 'Not clocked in';
 
   return (
-    <div className="flex items-center justify-between gap-4 rounded-xl border border-gray-100 bg-white px-5 py-4">
-      <div className="flex items-center gap-3">
-        <Avatar className="w-12 h-12">
+    <div className="flex items-center justify-between gap-4 rounded-xl border border-neutral-border-light bg-white-100 px-6 py-5">
+      <div className="flex items-center gap-4">
+        <Avatar className="w-14 h-14">
           <AvatarImage src={user.profileUrl ?? ''} alt={fullName} />
-          <AvatarFallback className="bg-pink-100 text-pink-700 font-semibold">{initials || 'U'}</AvatarFallback>
+          <AvatarFallback className="bg-pink-100 text-pink-700 text-h5 font-bold">{initials || 'U'}</AvatarFallback>
         </Avatar>
-        <div>
-          <h2 className="text-base font-semibold text-gray-900">{fullName || 'User'}</h2>
+        <div className="flex flex-col gap-0.5">
+          <h2 className="text-h4 font-bold text-neutral-black">{fullName || 'User'}</h2>
         </div>
       </div>
 
       <div className="flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={onClockAction} disabled={!clockedIn}>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onClockAction}
+          disabled={!clockedIn}
+          className="h-9 px-4 text-b14-600 text-neutral-dark-grey border-neutral-border"
+        >
           {breakLabel}
         </Button>
-        <div className="flex items-center gap-1.5 rounded-md border border-gray-200 bg-white px-3 h-9 text-sm">
-          <span className="text-gray-500">Clock out</span>
-          <span className="font-medium text-gray-900">{clockedOutTime ?? '—'}</span>
+        <div className="flex items-center gap-1.5 rounded-md border border-neutral-border bg-white-100 px-3 h-9">
+          <span className="text-b14-600 text-neutral-dark-grey">Clock out</span>
+          <span className="text-b14-500 text-neutral-dark-grey">{clockedOutTime ?? '—'}</span>
         </div>
-        <Button size="sm" onClick={onRequestLeave}>
+        <Button size="sm" onClick={onRequestLeave} className="h-9 px-4 text-b14-600 text-white">
           Leave request
         </Button>
       </div>

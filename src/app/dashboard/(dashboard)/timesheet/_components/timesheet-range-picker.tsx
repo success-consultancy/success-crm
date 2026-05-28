@@ -73,6 +73,7 @@ const TimesheetRangePicker = ({ range, onChange }: Props) => {
               onSelect={setDraft}
               numberOfMonths={2}
               defaultMonth={range.from}
+              disabled={{ after: new Date() }}
             />
             <div className="flex justify-end gap-2 pt-2">
               <Button variant="ghost" size="sm" onClick={() => setOpen(false)}>

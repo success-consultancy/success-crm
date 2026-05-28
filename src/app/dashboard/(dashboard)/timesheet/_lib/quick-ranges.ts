@@ -18,15 +18,19 @@ export const QUICK_RANGE_OPTIONS: { key: QuickRangeKey; label: string }[] = [
 
 export const resolveQuickRange = (key: QuickRangeKey): { from: Date; to: Date } => {
   const now = new Date();
+  const clampToToday = (d: Date) => (d.getTime() > now.getTime() ? now : d);
   switch (key) {
     case 'this_week':
-      return { from: startOfWeek(now, { weekStartsOn: 1 }), to: endOfWeek(now, { weekStartsOn: 1 }) };
+      return {
+        from: startOfWeek(now, { weekStartsOn: 1 }),
+        to: clampToToday(endOfWeek(now, { weekStartsOn: 1 })),
+      };
     case 'last_week': {
       const prev = subWeeks(now, 1);
       return { from: startOfWeek(prev, { weekStartsOn: 1 }), to: endOfWeek(prev, { weekStartsOn: 1 }) };
     }
     case 'this_month':
-      return { from: startOfMonth(now), to: endOfMonth(now) };
+      return { from: startOfMonth(now), to: clampToToday(endOfMonth(now)) };
     case 'last_month': {
       const prev = subMonths(now, 1);
       return { from: startOfMonth(prev), to: endOfMonth(prev) };
