@@ -2,28 +2,49 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft } from 'lucide-react';
-import { Globe01, Award01, ShieldPlus, Scales01, GraduationHat02, Lightbulb05, Scales02 } from '@untitledui/icons';
+import { GraduationHat02, Lightbulb05, ShieldPlus, Scales02 } from '@untitledui/icons';
 import { cn } from '@/lib/utils';
-
-const SERVICE_ICONS: Record<string, React.ElementType> = {
-  Education: GraduationHat02,
-  Visa: FileGlobeIcon,
-  'Skill Assessment': Lightbulb05,
-  'Health Insurance': ShieldPlus,
-  Tribunal: Scales02,
-};
 import { newCheckInSchema, NewCheckInSchemaType } from '@/schema/check-in-schema';
 import { useCreateNewCheckIn } from '@/mutations/check-in/new-check-in';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { COUNTRIES } from '@/data';
 import FileGlobeIcon from '@/assets/icons/file-globe-icon';
 
-const SERVICE_OPTIONS = ['Education', 'Visa', 'Skill Assessment', 'Health Insurance', 'Tribunal'];
+const SERVICE_OPTIONS: { label: string; Icon: React.ElementType }[] = [
+  { label: 'Education', Icon: GraduationHat02 },
+  { label: 'Visa', Icon: FileGlobeIcon },
+  { label: 'Skill Assessment', Icon: Lightbulb05 },
+  { label: 'Health Insurance', Icon: ShieldPlus },
+  { label: 'Tribunal', Icon: Scales02 },
+];
+
+const LABEL_STYLE: React.CSSProperties = {
+  fontFamily: 'Inter, sans-serif',
+  fontWeight: 400,
+  fontSize: 14,
+  color: '#1C1C1C',
+  marginBottom: 6,
+  display: 'block',
+};
+
+const OPTIONAL_STYLE: React.CSSProperties = {
+  color: '#9CA3AF',
+  fontWeight: 400,
+};
+
+const INPUT_STYLE: React.CSSProperties = {
+  height: 48,
+  border: '1px solid #E3E3E3',
+  borderRadius: 8,
+  fontFamily: 'Inter, sans-serif',
+  fontSize: 14,
+  color: '#1C1C1C',
+  backgroundColor: '#FFFFFF',
+};
 
 interface Props {
   onBack: () => void;
@@ -48,56 +69,57 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
 
   const onSubmit = (data: NewCheckInSchemaType) => {
     createNewCheckIn(
+      { ...data, serviceType: JSON.stringify(data.serviceType), status: 'New', isConsent: true },
       {
-        ...data,
-        serviceType: JSON.stringify(data.serviceType),
-        status: 'New',
-        isConsent: true,
-      },
-      {
-        onSuccess: () => {
-          onSuccess();
-        },
+        onSuccess: () => onSuccess(),
         onError: (error: any) => {
           const message = error?.response?.data?.message;
-          form.setError('email', {
-            type: 'manual',
-            message: message || 'Failed to check in. Please try again.',
-          });
+          form.setError('email', { type: 'manual', message: message || 'Failed to check in. Please try again.' });
         },
       },
     );
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
-      <div className="flex-1 flex flex-col items-center justify-center px-4 py-8">
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 w-full max-w-2xl">
-          {/* Back button */}
-          <button
-            onClick={onBack}
-            className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-800 mb-6 transition-colors"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            New Client
-          </button>
+    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#F0F4F7' }}>
+      <div className="flex-1 flex items-center justify-center px-6 py-10">
+        {/* Card: matches 800px card from check-in screen */}
+        <div className="bg-white w-full" style={{ maxWidth: 800, borderRadius: 16, padding: '40px 48px 48px' }}>
+
+          {/* Header: ← New Client */}
+          <div className="flex items-center gap-3" style={{ marginBottom: 32 }}>
+            <button
+              onClick={onBack}
+              className="flex items-center justify-center hover:opacity-70 transition-opacity"
+              style={{ color: '#1C1C1C' }}
+              aria-label="Back"
+            >
+              <ArrowLeft style={{ width: 22, height: 22 }} strokeWidth={2} />
+            </button>
+            <h1 style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 24, color: '#1C1C1C', margin: 0, lineHeight: '1.25em' }}>
+              New Client
+            </h1>
+          </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
-              {/* Name row */}
-              <div className="grid grid-cols-2 gap-4">
+            <form onSubmit={form.handleSubmit(onSubmit)}>
+              {/* Row 1: First name | Last name */}
+              <div className="grid grid-cols-2" style={{ gap: 20, marginBottom: 20 }}>
                 <FormField
                   control={form.control}
                   name="firstName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        First name <span className="text-gray-400 font-normal">(required)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>First name</label>
                       <FormControl>
-                        <Input placeholder="e.g. John" {...field} />
+                        <Input
+                          placeholder="e.g. John"
+                          {...field}
+                          style={INPUT_STYLE}
+                          className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-300"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
@@ -106,32 +128,38 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                   name="lastName"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Last name <span className="text-gray-400 font-normal">(required)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>Last name</label>
                       <FormControl>
-                        <Input placeholder="e.g. Ryan" {...field} />
+                        <Input
+                          placeholder="e.g. White"
+                          {...field}
+                          style={INPUT_STYLE}
+                          className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-300"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Phone & Email row */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Row 2: Phone number | Email */}
+              <div className="grid grid-cols-2" style={{ gap: 20, marginBottom: 20 }}>
                 <FormField
                   control={form.control}
                   name="phone"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Phone number <span className="text-gray-400 font-normal">(required)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>Phone number</label>
                       <FormControl>
-                        <PhoneNumberInput value={field.value} onChange={field.onChange} placeholder="+61 000 000 000" />
+                        <PhoneNumberInput
+                          value={field.value}
+                          onChange={field.onChange}
+                          placeholder="+00 000 000 000"
+                          style={INPUT_STYLE}
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
@@ -140,31 +168,38 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                   name="email"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Email <span className="text-gray-400 font-normal">(required)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>Email</label>
                       <FormControl>
-                        <Input placeholder="name@gmail.com" type="email" {...field} />
+                        <Input
+                          placeholder="name@gmail.com"
+                          type="email"
+                          {...field}
+                          style={INPUT_STYLE}
+                          className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-300"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Country & Note row */}
-              <div className="grid grid-cols-2 gap-4">
+              {/* Row 3: Country of origin | Personal message */}
+              <div className="grid grid-cols-2" style={{ gap: 20, marginBottom: 28 }}>
                 <FormField
                   control={form.control}
                   name="country"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Country of origin <span className="text-gray-400 font-normal">(optional)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>
+                        Country of origin <span style={OPTIONAL_STYLE}>(optional)</span>
+                      </label>
                       <Select onValueChange={field.onChange} value={field.value ?? ''}>
                         <FormControl>
-                          <SelectTrigger>
+                          <SelectTrigger
+                            style={{ ...INPUT_STYLE, paddingLeft: 12, paddingRight: 12 }}
+                            className="focus:ring-1 focus:ring-blue-300"
+                          >
                             <SelectValue placeholder="Select your origin country" />
                           </SelectTrigger>
                         </FormControl>
@@ -176,7 +211,7 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
@@ -185,70 +220,125 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                   name="note"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>
-                        Personal message <span className="text-gray-400 font-normal">(optional)</span>
-                      </FormLabel>
+                      <label style={LABEL_STYLE}>
+                        Personal message <span style={OPTIONAL_STYLE}>(optional)</span>
+                      </label>
                       <FormControl>
-                        <Input placeholder="Type a message, if any" {...field} value={field.value ?? ''} />
+                        <Input
+                          placeholder="Type your message, if any"
+                          {...field}
+                          value={field.value ?? ''}
+                          style={INPUT_STYLE}
+                          className="placeholder:text-gray-400 focus-visible:ring-1 focus-visible:ring-blue-300"
+                        />
                       </FormControl>
-                      <FormMessage />
+                      <FormMessage className="text-xs mt-1" />
                     </FormItem>
                   )}
                 />
               </div>
 
-              {/* Services */}
+              {/* Divider */}
+              <div style={{ height: 1, backgroundColor: '#E3E3E3', marginBottom: 24 }} />
+
+              {/* Select service */}
               <FormField
                 control={form.control}
                 name="serviceType"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Select service</FormLabel>
-                    <div className="flex flex-wrap gap-3 mt-2">
-                      {SERVICE_OPTIONS.map((service) => {
-                        const Icon = SERVICE_ICONS[service];
-                        const isSelected = field.value?.includes(service);
+                  <FormItem style={{ marginBottom: 32 }}>
+                    <label style={{ ...LABEL_STYLE, marginBottom: 12 }}>Select service</label>
+                    <div className="flex flex-wrap" style={{ gap: 10 }}>
+                      {SERVICE_OPTIONS.map(({ label, Icon }) => {
+                        const isSelected = field.value?.includes(label);
                         return (
                           <button
-                            key={service}
+                            key={label}
                             type="button"
                             onClick={() => {
                               const current = field.value || [];
-                              field.onChange(isSelected ? current.filter((v) => v !== service) : [...current, service]);
+                              field.onChange(
+                                isSelected ? current.filter((v) => v !== label) : [...current, label],
+                              );
                             }}
-                            className={cn(
-                              'flex items-center gap-2 px-4 py-2 rounded-lg border text-sm font-medium transition-all',
-                              isSelected
-                                ? 'border-blue-500 bg-blue-50 text-blue-700'
-                                : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50',
-                            )}
+                            className="flex items-center transition-all"
+                            style={{
+                              gap: 8,
+                              padding: '8px 16px',
+                              borderRadius: 8,
+                              border: `1px solid ${isSelected ? '#3B82F6' : '#E3E3E3'}`,
+                              backgroundColor: isSelected ? '#EFF6FF' : '#FFFFFF',
+                              color: isSelected ? '#1D4ED8' : '#1C1C1C',
+                              fontFamily: 'Inter, sans-serif',
+                              fontSize: 14,
+                              fontWeight: 400,
+                              cursor: 'pointer',
+                            }}
                           >
-                            <Icon className="w-4 h-4 shrink-0" strokeWidth={1.5} />
-                            {service}
+                            <Icon
+                              className="shrink-0"
+                              style={{ width: 16, height: 16, color: isSelected ? '#3B82F6' : '#484848' }}
+                              strokeWidth={1.5}
+                            />
+                            {label}
                           </button>
                         );
                       })}
                     </div>
-                    <FormMessage />
+                    <FormMessage className="text-xs mt-1" />
                   </FormItem>
                 )}
               />
 
-              {/* Actions */}
-              <div className="flex items-center gap-3 pt-2">
-                <Button type="submit" disabled={isPending} className="min-w-[120px]">
+              {/* Submit / Cancel — full width side by side */}
+              <div className="grid grid-cols-2" style={{ gap: 20 }}>
+                <button
+                  type="submit"
+                  disabled={isPending}
+                  style={{
+                    height: 48,
+                    borderRadius: 8,
+                    border: 'none',
+                    backgroundColor: '#4A90C4',
+                    color: '#FFFFFF',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontSize: 15,
+                    cursor: isPending ? 'not-allowed' : 'pointer',
+                    opacity: isPending ? 0.7 : 1,
+                    transition: 'opacity 0.15s',
+                  }}
+                >
                   {isPending ? 'Submitting...' : 'Submit'}
-                </Button>
-                <Button type="button" variant="outline" onClick={onBack}>
+                </button>
+                <button
+                  type="button"
+                  onClick={onBack}
+                  style={{
+                    height: 48,
+                    borderRadius: 8,
+                    border: '1px solid #E3E3E3',
+                    backgroundColor: '#FFFFFF',
+                    color: '#1C1C1C',
+                    fontFamily: 'Inter, sans-serif',
+                    fontWeight: 600,
+                    fontSize: 15,
+                    cursor: 'pointer',
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F9FAFB'; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FFFFFF'; }}
+                >
                   Cancel
-                </Button>
+                </button>
               </div>
             </form>
           </Form>
         </div>
       </div>
 
-      <footer className="text-center py-4 text-xs text-gray-400">© 2025 Success Education and Visa Services</footer>
+      <footer className="text-center py-4" style={{ fontFamily: 'Inter, sans-serif', fontSize: 12, color: '#484848' }}>
+        ©2026 Success Education and Visa Services
+      </footer>
     </div>
   );
 };

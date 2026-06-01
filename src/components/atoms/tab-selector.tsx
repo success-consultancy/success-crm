@@ -31,7 +31,7 @@ const TabSelector = ({ activeTab, onTabChange, tabs, className, btnClassName }: 
           )}
         >
           {label}
-          {count && <span className="px-2 py-[2px] rounded-full bg-blue-extra-light ml-1">{count}</span>}
+          {count !== undefined && <span className="px-2 py-[2px] rounded-full bg-blue-extra-light ml-1">{count}</span>}
         </button>
       ))}
     </div>
