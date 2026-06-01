@@ -2,12 +2,10 @@
 
 import { useState, useMemo, useCallback } from 'react';
 import {
-  Plus,
-  Eye,
+  Clock,
   ChevronUp,
   ChevronDown,
   ChevronsUpDown,
-  Clock,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
@@ -191,11 +189,8 @@ const EmployeesListPage = () => {
           </div>
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />
-            <Button variant="outline" className="mr-2" onClick={handleExport}>
+            <Button variant="outline" onClick={handleExport}>
               Export
-            </Button>
-            <Button LeftIcon={Plus} onClick={() => router.push('/dashboard/users/add')}>
-              Add employee
             </Button>
           </div>
         </div>
@@ -218,7 +213,7 @@ const EmployeesListPage = () => {
                 <th className="min-w-[100px] cursor-pointer select-none" onClick={() => handleSort('isActive')}>
                   Status <SortIcon field="isActive" />
                 </th>
-                <th className="w-32 text-right" />
+                <th className="w-16 text-right" />
               </tr>
             </thead>
             <tbody>
@@ -244,9 +239,6 @@ const EmployeesListPage = () => {
                       </td>
                       <td>
                         <Skeleton className="h-5 w-16" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-12" />
                       </td>
                     </tr>
                   ))
@@ -287,24 +279,14 @@ const EmployeesListPage = () => {
                       </span>
                     </td>
                     <td className="text-right">
-                      <div className="flex items-center justify-end gap-1">
-                        <button
-                          className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                          onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
-                          aria-label="View employee"
-                          title="View"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        <button
-                          className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                          onClick={() => router.push(`/dashboard/check-in?userId=${user.id}`)}
-                          aria-label="View time sheet"
-                          title="Time sheet"
-                        >
-                          <Clock className="h-4 w-4" />
-                        </button>
-                      </div>
+                      <button
+                        className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                        onClick={() => router.push(`/dashboard/employees/${user.id}`)}
+                        aria-label="View timesheet"
+                        title="View timesheet"
+                      >
+                        <Clock className="h-4 w-4" />
+                      </button>
                     </td>
                   </tr>
                 ))
@@ -312,7 +294,7 @@ const EmployeesListPage = () => {
 
               {!isLoading && pageItems.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400 text-sm">
+                  <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
                     No employees found
                   </td>
                 </tr>
