@@ -24,6 +24,7 @@ export interface IUser {
   settingManagement: boolean;
   password: string;
   updatedBy: number;
+  branchId: string | null;
   hideColumn: HideColumn | null;
   createdAt: Date;
   updatedAt: Date;

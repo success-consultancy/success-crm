@@ -7,7 +7,6 @@ import { useRouter } from 'next/navigation';
 import { Form, FormField } from '@/components/ui/form';
 import { Accordion } from '@/components/ui/accordion';
 import { FormAccordion } from '@/components/organisms/form-accordion';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 import Portal from '@/components/atoms/portal';
 import Button from '@/components/atoms/button';
@@ -20,13 +19,43 @@ import { useAddUser } from '@/mutations/user/add-user';
 import { useUpdateUser } from '@/mutations/user/update-user';
 import useAuthStore from '@/store/auth-store';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
+import { useGetBranches } from '@/query/get-branches';
 import toast from 'react-hot-toast';
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: '1' },
   { label: 'Manager', value: '2' },
   { label: 'Consultant', value: '3' },
+  { label: 'Accounting', value: '4' },
+  { label: 'Lead Management', value: '5' },
 ];
+
+type PermissionKey =
+  | 'dashboardManagement'
+  | 'agencyAgreementManagement'
+  | 'userManagement'
+  | 'universityManagement'
+  | 'courseManagement'
+  | 'sourceManagement'
+  | 'settingManagement';
+
+const PERMISSION_LABELS: Record<PermissionKey, string> = {
+  dashboardManagement: 'Dashboard',
+  agencyAgreementManagement: 'Agency Agreement',
+  userManagement: 'User Management',
+  universityManagement: 'University Management',
+  courseManagement: 'Course Management',
+  sourceManagement: 'Source Management',
+  settingManagement: 'Settings',
+};
+
+const ROLE_PERMISSIONS: Record<number, Record<PermissionKey, boolean>> = {
+  1: { dashboardManagement: true, agencyAgreementManagement: true, userManagement: true, universityManagement: true, courseManagement: true, sourceManagement: true, settingManagement: true },
+  2: { dashboardManagement: true, agencyAgreementManagement: true, userManagement: true, universityManagement: true, courseManagement: true, sourceManagement: true, settingManagement: false },
+  3: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
+  4: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
+  5: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
+};
 
 const STATUS_OPTIONS = [
   { label: 'Active', value: 'true' },
@@ -50,15 +79,6 @@ const COLOR_OPTIONS = [
   { label: 'Gray', value: '#6b7280' },
 ];
 
-const PERMISSIONS: { key: keyof UserFormType; label: string }[] = [
-  { key: 'dashboardManagement', label: 'Dashboard Management' },
-  { key: 'agencyAgreementManagement', label: 'Agency Agreement Management' },
-  { key: 'userManagement', label: 'User Management' },
-  { key: 'universityManagement', label: 'University Management' },
-  { key: 'courseManagement', label: 'Course Management' },
-  { key: 'sourceManagement', label: 'Source Management' },
-  { key: 'settingManagement', label: 'Setting Management' },
-];
 
 type Props = {
   mode: 'add' | 'edit';
@@ -79,6 +99,9 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
   const profile = useAuthStore((s) => s.profile);
   const { mutate: addUser, isPending: isAdding } = useAddUser();
   const { mutate: updateUser, isPending: isUpdating } = useUpdateUser();
+  const isSuperAdmin = profile?.roleId === 1;
+  const { data: branches = [] } = useGetBranches();
+  const branchOptions = branches.map((b) => ({ label: b.name, value: String(b.id) }));
 
   const form = useForm<UserFormType>({
     resolver: zodResolver(userFormSchema) as any,
@@ -91,16 +114,10 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
       address: '',
       color: '',
       roleId: 3,
+      branchId: profile?.branchId ? String(profile.branchId) : '',
       isActive: true,
       onlineAppointment: false,
       isPaid: false,
-      dashboardManagement: false,
-      agencyAgreementManagement: false,
-      userManagement: false,
-      universityManagement: false,
-      courseManagement: false,
-      sourceManagement: false,
-      settingManagement: false,
       ...defaultValues,
     },
   });
@@ -114,6 +131,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
   const firstName = useWatch({ control, name: 'firstName' });
   const lastName = useWatch({ control, name: 'lastName' });
   const selectedColor = useWatch({ control, name: 'color' });
+  const selectedRoleId = useWatch({ control, name: 'roleId' });
 
   const activeColor = selectedColor ||
     (firstName || lastName
@@ -132,19 +150,13 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
           address: data.address,
           color: data.color,
           roleId: data.roleId,
+          branchId: data.branchId,
           isActive: data.isActive,
           onlineAppointment: data.onlineAppointment,
           isPaid: data.isPaid,
           paidAmount: null,
           appointmentNote: null,
           slotTime: null,
-          dashboardManagement: data.dashboardManagement,
-          agencyAgreementManagement: data.agencyAgreementManagement,
-          userManagement: data.userManagement,
-          universityManagement: data.universityManagement,
-          courseManagement: data.courseManagement,
-          sourceManagement: data.sourceManagement,
-          settingManagement: data.settingManagement,
           updatedBy: profile?.id ?? 1,
         },
         {
@@ -176,19 +188,13 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
           address: data.address,
           color: data.color,
           roleId: data.roleId,
+          branchId: data.branchId,
           isActive: data.isActive,
           onlineAppointment: data.onlineAppointment,
           isPaid: data.isPaid,
           paidAmount: null,
           appointmentNote: null,
           slotTime: null,
-          dashboardManagement: data.dashboardManagement,
-          agencyAgreementManagement: data.agencyAgreementManagement,
-          userManagement: data.userManagement,
-          universityManagement: data.universityManagement,
-          courseManagement: data.courseManagement,
-          sourceManagement: data.sourceManagement,
-          settingManagement: data.settingManagement,
         },
         {
           onSuccess: () => {
@@ -295,6 +301,33 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
             />
             <FormField
               control={control}
+              name="branchId"
+              render={({ field }) => {
+                if (isSuperAdmin) {
+                  return (
+                    <SelectCommon
+                      label="Branch"
+                      options={branchOptions}
+                      value={field.value || undefined}
+                      onSelect={field.onChange}
+                      error={errors.branchId?.message}
+                    />
+                  );
+                }
+                // Non-admin users are locked to their own branch.
+                const branchName = branches.find((b) => String(b.id) === field.value)?.name ?? field.value;
+                return (
+                  <div className="flex flex-col gap-1.5">
+                    <Label className="text-b3-b font-semibold">Branch</Label>
+                    <div className="flex items-center h-10 px-3 rounded-md border border-gray-200 bg-gray-50 text-sm text-gray-600">
+                      {branchName || '—'}
+                    </div>
+                  </div>
+                );
+              }}
+            />
+            <FormField
+              control={control}
               name="isActive"
               render={({ field }) => (
                 <SelectCommon
@@ -366,26 +399,25 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         </FormAccordion>
 
         <FormAccordion value="permissions" title="Permissions">
-          <div className="grid grid-cols-2 gap-4">
-            {PERMISSIONS.map(({ key, label }) => (
-              <FormField
-                key={key}
-                control={control}
-                name={key}
-                render={({ field }) => (
-                  <div className="flex items-center gap-3">
-                    <Checkbox
-                      id={key}
-                      checked={!!field.value}
-                      onCheckedChange={(checked) => field.onChange(!!checked)}
-                    />
-                    <Label htmlFor={key} className="text-sm font-normal cursor-pointer">
+          <div className="space-y-3">
+            <p className="text-sm text-gray-500">
+              Permissions are automatically assigned based on the selected role and cannot be customised per user.
+            </p>
+            <div className="grid grid-cols-2 gap-2">
+              {(Object.entries(PERMISSION_LABELS) as [PermissionKey, string][]).map(([key, label]) => {
+                const granted = ROLE_PERMISSIONS[selectedRoleId]?.[key] ?? false;
+                return (
+                  <div key={key} className="flex items-center gap-2 py-1">
+                    <span className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${granted ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
+                      {granted ? '✓' : '–'}
+                    </span>
+                    <Label className={`text-sm font-normal ${granted ? 'text-gray-800' : 'text-gray-400'}`}>
                       {label}
                     </Label>
                   </div>
-                )}
-              />
-            ))}
+                );
+              })}
+            </div>
           </div>
         </FormAccordion>
       </Accordion>

@@ -10,6 +10,7 @@ export interface AddUserPayload {
   phone: string;
   password: string;
   roleId: number;
+  branchId: string;
   address: string;
   color: string;
   detail?: string | null;
@@ -19,13 +20,6 @@ export interface AddUserPayload {
   paidAmount?: string | null;
   appointmentNote?: string | null;
   slotTime?: number | null;
-  dashboardManagement: boolean;
-  agencyAgreementManagement: boolean;
-  userManagement: boolean;
-  universityManagement: boolean;
-  courseManagement: boolean;
-  sourceManagement: boolean;
-  settingManagement: boolean;
 }
 
 const addUser = async (payload: AddUserPayload) => {

@@ -10,6 +10,7 @@ export interface UpdateUserPayload {
   email: string;
   phone: string;
   roleId: number;
+  branchId: string;
   address: string;
   color: string;
   detail?: string | null;
@@ -19,13 +20,6 @@ export interface UpdateUserPayload {
   paidAmount?: string | null;
   appointmentNote?: string | null;
   slotTime?: number | null;
-  dashboardManagement: boolean;
-  agencyAgreementManagement: boolean;
-  userManagement: boolean;
-  universityManagement: boolean;
-  courseManagement: boolean;
-  sourceManagement: boolean;
-  settingManagement: boolean;
   updatedBy: number;
 }
 

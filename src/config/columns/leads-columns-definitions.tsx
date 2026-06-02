@@ -420,7 +420,7 @@ export const useLeadColumn = (
                     <span>Edit</span>
                   </div>
                   <div
-                    onClick={() => router.push(`/dashboard/leads/${row.original.id}/view`)}
+                    onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/leads/${row.original.id}/view`); }}
                     className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
                   >
                     <Eye strokeWidth={1.5} className="h-5 w-5" />
@@ -443,7 +443,10 @@ export const useLeadColumn = (
                   />
                   <DeleteDialog
                     trigger={
-                      <div className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red">
+                      <div
+                        onClick={(e) => e.stopPropagation()}
+                        className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
+                      >
                         <TrashIcon className="h-[20px] w-[20px]" />
                         <span>Delete Lead</span>
                       </div>

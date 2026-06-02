@@ -19,16 +19,10 @@ const EditUserClient = ({ userId }: { userId: string }) => {
     address: user.address ?? '',
     color: (user as any).color ?? '',
     roleId: user.roleId,
+    branchId: user.branchId ? String(user.branchId) : '',
     isActive: user.isActive,
     onlineAppointment: user.onlineAppointment,
     isPaid: user.isPaid,
-    dashboardManagement: user.dashboardManagement,
-    agencyAgreementManagement: user.agencyAgreementManagement,
-    userManagement: user.userManagement,
-    universityManagement: user.universityManagement,
-    courseManagement: user.courseManagement,
-    sourceManagement: user.sourceManagement,
-    settingManagement: user.settingManagement,
   };
 
   return <AddUserForm mode="edit" defaultValues={defaultValues} />;

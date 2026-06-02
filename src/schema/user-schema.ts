@@ -9,16 +9,10 @@ const userFormSchema = z.object({
   address: z.string().min(1, 'Address is required'),
   color: z.string().min(1, 'Color is required'),
   roleId: z.number().min(1, 'Role is required'),
+  branchId: z.string().min(1, 'Branch is required'),
   isActive: z.boolean().default(true),
   onlineAppointment: z.boolean().default(false),
   isPaid: z.boolean().default(false),
-  dashboardManagement: z.boolean().default(false),
-  agencyAgreementManagement: z.boolean().default(false),
-  userManagement: z.boolean().default(false),
-  universityManagement: z.boolean().default(false),
-  courseManagement: z.boolean().default(false),
-  sourceManagement: z.boolean().default(false),
-  settingManagement: z.boolean().default(false),
 });
 
 export type UserFormType = z.infer<typeof userFormSchema>;
