@@ -31,4 +31,6 @@ export const QUERY_KEYS = {
   GET_FISCAL_REPORT: 'get-fiscal-report',
   GET_CLOCK_RECORDS: 'get-clock-records',
   GET_USER_LEAVES: 'get-user-leaves',
+  GET_ANNOUNCEMENTS: 'get-announcements',
+  GET_ANNOUNCEMENT_BY_ID: 'get-announcement-by-id',
 };

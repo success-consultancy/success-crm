@@ -93,7 +93,7 @@ export const menuItems: MenuItem[] = [
   {
     title: DashboardTitle.NewsAndUpdates,
     icon: Icons.NewUpdatesIcon,
-    href: '#',
+    href: '/dashboard/updates-and-announcements',
     // all roles
   },
   {

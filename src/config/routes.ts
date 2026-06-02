@@ -18,6 +18,9 @@ export const ROUTES = {
   TRIBUNAL_REVIEW: '/dashboard/tribunal-review',
   AGENCY_AGREEMENT: '/dashboard/agreement',
   UPDATES_AND_ANNOUNCEMENTS: '/dashboard/updates-and-announcements',
+  ADD_ANNOUNCEMENT: '/dashboard/updates-and-announcements/add',
+  EDIT_ANNOUNCEMENT: (id: number | string) => `/dashboard/updates-and-announcements/${id}/edit`,
+  VIEW_ANNOUNCEMENT: (id: number | string) => `/dashboard/updates-and-announcements/${id}/view`,
 
   ADD_LEAD: '/dashboard/leads/add-lead',
 
