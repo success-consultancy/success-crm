@@ -37,7 +37,6 @@ export const ROUTES = {
   ADD_AGREEMENT: '/dashboard/agreement/add',
 
   USERS: '/dashboard/users',
-  EMPLOYEES: '/dashboard/employees',
   OCCUPATION: '/dashboard/occupation',
   VISA_LIST: '/dashboard/visa-list',
   UNIVERSITY: '/dashboard/university',

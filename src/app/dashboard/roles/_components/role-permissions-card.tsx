@@ -8,15 +8,15 @@ import { useUpdateRolePermissions } from '@/mutations/role/update-role-permissio
 
 const SERVICES: { key: ServiceKey; label: string }[] = [
   { key: 'leads',          label: 'Leads' },
-  { key: 'education',      label: 'Education Service' },
-  { key: 'visa',           label: 'Visa Service' },
-  { key: 'skill',          label: 'Skill Assessment' },
-  { key: 'tribunalReview', label: 'Tribunal Review' },
-  { key: 'insurance',      label: 'Insurance' },
-  { key: 'agreement',      label: 'Agency Agreement' },
-  { key: 'appointment',    label: 'Appointment' },
-  { key: 'fiscalReport',   label: 'Fiscal Report' },
-  { key: 'announcement',   label: 'Announcements' },
+  { key: 'education',      label: 'Education service' },
+  { key: 'visa',           label: 'Visa service' },
+  { key: 'skill',          label: 'Skill assessment service' },
+  { key: 'tribunalReview', label: 'Tribunal review' },
+  { key: 'insurance',      label: 'Insurance service' },
+  { key: 'agreement',      label: 'Agency agreement' },
+  { key: 'appointment',    label: 'Appointment calendar' },
+  { key: 'fiscalReport',   label: 'Fiscal report' },
+  { key: 'announcement',   label: 'News and updates' },
   { key: 'users',          label: 'Users' },
   { key: 'university',     label: 'University' },
   { key: 'course',         label: 'Course' },
@@ -24,33 +24,44 @@ const SERVICES: { key: ServiceKey; label: string }[] = [
   { key: 'settings',       label: 'Settings' },
 ];
 
-const ACTIONS: (keyof CrudActions)[] = ['create', 'read', 'update', 'delete'];
-
-const ROLE_BADGE_COLORS: Record<number, string> = {
-  1: 'bg-purple-100 text-purple-700',
-  2: 'bg-blue-100 text-blue-700',
-  3: 'bg-green-100 text-green-700',
-  4: 'bg-amber-100 text-amber-700',
-  5: 'bg-rose-100 text-rose-700',
-};
-
-interface Props {
-  role: RolePermissions;
-  readonly?: boolean;
-}
+const ACTIONS: (keyof CrudActions)[] = ['View', 'Create', 'Edit', 'Delete'];
 
 const emptyActions = (): CrudActions => ({ create: false, read: false, update: false, delete: false });
 
-export default function RolePermissionsCard({ role, readonly = false }: Props) {
+interface Props {
+  roles: RolePermissions[];
+  readonly?: boolean;
+}
+
+export default function RolePermissionsCard({ roles, readonly = false }: Props) {
+  const [activeRoleId, setActiveRoleId] = useState(roles[0]?.id || 1);
+  const activeRole = roles.find((r) => r.id === activeRoleId)!;
+
   const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => {
     const base = {} as RoleCrudPermissions;
     SERVICES.forEach(({ key }) => {
-      base[key] = role.permissions?.[key] ?? emptyActions();
+      base[key] = activeRole.permissions?.[key] ?? emptyActions();
     });
     return base;
   });
+
   const [isDirty, setIsDirty] = useState(false);
   const { mutate: updatePermissions, isPending } = useUpdateRolePermissions();
+
+  // Update permissions when role tab changes
+  const handleRoleChange = (roleId: number) => {
+    if (isDirty) {
+      if (!confirm('Unsaved changes. Switch anyway?')) return;
+      setIsDirty(false);
+    }
+    setActiveRoleId(roleId);
+    const newRole = roles.find((r) => r.id === roleId)!;
+    const base = {} as RoleCrudPermissions;
+    SERVICES.forEach(({ key }) => {
+      base[key] = newRole.permissions?.[key] ?? emptyActions();
+    });
+    setPermissions(base);
+  };
 
   const toggle = (service: ServiceKey, action: keyof CrudActions, value: boolean) => {
     setPermissions((prev) => ({
@@ -71,7 +82,9 @@ export default function RolePermissionsCard({ role, readonly = false }: Props) {
   const toggleColumn = (action: keyof CrudActions, value: boolean) => {
     setPermissions((prev) => {
       const next = { ...prev } as RoleCrudPermissions;
-      SERVICES.forEach(({ key }) => { next[key] = { ...next[key], [action]: value }; });
+      SERVICES.forEach(({ key }) => {
+        next[key] = { ...next[key], [action]: value };
+      });
       return next;
     });
     setIsDirty(true);
@@ -79,51 +92,73 @@ export default function RolePermissionsCard({ role, readonly = false }: Props) {
 
   const toggleEntireRole = (value: boolean) => {
     const next = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => { next[key] = { create: value, read: value, update: value, delete: value }; });
+    SERVICES.forEach(({ key }) => {
+      next[key] = { create: value, read: value, update: value, delete: value };
+    });
     setPermissions(next);
     setIsDirty(true);
   };
 
   const handleSave = () => {
-    updatePermissions({ id: role.id, permissions }, { onSuccess: () => setIsDirty(false) });
+    updatePermissions({ id: activeRole.id, permissions }, { onSuccess: () => setIsDirty(false) });
   };
 
   const handleReset = () => {
     const base = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => { base[key] = role.permissions?.[key] ?? emptyActions(); });
+    SERVICES.forEach(({ key }) => {
+      base[key] = activeRole.permissions?.[key] ?? emptyActions();
+    });
     setPermissions(base);
     setIsDirty(false);
   };
 
-  // "Manage" = all 4 actions true for that row
-  const isManaged = (service: ServiceKey) => ACTIONS.every((a) => permissions[service][a]);
-  // Column header = all rows true for that action
+  const isManaged = (service: ServiceKey) => ACTIONS.every((a) => permissions[service][a.toLowerCase() as keyof CrudActions]);
   const isColumnAll = (action: keyof CrudActions) => SERVICES.every(({ key }) => permissions[key][action]);
-  // Top-left "All" = everything true
   const isAllManaged = SERVICES.every(({ key }) => isManaged(key));
-
   const grantedCount = SERVICES.reduce(
-    (sum, { key }) => sum + ACTIONS.filter((a) => permissions[key][a]).length,
+    (sum, { key }) => sum + ACTIONS.filter((a) => permissions[key][a.toLowerCase() as keyof CrudActions]).length,
     0
   );
   const totalCount = SERVICES.length * ACTIONS.length;
 
+  const roleLabel: Record<number, string> = {
+    1: 'Super admin',
+    2: 'Manager',
+    3: 'General user',
+    4: 'Accounting',
+    5: 'Lead Management',
+  };
+
   return (
-    <div className="bg-white rounded-xl border border-gray-200 overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50">
-        <div className="flex items-center gap-3">
-          <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${ROLE_BADGE_COLORS[role.id] ?? 'bg-gray-100 text-gray-600'}`}>
-            {role.role}
-          </span>
-          <span className="text-xs text-gray-400">{grantedCount} / {totalCount} permissions</span>
-        </div>
+    <div className="bg-white rounded-lg border border-gray-200">
+      {/* Tabs */}
+      <div className="flex border-b border-gray-200 bg-gray-50">
+        {roles.map((role) => (
+          <button
+            key={role.id}
+            onClick={() => handleRoleChange(role.id)}
+            className={`px-5 py-3 text-sm font-medium transition-colors ${
+              activeRoleId === role.id
+                ? 'border-b-2 border-blue-600 text-blue-600 bg-white'
+                : 'text-gray-600 hover:text-gray-900'
+            }`}
+          >
+            {roleLabel[role.id]}
+          </button>
+        ))}
+      </div>
+
+      {/* Header with Save/Cancel */}
+      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
+        <span className="text-xs text-gray-500">
+          {grantedCount} / {totalCount} permissions
+        </span>
         {!readonly && isDirty && (
           <div className="flex items-center gap-2">
             <button type="button" onClick={handleReset} className="text-xs text-gray-400 hover:text-gray-600 underline">
               Reset
             </button>
-            <Button onClick={handleSave} disabled={isPending} className="h-7 text-xs px-3">
+            <Button onClick={handleSave} disabled={isPending} className="h-8 text-xs px-3">
               {isPending ? 'Saving…' : 'Save'}
             </Button>
           </div>
@@ -135,11 +170,10 @@ export default function RolePermissionsCard({ role, readonly = false }: Props) {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="text-left px-5 py-3 font-medium text-gray-500 w-44">Service</th>
-              {/* Manage all column */}
-              <th className="px-3 py-3 text-center font-medium text-gray-500 w-20">
+              <th className="text-left px-6 py-3 font-medium text-gray-700 w-56">Permission</th>
+              <th className="px-4 py-3 text-center font-medium text-gray-700 w-20">
                 <div className="flex flex-col items-center gap-1.5">
-                  <span>Manage</span>
+                  <span className="text-xs">Manage</span>
                   <Checkbox
                     checked={isAllManaged}
                     onCheckedChange={(v) => !readonly && toggleEntireRole(!!v)}
@@ -148,12 +182,12 @@ export default function RolePermissionsCard({ role, readonly = false }: Props) {
                 </div>
               </th>
               {ACTIONS.map((action) => (
-                <th key={action} className="px-3 py-3 text-center font-medium text-gray-500 w-20 capitalize">
+                <th key={action} className="px-4 py-3 text-center font-medium text-gray-700 w-20">
                   <div className="flex flex-col items-center gap-1.5">
-                    <span>{action}</span>
+                    <span className="text-xs">{action}</span>
                     <Checkbox
-                      checked={isColumnAll(action)}
-                      onCheckedChange={(v) => !readonly && toggleColumn(action, !!v)}
+                      checked={isColumnAll(action.toLowerCase() as keyof CrudActions)}
+                      onCheckedChange={(v) => !readonly && toggleColumn(action.toLowerCase() as keyof CrudActions, !!v)}
                       disabled={readonly}
                     />
                   </div>
@@ -161,27 +195,29 @@ export default function RolePermissionsCard({ role, readonly = false }: Props) {
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-50">
+          <tbody className="divide-y divide-gray-100">
             {SERVICES.map(({ key, label }) => (
               <tr key={key} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-5 py-3 font-medium text-gray-800">{label}</td>
-                {/* Manage (row master) */}
-                <td className="px-3 py-3 text-center">
+                <td className="px-6 py-3 font-medium text-gray-700 text-sm">{label}</td>
+                <td className="px-4 py-3 text-center">
                   <Checkbox
                     checked={isManaged(key)}
                     onCheckedChange={(v) => !readonly && toggleAll(key, !!v)}
                     disabled={readonly}
                   />
                 </td>
-                {ACTIONS.map((action) => (
-                  <td key={action} className="px-3 py-3 text-center">
-                    <Checkbox
-                      checked={permissions[key][action]}
-                      onCheckedChange={(v) => !readonly && toggle(key, action, !!v)}
-                      disabled={readonly}
-                    />
-                  </td>
-                ))}
+                {ACTIONS.map((action) => {
+                  const actionKey = action.toLowerCase() as keyof CrudActions;
+                  return (
+                    <td key={action} className="px-4 py-3 text-center">
+                      <Checkbox
+                        checked={permissions[key][actionKey]}
+                        onCheckedChange={(v) => !readonly && toggle(key, actionKey, !!v)}
+                        disabled={readonly}
+                      />
+                    </td>
+                  );
+                })}
               </tr>
             ))}
           </tbody>

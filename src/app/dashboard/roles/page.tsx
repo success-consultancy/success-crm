@@ -17,19 +17,14 @@ export default function RolesPage() {
   return (
     <div className="p-6 space-y-6 max-w-6xl">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">Role Permissions</h3>
+        <h3 className="text-h4 text-content-heading font-bold">Manage roles</h3>
       </Portal>
 
       <p className="text-sm text-gray-500">
         Define what each role can do across every service. Changes apply immediately to all users with that role.
-        {!isAdmin && ' Only admins can make changes.'}
       </p>
 
-      <div className="space-y-5">
-        {roles?.map((role) => (
-          <RolePermissionsCard key={role.id} role={role} readonly={!isAdmin} />
-        ))}
-      </div>
+      {roles && <RolePermissionsCard roles={roles} readonly={!isAdmin} />}
     </div>
   );
 }

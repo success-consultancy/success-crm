@@ -72,7 +72,6 @@ export const NAVIGATION_LIST: SidebarNavItem[] = [
         title: SubNavTitle.Users,
         href: ROUTES.USERS,
       },
-      { title: SubNavTitle.Employees, href: ROUTES.EMPLOYEES },
       { title: SubNavTitle.Occupation, href: ROUTES.CHECK_IN },
       {
         title: SubNavTitle.Occupation,
