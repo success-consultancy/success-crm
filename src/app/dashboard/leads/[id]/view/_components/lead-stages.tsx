@@ -186,7 +186,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
         </div>
       </div>
 
-      <ConfirmationDialog
+      {/* <ConfirmationDialog
         isOpen={confirmOpen}
         setIsOpen={setConfirmOpen}
         title="Change Lead Stage"
@@ -196,7 +196,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
         onConfirm={confirmStageChange}
         onCancel={() => setPendingStage(null)}
         loading={updateLeadStatus.isPending}
-      />
+      /> */}
     </div>
   );
 };
