@@ -230,20 +230,15 @@ const TableComponent = <TData, TValue>({
     if (!column) return {};
 
     const isPinned = column.getIsPinned();
-
-    // pinned shadow style
     const isLastLeftPinnedColumn = isPinned === 'left' && column.getIsLastColumn('left');
     const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
 
-    const boxShadow = isPinned
-      ? isLastLeftPinnedColumn
-        ? `-2px 0 2px -2px #D9E2E8 inset`
-        : isFirstRightPinnedColumn
-          ? `2px 0 2px -2px #D9E2E8 inset`
-          : undefined
-      : undefined;
+    const boxShadow = isLastLeftPinnedColumn
+      ? 'inset -4px 0 6px -4px rgba(0,0,0,0.12)'
+      : isFirstRightPinnedColumn
+        ? 'inset 4px 0 6px -4px rgba(0,0,0,0.12)'
+        : undefined;
 
-    // For body cells, ensure white background that can be overridden by hover
     const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
 
     return {
@@ -252,9 +247,8 @@ const TableComponent = <TData, TValue>({
       right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
       position: isPinned ? 'sticky' : 'relative',
       width: column.getSize(),
-      zIndex: isPinned ? 1 : 0,
+      zIndex: isPinned ? 10 : 0,
       backgroundColor,
-      // Ensure pinned columns are always rendered on top
       willChange: isPinned ? 'transform' : undefined,
     };
   };
@@ -323,7 +317,7 @@ const TableComponent = <TData, TValue>({
             style={{ minWidth: `${totalTableWidth}px`, width: '100%', tableLayout: 'fixed' }}
             suppressHydrationWarning
           >
-            <thead className="sticky top-0 z-10 bg-component-hovered-light">
+            <thead className="sticky top-0 z-[20] bg-component-hovered-light">
               {table.getHeaderGroups().map((headerGroup) => (
                 <tr
                   className={cn([
@@ -400,9 +394,7 @@ const TableComponent = <TData, TValue>({
                       <td
                         className={cn([
                           'py-2 align-middle text-neutral-darkGrey last:text-end text-b1 overflow-hidden text-ellipsis whitespace-nowrap relative',
-                          // Ensure pinned columns are always white, but can be overridden by hover
                           isPinned && 'bg-white group-hover:bg-muted transition-colors duration-200',
-                          // Add higher z-index for pinned columns to prevent overlap issues
                           isPinned && 'z-10',
                         ])}
                         key={cell.id}
