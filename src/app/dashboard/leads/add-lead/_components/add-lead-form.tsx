@@ -23,6 +23,7 @@ import PersonalDetailsStep from './personal-details-fields';
 import MiscStep from './misc-fields';
 import VisaAndServiceStep from './visa-and-service-fields';
 import { ROUTES } from '@/config/routes';
+import { ArrowLeft } from 'lucide-react';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -117,7 +118,17 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
   return (
     <Form {...form}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">{mode === 'edit' ? 'Edit lead' : 'New lead'}</h3>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => mode === 'add' ? router.push(ROUTES.LEADS) : router.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h3 className="text-h4 text-content-heading font-bold">{mode === 'edit' ? 'Edit lead' : 'New lead'}</h3>
+        </div>
       </Portal>
       <div>
         <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1', 'item-2', 'item-3']}>
