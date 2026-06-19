@@ -59,7 +59,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
         return (
           <div
             key={appointment.id}
-            className="border rounded-lg p-3 cursor-pointer hover:bg-gray-50 transition-colors"
+            className="border rounded-lg p-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors"
             onClick={() => onAppointmentClick(appointment)}
           >
             <div className="flex items-start gap-3">

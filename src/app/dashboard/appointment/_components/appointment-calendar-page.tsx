@@ -27,6 +27,7 @@ import VisaExpiryList from './visa-expiry-list';
 import VisaExpiryPopover from './visa-expiry-popover';
 import TabSelector from '@/components/atoms/tab-selector';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar as CalendarPicker } from '@/components/ui/calendar';
 import AppointmentPreview from './appointment-preview';
 import { cn } from '@/lib/utils';
 import UserSelectWithCommand from '@/components/molecules/user-select-with-command';
@@ -348,6 +349,7 @@ const AppointmentCalendarPage = () => {
 
   // Visa expiry popover state (controlled by main page; popover trigger is virtual)
   const [activeExpiry, setActiveExpiry] = useState<VisaExpiryEvent | null>(null);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
 
   const currentView = searchParams.get('view') || 'month';
   const currentTab = searchParams.get('tab') || 'appointment';
@@ -526,13 +528,33 @@ const AppointmentCalendarPage = () => {
               <Button variant="outline" onClick={() => handleDateChange('today')}>Today</Button>
               <div className="flex items-center gap-2 border rounded-md">
                 <Button variant="ghost" size="icon" onClick={() => handleDateChange('prev')}><ChevronLeft className="h-4 w-4" /></Button>
-                <span className="text-sm font-medium min-w-[120px] text-center">
-                  {(currentView === 'week' || currentView === 'work-week')
-                    ? `${format(weekDays[0], 'd MMM')} - ${format(weekDays[weekDays.length - 1], 'd MMM, yyyy')}`
-                    : currentView === 'agenda'
-                      ? `${format(selectedDate, 'd MMM, yyyy')} - ${format(addDays(selectedDate, 30), 'd MMM, yyyy')}`
-                      : format(selectedDate, 'd MMM, yyyy')}
-                </span>
+                <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+                  <PopoverTrigger asChild>
+                    <button className="text-sm font-medium min-w-[120px] text-center hover:bg-accent hover:text-accent-foreground px-2 py-1 rounded transition-colors">
+                      {(currentView === 'week' || currentView === 'work-week')
+                        ? `${format(weekDays[0], 'd MMM')} - ${format(weekDays[weekDays.length - 1], 'd MMM, yyyy')}`
+                        : currentView === 'agenda'
+                          ? `${format(selectedDate, 'd MMM, yyyy')} - ${format(addDays(selectedDate, 30), 'd MMM, yyyy')}`
+                          : format(selectedDate, 'd MMM, yyyy')}
+                    </button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="center">
+                    <CalendarPicker
+                      mode="single"
+                      selected={selectedDate}
+                      defaultMonth={selectedDate}
+                      captionLayout="dropdown"
+                      modifiers={(currentView === 'week' || currentView === 'work-week') ? { week: weekDays } : undefined}
+                      modifiersClassNames={(currentView === 'week' || currentView === 'work-week') ? { week: 'bg-accent rounded-none first:rounded-l-full last:rounded-r-full' } : undefined}
+                      onSelect={(date) => {
+                        if (date) {
+                          setSelectedDate(date);
+                          setIsDatePickerOpen(false);
+                        }
+                      }}
+                    />
+                  </PopoverContent>
+                </Popover>
                 <Button variant="ghost" size="icon" onClick={() => handleDateChange('next')}><ChevronRight className="h-4 w-4" /></Button>
               </div>
               {!isCalendarTab && (
@@ -620,11 +642,11 @@ const AppointmentCalendarPage = () => {
 
             {/* Right Sidebar */}
             {currentView !== 'agenda' && (
-              <div className="w-80 flex flex-col flex-shrink-0 rounded-lg p-4 overflow-hidden">
-                <div className="flex items-center justify-between mb-4 flex-shrink-0">
+              <div className="w-80 flex flex-col flex-shrink-0 rounded-lg border border-light-grey bg-[#F7F8FA] p-4 overflow-hidden">
+                <div className="flex items-center justify-between mb-3 flex-shrink-0">
                   <h4 className="text-b14-600">{format(selectedDate, 'd MMM, yyyy')}</h4>
                   {!isCalendarTab && (
-                    <Button LeftIcon={Plus} onClick={() => setIsFormModalOpen(true)} size="sm" className="text-primary" variant="ghost">Add</Button>
+                    <Button LeftIcon={Plus} onClick={() => setIsFormModalOpen(true)} size="sm" className="text-primary-blue" variant="ghost">Add</Button>
                   )}
                 </div>
                 {isCalendarTab ? (

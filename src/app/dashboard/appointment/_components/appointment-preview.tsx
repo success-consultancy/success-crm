@@ -131,18 +131,17 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
           <div className='flex'>
             <h4 className="text-sm font-semibold mb-1 w-[84px] mr-3">Owner: </h4>
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium" style={{ backgroundColor: getAppointColorBasedOnUserName(appointment.user, 'raw') as string }}>
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white" style={{ backgroundColor: getAppointColorBasedOnUserName(appointment.user, 'raw') as string }}>
                 {getInitials(appointment.user.firstName, appointment.user.lastName)}
               </div>
               <p className="text-sm">
-                {getInitials(appointment.user.firstName, appointment.user.lastName)}{' '}
                 {appointment.user.firstName} {appointment.user.lastName}
               </p>
             </div>
           </div>
         )}
 
-        <div className='border-b pb-4 mb-4 -mx-4 md:-mx-6'></div>
+        <div className='border-b mt-2 mb-4 -mx-4 md:-mx-6'></div>
 
         {/* Created By */}
         {appointment.createdByUser && appointment.createdAt && (

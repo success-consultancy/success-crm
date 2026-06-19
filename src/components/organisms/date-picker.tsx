@@ -102,6 +102,7 @@ export function DatePicker({
                   mode="single"
                   selected={value}
                   captionLayout="dropdown"
+                  defaultMonth={defaultMonth}
                   onSelect={(date) => {
                     onChange(date);
                     if (date) {
