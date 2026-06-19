@@ -47,7 +47,7 @@ const VisaExpiryList: React.FC<VisaExpiryListProps> = ({ events, onEventClick, i
         return (
           <div
             key={event.id}
-            className="cursor-pointer hover:bg-gray-50 transition-colors p-2 -m-2 rounded-md"
+            className="cursor-pointer bg-white hover:bg-gray-50 transition-colors border rounded-lg p-3"
             onClick={() => onEventClick(event)}
           >
             <div className="flex items-start gap-2">

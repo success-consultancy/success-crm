@@ -32,7 +32,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
-import { ArrowLeft, Code2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
 
@@ -319,13 +319,17 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     <>
       <Portal rootId={PortalIds.DashboardHeader}>
         <div className="flex items-center gap-3">
-          <button className="p-1.5 rounded hover:bg-gray-100 transition-colors">
-            <Code2 className="h-5 w-5 text-gray-600" />
-          </button>
-          <button onClick={() => router.back()} className="p-1.5 rounded hover:bg-gray-100 transition-colors">
-            <ArrowLeft className="h-5 w-5 text-gray-600" />
-          </button>
-          <h3 className="text-lg font-semibold">{formState === FORM_STATE.ADD ? 'New applicant' : 'Edit applicant'}</h3>
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.SKILL_ASSESSMENT) : router.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h3 className="text-h4 text-content-heading font-bold">
+            {formState === FORM_STATE.ADD ? 'New Skill Applicant' : 'Edit Skill Applicant'}
+          </h3>
         </div>
       </Portal>
       <form className="w-full" onSubmit={handleSubmit(submitHandler)}>

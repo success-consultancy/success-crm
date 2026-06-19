@@ -37,6 +37,8 @@ import { FORM_STATE } from '@/types/common';
 import { IAccount } from '@/schema/account-schema';
 import Accounts from '../../[id]/view/_components/accounts';
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
+import { ArrowLeft } from 'lucide-react';
+import { ROUTES } from '@/config/routes';
 
 interface Props {
   userId: number | undefined;
@@ -193,9 +195,14 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">
-          {isAdd ? 'New Visa Applicant' : 'Edit Visa Applicant'}
-        </h3>
+        <div className="flex items-center gap-3">
+          <Button variant="ghost" size="icon" type="button" onClick={() => isAdd ? router.push(ROUTES.VISA) : router.back()}>
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h3 className="text-h4 text-content-heading font-bold">
+            {isAdd ? 'New Visa Applicant' : 'Edit Visa Applicant'}
+          </h3>
+        </div>
       </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}

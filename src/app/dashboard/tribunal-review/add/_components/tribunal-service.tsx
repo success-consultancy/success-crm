@@ -38,6 +38,7 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
   userId: number | undefined;
@@ -200,9 +201,19 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">
-          {formState === FORM_STATE.ADD ? 'New Tribunal Review' : 'Edit Tribunal Review'}
-        </h3>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.TRIBUNAL_REVIEW) : router.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h3 className="text-h4 text-content-heading font-bold">
+            {formState === FORM_STATE.ADD ? 'New Tribunal Review' : 'Edit Tribunal Review'}
+          </h3>
+        </div>
       </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}

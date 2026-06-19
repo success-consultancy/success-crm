@@ -41,6 +41,7 @@ import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constant
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { InsuranceStatusTypes } from '@/types/response-types/insurance-response';
+import { ArrowLeft } from 'lucide-react';
 
 interface Props {
   userId: number | undefined;
@@ -176,9 +177,19 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
   return (
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">
-          {formState === FORM_STATE.ADD ? 'New Insurance Applicant' : 'Edit Insurance Applicant'}
-        </h3>
+        <div className="flex items-center gap-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.INSURANCE) : router.back()}
+          >
+            <ArrowLeft className="h-4 w-4" />
+          </Button>
+          <h3 className="text-h4 text-content-heading font-bold">
+            {formState === FORM_STATE.ADD ? 'New Insurance Applicant' : 'Edit Insurance Applicant'}
+          </h3>
+        </div>
       </Portal>
       <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
