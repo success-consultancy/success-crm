@@ -300,9 +300,10 @@ const TableComponent = <TData, TValue>({
               title={bulkDeleteTitle || 'Delete Leads'}
               description={bulkDeleteDescription || ''}
               confirmText={bulkDeleteConfirmText}
-              onConfirm={async () => {
-                const ids = await table.getSelectedRowModel().rows.map((row: any) => row.original.id);
+              onConfirm={() => {
+                const ids = table.getSelectedRowModel().rows.map((row: any) => row.original.id);
                 onBulkDelete?.(ids);
+                table.toggleAllRowsSelected(false);
               }}
             />
           </div>

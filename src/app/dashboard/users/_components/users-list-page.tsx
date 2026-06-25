@@ -52,7 +52,7 @@ const UsersListPage = () => {
 
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('id');
-  const [sortDir, setSortDir] = useState<SortDir>('asc');
+  const [sortDir, setSortDir] = useState<SortDir>('desc');
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 

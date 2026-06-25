@@ -33,4 +33,11 @@ export const QUERY_KEYS = {
   GET_USER_LEAVES: 'get-user-leaves',
   GET_ANNOUNCEMENTS: 'get-announcements',
   GET_ANNOUNCEMENT_BY_ID: 'get-announcement-by-id',
+  GET_LEAD_STATS: 'get-lead-stats',
+  GET_CONVERTED_STATS: 'get-converted-stats',
+  GET_SERVICE_STATS: 'get-service-stats',
+  GET_CLIENT_COUNTRY: 'get-client-country',
+  GET_PROCESSING_INSIGHTS: 'get-processing-insights',
+  GET_EMPLOYEE_RANKING: 'get-employee-ranking',
+  GET_ALL_SERVICE_DATA: 'get-all-service-data',
 };

@@ -63,9 +63,9 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-48 h-6" />;
-        return <div className="max-w-[300px] truncate font-medium">{row.original.title}</div>;
+        return <div className="truncate font-medium">{row.original.title}</div>;
       },
-      size: 300,
+      size: 400,
       meta: { isVisible: true },
     },
     {
@@ -78,7 +78,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
         const name = user ? `${user.firstName} ${user.lastName}` : '-';
         return <div>{name}</div>;
       },
-      size: 180,
+      size: 220,
       meta: { isVisible: true },
     },
     {
@@ -97,7 +97,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
           />
         );
       },
-      size: 100,
+      size: 140,
       meta: { isVisible: true },
     },
     {
@@ -117,7 +117,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
         }
       },
       enableSorting: true,
-      size: 130,
+      size: 160,
       meta: { isVisible: true },
     },
     {
@@ -167,7 +167,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
           </Popover>
         );
       },
-      size: 60,
+      size: 80,
       meta: { isVisible: true, sticky: 'right' },
     },
   ];
