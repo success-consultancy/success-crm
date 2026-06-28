@@ -7,24 +7,24 @@ import { RolePermissions, RoleCrudPermissions, ServiceKey, CrudActions } from '@
 import { useUpdateRolePermissions } from '@/mutations/role/update-role-permissions';
 
 const SERVICES: { key: ServiceKey; label: string }[] = [
-  { key: 'leads',          label: 'Leads' },
-  { key: 'education',      label: 'Education service' },
-  { key: 'visa',           label: 'Visa service' },
-  { key: 'skill',          label: 'Skill assessment service' },
+  { key: 'leads', label: 'Leads' },
+  { key: 'education', label: 'Education service' },
+  { key: 'visa', label: 'Visa service' },
+  { key: 'skill', label: 'Skill assessment service' },
   { key: 'tribunalReview', label: 'Tribunal review' },
-  { key: 'insurance',      label: 'Insurance service' },
-  { key: 'agreement',      label: 'Agency agreement' },
-  { key: 'appointment',    label: 'Appointment calendar' },
-  { key: 'fiscalReport',   label: 'Fiscal report' },
-  { key: 'announcement',   label: 'News and updates' },
-  { key: 'users',          label: 'Users' },
-  { key: 'university',     label: 'University' },
-  { key: 'course',         label: 'Course' },
-  { key: 'source',         label: 'Source' },
-  { key: 'settings',       label: 'Settings' },
+  { key: 'insurance', label: 'Insurance service' },
+  { key: 'agreement', label: 'Agency agreement' },
+  { key: 'appointment', label: 'Appointment calendar' },
+  { key: 'fiscalReport', label: 'Fiscal report' },
+  { key: 'announcement', label: 'News and updates' },
+  { key: 'users', label: 'Users' },
+  { key: 'university', label: 'University' },
+  { key: 'course', label: 'Course' },
+  { key: 'source', label: 'Source' },
+  { key: 'settings', label: 'Settings' },
 ];
 
-const ACTIONS: (keyof CrudActions)[] = ['View', 'Create', 'Edit', 'Delete'];
+const ACTIONS: (keyof CrudActions)[] = ['read', 'create', 'update', 'delete'];
 
 const emptyActions = (): CrudActions => ({ create: false, read: false, update: false, delete: false });
 
@@ -112,12 +112,13 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
     setIsDirty(false);
   };
 
-  const isManaged = (service: ServiceKey) => ACTIONS.every((a) => permissions[service][a.toLowerCase() as keyof CrudActions]);
+  const isManaged = (service: ServiceKey) =>
+    ACTIONS.every((a) => permissions[service][a.toLowerCase() as keyof CrudActions]);
   const isColumnAll = (action: keyof CrudActions) => SERVICES.every(({ key }) => permissions[key][action]);
   const isAllManaged = SERVICES.every(({ key }) => isManaged(key));
   const grantedCount = SERVICES.reduce(
     (sum, { key }) => sum + ACTIONS.filter((a) => permissions[key][a.toLowerCase() as keyof CrudActions]).length,
-    0
+    0,
   );
   const totalCount = SERVICES.length * ACTIONS.length;
 
