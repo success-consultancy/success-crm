@@ -11,9 +11,21 @@ export type CrudActions = {
 };
 
 export type ServiceKey =
-  | 'leads' | 'education' | 'visa' | 'skill' | 'tribunalReview'
-  | 'insurance' | 'agreement' | 'appointment' | 'fiscalReport' | 'announcement'
-  | 'users' | 'university' | 'course' | 'source' | 'settings';
+  | 'leads'
+  | 'education'
+  | 'visa'
+  | 'skill'
+  | 'tribunalReview'
+  | 'insurance'
+  | 'agreement'
+  | 'appointment'
+  | 'fiscalReport'
+  | 'announcement'
+  | 'users'
+  | 'university'
+  | 'course'
+  | 'source'
+  | 'settings';
 
 export type RoleCrudPermissions = Record<ServiceKey, CrudActions>;
 

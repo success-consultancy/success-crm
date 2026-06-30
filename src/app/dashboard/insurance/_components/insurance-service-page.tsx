@@ -112,6 +112,7 @@ const ServicePage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        storageKey="insurance-column-visibility"
         columnPinning={{
           left: ['select', 'insurance-createdAt', 'insurance-id', 'insurance-first-name'],
           right: ['insurance-actions'],

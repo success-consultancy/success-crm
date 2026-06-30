@@ -110,6 +110,7 @@ const VisaServicePage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        storageKey="visa-column-visibility"
         columnPinning={{
           left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name'],
           right: ['visa-actions'],

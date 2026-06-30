@@ -103,6 +103,7 @@ const Leads = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
+        storageKey="leads-column-visibility"
         columnPinning={{
           left: ['select', 'lead-createdAt', 'lead-id', 'lead-first-name'],
           right: ['lead-actions'],

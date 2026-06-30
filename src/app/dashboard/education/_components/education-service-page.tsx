@@ -110,6 +110,7 @@ const EducationServicePage = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
+        storageKey="education-column-visibility"
         columnPinning={{
           left: ['select', 'education-createdAt', 'education-id', 'education-first-name'],
           right: ['education-actions'],

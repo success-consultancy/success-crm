@@ -68,6 +68,7 @@ const AnnouncementPage = () => {
       <TableComponent
         data={data?.rows as IAnnouncement[]}
         columns={visibleColumns}
+        storageKey="announcement-column-visibility"
         skeletonColumns={visibleColumns}
         isLoading={isLoading}
         offset={filterParams.limit || 25}

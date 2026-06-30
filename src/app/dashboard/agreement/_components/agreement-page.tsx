@@ -162,6 +162,7 @@ const AgreementPage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="university"
+        storageKey="agreement-column-visibility"
         columnPinning={{
           left: ['select', 'agreement-id', 'agreement-university'],
           right: ['agreement-actions'],

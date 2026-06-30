@@ -107,6 +107,7 @@ const SkillAssessmentServicePage = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
+        storageKey="skill-column-visibility"
         searchKey="email"
         columnPinning={{
           left: ['select', 'skill-assessment-createdAt', 'skill-assessment-id', 'skill-assessment-first-name'],

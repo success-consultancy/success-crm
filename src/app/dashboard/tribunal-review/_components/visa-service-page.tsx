@@ -111,6 +111,7 @@ const ServicePage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        storageKey="tribunal-column-visibility"
         columnPinning={{
           left: ['select', 'visa-createdAt', 'visa-id', 'visa-first-name'],
           right: ['visa-actions'],

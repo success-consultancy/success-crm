@@ -106,11 +106,12 @@ export function ColumnSelector<TData>({
           <CommandList className="max-h-[400px] h-[13.5rem] overflow-y-auto custom-scrollbar">
             <CommandEmpty>No results found.</CommandEmpty>
             {allColumns.map((column) => {
-              const columnName = column.id
-                .split('-')
+              const parts = column.id.split('-');
+              const knownPrefixes = ['lead', 'visa', 'education', 'insurance', 'tribunal', 'skill', 'agreement', 'announcement', 'checkin', 'accounts'];
+              const stripped = knownPrefixes.includes(parts[0]) ? parts.slice(1) : parts;
+              const columnName = stripped
                 .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-                .join(' ')
-                .replace('Lead ', '');
+                .join(' ');
 
               return (
                 <CommandItem className="p-0 m-0" key={column.id} value={columnName}>
