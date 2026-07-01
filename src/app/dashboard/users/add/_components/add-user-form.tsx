@@ -11,6 +11,7 @@ import { Label } from '@/components/ui/label';
 import Portal from '@/components/atoms/portal';
 import Button from '@/components/atoms/button';
 import Input from '@/components/molecules/input';
+import PasswordInput from '@/components/molecules/password-input';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import SelectCommon from '@/components/molecules/select-common';
 import { PortalIds } from '@/config/portal';
@@ -264,9 +265,8 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
                 control={control}
                 name="password"
                 render={({ field }) => (
-                  <Input
+                  <PasswordInput
                     label="Password"
-                    type="password"
                     {...field}
                     value={field.value ?? ''}
                     error={errors.password?.message}

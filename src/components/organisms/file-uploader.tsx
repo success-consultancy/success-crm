@@ -43,12 +43,38 @@ const FileUploader = (props: Props) => {
     [files, props.maxFileSize],
   );
 
+  const EXT_TO_MIME: Record<string, string[]> = {
+    PDF: ['application/pdf'],
+    JPG: ['image/jpeg'],
+    JPEG: ['image/jpeg'],
+    PNG: ['image/png'],
+    WEBP: ['image/webp'],
+    GIF: ['image/gif'],
+    DOC: ['application/msword'],
+    DOCX: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    XLS: ['application/vnd.ms-excel'],
+    XLSX: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+    '.jpg': ['image/jpeg'],
+    '.jpeg': ['image/jpeg'],
+    '.png': ['image/png'],
+    '.webp': ['image/webp'],
+    '.pdf': ['application/pdf'],
+    '.docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  };
+
+  const acceptMap = props.acceptedFiles.reduce((acc, type) => {
+    const mimeTypes = EXT_TO_MIME[type.toUpperCase()] || EXT_TO_MIME[type.toLowerCase()];
+    if (mimeTypes) {
+      mimeTypes.forEach((mime) => {
+        if (!acc[mime]) acc[mime] = [];
+      });
+    }
+    return acc;
+  }, {} as Record<string, string[]>);
+
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: props.acceptedFiles.reduce((acc, type) => {
-      acc[type] = [];
-      return acc;
-    }, {} as Record<string, string[]>),
+    accept: acceptMap,
     maxSize: props.maxFileSize * 1024 * 1024,
   });
 

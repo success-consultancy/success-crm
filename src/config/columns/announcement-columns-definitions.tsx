@@ -74,7 +74,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-32 h-6" />;
-        const user = row.original.User;
+        const user = (row.original as any).user ?? row.original.User;
         const name = user ? `${user.firstName} ${user.lastName}` : '-';
         return <div>{name}</div>;
       },

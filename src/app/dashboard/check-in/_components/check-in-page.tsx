@@ -89,6 +89,7 @@ const CheckInPage = () => {
         currentPage={filterParams.page}
         searchKey="checkin"
         storageKey={`checkin-${currentTab}-columns`}
+        tableHeight="calc(100vh - 430px)"
         topRightSection={
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />

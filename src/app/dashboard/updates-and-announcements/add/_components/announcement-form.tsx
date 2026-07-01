@@ -127,7 +127,6 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
             placeholder="Announcement title"
             error={errors.title?.message}
           />
-          <FormErrorMessage message={errors.title?.message} />
         </div>
 
         {/* Description (Rich Text) */}

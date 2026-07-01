@@ -10,7 +10,8 @@ export const educationServiceSchema = z
     firstName: z
       .string()
       .min(1, 'First name is required')
-      .max(50, 'First name cannot exceed 50 characters'),
+      .max(50, 'First name cannot exceed 50 characters')
+      .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
 
     middleName: z
       .string()
@@ -20,7 +21,8 @@ export const educationServiceSchema = z
     lastName: z
       .string()
       .min(1, 'Last name is required')
-      .max(50, 'Last name cannot exceed 50 characters'),
+      .max(50, 'Last name cannot exceed 50 characters')
+      .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
 
     dob: z.date().optional(),
 

@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { PasswordChangeSchema, PasswordChangeSchemaType } from '@/schema/profile-schema';
 import { useChangePassword } from '@/mutations/auth/change-password';
-import Input from '@/components/molecules/input';
+import PasswordInput from '@/components/molecules/password-input';
 import Button from '@/components/atoms/button';
 
 const SecurityTab = () => {
@@ -48,7 +48,7 @@ const SecurityTab = () => {
           control={control}
           name="newPassword"
           render={({ field }) => (
-            <Input {...field} label="New Password" type="password" error={errors.newPassword?.message} />
+            <PasswordInput {...field} label="New Password" error={errors.newPassword?.message} />
           )}
         />
 
@@ -56,7 +56,7 @@ const SecurityTab = () => {
           control={control}
           name="confirmPassword"
           render={({ field }) => (
-            <Input {...field} label="Confirm Password" type="password" error={errors.confirmPassword?.message} />
+            <PasswordInput {...field} label="Confirm Password" error={errors.confirmPassword?.message} />
           )}
         />
 

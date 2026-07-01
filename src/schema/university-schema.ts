@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const universityFormSchema = z.object({
-  name: z.string().min(1, 'University name is required'),
+  name: z.string().min(1, 'University name is required').refine((v) => v.trim().length > 0, { message: 'University name cannot be blank' }),
   educationLevel: z.string().nullable().optional(),
   location: z.string().nullable().optional(),
   comment: z.string().nullable().optional(),

@@ -13,7 +13,12 @@ const educationFormSchema = z.object({
   expiryDate: z.string().nullable().optional(),
 
   email: z.string().email(),
-  phone: z.string().nullable().optional(),
+  phone: z
+    .string()
+    .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
+    .min(10, { message: 'Phone number must be at least 10 digits' })
+    .nullable()
+    .optional(),
   dob: z.string().nullable().optional(),
 
   status: z.string().nullable().optional(),

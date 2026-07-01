@@ -21,8 +21,8 @@ export const useAddSource = () => {
       queryClient.invalidateQueries({ queryKey: [GET_SOURCE] });
       toast.success('Source added successfully');
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (err: any) => {
+      toast.error(err?.response?.data?.message || 'Something went wrong');
     },
   });
 };

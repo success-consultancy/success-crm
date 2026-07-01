@@ -11,12 +11,15 @@ export const tribunalReviewFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
   // ========== PERSONAL DETAILS ==========
-  firstName: z.string().min(1, 'First name is required').max(100, 'First name too long'),
+  firstName: z.string().min(1, 'First name is required').max(100, 'First name too long').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
   middleName: nullableString(),
-  lastName: z.string().min(1, 'Last name is required'),
+  lastName: z.string().min(1, 'Last name is required').refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   dob: nullableDate(),
   email: z.string().email('Please enter a valid email address'),
-  phone: z.string().min(1, 'Phone number is required'),
+  phone: z
+    .string()
+    .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
+    .min(10, { message: 'Phone number must be at least 10 digits' }),
   country: nullableString(),
   address: nullableString(),
   passport: z.union([z.string(), z.number()]).nullable().optional(),

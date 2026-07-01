@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export const appointmentFormSchema = z.object({
-  title: z.string().min(1, 'Title is required').max(200, 'Title is too long'),
+  title: z.string().min(1, 'Title is required').max(200, 'Title is too long').refine((v) => v.trim().length > 0, { message: 'Title cannot be blank' }),
   description: z.string().nullable().optional(),
   date: z.string().min(1, 'Date is required'),
   startTime: z.string().min(1, 'Start time is required'),

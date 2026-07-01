@@ -4,10 +4,17 @@ export const personalDetailsSchema = z.object({
   email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email address' }),
   phone: z
     .string({ message: 'Phone number is required' })
-    .min(10, { message: 'Phone number must be at least 10 characters' }),
-  firstName: z.string({ message: 'First name is required' }).min(1, { message: 'First name is required' }),
+    .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
+    .min(10, { message: 'Phone number must be at least 10 digits' }),
+  firstName: z
+    .string({ message: 'First name is required' })
+    .min(1, { message: 'First name is required' })
+    .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
   middleName: z.string().nullable().optional(),
-  lastName: z.string({ message: 'Last name is required' }).min(1, { message: 'Last name is required' }),
+  lastName: z
+    .string({ message: 'Last name is required' })
+    .min(1, { message: 'Last name is required' })
+    .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   dob: z.string().nullable().optional(),
   address: z.string().nullable().optional(),
   qualification: z.string().nullable().optional(),

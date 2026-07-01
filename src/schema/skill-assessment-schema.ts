@@ -4,8 +4,8 @@ import { format } from 'date-fns';
 const skillAssessmentFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string().min(1, 'First name is required'),
-  lastName: z.string().min(1, 'Last name is required'),
+  firstName: z.string().min(1, 'First name is required').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
+  lastName: z.string().min(1, 'Last name is required').refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   middleName: z.string().nullable().optional(),
 
   passport: z.union([z.number(), z.string()]).nullable().optional(),
@@ -13,7 +13,10 @@ const skillAssessmentFormSchema = z.object({
   expiryDate: z.string().nullable().optional(),
 
   email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email address' }),
-  phone: z.string().min(1, 'Phone number is required'),
+  phone: z
+    .string()
+    .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
+    .min(10, { message: 'Phone number must be at least 10 digits' }),
   dob: z.string().nullable().optional(),
 
   occupation: z.string().nullable().optional(),

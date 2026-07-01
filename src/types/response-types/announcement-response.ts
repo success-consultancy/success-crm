@@ -7,6 +7,10 @@ export interface IAnnouncement {
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
+  user?: {
+    firstName: string;
+    lastName: string;
+  };
   User?: {
     firstName: string;
     lastName: string;

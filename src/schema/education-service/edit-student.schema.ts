@@ -12,6 +12,7 @@ export const editEducationServiceSchema = z
       .string()
       .max(50, 'First name cannot exceed 50 characters')
       .regex(/^[A-Za-z\s\-']+$/, 'First name can only contain letters, spaces, hyphens, and apostrophes')
+      .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' })
       .optional(),
 
     middleName: z
@@ -24,6 +25,7 @@ export const editEducationServiceSchema = z
       .string()
       .max(50, 'Last name cannot exceed 50 characters')
       .regex(/^[A-Za-z\s\-']+$/, 'Last name can only contain letters, spaces, hyphens, and apostrophes')
+      .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' })
       .optional(),
 
     dob: z.date().optional(),
