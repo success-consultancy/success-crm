@@ -53,6 +53,14 @@
             "timeout": 10000
           }
         ]
+      },
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "codegraph prompt-hook"
+          }
+        ]
       }
     ],
     "SessionStart": [
@@ -166,7 +174,8 @@
       "Bash(npx @claude-flow*)",
       "Bash(npx claude-flow*)",
       "Bash(node .claude/*)",
-      "mcp__claude-flow__:*"
+      "mcp__claude-flow__:*",
+      "mcp__codegraph__*"
     ],
     "deny": [
       "Read(./.env)",
