@@ -23,7 +23,7 @@ const formatDate = (date: string | null) => {
   try {
     const parsed = parseISO(date);
     if (!isValid(parsed)) return '-';
-    return format(parsed, 'dd/MM/yyyy HH:mm');
+    return format(parsed, 'MMM dd, yyyy');
   } catch {
     return '-';
   }

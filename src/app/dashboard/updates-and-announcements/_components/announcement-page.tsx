@@ -16,6 +16,7 @@ import { useDeleteAnnouncement, useDeleteAnnouncementBulk } from '@/mutations/an
 import { IAnnouncement } from '@/types/response-types/announcement-response';
 import { useAnnouncementColumn } from '@/config/columns/announcement-columns-definitions';
 import { Megaphone } from 'lucide-react';
+import ClearFilters from '@/components/molecules/clear-filters';
 
 const emptyState = (
   <div className="flex flex-col items-center justify-center py-16 text-center">
@@ -28,7 +29,7 @@ const emptyState = (
 );
 
 const AnnouncementPage = () => {
-  const { getSearchParamsObject } = useSearchParams();
+  const { getSearchParamsObject, setParams } = useSearchParams();
   const router = useRouter();
 
   const filterParams = getSearchParamsObject(ANNOUNCEMENT_FILTER_PARAMS);
@@ -48,6 +49,13 @@ const AnnouncementPage = () => {
 
   const handleDeleteBulk = (ids: number[]) => {
     deleteAnnouncementBulk(ids);
+  };
+
+  const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
+    setParams([
+      { name: 'from', value: range.from?.toISOString() || null },
+      { name: 'to', value: range.to?.toISOString() || null },
+    ]);
   };
 
   const AnnouncementColumns = useAnnouncementColumn(handleDelete);
@@ -80,6 +88,14 @@ const AnnouncementPage = () => {
           right: ['announcement-actions'],
         }}
         emptyState={emptyState}
+        handleDateRangeApply={handleDateRangeApply}
+        tableHeaderSection={
+          <ClearFilters
+            filterKeys={['from', 'to', 'q']}
+            labels={{ from: 'From', to: 'To', q: 'Search' }}
+            className="mb-3"
+          />
+        }
         topRightSection={
           <ButtonLink href={ROUTES.ADD_ANNOUNCEMENT} LeftIcon={Plus}>
             Add announcement

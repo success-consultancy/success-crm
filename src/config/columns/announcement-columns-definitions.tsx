@@ -111,7 +111,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
         try {
           const parsed = parseISO(date);
           if (!isValid(parsed)) return <div>-</div>;
-          return <div>{format(parsed, 'dd/MMM/yyyy')}</div>;
+          return <div>{format(parsed, 'MMM dd, yyyy')}</div>;
         } catch {
           return <div>-</div>;
         }
