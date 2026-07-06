@@ -12,6 +12,7 @@ type Props = {
   maxFileSize: number; // in MB
   acceptedFiles: string[];
   onUploadComplete?: (files: UploadedFileMeta[]) => void;
+  maxFiles?: number;
 };
 
 type FileWithStatus = {
@@ -28,19 +29,15 @@ const FileUploader = (props: Props) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      // Filter files that exceed the max file size
       const validFiles = acceptedFiles.filter((file) => file.size <= props.maxFileSize * 1024 * 1024);
+      const dedupedFiles = validFiles.filter((newFile) => !files.some((f) => f.file.name === newFile.name));
+      const remaining = props.maxFiles ? props.maxFiles - files.length : Infinity;
+      const newFiles = dedupedFiles.slice(0, remaining);
 
-      // Filter files that are already in the list
-      const newFiles = validFiles.filter((newFile) => !files.some((f) => f.file.name === newFile.name));
-
-      // Add new files to the state
       setFiles((prev) => [...prev, ...newFiles.map((file) => ({ file, status: 'idle' as const }))]);
-
-      // Automatically upload new files
       newFiles.forEach((file) => handleFileUpload(file));
     },
-    [files, props.maxFileSize],
+    [files, props.maxFileSize, props.maxFiles],
   );
 
   const EXT_TO_MIME: Record<string, string[]> = {
@@ -76,6 +73,7 @@ const FileUploader = (props: Props) => {
     onDrop,
     accept: acceptMap,
     maxSize: props.maxFileSize * 1024 * 1024,
+    maxFiles: props.maxFiles,
   });
 
   const handleFileUpload = async (file: File) => {
@@ -208,28 +206,36 @@ const FileUploader = (props: Props) => {
   };
 
   const isAnyFileUploading = files.some((f) => f.status === 'uploading');
+  const atCapacity = props.maxFiles != null && files.length >= props.maxFiles;
+  const showDropzone = !isAnyFileUploading && !atCapacity;
 
   return (
     <div className="space-y-5">
-      <section
-        className={`flex items-center justify-center py-7 border border-dashed rounded-md transition-colors ${
-          isDragActive ? 'border-primary-blue bg-blue-50' : 'border-neutral-border'
+      <div
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          showDropzone ? 'max-h-48 opacity-100' : 'max-h-0 opacity-0 pointer-events-none'
         }`}
       >
-        <div {...getRootProps()} className="flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4">
-          <input {...getInputProps()} />
-          <CloudUpload className="text-primary-blue h-7 w-7" />
-          <div className="flex flex-col items-center gap-0.5">
-            <p>
-              {isDragActive ? 'Drop the files here' : 'Drag and drop files here or '}
-              {!isDragActive && <span className="text-primary-blue font-semibold">Choose files</span>}
-            </p>
-            <p className="text-c1 text-neutral-lightGrey">
-              Maximum file size of {props.maxFileSize} MB | {props.acceptedFiles.join(', ')} files
-            </p>
+        <section
+          className={`flex items-center justify-center py-7 border border-dashed rounded-md transition-colors ${
+            isDragActive ? 'border-primary-blue bg-blue-50' : 'border-neutral-border'
+          }`}
+        >
+          <div {...getRootProps()} className="flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4">
+            <input {...getInputProps()} />
+            <CloudUpload className="text-primary-blue h-7 w-7" />
+            <div className="flex flex-col items-center gap-0.5">
+              <p>
+                {isDragActive ? 'Drop the files here' : 'Drag and drop files here or '}
+                {!isDragActive && <span className="text-primary-blue font-semibold">Choose files</span>}
+              </p>
+              <p className="text-c1 text-neutral-lightGrey">
+                Maximum file size of {props.maxFileSize} MB | {props.acceptedFiles.join(', ')} files
+              </p>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
 
       {files.length > 0 && (
         <div className="space-y-4">

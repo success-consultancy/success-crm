@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import {
   announcementFormSchema,
   AnnouncementSchemaType,
@@ -38,6 +38,7 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
   const router = useRouter();
   const isEditMode = formState === FORM_STATE.EDIT;
   const [description, setDescription] = useState<string>(defaultValues?.description || '');
+  const [currentPhotoURL, setCurrentPhotoURL] = useState<string | null>(defaultValues?.photoURL ?? null);
 
   const form = useForm<AnnouncementSchemaType>({
     resolver: zodResolver(announcementFormSchema),
@@ -54,6 +55,7 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
       const values = getAnnouncementDefaultValues(defaultValues);
       form.reset(values);
       setDescription(values.description || '');
+      setCurrentPhotoURL(values.photoURL ?? null);
     }
   }, [defaultValues, isEditMode, form]);
 
@@ -71,8 +73,14 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
 
   const handleImageUpload = (newFiles: { url: string; name: string }[]) => {
     if (newFiles.length > 0) {
+      setCurrentPhotoURL(newFiles[0].url);
       setValue('photoURL', newFiles[0].url, { shouldValidate: true });
     }
+  };
+
+  const handleImageRemove = () => {
+    setCurrentPhotoURL(null);
+    setValue('photoURL', null, { shouldValidate: true });
   };
 
   const submitHandler = (data: AnnouncementSchemaType) => {
@@ -142,12 +150,31 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
         {/* Cover Image Upload */}
         <div className="space-y-2">
           <Label className="text-b2">Cover Image</Label>
-          <FileUploader
-            type="announcement"
-            maxFileSize={5}
-            acceptedFiles={['.jpg', '.jpeg', '.png', '.webp']}
-            onUploadComplete={handleImageUpload}
-          />
+          {currentPhotoURL ? (
+            <div className="relative w-full max-w-sm">
+              <img
+                src={currentPhotoURL}
+                alt="Cover"
+                className="w-full max-h-48 object-cover rounded-lg border border-gray-200"
+              />
+              <button
+                type="button"
+                onClick={handleImageRemove}
+                className="absolute top-2 right-2 bg-white rounded-full p-1 shadow hover:bg-red-50 text-gray-500 hover:text-red-500 transition-colors"
+                aria-label="Remove image"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+            <FileUploader
+              type="announcement"
+              maxFileSize={5}
+              acceptedFiles={['.jpg', '.jpeg', '.png', '.webp']}
+              onUploadComplete={handleImageUpload}
+              maxFiles={1}
+            />
+          )}
           <FormErrorMessage message={errors.photoURL?.message} />
         </div>
 
