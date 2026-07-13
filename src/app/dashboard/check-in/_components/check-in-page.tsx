@@ -87,7 +87,7 @@ const CheckInPage = () => {
         offset={filterParams.limit || 25}
         totalItems={data?.count}
         currentPage={filterParams.page}
-        searchKey="checkin"
+        searchKey="email"
         storageKey={`checkin-${currentTab}-columns`}
         tableHeight="calc(100vh - 430px)"
         topRightSection={

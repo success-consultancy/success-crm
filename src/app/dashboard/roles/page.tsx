@@ -15,14 +15,10 @@ export default function RolesPage() {
   if (isLoading) return <SectionLoader />;
 
   return (
-    <div className="p-6 space-y-6 max-w-6xl">
+    <div className="p-4 pt-2">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h4 text-content-heading font-bold">Manage roles</h3>
       </Portal>
-
-      <p className="text-sm text-gray-500">
-        Define what each role can do across every service. Changes apply immediately to all users with that role.
-      </p>
 
       {roles && <RolePermissionsCard roles={roles} readonly={!isAdmin} />}
     </div>

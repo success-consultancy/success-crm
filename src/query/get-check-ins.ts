@@ -8,6 +8,8 @@ import QueryString from 'qs';
 interface CheckInsFilterParams extends IPagination {
   q?: string;
   q_field?: string;
+  order?: string;
+  order_by?: string;
   tab?: string;
 }
 
@@ -15,6 +17,8 @@ export const CHECK_INS_FILTER_PARAMS: Array<keyof CheckInsFilterParams> = [
   ...PAGINATION_PARAMS,
   'q',
   'q_field',
+  'order',
+  'order_by',
   'tab',
 ];
 

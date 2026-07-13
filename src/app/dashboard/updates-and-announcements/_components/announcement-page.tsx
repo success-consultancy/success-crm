@@ -71,7 +71,7 @@ const AnnouncementPage = () => {
   return (
     <Container className="flex flex-col h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h5 text-content-heading font-bold">Updates & Announcements</h3>
+        <h3 className="text-h5 text-content-heading font-bold">News & Updates </h3>
       </Portal>
       <TableComponent
         data={data?.rows as IAnnouncement[]}

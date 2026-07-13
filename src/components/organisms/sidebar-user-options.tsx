@@ -4,16 +4,13 @@ import React from 'react';
 import { LogoutCurve } from 'iconsax-reactjs';
 
 import { cn } from '@/lib/utils';
-import { clearTokens } from '@/utils/token';
+import { logout } from '@/utils/logout';
 import { useSidebarStore } from '@/store/sidebar-store';
 
 const SidebarUserOptions = () => {
   const { isCollapsed } = useSidebarStore();
 
-  const handleLogout = () => {
-    clearTokens();
-    window.location.href = '/login';
-  };
+  const handleLogout = () => logout();
 
   return (
     <div

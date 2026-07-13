@@ -117,7 +117,7 @@ export const useActiveCheckInColumns = (onEndSession: (id: number) => void) => {
     },
     {
       id: 'checkin-status',
-      header: () => <ColumnHeader title="Status" keyParam="isNew" />,
+      header: () => <ColumnHeader title="Status" keyParam="isNew" enableSearch={false} />,
       cell: function Cell({ row }) {
         const ctx = useTableContext();
         if (ctx?.isLoading) return <Skeleton className="w-20 h-5" />;
@@ -262,7 +262,7 @@ export const useHistoryCheckInColumns = () => {
     },
     {
       id: 'checkin-status',
-      header: () => <ColumnHeader title="Status" keyParam="isNew" />,
+      header: () => <ColumnHeader title="Status" keyParam="isNew" enableSearch={false} />,
       cell: function Cell({ row }) {
         const ctx = useTableContext();
         if (ctx?.isLoading) return <Skeleton className="w-20 h-5" />;

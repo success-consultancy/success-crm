@@ -19,12 +19,23 @@ const SERVICES: { key: ServiceKey; label: string }[] = [
   { key: 'announcement', label: 'News and updates' },
   { key: 'users', label: 'Users' },
   { key: 'university', label: 'University' },
-  { key: 'course', label: 'Course' },
-  { key: 'source', label: 'Source' },
-  { key: 'settings', label: 'Settings' },
+  { key: 'course', label: 'Courses' },
 ];
 
-const ACTIONS: (keyof CrudActions)[] = ['read', 'create', 'update', 'delete'];
+const ACTIONS: { key: keyof CrudActions; label: string }[] = [
+  { key: 'read', label: 'View' },
+  { key: 'create', label: 'Create' },
+  { key: 'update', label: 'Edit' },
+  { key: 'delete', label: 'Delete' },
+];
+
+const ROLE_LABEL: Record<number, string> = {
+  1: 'Super admin',
+  2: 'Manager',
+  3: 'General user',
+  4: 'Accounting',
+  5: 'Lead Management',
+};
 
 const emptyActions = (): CrudActions => ({ create: false, read: false, update: false, delete: false });
 
@@ -48,12 +59,9 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
   const [isDirty, setIsDirty] = useState(false);
   const { mutate: updatePermissions, isPending } = useUpdateRolePermissions();
 
-  // Update permissions when role tab changes
   const handleRoleChange = (roleId: number) => {
-    if (isDirty) {
-      if (!confirm('Unsaved changes. Switch anyway?')) return;
-      setIsDirty(false);
-    }
+    if (isDirty && !confirm('Unsaved changes. Switch anyway?')) return;
+    setIsDirty(false);
     setActiveRoleId(roleId);
     const newRole = roles.find((r) => r.id === roleId)!;
     const base = {} as RoleCrudPermissions;
@@ -71,34 +79,6 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
     setIsDirty(true);
   };
 
-  const toggleAll = (service: ServiceKey, value: boolean) => {
-    setPermissions((prev) => ({
-      ...prev,
-      [service]: { create: value, read: value, update: value, delete: value },
-    }));
-    setIsDirty(true);
-  };
-
-  const toggleColumn = (action: keyof CrudActions, value: boolean) => {
-    setPermissions((prev) => {
-      const next = { ...prev } as RoleCrudPermissions;
-      SERVICES.forEach(({ key }) => {
-        next[key] = { ...next[key], [action]: value };
-      });
-      return next;
-    });
-    setIsDirty(true);
-  };
-
-  const toggleEntireRole = (value: boolean) => {
-    const next = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => {
-      next[key] = { create: value, read: value, update: value, delete: value };
-    });
-    setPermissions(next);
-    setIsDirty(true);
-  };
-
   const handleSave = () => {
     updatePermissions({ id: activeRole.id, permissions }, { onSuccess: () => setIsDirty(false) });
   };
@@ -112,51 +92,38 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
     setIsDirty(false);
   };
 
-  const isManaged = (service: ServiceKey) =>
-    ACTIONS.every((a) => permissions[service][a.toLowerCase() as keyof CrudActions]);
-  const isColumnAll = (action: keyof CrudActions) => SERVICES.every(({ key }) => permissions[key][action]);
-  const isAllManaged = SERVICES.every(({ key }) => isManaged(key));
-  const grantedCount = SERVICES.reduce(
-    (sum, { key }) => sum + ACTIONS.filter((a) => permissions[key][a.toLowerCase() as keyof CrudActions]).length,
-    0,
-  );
-  const totalCount = SERVICES.length * ACTIONS.length;
-
-  const roleLabel: Record<number, string> = {
-    1: 'Super admin',
-    2: 'Manager',
-    3: 'General user',
-    4: 'Accounting',
-    5: 'Lead Management',
-  };
-
   return (
-    <div className="bg-white rounded-lg border border-gray-200">
-      {/* Tabs */}
-      <div className="flex border-b border-gray-200 bg-gray-50">
+    <div className="bg-white rounded-xl border border-[#EBEBEB]">
+      {/* Role tabs */}
+      <div className="flex border-b border-[#EBEBEB] gap-1 px-2">
         {roles.map((role) => (
           <button
             key={role.id}
             onClick={() => handleRoleChange(role.id)}
-            className={`px-5 py-3 text-sm font-medium transition-colors ${
+            className={`relative flex items-center px-3 h-11 text-sm transition-colors ${
               activeRoleId === role.id
-                ? 'border-b-2 border-blue-600 text-blue-600 bg-white'
-                : 'text-gray-600 hover:text-gray-900'
+                ? 'font-semibold text-[#1C1C1C]'
+                : 'font-medium text-[#484848] hover:text-[#1C1C1C]'
             }`}
           >
-            {roleLabel[role.id]}
+            {ROLE_LABEL[role.id] ?? role.role}
+            {activeRoleId === role.id && (
+              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#007ACC] rounded-full" />
+            )}
           </button>
         ))}
       </div>
 
-      {/* Header with Save/Cancel */}
-      <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white">
-        <span className="text-xs text-gray-500">
-          {grantedCount} / {totalCount} permissions
-        </span>
+      {/* Body */}
+      <div className="p-4 flex flex-col gap-4">
+        {/* Save / Reset — admin only, shown when dirty */}
         {!readonly && isDirty && (
-          <div className="flex items-center gap-2">
-            <button type="button" onClick={handleReset} className="text-xs text-gray-400 hover:text-gray-600 underline">
+          <div className="flex items-center justify-end gap-2">
+            <button
+              type="button"
+              onClick={handleReset}
+              className="text-xs text-gray-400 hover:text-gray-600 underline"
+            >
               Reset
             </button>
             <Button onClick={handleSave} disabled={isPending} className="h-8 text-xs px-3">
@@ -164,65 +131,52 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
             </Button>
           </div>
         )}
-      </div>
 
-      {/* Grid */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-sm">
-          <thead>
-            <tr className="border-b border-gray-100 bg-gray-50/50">
-              <th className="text-left px-6 py-3 font-medium text-gray-700 w-56">Permission</th>
-              <th className="px-4 py-3 text-center font-medium text-gray-700 w-20">
-                <div className="flex flex-col items-center gap-1.5">
-                  <span className="text-xs">Manage</span>
-                  <Checkbox
-                    checked={isAllManaged}
-                    onCheckedChange={(v) => !readonly && toggleEntireRole(!!v)}
-                    disabled={readonly}
-                  />
-                </div>
-              </th>
-              {ACTIONS.map((action) => (
-                <th key={action} className="px-4 py-3 text-center font-medium text-gray-700 w-20">
-                  <div className="flex flex-col items-center gap-1.5">
-                    <span className="text-xs">{action}</span>
-                    <Checkbox
-                      checked={isColumnAll(action.toLowerCase() as keyof CrudActions)}
-                      onCheckedChange={(v) => !readonly && toggleColumn(action.toLowerCase() as keyof CrudActions, !!v)}
-                      disabled={readonly}
-                    />
-                  </div>
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {SERVICES.map(({ key, label }) => (
-              <tr key={key} className="hover:bg-gray-50/50 transition-colors">
-                <td className="px-6 py-3 font-medium text-gray-700 text-sm">{label}</td>
-                <td className="px-4 py-3 text-center">
-                  <Checkbox
-                    checked={isManaged(key)}
-                    onCheckedChange={(v) => !readonly && toggleAll(key, !!v)}
-                    disabled={readonly}
-                  />
-                </td>
-                {ACTIONS.map((action) => {
-                  const actionKey = action.toLowerCase() as keyof CrudActions;
-                  return (
-                    <td key={action} className="px-4 py-3 text-center">
-                      <Checkbox
-                        checked={permissions[key][actionKey]}
-                        onCheckedChange={(v) => !readonly && toggle(key, actionKey, !!v)}
-                        disabled={readonly}
-                      />
+        {/* Permissions table */}
+        <div className="border border-[#EBEBEB] rounded-[10px] overflow-hidden">
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm border-collapse">
+              <thead>
+                <tr>
+                  <th className="sticky left-0 z-10 bg-[#F9FAFB] text-left px-3 py-3.5 text-sm font-semibold text-[#484848] border-b border-[#EBEBEB] min-w-[220px]">
+                    Permission
+                  </th>
+                  {ACTIONS.map(({ key, label }) => (
+                    <th
+                      key={key}
+                      className="bg-[#F9FAFB] text-center px-3 py-3.5 text-sm font-semibold text-[#484848] border-b border-[#EBEBEB] w-[136px] min-w-[136px]"
+                    >
+                      {label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {SERVICES.map(({ key, label }, idx) => (
+                  <tr
+                    key={key}
+                    className={idx < SERVICES.length - 1 ? 'border-b border-[#EBEBEB]' : ''}
+                  >
+                    <td className="sticky left-0 bg-white px-3 py-3.5 text-sm text-[#1C1C1C]">
+                      {label}
                     </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    {ACTIONS.map(({ key: actionKey }) => (
+                      <td key={actionKey} className="px-3 py-3.5 text-center">
+                        <div className="flex items-center justify-center">
+                          <Checkbox
+                            checked={permissions[key]?.[actionKey] ?? false}
+                            onCheckedChange={(v) => !readonly && toggle(key, actionKey, !!v)}
+                            disabled={readonly}
+                          />
+                        </div>
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );

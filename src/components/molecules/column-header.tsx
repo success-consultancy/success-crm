@@ -10,9 +10,15 @@ type Props = {
   title: string;
   keyParam: string;
   className?: string;
+  /** Show the per-column search box. Defaults to true. */
+  enableSearch?: boolean;
+  /** Show the sort options. Defaults to true. */
+  enableSort?: boolean;
 };
 
 const ColumnHeader = (props: Props) => {
+  const enableSearch = props.enableSearch ?? true;
+  const enableSort = props.enableSort ?? true;
   const [sortingState, setSortingState] = useState<string | undefined>();
   const [searchValue, setSearchValue] = useState('');
   const [open, setOpen] = useState(false);
@@ -151,6 +157,7 @@ const ColumnHeader = (props: Props) => {
       <PopoverContent className="w-56 p-2" align="start">
         <div className="flex flex-col gap-1">
           {/* Search Section */}
+          {enableSearch && (
           <div className="p-2 border-b border-border">
             <div className="relative">
               <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -171,8 +178,10 @@ const ColumnHeader = (props: Props) => {
               )}
             </div>
           </div>
-          
+          )}
+
           {/* Sort Section */}
+          {enableSort && (
           <div className="p-2">
             <p className="text-xs font-medium text-muted-foreground mb-2">Sort by</p>
             <button
@@ -195,16 +204,20 @@ const ColumnHeader = (props: Props) => {
               <ArrowDownZA className="h-4 w-4" />
               <span>Sort Descending</span>
             </button>
-            <button
-              onClick={() => handleSortChange('none')}
-              className={cn([
-                'flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left w-full',
-              ])}
-            >
-              <X className="h-4 w-4" />
-              <span>Clear Sort</span>
-            </button>
+            {/* Clear Sort only makes sense once a sort is active (CRM-148) */}
+            {isSorted && (
+              <button
+                onClick={() => handleSortChange('none')}
+                className={cn([
+                  'flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left w-full',
+                ])}
+              >
+                <X className="h-4 w-4" />
+                <span>Clear Sort</span>
+              </button>
+            )}
           </div>
+          )}
         </div>
       </PopoverContent>
     </Popover>

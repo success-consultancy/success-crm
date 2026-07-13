@@ -1,7 +1,8 @@
 import axios, { AxiosRequestConfig } from 'axios';
-import { getAccessToken, removeAccessToken, saveAccessToken } from '@/utils/auth-token';
+import { getAccessToken, saveAccessToken } from '@/utils/auth-token';
 import { queryClient } from '@/context/tanstack-context';
 import useAuthStore from '@/store/auth-store';
+import { logout } from '@/utils/logout';
 
 const baseURL = process.env.NEXT_PUBLIC_BACKEND_URL;
 
@@ -65,15 +66,13 @@ api.interceptors.response.use(
 
           return api(originalConfig as AxiosRequestConfig<unknown>);
         } catch (_error: any) {
-          // if expired token clear auth states , It triggers redirect to login page
+          // Refresh failed → the session is no longer valid. Clear auth state and
+          // redirect to the login page so the user can sign in again.
           if (_error?.response?.status === 401) {
-            removeAccessToken();
             if (originalConfig.url !== '/auth/login') {
               queryClient.resetQueries();
             }
-
-            // clear auth store if session expires
-            // useAuthStore.setState({ profile: null, masqueradingAs: '', isMasquerading: false, websiteId: '' });
+            logout();
           }
 
           return Promise.reject(_error);

@@ -83,22 +83,17 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
     },
     {
       id: 'announcement-photo',
-      header: () => <ColumnHeader title="Image" keyParam="photoURL" />,
+      header: () => <span className="font-medium">Image</span>,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-16 h-10" />;
         const url = row.original.photoURL;
         if (!url) return <div className="text-gray-400 text-sm">No image</div>;
-        return (
-          <img
-            src={url}
-            alt={row.original.title}
-            className="h-10 w-16 object-cover rounded"
-          />
-        );
+        return <img src={url} alt={row.original.title} className="h-10 w-16 object-cover rounded" />;
       },
       size: 140,
       meta: { isVisible: true },
+      enableSorting: false,
     },
     {
       id: 'announcement-created-at',

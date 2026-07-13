@@ -12,7 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ChevronDown } from 'lucide-react';
 import { User, LogoutCurve, Document } from 'iconsax-reactjs';
 import { useRouter } from 'next/navigation';
-import { clearTokens } from '@/utils/token';
+import { logout } from '@/utils/logout';
 import useAuthStore from '@/store/auth-store';
 
 type MenuItem = {
@@ -36,10 +36,7 @@ const menuItems: MenuItem[] = [
   {
     label: 'Sign Out',
     icon: LogoutCurve,
-    onClick: () => {
-      clearTokens();
-      window.location.href = '/login';
-    },
+    onClick: () => logout(),
   },
 ];
 
