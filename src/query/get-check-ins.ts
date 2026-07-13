@@ -11,6 +11,8 @@ interface CheckInsFilterParams extends IPagination {
   order?: string;
   order_by?: string;
   tab?: string;
+  from?: string;
+  to?: string;
 }
 
 export const CHECK_INS_FILTER_PARAMS: Array<keyof CheckInsFilterParams> = [
@@ -20,6 +22,8 @@ export const CHECK_INS_FILTER_PARAMS: Array<keyof CheckInsFilterParams> = [
   'order',
   'order_by',
   'tab',
+  'from',
+  'to',
 ];
 
 const getCheckIns = async (params: CheckInsFilterParams) => {

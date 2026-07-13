@@ -59,6 +59,14 @@ const CheckInPage = () => {
     ]);
   };
 
+  const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
+    setParams([
+      { name: 'from', value: range.from?.toISOString() || null },
+      { name: 'to', value: range.to?.toISOString() || null },
+      { name: 'page', value: null },
+    ]);
+  };
+
   const activeColumns = useActiveCheckInColumns(handleEndSession);
   const historyColumns = useHistoryCheckInColumns();
 
@@ -88,6 +96,7 @@ const CheckInPage = () => {
         totalItems={data?.count}
         currentPage={filterParams.page}
         searchKey="email"
+        handleDateRangeApply={handleDateRangeApply}
         storageKey={`checkin-${currentTab}-columns`}
         tableHeight="calc(100vh - 430px)"
         topRightSection={
