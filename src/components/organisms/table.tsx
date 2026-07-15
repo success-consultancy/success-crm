@@ -25,9 +25,17 @@ import Pagination from '../molecules/pagination-component';
 import { ColumnSelector } from '../molecules/table-column-selector';
 import DeleteDialog from './delete.dialog';
 import EmailDialog from './email.dialog';
-import { Mail, Trash2 } from 'lucide-react';
+import { Inbox, Mail, Trash2 } from 'lucide-react';
 import { DateRangePicker } from '../molecules/date-range.picker';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
+
+const DEFAULT_EMPTY_STATE = (
+  <div className="flex flex-col items-center justify-center py-16 text-center">
+    <Inbox className="h-12 w-12 text-gray-300" />
+    <h3 className="mt-4 text-base font-semibold text-gray-800">No data found</h3>
+    <p className="mt-1 text-sm text-gray-500">There are no records to display.</p>
+  </div>
+);
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -98,7 +106,7 @@ const TableComponent = <TData, TValue>({
   topRightSection,
   tableHeaderSection,
   extraFilters,
-  emptyState,
+  emptyState = DEFAULT_EMPTY_STATE,
   tableHeight = 'calc(100vh - 300px)', // Default height, can be overridden via props
   onBulkDelete,
   handleDateRangeApply,
