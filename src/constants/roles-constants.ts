@@ -11,6 +11,14 @@ export const ROLES = {
   ACCOUNTING,
   LEAD_MANAGEMENT,
 };
+
+export const ROLE_LABELS: Record<number, string> = {
+  [SUPER_ADMIN]: 'Super admin',
+  [MANAGER]: 'Manager',
+  [GENERAL]: 'General user',
+  [ACCOUNTING]: 'Accounting',
+  [LEAD_MANAGEMENT]: 'Lead Management',
+};
 const SUPER_ROLE = [SUPER_ADMIN, MANAGER];
 const SUPER_ADMIN_ROLES = [SUPER_ADMIN];
 const GENERAL_ROLE = [GENERAL];
