@@ -82,6 +82,20 @@ const ViewUniversityPage = ({ id }: Props) => {
     );
   };
 
+  const handleRemoveDocument = (fileUrl: string) => {
+    const next = files.filter((f) => f.url !== fileUrl);
+    editUniversity(
+      { id: university.id, files: next, name: university.name },
+      {
+        onSuccess: () => {
+          toast.success('Document removed successfully');
+          refetch();
+        },
+        onError: () => toast.error('Failed to remove document'),
+      },
+    );
+  };
+
   return (
     <Container className="flex flex-col py-10 gap-4">
       <Portal rootId={PortalIds.DashboardHeader}>
@@ -190,6 +204,7 @@ const ViewUniversityPage = ({ id }: Props) => {
                   <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Size</th>
                   <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Type</th>
                   <th className="text-left py-3 px-3 text-neutral-dark-grey text-b14-600">Date added</th>
+                  <th className="text-right py-3 px-3 text-neutral-dark-grey text-b14-600">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -209,6 +224,18 @@ const ViewUniversityPage = ({ id }: Props) => {
                     <td className="py-3 px-3 text-neutral-dark-grey text-b14">{getFileType(file.name)}</td>
                     <td className="py-3 px-3 text-neutral-dark-grey text-b14">
                       {file.addedDate ? format(new Date(file.addedDate), 'dd/MM/yyyy') : '-'}
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <DeleteDialog
+                        trigger={
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        }
+                        title="Remove Document"
+                        description={`Are you sure you want to remove "${file.name}"? This action cannot be undone.`}
+                        onConfirm={() => handleRemoveDocument(file.url)}
+                      />
                     </td>
                   </tr>
                 ))}

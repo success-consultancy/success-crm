@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, X } from 'lucide-react';
 import {
   agreementFormSchema,
   AgreementSchemaType,
@@ -118,10 +118,17 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
     setValue('files', merged, { shouldValidate: true });
   };
 
+  const handleRemoveFile = (url: string) => {
+    const next = uploadedFiles.filter((f) => f.url !== url);
+    setUploadedFiles(next);
+    setValue('files', next, { shouldValidate: true });
+  };
+
   const submitHandler = (data: AgreementSchemaType) => {
+    const payload = { ...data, files: uploadedFiles };
     if (isEditMode && id) {
       editAgreement(
-        { ...data, id },
+        { ...payload, id },
         {
           onSuccess: () => {
             toast.success('Agreement updated successfully');
@@ -134,7 +141,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         },
       );
     } else {
-      addAgreement(data, {
+      addAgreement(payload, {
         onSuccess: () => {
           toast.success('Agreement created successfully');
           form.reset();
@@ -321,11 +328,19 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
           />
           {uploadedFiles.length > 0 && (
             <div className="mt-2 space-y-1">
-              {uploadedFiles.map((f, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+              {uploadedFiles.map((f) => (
+                <div key={f.url} className="flex items-center gap-2 text-sm text-gray-600">
                   <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     {f.name}
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(f.url)}
+                    className="text-gray-400 hover:text-red-500"
+                    aria-label="Remove file"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
               ))}
             </div>

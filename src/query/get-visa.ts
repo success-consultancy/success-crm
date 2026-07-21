@@ -112,5 +112,6 @@ export const useGetVisaConst = () => {
     queryKey: [GET_VISA_CONST],
     queryFn: getVisaConst,
     refetchOnWindowFocus: false,
+    select: (data) => [...data].sort((a, b) => (a.visaType ?? '').localeCompare(b.visaType ?? '')),
   });
 };

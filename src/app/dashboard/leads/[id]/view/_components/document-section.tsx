@@ -1,12 +1,13 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Trash2 } from 'lucide-react';
 import { ILead } from '@/types/response-types/leads-response';
 import FileUploader from '@/components/organisms/file-uploader';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogClose } from '@/components/ui/dialog';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { LeadSchemaType } from '@/schema/lead-schema';
 import { FilePreviewDialog } from '@/components/organisms/preview-model';
@@ -31,17 +32,19 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
 
   const editLead = useEditLead();
 
+  // Keep local state in sync with the latest lead (e.g. after a save refetch).
+  useEffect(() => {
+    setLeadData(lead);
+  }, [lead]);
+
   const handleAddDocument = () => {
     setIsUploaderOpen(true);
   };
 
-  const handleDocumentUpload = (files: UploadedFileMeta[]) => {
-    const updatedFiles = [...(leadData?.files || []), ...files];
-
+  const persistFiles = (updatedFiles: ILead['files']) => {
     setLeadData({ ...leadData, files: updatedFiles });
 
-    // Update lead when document is added
-    const { createdAt, updatedAt, deletedAt, clientIds, ...rest } = leadData;
+    const { createdAt, updatedAt, deletedAt, clientIds, leadStage, leadStageHistory, source, user, ...rest } = leadData;
     const payload = {
       ...rest,
       id: lead.id,
@@ -49,10 +52,17 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
       files: updatedFiles,
     } as Omit<LeadSchemaType, 'serviceType'> & { serviceType: string; id: number; hasVisitedStep: boolean };
 
-    editLead.mutate({
-      ...payload,
-    });
+    editLead.mutate({ ...payload });
+  };
 
+  const handleRemoveDocument = (fileUrl: string) => {
+    const updatedFiles = (leadData?.files || []).filter((f) => f.url !== fileUrl);
+    persistFiles(updatedFiles);
+  };
+
+  const handleDocumentUpload = (files: UploadedFileMeta[]) => {
+    const updatedFiles = [...(leadData?.files || []), ...files] as ILead['files'];
+    persistFiles(updatedFiles);
     setIsUploaderOpen(false);
   };
 
@@ -103,11 +113,12 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
               </TableHead>
               <TableHead className="text-gray-800 text-sm font-medium py-3">Size</TableHead>
               <TableHead className="text-gray-800 text-sm font-medium py-3">Type</TableHead>
-              <TableHead className="text-gray-800 text-sm font-medium py-3 pr-6">Date added</TableHead>
+              <TableHead className="text-gray-800 text-sm font-medium py-3">Date added</TableHead>
+              <TableHead className="text-gray-800 text-sm font-medium py-3 pr-6 text-right">Action</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {lead?.files?.map((doc, index) => {
+            {leadData?.files?.map((doc, index) => {
               const fileName = doc.name || getFileNameFromURL(doc as any);
 
               const fileExtension = getFileExtension(fileName || '');
@@ -129,7 +140,24 @@ const DocumentsSection = ({ lead }: { lead: ILead }) => {
                   </TableCell>
                   <TableCell>{fileSize}</TableCell>
                   <TableCell>{fileExtension}</TableCell>
-                  <TableCell className="pr-6">{new Date(doc.addedDate).toLocaleDateString('en-GB')}</TableCell>
+                  <TableCell>{new Date(doc.addedDate).toLocaleDateString('en-GB')}</TableCell>
+                  <TableCell className="pr-6 text-right">
+                    <DeleteDialog
+                      trigger={
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-red-600 hover:text-red-700"
+                          disabled={editLead.isPending}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      }
+                      title="Remove Document"
+                      description={`Are you sure you want to remove "${fileName}"? This action cannot be undone.`}
+                      onConfirm={() => handleRemoveDocument(doc.url)}
+                    />
+                  </TableCell>
                 </TableRow>
               );
             })}

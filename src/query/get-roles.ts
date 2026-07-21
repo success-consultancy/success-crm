@@ -25,7 +25,9 @@ export type ServiceKey =
   | 'university'
   | 'course'
   | 'source'
-  | 'settings';
+  | 'settings'
+  | 'occupation'
+  | 'visaList';
 
 export type RoleCrudPermissions = Record<ServiceKey, CrudActions>;
 

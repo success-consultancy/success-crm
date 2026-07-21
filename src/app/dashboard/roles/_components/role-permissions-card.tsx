@@ -20,6 +20,8 @@ const SERVICES: { key: ServiceKey; label: string }[] = [
   { key: 'users', label: 'Users' },
   { key: 'university', label: 'University' },
   { key: 'course', label: 'Courses' },
+  { key: 'occupation', label: 'Occupation' },
+  { key: 'visaList', label: 'Visa list' },
 ];
 
 const ACTIONS: { key: keyof CrudActions; label: string }[] = [

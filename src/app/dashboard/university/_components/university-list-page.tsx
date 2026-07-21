@@ -178,9 +178,9 @@ const UniversityListPage = () => {
   };
 
   const handleExport = useCallback(() => {
-    if (!universities.length) return;
+    if (!sorted.length) return;
     const headers = ['ID', 'University Name', 'Group', 'Location', 'Description', 'Track in Report'];
-    const rows = universities.map((u) => [
+    const rows = sorted.map((u) => [
       u.id,
       u.name,
       u.educationLevel || '',
@@ -192,7 +192,7 @@ const UniversityListPage = () => {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
     downloadFile(csv, 'universities.csv', 'text/csv;charset=utf-8;');
-  }, [universities]);
+  }, [sorted]);
 
   const rangeStart = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;
   const rangeEnd = Math.min(page * pageSize, totalItems);

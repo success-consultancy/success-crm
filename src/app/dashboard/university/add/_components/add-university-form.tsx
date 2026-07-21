@@ -5,11 +5,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { ArrowLeft, X, ChevronDown } from 'lucide-react';
-import {
-  universityFormSchema,
-  UniversitySchemaType,
-  getUniversityDefaultValues,
-} from '@/schema/university-schema';
+import { universityFormSchema, UniversitySchemaType, getUniversityDefaultValues } from '@/schema/university-schema';
 import { useAddUniversity } from '@/mutations/university/add-university';
 import { useEditUniversity } from '@/mutations/university/edit-university';
 import { useGetCourse, useGetAllCourses } from '@/query/get-course';
@@ -65,9 +61,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
   const { data: allSystemCourses = [] } = useGetAllCourses();
   // Fetch existing linked courses for this university (edit mode)
   const { data: allCoursesForUni = [] } = useGetCourse(isEditMode ? id : undefined);
-  const availableCourses = isEditMode
-    ? allCoursesForUni.filter((c) => c.universityId === id)
-    : [];
+  const availableCourses = isEditMode ? allCoursesForUni.filter((c) => c.universityId === id) : [];
 
   const form = useForm<UniversitySchemaType>({
     resolver: zodResolver(universityFormSchema),
@@ -105,6 +99,12 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
   const handleDescriptionChange = (content: string) => {
     setDescription(content);
     setValue('description', content, { shouldValidate: true });
+  };
+
+  const handleRemoveFile = (url: string) => {
+    const next = uploadedFiles.filter((f) => f.url !== url);
+    setUploadedFiles(next);
+    setValue('files', next, { shouldValidate: true });
   };
 
   const handleFileUploadComplete = (newFiles: UploadedFileMeta[]) => {
@@ -150,12 +150,13 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
       .reduce((map, c) => {
         if (!map.has(c.name.toLowerCase())) map.set(c.name.toLowerCase(), c);
         return map;
-      }, new Map<string, typeof allSystemCourses[0]>())
+      }, new Map<string, (typeof allSystemCourses)[0]>())
       .values(),
   );
 
   const submitHandler = (data: UniversitySchemaType) => {
-    const { courses: _courses, ...payload } = data;
+    const { courses: _courses, ...rest } = data;
+    const payload = { ...rest, files: uploadedFiles };
 
     if (isEditMode && id) {
       editUniversity(
@@ -313,17 +314,18 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
                           {course.name}
                         </CommandItem>
                       ))}
-                      {courseSearch.trim() && filteredOptions.some(
-                        (c) => c.name.toLowerCase() === courseSearch.trim().toLowerCase(),
-                      ) === false && filteredOptions.length > 0 && (
-                        <CommandItem
-                          value={`__add__${courseSearch}`}
-                          onSelect={() => addNewCourse(courseSearch)}
-                          className="text-primary"
-                        >
-                          Add &quot;{courseSearch.trim()}&quot;
-                        </CommandItem>
-                      )}
+                      {courseSearch.trim() &&
+                        filteredOptions.some((c) => c.name.toLowerCase() === courseSearch.trim().toLowerCase()) ===
+                          false &&
+                        filteredOptions.length > 0 && (
+                          <CommandItem
+                            value={`__add__${courseSearch}`}
+                            onSelect={() => addNewCourse(courseSearch)}
+                            className="text-primary"
+                          >
+                            Add &quot;{courseSearch.trim()}&quot;
+                          </CommandItem>
+                        )}
                     </CommandGroup>
                   </CommandList>
                 </Command>
@@ -383,11 +385,19 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
           />
           {uploadedFiles.length > 0 && (
             <div className="mt-2 space-y-1">
-              {uploadedFiles.map((f, i) => (
-                <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+              {uploadedFiles.map((f) => (
+                <div key={f.url} className="flex items-center gap-2 text-sm text-gray-600">
                   <a href={f.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
                     {f.name}
                   </a>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveFile(f.url)}
+                    className="text-gray-400 hover:text-red-500"
+                    aria-label="Remove file"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
                 </div>
               ))}
             </div>

@@ -7,6 +7,8 @@ export type SubMenuItem = {
   title: string;
   href: string;
   roles?: number[];
+  /** Service key from RoleCrudPermissions — item shown when the user's role has `read` access */
+  permissionKey?: string;
 };
 
 export type MenuItem = {
@@ -100,13 +102,13 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.Setup,
     icon: Icons.SetupIcon,
     subItems: [
-      { title: 'Users & permissions', href: '/dashboard/users', roles: [1, 2] },
-      { title: 'Occupation', href: '/dashboard/occupation', roles: [1, 2] },
-      { title: 'Visa List',  href: '/dashboard/visa-list',  roles: [1, 2] },
-      { title: 'University', href: '/dashboard/university', roles: [1, 2] },
-      { title: 'Course',     href: '/dashboard/course',     roles: [1, 2] },
-      { title: 'Source',     href: '/dashboard/source',     roles: [1, 2] },
-      { title: 'Settings',   href: '/dashboard/settings',   roles: [1] },
+      { title: 'Users & permissions', href: '/dashboard/users',      permissionKey: 'users' },
+      { title: 'Occupation',          href: '/dashboard/occupation',  permissionKey: 'occupation' },
+      { title: 'Visa List',           href: '/dashboard/visa-list',   permissionKey: 'visaList' },
+      { title: 'University',          href: '/dashboard/university',  permissionKey: 'university' },
+      { title: 'Course',              href: '/dashboard/course',      permissionKey: 'course' },
+      { title: 'Source',              href: '/dashboard/source',      permissionKey: 'source' },
+      { title: 'Settings',            href: '/dashboard/settings',    permissionKey: 'settings' },
     ],
   },
 ];

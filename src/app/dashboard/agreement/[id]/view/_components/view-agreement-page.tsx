@@ -64,6 +64,20 @@ const ViewAgreementPage = ({ id }: Props) => {
     });
   };
 
+  const handleRemoveDocument = (fileUrl: string) => {
+    const next = files.filter((f) => f.url !== fileUrl);
+    editAgreement(
+      { id: agreement.id, files: next, universityId: agreement.universityId, status: agreement.status },
+      {
+        onSuccess: () => {
+          toast.success('Document removed successfully');
+          refetch();
+        },
+        onError: () => toast.error('Failed to remove document'),
+      },
+    );
+  };
+
   const handleAddDocument = (newFiles: UploadedFileMeta[]) => {
     const merged = [...files, ...newFiles];
     editAgreement(
@@ -195,6 +209,7 @@ const ViewAgreementPage = ({ id }: Props) => {
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">Size</th>
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">Type</th>
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">Date added</th>
+                  <th className="text-right py-2 px-3 text-gray-500 font-medium">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -214,6 +229,18 @@ const ViewAgreementPage = ({ id }: Props) => {
                     <td className="py-3 px-3 text-gray-600">{getFileType(file.name)}</td>
                     <td className="py-3 px-3 text-gray-600">
                       {file.addedDate ? format(new Date(file.addedDate), 'dd/MM/yyyy') : '-'}
+                    </td>
+                    <td className="py-3 px-3 text-right">
+                      <DeleteDialog
+                        trigger={
+                          <Button variant="ghost" size="icon" className="h-8 w-8 text-red-600 hover:text-red-700">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        }
+                        title="Remove Document"
+                        description={`Are you sure you want to remove "${file.name}"? This action cannot be undone.`}
+                        onConfirm={() => handleRemoveDocument(file.url)}
+                      />
                     </td>
                   </tr>
                 ))}

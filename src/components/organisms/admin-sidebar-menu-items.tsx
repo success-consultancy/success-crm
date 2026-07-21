@@ -3,25 +3,38 @@
 import { usePathname } from 'next/navigation';
 import { Accordion } from '@/components/ui/accordion';
 import { AccordionMenuItem } from './accordion-menu-item';
-import { MenuItem, menuItems } from '@/constants/sidebar-menu-items';
+import { MenuItem, SubMenuItem, menuItems } from '@/constants/sidebar-menu-items';
 import SimpleMenuItem from './simple-menu-item';
 import { useSidebarStore } from '@/store/sidebar-store';
 import useAuthStore from '@/store/auth-store';
+import { useGetRoles } from '@/query/get-roles';
 
 const AdminSidebarMenuItems = () => {
   const pathName = usePathname();
   const { isCollapsed } = useSidebarStore();
   const roleId = useAuthStore((s) => s.profile?.roleId ?? 0);
+  const { data: roles } = useGetRoles();
 
-  const canSee = (roles?: number[]) => !roles || roles.includes(roleId);
+  const rolePermissions = roles?.find((r) => r.id === roleId)?.permissions;
+
+  const canSee = (item: SubMenuItem | MenuItem): boolean => {
+    // Role-list check (hardcoded restriction)
+    if ('roles' in item && item.roles && !item.roles.includes(roleId)) return false;
+    // DB permission check — show when the role has at least `read` access
+    if ('permissionKey' in item && item.permissionKey) {
+      if (!rolePermissions) return false;
+      return !!(rolePermissions[item.permissionKey as keyof typeof rolePermissions] as any)?.read;
+    }
+    return true;
+  };
 
   // Filter top-level items and their sub-items by the current user's role.
   // A parent with sub-items is hidden when all its sub-items are filtered out.
   const visibleItems = menuItems.reduce<MenuItem[]>((acc, item) => {
-    if (!canSee(item.roles)) return acc;
+    if (!canSee(item)) return acc;
 
     if (item.subItems) {
-      const visibleSubItems = item.subItems.filter((sub) => canSee(sub.roles));
+      const visibleSubItems = item.subItems.filter((sub) => canSee(sub));
       if (visibleSubItems.length === 0) return acc;
       acc.push({ ...item, subItems: visibleSubItems });
     } else {
