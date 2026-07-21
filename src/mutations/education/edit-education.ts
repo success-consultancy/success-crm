@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
@@ -28,9 +28,9 @@ export const useEditEducation = () => {
           query.queryKey[0] === QUERY_KEYS.GET_EDUCATIONS || query.queryKey[0] === QUERY_KEYS.GET_EDUCATION_BY_ID,
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast("Error!", {
-        description: "Something went wrong",
+        description: getApiErrorMessage(error),
       });
     },
   });

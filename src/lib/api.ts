@@ -83,3 +83,13 @@ api.interceptors.response.use(
     return Promise.reject(err);
   },
 );
+
+/** Extract the human-readable message from an Axios error, falling back to a generic string. */
+export const getApiErrorMessage = (error: unknown, fallback = 'Something went wrong'): string => {
+  if (error !== null && typeof error === 'object') {
+    const msg = (error as any)?.response?.data?.message;
+    if (msg && typeof msg === 'string') return msg;
+    if (error instanceof Error && error.message) return error.message;
+  }
+  return fallback;
+};

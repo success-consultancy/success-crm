@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { CreateCourseFeePayload } from '@/schema/education-schema';
@@ -50,9 +50,9 @@ export const useDeleteCourseFee = () => {
         queryKey: [QUERY_KEYS.GET_EDUCATION_BY_ID],
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });

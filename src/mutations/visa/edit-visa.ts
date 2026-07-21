@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 
@@ -29,9 +29,9 @@ export const useEditVisa = () => {
           query.queryKey[0] === QUERY_KEYS.GET_VISAS || query.queryKey[0] === QUERY_KEYS.GET_VISA_BY_ID,
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });

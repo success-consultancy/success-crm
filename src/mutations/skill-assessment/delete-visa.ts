@@ -1,6 +1,6 @@
-import { QUERY_KEYS } from '@/constants/query-keys';
+﻿import { QUERY_KEYS } from '@/constants/query-keys';
 import { toast } from 'sonner';
-import { api } from '@/lib/api';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const deleteSkillAssessment = async (id: number) => {
@@ -17,9 +17,9 @@ export const useDeleteSkillAssessment = () => {
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });
@@ -39,9 +39,9 @@ export const useDeleteSkillAssessmentBulk = () => {
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });

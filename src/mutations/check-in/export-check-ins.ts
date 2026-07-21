@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import QueryString from 'qs';
@@ -28,7 +28,7 @@ const exportCheckIns = async (params: Record<string, any>) => {
 export const useExportCheckIns = () => {
   return useMutation({
     mutationFn: exportCheckIns,
-    onError: () => {
+    onError: (error: any) => {
       toast.error('Failed to export check-ins');
     },
   });

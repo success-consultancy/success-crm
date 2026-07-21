@@ -1,5 +1,5 @@
-import { QUERY_KEYS } from '@/constants/query-keys';
-import { api } from '@/lib/api';
+﻿import { QUERY_KEYS } from '@/constants/query-keys';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -17,7 +17,7 @@ export const useEndCheckInSession = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_CHECK_IN_STATS] });
       toast.success('Session ended successfully');
     },
-    onError: () => {
+    onError: (error: any) => {
       toast.error('Failed to end session');
     },
   });

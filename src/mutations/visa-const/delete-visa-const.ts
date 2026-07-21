@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_VISA_CONST } from '@/query/get-visa';
 import toast from 'react-hot-toast';
@@ -16,8 +16,8 @@ export const useDeleteVisaConst = () => {
       queryClient.invalidateQueries({ queryKey: [GET_VISA_CONST] });
       toast.success('Visa type deleted successfully');
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (error: any) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 };

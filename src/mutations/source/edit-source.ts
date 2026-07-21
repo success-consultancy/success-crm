@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_SOURCE } from '@/query/get-source';
 import toast from 'react-hot-toast';
@@ -22,8 +22,8 @@ export const useEditSource = () => {
       queryClient.invalidateQueries({ queryKey: [GET_SOURCE] });
       toast.success('Source updated successfully');
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (error: any) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 };

@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
@@ -65,9 +65,9 @@ export const useDeleteAccount = () => {
         queryKey: [QUERY_KEYS.GET_INSURANCE_BY_ID],
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });

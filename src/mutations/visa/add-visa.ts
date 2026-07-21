@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
@@ -59,9 +59,9 @@ export const useUpdateVisaStatus = () => {
         description: "Tribunal review has been updated",
       })
     },
-    onError: () => {
+    onError: (error: any) => {
       toast("Error!", {
-        description: "Something went wrong",
+        description: getApiErrorMessage(error),
       })
     },
   });

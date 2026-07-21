@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { AppointmentSchemaType } from '@/schema/appointment-schema';
@@ -74,7 +74,7 @@ export const useAddAppointment = () => {
       });
     },
     onError: (error: any) => {
-      const message = error?.response?.data?.message || error?.response?.data?.error || 'Something went wrong';
+      const message = error?.response?.data?.message || error?.response?.data?.error || getApiErrorMessage(error);
       const errors = error?.response?.data?.errors;
       
       if (errors) {

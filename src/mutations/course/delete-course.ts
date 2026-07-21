@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_COURSE } from '@/query/get-course';
 import toast from 'react-hot-toast';
@@ -16,8 +16,8 @@ export const useDeleteCourse = () => {
       queryClient.invalidateQueries({ queryKey: [GET_COURSE] });
       toast.success('Course deleted successfully');
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (error: any) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 };

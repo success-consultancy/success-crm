@@ -1,9 +1,9 @@
-'use client';
+﻿'use client';
 
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
 
-import { api } from '@/lib/api';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { SetPasswordFormValues } from '@/schema/auth/set-password-schema';
 import { ISetPasswordResponse } from '@/types/auth';
 import { useToastContext } from '@/context/toast-context';

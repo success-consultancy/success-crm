@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_UNIVERSITY } from '@/query/get-university';
 import { toast } from 'sonner';
@@ -16,8 +16,8 @@ export const useDeleteUniversity = () => {
       queryClient.invalidateQueries({ queryKey: [GET_UNIVERSITY] });
       toast('Success!', { description: 'University has been deleted' });
     },
-    onError: () => {
-      toast('Error!', { description: 'Something went wrong' });
+    onError: (error: any) => {
+      toast('Error!', { description: getApiErrorMessage(error) });
     },
   });
 };

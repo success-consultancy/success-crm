@@ -1,6 +1,6 @@
-import { QUERY_KEYS } from '@/constants/query-keys';
+﻿import { QUERY_KEYS } from '@/constants/query-keys';
 import { toast } from 'sonner';
-import { api } from '@/lib/api';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const deleteAgreement = async (id: number) => {
@@ -20,9 +20,9 @@ export const useDeleteAgreement = () => {
         description: 'Agreement has been deleted',
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });
@@ -45,9 +45,9 @@ export const useDeleteAgreementBulk = () => {
         description: 'Agreements have been deleted',
       });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', {
-        description: 'Something went wrong',
+        description: getApiErrorMessage(error),
       });
     },
   });

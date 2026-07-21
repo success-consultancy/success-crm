@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { toast } from 'sonner';
@@ -22,7 +22,7 @@ export const useCreateFiscalReport = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FISCAL_REPORT] });
       toast('Success!', { description: 'Report created.' });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast('Error!', { description: 'Something went wrong.' });
     },
   });

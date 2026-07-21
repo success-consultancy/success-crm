@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_UNIVERSITY, GET_UNIVERSITY_BY_ID } from '@/query/get-university';
 import { GET_COURSE } from '@/query/get-course';

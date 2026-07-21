@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_SETTING, ISetting } from '@/query/get-setting';
 import toast from 'react-hot-toast';
@@ -19,7 +19,7 @@ export const useUpdateSetting = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_SETTING] });
     },
-    onError: () => {
+    onError: (error: any) => {
       toast.error('Failed to update setting');
     },
   });

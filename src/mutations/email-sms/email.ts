@@ -1,4 +1,4 @@
-import { useToastContext } from '@/context/toast-context';
+﻿import { useToastContext } from '@/context/toast-context';
 import { emailSmsApi } from '@/lib/emailSmsapi';
 import { LeadSchemaType } from '@/schema/lead-schema';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
@@ -16,7 +16,7 @@ export const useSendEmail = () => {
     onSuccess: () => {
       success('Email sent successfully');
     },
-    onError: () => {
+    onError: (error: any) => {
       error('Email sending failed');
     },
   });

@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { LeadSchemaType } from '@/schema/lead-schema';
@@ -37,9 +37,9 @@ export const useEditLead = () => {
         description: "Lead has been updated",
       })
     },
-    onError: () => {
+    onError: (error: any) => {
       toast("Error!", {
-        description: "Something went wrong",
+        description: getApiErrorMessage(error),
       })
     },
   });
@@ -67,10 +67,10 @@ export const updateLeadClient = async (leadId: string, payload: IPayload) => {
 //           query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
 //       });
 //     },
-//     onError: () => {
+//     onError: (error: any) => {
 //       toast({
 //         title: 'Error!',
-//         description: 'Something went wrong',
+//         description: getApiErrorMessage(error),
 //       });
 //     },
 //   });
@@ -98,9 +98,9 @@ export const useUpdateLeadStatus = () => {
         description: "Lead has been updated",
       })
     },
-    onError: () => {
+    onError: (error: any) => {
       toast("Error!", {
-        description: "Something went wrong",
+        description: getApiErrorMessage(error),
       })
     },
   });

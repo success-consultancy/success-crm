@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_OCCUPATIONS } from '@/query/get-occupations';
 import toast from 'react-hot-toast';
@@ -21,8 +21,8 @@ export const useAddOccupation = () => {
       queryClient.invalidateQueries({ queryKey: [GET_OCCUPATIONS] });
       toast.success('Occupation added successfully');
     },
-    onError: () => {
-      toast.error('Something went wrong');
+    onError: (error: any) => {
+      toast.error(getApiErrorMessage(error));
     },
   });
 };

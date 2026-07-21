@@ -1,6 +1,6 @@
-import { useToastContext } from '@/context/toast-context';
+﻿import { useToastContext } from '@/context/toast-context';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { api } from '@/lib/api';
+import { api, getApiErrorMessage } from '@/lib/api';
 import { FollowUpSchemaType } from '@/schema/follow-up-schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -31,7 +31,7 @@ export const useUpdateFollowUp = () => {
       // Invalidate follow-up list for this lead
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
-    onError: () => {
+    onError: (error: any) => {
       error('Failed to update follow-up');
     },
   });
@@ -47,7 +47,7 @@ export const useAddFollowUp = () => {
       success('Follow-up added successfully.');
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
-    onError: () => {
+    onError: (error: any) => {
       error('Failed to add follow-up');
     },
   });
@@ -63,7 +63,7 @@ export const useDeleteFollowUp = (leadId: number | string) => {
       success('Follow-up deleted successfully.');
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(leadId)] });
     },
-    onError: () => {
+    onError: (error: any) => {
       error('Failed to delete follow-up');
     },
   });

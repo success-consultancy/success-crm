@@ -1,4 +1,4 @@
-import { api } from '@/lib/api';
+﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_ROLES, RoleCrudPermissions } from '@/query/get-roles';
 import toast from 'react-hot-toast';
@@ -21,7 +21,7 @@ export const useUpdateRolePermissions = () => {
       queryClient.invalidateQueries({ queryKey: [GET_ROLES] });
       toast.success('Role permissions updated');
     },
-    onError: () => {
+    onError: (error: any) => {
       toast.error('Failed to update role permissions');
     },
   });
