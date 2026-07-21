@@ -10,6 +10,7 @@ import CreateFiscalReportModal from './create-fiscal-report-modal';
 import { useGetFiscalReport } from '@/query/get-fiscal-report';
 import { useUpdateFiscalReport } from '@/mutations/fiscal-report/update-fiscal-report';
 import { FiscalReportRow } from '@/types/response-types/fiscal-report-response';
+import { usePermissions } from '@/hooks/use-permissions';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -69,6 +70,8 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   const [isEdit, setIsEdit] = useState(false);
   const [editData, setEditData] = useState<ReportRow[]>([]);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const { create: canCreate, update: canUpdate } = usePermissions('fiscalReport');
 
   const { initialYear, finalYear } = parseYear(fiscalYear);
 
@@ -264,7 +267,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
             isEdit={isEdit}
             isSaving={isSaving}
             isLoading={isLoading}
-            onEditToggle={() => setIsEdit(true)}
+            onEditToggle={canUpdate ? () => setIsEdit(true) : undefined}
             onSave={handleSave}
             onCancel={handleCancel}
             onCellChange={handleCellChange}
@@ -274,7 +277,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
             onFiscalYearChange={handleFiscalYearChange}
             fiscalYears={fiscalYears}
             onExport={handleExport}
-            onCreateNew={() => setIsCreateOpen(true)}
+            onCreateNew={canCreate ? () => setIsCreateOpen(true) : undefined}
           />
         </div>
       </div>

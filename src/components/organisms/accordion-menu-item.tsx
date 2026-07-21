@@ -24,7 +24,7 @@ export const AccordionMenuItem = ({ item, index, isActive, pathName }: Accordion
         className={cn(
           'relative flex h-11 items-center rounded-lg transition-all duration-300 ease-in-out hover:no-underline',
           isActive && 'bg-component-active text-primary font-medium',
-          isCollapsed ? 'justify-center px-0' : 'px-[3px]',
+          isCollapsed ? 'justify-center px-0' : 'px-[3px] pr-2',
         )}
       >
         <div

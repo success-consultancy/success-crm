@@ -226,18 +226,22 @@ export default function PerformanceTable({
           <div className="flex items-center gap-2">
             {!isEdit ? (
               <>
-                <Button variant="outline" size="sm" onClick={onEditToggle} disabled={isLoading}>
-                  <Pencil className="w-3.5 h-3.5" />
-                  Edit targets
-                </Button>
+                {onEditToggle && (
+                  <Button variant="outline" size="sm" onClick={onEditToggle} disabled={isLoading}>
+                    <Pencil className="w-3.5 h-3.5" />
+                    Edit targets
+                  </Button>
+                )}
                 <Button variant="outline" size="sm" onClick={onExport}>
                   <Download className="w-3.5 h-3.5" />
                   Export
                 </Button>
-                <Button size="sm" onClick={onCreateNew}>
-                  <Plus className="w-3.5 h-3.5" />
-                  Create new report
-                </Button>
+                {onCreateNew && (
+                  <Button size="sm" onClick={onCreateNew}>
+                    <Plus className="w-3.5 h-3.5" />
+                    Create new report
+                  </Button>
+                )}
               </>
             ) : (
               <>

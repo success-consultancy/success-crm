@@ -15,7 +15,8 @@ import { useGetBranchById, useGetBranches } from '@/query/get-branches';
 import useAuthStore from '@/store/auth-store';
 import { IUser } from '@/types/user-type';
 import { queryClient } from '@/context/tanstack-context';
-import { QUERY_KEYS } from '@/constants/query-keys';
+import { useRouter } from 'next/navigation';
+import { ROUTES } from '@/config/routes';
 import DialogWrapper from './dialog-wrapper';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -72,6 +73,7 @@ const BranchSelector = () => {
   const { data: branches, isLoading } = useGetBranches();
   const { setProfile, profile } = useAuthStore();
   const { isCollapsed } = useSidebarStore();
+  const router = useRouter();
   const [isOpen, setIsOpen] = React.useState(false);
   const [isEditOpen, setIsEditOpen] = React.useState(false);
   const [branchId, setBranchId] = React.useState(profile?.branchId || '');
@@ -82,14 +84,13 @@ const BranchSelector = () => {
       branchId: item?.id,
     } as IUser);
 
-    queryClient.resetQueries({
-      queryKey: [QUERY_KEYS.GET_LEADS],
-    });
+    queryClient.clear();
+    router.push(ROUTES.DASHBOARD);
   };
 
   const hasBranches = Array.isArray(branches) && branches.length > 0;
 
-  const IS_SUPER_ADMIN = profile?.id === SUPER_ADMIN_ROLE;
+  const IS_SUPER_ADMIN = profile?.roleId === SUPER_ADMIN_ROLE;
 
   const currentBranch = branches?.find((item) => item.id === profile?.branchId);
 

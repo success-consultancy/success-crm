@@ -10,6 +10,7 @@ import { MeUser } from '@/query/get-me';
 import { ProfileSchema, ProfileSchemaType } from '@/schema/profile-schema';
 import { useUserUpdate } from '@/mutations/auth/profile-update';
 import { useGenerateClockInCode } from '@/mutations/auth/generate-clockin-code';
+import { ROLE_LABELS } from '@/constants/roles-constants';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Input from '@/components/molecules/input';
 import Button from '@/components/atoms/button';
@@ -180,7 +181,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
 
         <div className="flex flex-col">
           <h1 className="text-bu-l mb-1">{name}</h1>
-          <span className="text-c1">Super admin</span>
+          <span className="text-c1">{user?.roleId ? ROLE_LABELS[user.roleId] : ''}</span>
         </div>
       </div>
 
@@ -226,7 +227,7 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
                 label="Role"
                 disabled
                 readOnly
-                value="Super Admin" // Display role name instead of ID
+                value={user?.roleId ? ROLE_LABELS[user.roleId] : ''} // Display role name instead of ID
                 error={errors.role?.message}
               />
             )}
