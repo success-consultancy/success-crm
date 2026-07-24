@@ -37,9 +37,8 @@ const ViewAnnouncementPage = ({ id }: Props) => {
   if (isLoading) return <PageLoader />;
   if (!announcement) return null;
 
-  const authorName = announcement.User
-    ? `${announcement.User.firstName} ${announcement.User.lastName}`
-    : '-';
+  const author = (announcement as any).user ?? announcement.User;
+  const authorName = author ? `${author.firstName} ${author.lastName}` : '-';
 
   const handleDelete = () => {
     deleteAnnouncement(announcement.id, {
@@ -58,13 +57,13 @@ const ViewAnnouncementPage = ({ id }: Props) => {
         </div>
       </Portal>
 
-      {/* Cover Image */}
+      {/* Cover Image — full-width hero banner */}
       {announcement.photoURL && (
-        <div className="bg-white rounded-lg border border-[#EBEBEB] overflow-hidden">
+        <div className="rounded-lg overflow-hidden border border-[#EBEBEB]">
           <img
             src={announcement.photoURL}
             alt={announcement.title}
-            className="w-full max-h-64 object-cover"
+            className="w-full h-72 object-cover"
           />
         </div>
       )}
@@ -108,7 +107,14 @@ const ViewAnnouncementPage = ({ id }: Props) => {
           <p className="text-xl font-bold">Content</p>
         </div>
         <div
-          className="p-6 text-sm text-neutral-dark-grey prose max-w-none"
+          className="p-6 text-sm text-neutral-dark-grey max-w-none leading-relaxed
+            [&_p]:mb-3 [&_p:last-child]:mb-0
+            [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-700 [&_a]:break-words
+            [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-3 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-3
+            [&_li]:mb-1
+            [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2
+            [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2
+            [&_strong]:font-semibold [&_em]:italic"
           dangerouslySetInnerHTML={{ __html: announcement.description }}
         />
       </div>

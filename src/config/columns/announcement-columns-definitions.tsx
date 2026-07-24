@@ -65,7 +65,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
         if (tableCtx?.isLoading) return <Skeleton className="w-48 h-6" />;
         return <div className="truncate font-medium">{row.original.title}</div>;
       },
-      size: 400,
+      size: 800,
       meta: { isVisible: true },
     },
     {
@@ -91,7 +91,7 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
         if (!url) return <div className="text-gray-400 text-sm">No image</div>;
         return <img src={url} alt={row.original.title} className="h-10 w-16 object-cover rounded" />;
       },
-      size: 140,
+      size: 200,
       meta: { isVisible: true },
       enableSorting: false,
     },
