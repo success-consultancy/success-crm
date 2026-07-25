@@ -22,7 +22,7 @@ export const useAddSource = () => {
       toast.success('Source added successfully');
     },
     onError: (err: any) => {
-      toast.error(err?.response?.data?.message || getApiErrorMessage(error));
+      toast.error(getApiErrorMessage(err));
     },
   });
 };

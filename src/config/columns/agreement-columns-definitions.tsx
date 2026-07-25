@@ -13,7 +13,10 @@ import { AGREEMENT_STATUS_COLORS, IAgreement } from '@/types/response-types/agre
 import { useRouter } from 'next/navigation';
 import { Minus } from 'lucide-react';
 
-export const useAgreementColumn = (handleDelete: (id: number) => void) => {
+export const useAgreementColumn = (
+  handleDelete: (id: number) => void,
+  { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
+) => {
   const router = useRouter();
 
   const AgreementColumns: ColumnDef<IAgreement>[] = [
@@ -230,25 +233,29 @@ export const useAgreementColumn = (handleDelete: (id: number) => void) => {
                   <Eye className="h-4 w-4" />
                   View
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="justify-start gap-2"
-                  onClick={() => router.push(`/dashboard/agreement/${row.original.id}/edit`)}
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit
-                </Button>
-                <DeleteDialog
-                  trigger={
-                    <Button variant="ghost" className="justify-start gap-2 text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
-                  }
-                  title="Delete Agreement"
-                  description="Are you sure you want to delete this agreement? This action cannot be undone."
-                  onConfirm={() => handleDelete(row.original.id)}
-                />
+                {canUpdate && (
+                  <Button
+                    variant="ghost"
+                    className="justify-start gap-2"
+                    onClick={() => router.push(`/dashboard/agreement/${row.original.id}/edit`)}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit
+                  </Button>
+                )}
+                {canDelete && (
+                  <DeleteDialog
+                    trigger={
+                      <Button variant="ghost" className="justify-start gap-2 text-red-600 hover:text-red-700">
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </Button>
+                    }
+                    title="Delete Agreement"
+                    description="Are you sure you want to delete this agreement? This action cannot be undone."
+                    onConfirm={() => handleDelete(row.original.id)}
+                  />
+                )}
               </div>
             </PopoverContent>
           </Popover>

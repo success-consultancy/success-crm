@@ -20,6 +20,7 @@ import { useGetSkillAssessments, SKILL_ASSESSMENT_FILTER_PARAMS } from '@/query/
 import { useDeleteSkillAssessment, useDeleteSkillAssessmentBulk } from '@/mutations/skill-assessment/delete-visa';
 import { ISkillAssessment } from '@/types/response-types/skill-assessment-response';
 import { useSkillAssessmentColumn } from '@/config/columns/skill-assessment-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useExportSkillAssessments } from '@/mutations/skill-assessment/export-skill-assessments';
 
 // Tab Config
@@ -32,6 +33,7 @@ let TAB_CONFIG = [
 ];
 
 const SkillAssessmentServicePage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('skill');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -59,7 +61,7 @@ const SkillAssessmentServicePage = () => {
     sendEmail(payload);
   };
 
-  const SkillAssessmentColumns = useSkillAssessmentColumn(handleDelete, handleSendEmail);
+  const SkillAssessmentColumns = useSkillAssessmentColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ISkillAssessment>[]>(SkillAssessmentColumns);
 
@@ -126,16 +128,18 @@ const SkillAssessmentServicePage = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_SKILL_ASSESSMENT} LeftIcon={Plus}>
-              Add applicant
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_SKILL_ASSESSMENT} LeftIcon={Plus}>
+                Add applicant
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

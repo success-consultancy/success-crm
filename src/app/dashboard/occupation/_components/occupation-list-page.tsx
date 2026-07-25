@@ -17,6 +17,7 @@ import { useAddOccupation } from '@/mutations/occupation/add-occupation';
 import { useEditOccupation } from '@/mutations/occupation/edit-occupation';
 import { useDeleteOccupation } from '@/mutations/occupation/delete-occupation';
 import { downloadFile } from '@/utils/download';
+import { usePermissions } from '@/hooks/use-permissions';
 
 type SortField = 'code' | 'title' | 'createdAt' | 'updatedAt';
 type SortDir = 'asc' | 'desc';
@@ -30,6 +31,7 @@ const EMPTY_FORM: FormState = { code: '', title: '' };
 const PAGE_SIZE_OPTIONS = [25, 50, 100, 250];
 
 const OccupationListPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('occupation');
   const { data: occupations = [], isLoading } = useGetOccupations();
   const { mutate: addOccupation, isPending: isAdding } = useAddOccupation();
   const { mutate: editOccupation, isPending: isEditing } = useEditOccupation();
@@ -171,9 +173,11 @@ const OccupationListPage = () => {
             <Button variant="outline" className="mr-2" onClick={handleExport}>
               Export
             </Button>
-            <Button LeftIcon={Plus} onClick={openAdd} disabled={showAddForm}>
-              Add occupation
-            </Button>
+            {canCreate && (
+              <Button LeftIcon={Plus} onClick={openAdd} disabled={showAddForm}>
+                Add occupation
+              </Button>
+            )}
           </div>
         </div>
 
@@ -279,28 +283,32 @@ const OccupationListPage = () => {
                       <td className="whitespace-nowrap">{format(new Date(occ.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
                       <td className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                            onClick={() => openEdit(occ)}
-                            aria-label="Edit occupation"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </button>
-                          <DeleteDialog
-                            trigger={
-                              <button
-                                className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
-                                aria-label="Delete occupation"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            }
-                            title="Delete occupation"
-                            description="Are you sure you want to delete this occupation?"
-                            confirmText="Yes, delete"
-                            confirmClassName="bg-red-600 hover:bg-red-700 text-white"
-                            onConfirm={() => deleteOccupation(occ.id)}
-                          />
+                          {canUpdate && (
+                            <button
+                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                              onClick={() => openEdit(occ)}
+                              aria-label="Edit occupation"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <DeleteDialog
+                              trigger={
+                                <button
+                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                  aria-label="Delete occupation"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              }
+                              title="Delete occupation"
+                              description="Are you sure you want to delete this occupation?"
+                              confirmText="Yes, delete"
+                              confirmClassName="bg-red-600 hover:bg-red-700 text-white"
+                              onConfirm={() => deleteOccupation(occ.id)}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>

@@ -15,6 +15,7 @@ import { useGetAnnouncements, ANNOUNCEMENT_FILTER_PARAMS } from '@/query/get-ann
 import { useDeleteAnnouncement, useDeleteAnnouncementBulk } from '@/mutations/announcement/delete-announcement';
 import { IAnnouncement } from '@/types/response-types/announcement-response';
 import { useAnnouncementColumn } from '@/config/columns/announcement-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import { Megaphone } from 'lucide-react';
 import ClearFilters from '@/components/molecules/clear-filters';
 
@@ -29,6 +30,7 @@ const emptyState = (
 );
 
 const AnnouncementPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('announcement');
   const { getSearchParamsObject, setParams } = useSearchParams();
   const router = useRouter();
 
@@ -58,7 +60,7 @@ const AnnouncementPage = () => {
     ]);
   };
 
-  const AnnouncementColumns = useAnnouncementColumn(handleDelete);
+  const AnnouncementColumns = useAnnouncementColumn(handleDelete, { canUpdate, canDelete });
   const [visibleColumns] = useState<ColumnDef<IAnnouncement>[]>(AnnouncementColumns);
 
   const handleRowClick = useCallback(
@@ -97,12 +99,14 @@ const AnnouncementPage = () => {
           />
         }
         topRightSection={
-          <ButtonLink href={ROUTES.ADD_ANNOUNCEMENT} LeftIcon={Plus}>
-            Add announcement
-          </ButtonLink>
+          canCreate ? (
+            <ButtonLink href={ROUTES.ADD_ANNOUNCEMENT} LeftIcon={Plus}>
+              Add announcement
+            </ButtonLink>
+          ) : undefined
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         onRowClick={handleRowClick}
         bulkDeleteTitle="Delete Announcements"
         bulkDeleteDescription="Are you sure you want to delete the selected announcements? This action cannot be undone."

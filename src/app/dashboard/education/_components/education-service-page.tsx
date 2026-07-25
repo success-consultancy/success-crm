@@ -20,6 +20,7 @@ import { useExportLeads } from '@/mutations/leads/export-lead';
 import { useGetEducation } from '@/query/get-education';
 import { IEducation } from '@/types/response-types/education-response';
 import { useEducationColumn } from '@/config/columns/education-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { useDeleteEducation, useDeleteEducationBulk } from '@/mutations/education/delete-education';
@@ -35,6 +36,7 @@ let TAB_CONFIG = [
 ];
 
 const EducationServicePage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('education');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -62,7 +64,7 @@ const EducationServicePage = () => {
     sendEmail(payload);
   };
 
-  const EducationColumns = useEducationColumn(handleDelete, handleSendEmail);
+  const EducationColumns = useEducationColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IEducation>[]>(EducationColumns);
 
@@ -128,16 +130,18 @@ const EducationServicePage = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_EDUCATION_SERVICE} LeftIcon={Plus}>
-              Add Education Service
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_EDUCATION_SERVICE} LeftIcon={Plus}>
+                Add Education Service
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

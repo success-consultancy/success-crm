@@ -27,6 +27,7 @@ import DeleteDialog from '@/components/organisms/delete.dialog';
 import { useGetUsers } from '@/query/get-user';
 import { useGetRoles } from '@/query/get-roles';
 import { useDeleteUser } from '@/mutations/user/delete-user';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useExportUsers } from '@/mutations/user/export-users';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 
@@ -44,6 +45,7 @@ const ROLE_LABELS: Record<number, string> = {
 };
 
 const UsersListPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('users');
   const router = useRouter();
   const { data: users = [], isLoading } = useGetUsers();
   const { data: roles } = useGetRoles();
@@ -159,9 +161,11 @@ const UsersListPage = () => {
               Export
             </Button>
             <Separator orientation="vertical" className="h-6" />
-            <Button LeftIcon={Plus} onClick={() => router.push('/dashboard/users/add')}>
-              Add user
-            </Button>
+            {canCreate && (
+              <Button LeftIcon={Plus} onClick={() => router.push('/dashboard/users/add')}>
+                Add user
+              </Button>
+            )}
           </div>
         </div>
 
@@ -250,14 +254,16 @@ const UsersListPage = () => {
                           </PopoverTrigger>
                           <PopoverContent className="w-48 p-1" align="end">
                             <div className="flex flex-col">
-                              <Button
-                                variant="ghost"
-                                className="justify-start gap-2"
-                                onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                                Edit user
-                              </Button>
+                              {canUpdate && (
+                                <Button
+                                  variant="ghost"
+                                  className="justify-start gap-2"
+                                  onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
+                                >
+                                  <Pencil className="h-4 w-4" />
+                                  Edit user
+                                </Button>
+                              )}
                               <Button
                                 variant="ghost"
                                 className="justify-start gap-2"
@@ -274,20 +280,22 @@ const UsersListPage = () => {
                                 <Shield className="h-4 w-4" />
                                 Manage permissions
                               </Button>
-                              <DeleteDialog
-                                trigger={
-                                  <Button
-                                    variant="ghost"
-                                    className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                    Delete user
-                                  </Button>
-                                }
-                                title="Delete User"
-                                description="Are you sure you want to delete this user? This action cannot be undone."
-                                onConfirm={() => deleteUser(user.id)}
-                              />
+                              {canDelete && (
+                                <DeleteDialog
+                                  trigger={
+                                    <Button
+                                      variant="ghost"
+                                      className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                      Delete user
+                                    </Button>
+                                  }
+                                  title="Delete User"
+                                  description="Are you sure you want to delete this user? This action cannot be undone."
+                                  onConfirm={() => deleteUser(user.id)}
+                                />
+                              )}
                             </div>
                           </PopoverContent>
                         </Popover>

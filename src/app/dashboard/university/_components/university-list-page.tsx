@@ -33,6 +33,7 @@ import { useGetUniversity, University } from '@/query/get-university';
 import { useGetAllCourses } from '@/query/get-course';
 import { useDeleteUniversity } from '@/mutations/university/delete-university';
 import { downloadFile } from '@/utils/download';
+import { usePermissions } from '@/hooks/use-permissions';
 import EmptyUniversityIcon from '@/assets/icons/empty-university-icon';
 
 type SortField = 'name' | 'educationLevel' | 'location';
@@ -55,6 +56,7 @@ const UNIVERSITY_COLUMNS: ColumnDef<University>[] = [
 const COLUMN_STORAGE_KEY = 'university-list-columns';
 
 const UniversityListPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('university');
   const router = useRouter();
   const { data: universities = [], isLoading } = useGetUniversity();
   const { data: allCourses = [] } = useGetAllCourses();
@@ -224,9 +226,11 @@ const UniversityListPage = () => {
               <Button variant="outline" onClick={handleExport} className="h-9 text-b14-600  border-neutral-border">
                 Export
               </Button>
-              <ButtonLink href={ROUTES.ADD_UNIVERSITY} LeftIcon={Plus} className="h-9 text-b14-600 text-white">
-                Add university
-              </ButtonLink>
+              {canCreate && (
+                <ButtonLink href={ROUTES.ADD_UNIVERSITY} LeftIcon={Plus} className="h-9 text-b14-600 text-white">
+                  Add university
+                </ButtonLink>
+              )}
             </div>
           </div>
         </div>
@@ -374,28 +378,32 @@ const UniversityListPage = () => {
                                   <Eye className="h-4 w-4" />
                                   View
                                 </Button>
-                                <Button
-                                  variant="ghost"
-                                  className="justify-start gap-2"
-                                  onClick={() => router.push(`/dashboard/university/${university.id}/edit`)}
-                                >
-                                  <Edit className="h-4 w-4" />
-                                  Edit
-                                </Button>
-                                <DeleteDialog
-                                  trigger={
-                                    <Button
-                                      variant="ghost"
-                                      className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                      Delete
-                                    </Button>
-                                  }
-                                  title="Delete University"
-                                  description="Are you sure you want to delete this university? This action cannot be undone."
-                                  onConfirm={() => deleteUniversity(university.id)}
-                                />
+                                {canUpdate && (
+                                  <Button
+                                    variant="ghost"
+                                    className="justify-start gap-2"
+                                    onClick={() => router.push(`/dashboard/university/${university.id}/edit`)}
+                                  >
+                                    <Edit className="h-4 w-4" />
+                                    Edit
+                                  </Button>
+                                )}
+                                {canDelete && (
+                                  <DeleteDialog
+                                    trigger={
+                                      <Button
+                                        variant="ghost"
+                                        className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
+                                      >
+                                        <Trash2 className="h-4 w-4" />
+                                        Delete
+                                      </Button>
+                                    }
+                                    title="Delete University"
+                                    description="Are you sure you want to delete this university? This action cannot be undone."
+                                    onConfirm={() => deleteUniversity(university.id)}
+                                  />
+                                )}
                               </div>
                             </PopoverContent>
                           </Popover>

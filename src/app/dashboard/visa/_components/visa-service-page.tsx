@@ -22,6 +22,7 @@ import { useGetVisa } from '@/query/get-visa';
 import { useDeleteVisa, useDeleteVisaBulk } from '@/mutations/visa/delete-visa';
 import { IVisa } from '@/types/response-types/visa-response';
 import { useVisaColumn } from '@/config/columns/visa-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useExportVisaApplicants } from '@/mutations/visa/export-visa-applicants';
 
 // Tab Config
@@ -34,6 +35,7 @@ let TAB_CONFIG = [
 ];
 
 const VisaServicePage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('visa');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -61,7 +63,7 @@ const VisaServicePage = () => {
     sendEmail(payload);
   };
 
-  const VisaColumns = useVisaColumn(handleDelete, handleSendEmail);
+  const VisaColumns = useVisaColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IVisa>[]>(VisaColumns);
 
@@ -128,16 +130,18 @@ const VisaServicePage = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_VISA_SERVICE} LeftIcon={Plus}>
-              Add Visa Service
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_VISA_SERVICE} LeftIcon={Plus}>
+                Add Visa Service
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

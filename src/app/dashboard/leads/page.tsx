@@ -9,6 +9,7 @@ import { ILead } from '@/types/response-types/leads-response';
 import { LEADS_FILTER_PARAMS, useGetLeads, useGetLeads as useLeads } from '@/query/get-leads';
 import { useDeleteLead, useDeleteLeadBulk } from '@/mutations/leads/delete-lead';
 import { useLeadColumn } from '@/config/columns/leads-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import TableComponent from '@/components/organisms/table';
@@ -32,6 +33,7 @@ const TAB_CONFIG = [
 ];
 
 const Leads = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('leads');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -71,7 +73,7 @@ const Leads = () => {
     sendEmail(payload);
   };
 
-  const LeadColumns = useLeadColumn(handleDelete, handleSendEmail);
+  const LeadColumns = useLeadColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ILead>[]>(LeadColumns);
 
@@ -114,16 +116,18 @@ const Leads = () => {
             <Button variant="outline" className="mr-2" onClick={() => exportLeads(filterParams)} loading={isExporting}>
               Export
             </Button>
-            <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
-              Add Lead
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_LEAD} LeftIcon={Plus}>
+                Add Lead
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

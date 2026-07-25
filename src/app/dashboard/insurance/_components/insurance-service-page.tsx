@@ -21,6 +21,7 @@ import { useGetInsurance } from '@/query/get-insurance';
 import { useDeleteInsurance, useDeleteInsuranceBulk } from '@/mutations/insurance/delete-insurance';
 import { useExportInsurance } from '@/mutations/insurance/export-insurance';
 import { useInsuranceColumn } from '@/config/columns/insurance-columns-definations';
+import { usePermissions } from '@/hooks/use-permissions';
 import { IInsurance } from '@/types/response-types/insurance-response';
 
 const DEFAULT_TAB = 'all_applicant';
@@ -35,6 +36,7 @@ let TAB_CONFIG = [
 ];
 
 const ServicePage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('insurance');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -63,7 +65,7 @@ const ServicePage = () => {
     sendEmail(payload);
   };
 
-  const InsuranceColumns = useInsuranceColumn(handleDelete, handleSendEmail);
+  const InsuranceColumns = useInsuranceColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<IInsurance>[]>(InsuranceColumns);
 
@@ -130,16 +132,18 @@ const ServicePage = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_INSURANCE_SERVICE} LeftIcon={Plus}>
-              Add Applicant
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_INSURANCE_SERVICE} LeftIcon={Plus}>
+                Add Applicant
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

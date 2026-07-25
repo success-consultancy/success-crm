@@ -21,6 +21,7 @@ import { IVisa } from '@/types/response-types/visa-response';
 import { useGetTribunalReviews } from '@/query/get-tribunalreview';
 import { useDeleteTribunal, useDeleteTribunalBulk } from '@/mutations/tribunal-review/delete-tribunal-review';
 import { useTribunalReviewColumn } from '@/config/columns/tribunal-columns-definations';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useExportTribunalReviews } from '@/mutations/tribunal-review/export-tribunal-review';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
@@ -35,6 +36,7 @@ let TAB_CONFIG = [
 ];
 
 const ServicePage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('tribunalReview');
   const { getSearchParamsObject } = useSearchParams();
   const router = useRouter();
 
@@ -62,7 +64,7 @@ const ServicePage = () => {
     sendEmail(payload);
   };
 
-  const TribunalReviewColumns = useTribunalReviewColumn(handleDelete, handleSendEmail);
+  const TribunalReviewColumns = useTribunalReviewColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
   const [visibleColumns, setVisibleColumns] = useState<ColumnDef<ITribunalReview>[]>(TribunalReviewColumns);
 
@@ -129,16 +131,18 @@ const ServicePage = () => {
               Export
             </Button>
 
-            <ButtonLink href={ROUTES.ADD_TRIBUNAL_SERVICE} LeftIcon={Plus}>
-              Add Tribunal Review
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_TRIBUNAL_SERVICE} LeftIcon={Plus}>
+                Add Tribunal Review
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
           <TabSelector btnClassName="mb-4" activeTab={currentTab} onTabChange={handleTabChange} tabs={TAB_CONFIG} />
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

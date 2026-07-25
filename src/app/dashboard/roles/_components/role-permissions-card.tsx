@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Checkbox } from '@/components/ui/checkbox';
 import Button from '@/components/atoms/button';
 import { RolePermissions, RoleCrudPermissions, ServiceKey, CrudActions } from '@/query/get-roles';
@@ -41,6 +41,15 @@ const ROLE_LABEL: Record<number, string> = {
 
 const emptyActions = (): CrudActions => ({ create: false, read: false, update: false, delete: false });
 
+// Build the permissions map for a role, filling in empty defaults for any missing service.
+const buildPermissions = (role: RolePermissions): RoleCrudPermissions => {
+  const base = {} as RoleCrudPermissions;
+  SERVICES.forEach(({ key }) => {
+    base[key] = role.permissions?.[key] ?? emptyActions();
+  });
+  return base;
+};
+
 interface Props {
   roles: RolePermissions[];
   readonly?: boolean;
@@ -50,27 +59,28 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
   const [activeRoleId, setActiveRoleId] = useState(roles[0]?.id || 1);
   const activeRole = roles.find((r) => r.id === activeRoleId)!;
 
-  const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => {
-    const base = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => {
-      base[key] = activeRole.permissions?.[key] ?? emptyActions();
-    });
-    return base;
-  });
+  const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => buildPermissions(activeRole));
 
-  const [isDirty, setIsDirty] = useState(false);
+  // Derive dirtiness by comparing against the role's saved permissions, so reverting
+  // a change back to its original value clears the Reset/Save buttons (CRM-159).
+  const isDirty = useMemo(
+    () =>
+      SERVICES.some(({ key }) =>
+        ACTIONS.some(
+          ({ key: action }) =>
+            (permissions[key]?.[action] ?? false) !== (activeRole.permissions?.[key]?.[action] ?? false),
+        ),
+      ),
+    [permissions, activeRole],
+  );
+
   const { mutate: updatePermissions, isPending } = useUpdateRolePermissions();
 
   const handleRoleChange = (roleId: number) => {
     if (isDirty && !confirm('Unsaved changes. Switch anyway?')) return;
-    setIsDirty(false);
     setActiveRoleId(roleId);
     const newRole = roles.find((r) => r.id === roleId)!;
-    const base = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => {
-      base[key] = newRole.permissions?.[key] ?? emptyActions();
-    });
-    setPermissions(base);
+    setPermissions(buildPermissions(newRole));
   };
 
   const toggle = (service: ServiceKey, action: keyof CrudActions, value: boolean) => {
@@ -78,20 +88,14 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
       ...prev,
       [service]: { ...prev[service], [action]: value },
     }));
-    setIsDirty(true);
   };
 
   const handleSave = () => {
-    updatePermissions({ id: activeRole.id, permissions }, { onSuccess: () => setIsDirty(false) });
+    updatePermissions({ id: activeRole.id, permissions });
   };
 
   const handleReset = () => {
-    const base = {} as RoleCrudPermissions;
-    SERVICES.forEach(({ key }) => {
-      base[key] = activeRole.permissions?.[key] ?? emptyActions();
-    });
-    setPermissions(base);
-    setIsDirty(false);
+    setPermissions(buildPermissions(activeRole));
   };
 
   return (

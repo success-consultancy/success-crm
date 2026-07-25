@@ -18,6 +18,7 @@ import { useAddCourse } from '@/mutations/course/add-course';
 import { useEditCourse } from '@/mutations/course/edit-course';
 import { useDeleteCourse } from '@/mutations/course/delete-course';
 import { downloadFile } from '@/utils/download';
+import { usePermissions } from '@/hooks/use-permissions';
 
 type SortField = 'universityName' | 'name' | 'createdAt' | 'updatedAt';
 type SortDir = 'asc' | 'desc';
@@ -32,6 +33,7 @@ const EMPTY_FORM: FormState = { universityId: '', name: '', description: '' };
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
 const CourseListPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('course');
   const { data: courses = [], isLoading: coursesLoading } = useGetAllCourses();
   const { data: universities = [], isLoading: universitiesLoading } = useGetUniversity();
   const { mutate: addCourse, isPending: isAdding } = useAddCourse();
@@ -185,13 +187,11 @@ const CourseListPage = () => {
             <Button variant="outline" className="mr-2" onClick={handleExport}>
               Export
             </Button>
-            <Button
-              LeftIcon={Plus}
-              onClick={openAdd}
-              disabled={showAddForm}
-            >
-              Add course
-            </Button>
+            {canCreate && (
+              <Button LeftIcon={Plus} onClick={openAdd} disabled={showAddForm}>
+                Add course
+              </Button>
+            )}
           </div>
         </div>
 
@@ -319,34 +319,38 @@ const CourseListPage = () => {
                         </td>
                         <td className="text-right">
                           <div className="flex items-center justify-end gap-1">
-                            <button
-                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                              onClick={() => openEdit(course)}
-                              aria-label="Edit course"
-                            >
-                              <Pencil className="h-4 w-4" />
-                            </button>
-                            <DeleteDialog
-                              trigger={
-                                <button
-                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
-                                  aria-label="Delete course"
-                                >
-                                  <Trash2 className="h-4 w-4" />
-                                </button>
-                              }
-                              title="Delete course"
-                              description={
-                                <span>
-                                  Are you sure you want to delete this course?
-                                  <br />
-                                  Deleting this course will remove all associated data, including details and interactions.
-                                </span>
-                              }
-                              confirmText="Yes, delete"
-                              confirmClassName="bg-red-600 hover:bg-red-700 text-white"
-                              onConfirm={() => deleteCourse(course.id)}
-                            />
+                            {canUpdate && (
+                              <button
+                                className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                                onClick={() => openEdit(course)}
+                                aria-label="Edit course"
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </button>
+                            )}
+                            {canDelete && (
+                              <DeleteDialog
+                                trigger={
+                                  <button
+                                    className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                    aria-label="Delete course"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </button>
+                                }
+                                title="Delete course"
+                                description={
+                                  <span>
+                                    Are you sure you want to delete this course?
+                                    <br />
+                                    Deleting this course will remove all associated data, including details and interactions.
+                                  </span>
+                                }
+                                confirmText="Yes, delete"
+                                confirmClassName="bg-red-600 hover:bg-red-700 text-white"
+                                onConfirm={() => deleteCourse(course.id)}
+                              />
+                            )}
                           </div>
                         </td>
                       </tr>

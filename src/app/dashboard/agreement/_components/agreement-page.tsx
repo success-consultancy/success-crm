@@ -18,6 +18,7 @@ import { useGetAgreements, AGREEMENT_FILTER_PARAMS } from '@/query/get-agreement
 import { useDeleteAgreement, useDeleteAgreementBulk } from '@/mutations/agreement/delete-agreement';
 import { IAgreement } from '@/types/response-types/agreement-response';
 import { useAgreementColumn } from '@/config/columns/agreement-columns-definitions';
+import { usePermissions } from '@/hooks/use-permissions';
 import { useExportAgreements } from '@/mutations/agreement/export-agreements';
 import EmptyAgreementIcon from '@/assets/icons/empty-agreement-icon';
 import ClearFilters from '@/components/molecules/clear-filters';
@@ -40,6 +41,7 @@ const BASE_TAB_CONFIG = [
 const TYPE_OPTIONS = ['Tafe', 'University', 'College', 'Both'];
 
 const AgreementPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('agreement');
   const { getSearchParamsObject, searchParams, setParams, setParam } = useSearchParams();
   const router = useRouter();
 
@@ -68,7 +70,7 @@ const AgreementPage = () => {
     deleteAgreementBulk(ids);
   };
 
-  const AgreementColumns = useAgreementColumn(handleDelete);
+  const AgreementColumns = useAgreementColumn(handleDelete, { canUpdate, canDelete });
 
   const [visibleColumns] = useState<ColumnDef<IAgreement>[]>(AgreementColumns);
 
@@ -180,9 +182,11 @@ const AgreementPage = () => {
             >
               Export
             </Button>
-            <ButtonLink href={ROUTES.ADD_AGREEMENT} LeftIcon={Plus}>
-              Add agreement
-            </ButtonLink>
+            {canCreate && (
+              <ButtonLink href={ROUTES.ADD_AGREEMENT} LeftIcon={Plus}>
+                Add agreement
+              </ButtonLink>
+            )}
           </div>
         }
         tableHeaderSection={
@@ -197,7 +201,7 @@ const AgreementPage = () => {
           </div>
         }
         className="bg-neutral-white !text-neutral-darkGrey"
-        onBulkDelete={handleDeleteBulk}
+        onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onRowClick={handleRowClick}
         bulkDeleteTitle="Delete Agreements"

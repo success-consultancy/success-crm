@@ -17,6 +17,7 @@ import { useAddVisaConst } from '@/mutations/visa-const/add-visa-const';
 import { useEditVisaConst } from '@/mutations/visa-const/edit-visa-const';
 import { useDeleteVisaConst } from '@/mutations/visa-const/delete-visa-const';
 import { downloadFile } from '@/utils/download';
+import { usePermissions } from '@/hooks/use-permissions';
 
 type SortField = 'visaType' | 'createdAt' | 'updatedAt';
 type SortDir = 'asc' | 'desc';
@@ -24,6 +25,7 @@ type SortDir = 'asc' | 'desc';
 const PAGE_SIZE_OPTIONS = [25, 50, 100];
 
 const VisaListPage = () => {
+  const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('visaList');
   const { data: visas = [], isLoading } = useGetVisaConst();
   const { mutate: addVisa, isPending: isAdding } = useAddVisaConst();
   const { mutate: editVisa, isPending: isEditing } = useEditVisaConst();
@@ -157,9 +159,11 @@ const VisaListPage = () => {
             <Button variant="outline" className="mr-2" onClick={handleExport}>
               Export
             </Button>
-            <Button LeftIcon={Plus} onClick={openAdd} disabled={showAddForm}>
-              Add visa type
-            </Button>
+            {canCreate && (
+              <Button LeftIcon={Plus} onClick={openAdd} disabled={showAddForm}>
+                Add visa type
+              </Button>
+            )}
           </div>
         </div>
 
@@ -241,28 +245,32 @@ const VisaListPage = () => {
                       <td className="whitespace-nowrap">{format(new Date(visa.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
                       <td className="text-right">
                         <div className="flex items-center justify-end gap-1">
-                          <button
-                            className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                            onClick={() => openEdit(visa)}
-                            aria-label="Edit visa type"
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </button>
-                          <DeleteDialog
-                            trigger={
-                              <button
-                                className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
-                                aria-label="Delete visa type"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            }
-                            title="Delete visa type"
-                            description="Are you sure you want to delete this visa type?"
-                            confirmText="Yes, delete"
-                            confirmClassName="bg-red-600 hover:bg-red-700 text-white"
-                            onConfirm={() => deleteVisa(visa.id)}
-                          />
+                          {canUpdate && (
+                            <button
+                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                              onClick={() => openEdit(visa)}
+                              aria-label="Edit visa type"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <DeleteDialog
+                              trigger={
+                                <button
+                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                  aria-label="Delete visa type"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              }
+                              title="Delete visa type"
+                              description="Are you sure you want to delete this visa type?"
+                              confirmText="Yes, delete"
+                              confirmClassName="bg-red-600 hover:bg-red-700 text-white"
+                              onConfirm={() => deleteVisa(visa.id)}
+                            />
+                          )}
                         </div>
                       </td>
                     </tr>

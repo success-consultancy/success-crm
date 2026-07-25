@@ -13,7 +13,10 @@ import { useRouter } from 'next/navigation';
 import { Minus } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
 
-export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
+export const useAnnouncementColumn = (
+  handleDelete: (id: number) => void,
+  { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
+) => {
   const router = useRouter();
 
   const AnnouncementColumns: ColumnDef<IAnnouncement>[] = [
@@ -138,25 +141,29 @@ export const useAnnouncementColumn = (handleDelete: (id: number) => void) => {
                   <Eye className="h-4 w-4" />
                   View
                 </Button>
-                <Button
-                  variant="ghost"
-                  className="justify-start gap-2"
-                  onClick={() => router.push(ROUTES.EDIT_ANNOUNCEMENT(row.original.id))}
-                >
-                  <Edit className="h-4 w-4" />
-                  Edit
-                </Button>
-                <DeleteDialog
-                  trigger={
-                    <Button variant="ghost" className="justify-start gap-2 text-red-600 hover:text-red-700">
-                      <Trash2 className="h-4 w-4" />
-                      Delete
-                    </Button>
-                  }
-                  title="Delete Announcement"
-                  description="Are you sure you want to delete this announcement? This action cannot be undone."
-                  onConfirm={() => handleDelete(row.original.id)}
-                />
+                {canUpdate && (
+                  <Button
+                    variant="ghost"
+                    className="justify-start gap-2"
+                    onClick={() => router.push(ROUTES.EDIT_ANNOUNCEMENT(row.original.id))}
+                  >
+                    <Edit className="h-4 w-4" />
+                    Edit
+                  </Button>
+                )}
+                {canDelete && (
+                  <DeleteDialog
+                    trigger={
+                      <Button variant="ghost" className="justify-start gap-2 text-red-600 hover:text-red-700">
+                        <Trash2 className="h-4 w-4" />
+                        Delete
+                      </Button>
+                    }
+                    title="Delete Announcement"
+                    description="Are you sure you want to delete this announcement? This action cannot be undone."
+                    onConfirm={() => handleDelete(row.original.id)}
+                  />
+                )}
               </div>
             </PopoverContent>
           </Popover>

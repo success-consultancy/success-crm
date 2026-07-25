@@ -20,6 +20,7 @@ import { ISkillAssessment } from '@/types/response-types/skill-assessment-respon
 export const useSkillAssessmentColumn = (
   handleDelete: (id: number) => void,
   handleSendEmail: (payload: SendEmailSchemaType) => void,
+  { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
 ) => {
   const router = useRouter();
 
@@ -329,16 +330,18 @@ export const useSkillAssessmentColumn = (
               </PopoverTrigger>
               <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
                 <div className="flex flex-col">
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/dashboard/skill/${row.original.id}/edit`);
-                    }}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-                  >
-                    <Edit strokeWidth={1.5} className="h-5 w-5" />
-                    <span>Edit</span>
-                  </div>
+                  {canUpdate && (
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        router.push(`/dashboard/skill/${row.original.id}/edit`);
+                      }}
+                      className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
+                    >
+                      <Edit strokeWidth={1.5} className="h-5 w-5" />
+                      <span>Edit</span>
+                    </div>
+                  )}
                   <div
                     onClick={(e) => {
                       e.stopPropagation();
@@ -374,22 +377,24 @@ export const useSkillAssessmentColumn = (
                     onSend={handleSendEmail}
                     recipients={[{ email: row.original.email }]}
                   />
-                  <DeleteDialog
-                    trigger={
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
-                      >
-                        <Trash2 strokeWidth={1.5} className="h-5 w-5" />
-                        <span>Delete applicant</span>
-                      </div>
-                    }
-                    title="Delete this applicant"
-                    description="Are you sure you want to delete this applicant? Deleting this applicant will remove all associated data, including contacts, interactions and notes."
-                    onConfirm={() => handleDelete(row.original.id)}
-                  />
+                  {canDelete && (
+                    <DeleteDialog
+                      trigger={
+                        <div
+                          onClick={(e) => {
+                            e.stopPropagation();
+                          }}
+                          className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
+                        >
+                          <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+                          <span>Delete applicant</span>
+                        </div>
+                      }
+                      title="Delete this applicant"
+                      description="Are you sure you want to delete this applicant? Deleting this applicant will remove all associated data, including contacts, interactions and notes."
+                      onConfirm={() => handleDelete(row.original.id)}
+                    />
+                  )}
                 </div>
               </PopoverContent>
             </Popover>
