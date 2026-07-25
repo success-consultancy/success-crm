@@ -13,7 +13,7 @@ export const newCheckInSchema = z.object({
       },
       { message: 'Phone number must be at least 9 digits' },
     ),
-  email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email address' }),
+  email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email address' }),
   country: z.string().nullable().optional(),
   note: z.string().nullable().optional(),
   serviceType: z.array(z.string()).min(1, { message: 'Select at least one service' }),

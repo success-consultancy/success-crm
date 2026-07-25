@@ -320,7 +320,7 @@ const TableComponent = <TData, TValue>({
         {tableHeaderSection}
 
         {/* Single scrollable container for the entire table */}
-        <div className="overflow-auto flex-1 custom-scrollbar" style={{ height: tableHeight }}>
+        <div className="overflow-auto flex-1 min-h-0 custom-scrollbar" style={{ maxHeight: tableHeight }}>
           <table
             className="w-full caption-bottom !border-none"
             style={{ minWidth: `${totalTableWidth}px`, width: '100%', tableLayout: 'fixed' }}

@@ -73,8 +73,12 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
       {
         onSuccess: () => onSuccess(),
         onError: (error: any) => {
-          const message = error?.response?.data?.message;
-          form.setError('email', { type: 'manual', message: message || 'Failed to check in. Please try again.' });
+          const message: string = error?.response?.data?.message || '';
+          if (message === 'Phone number already used') {
+            form.setError('phone', { type: 'manual', message });
+          } else {
+            form.setError('email', { type: 'manual', message: message || 'Failed to check in. Please try again.' });
+          }
         },
       },
     );
