@@ -110,7 +110,11 @@
 
   /* Colors - Accent */
   --color-accent-50: #f0f9ff;
+  --color-accent-100: #e0f2fe;
   --color-accent-700: #0369a1;
+
+  /* Colors - Button */
+  --color-button-700: #0369a1;
 
   /* Colors - Content */
   --color-content-subtitle: #6b7280;
@@ -330,6 +334,7 @@
   --color-card-border: #dfe3e560 /* Additional Colors */ --color-red: #e81b00;
   --color-green: #3f9e60;
   --color-blue: #33a0d2;
+  --color-success: #3f9e60;
 
   /* Secondary Colors */
   --color-blue-secondary: #006eb8;

@@ -248,7 +248,7 @@ const UsersListPage = () => {
                       <td onClick={(e) => e.stopPropagation()}>
                         <Popover>
                           <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8">
+                            <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open actions menu">
                               <EllipsisVertical className="h-4 w-4" />
                             </Button>
                           </PopoverTrigger>

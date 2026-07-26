@@ -488,7 +488,7 @@ const TableComponent = <TData, TValue>({
           </div>
         )}
       </div>
-    </TableContextProvider>
+    </TableContextProvider >
   );
 };
 

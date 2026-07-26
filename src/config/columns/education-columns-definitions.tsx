@@ -1,9 +1,7 @@
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import EmailDialog from '@/components/organisms/email.dialog';
 import ColumnHeader from '@/components/molecules/column-header';
-import DeleteDialog from '@/components/organisms/delete.dialog';
+import TableRowActionsMenu from '@/components/organisms/table-row-actions-menu';
 import { useTableContext } from '@/components/molecules/table-context-provider';
 
 import { useRouter } from 'next/navigation';
@@ -11,8 +9,7 @@ import { format, formatDate } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus } from 'lucide-react';
 import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 import { ServiceType } from '@/types/leads/leads-types';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
@@ -283,87 +280,18 @@ export const useEducationColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-8 h-6" />;
         return (
-          <div className="flex justify-center">
-            <Popover>
-              <PopoverTrigger>
-                <Button
-                  variant="ghost"
-                  className="h-5 w-5 rounded-full"
-                  iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
-                  iconLeftClassName="mr-0"
-                />
-              </PopoverTrigger>
-              <PopoverContent className="w-[12.5rem] bg-white-100 p-2">
-                <div className="flex flex-col">
-                  {canUpdate && (
-                    <div
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/dashboard/education/${row.original.id}/edit`);
-                      }}
-                      className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-                    >
-                      <Edit strokeWidth={1.5} className="h-5 w-5" />
-                      <span>Edit</span>
-                    </div>
-                  )}
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/dashboard/education/${row.original.id}/view`);
-                    }}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-                  >
-                    <Eye strokeWidth={1.5} className="h-5 w-5" />
-                    <span>View</span>
-                  </div>
-                  <div
-                    onClick={(e) => {
-                      e.stopPropagation();
-                    }}
-                    className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-                  >
-                    <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
-                    <span>Send SMS</span>
-                  </div>
-                  <EmailDialog
-                    trigger={
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                        }}
-                        className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-                      >
-                        <Mail strokeWidth={1.5} className="h-5 w-5" />
-                        <span>Send Email</span>
-                      </div>
-                    }
-                    recipientsCount={1}
-                    onSend={handleSendEmail}
-                    recipients={[{ email: row.original.email }]}
-                  />
-                  {canDelete && (
-                    <DeleteDialog
-                      trigger={
-                        <div
-                          onClick={(e) => {
-                            e.stopPropagation();
-                          }}
-                          className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1 text-red"
-                        >
-                          <Trash2 strokeWidth={1.5} className="h-5 w-5" />
-                          <span>Delete Education</span>
-                        </div>
-                      }
-                      title="Delete this Education"
-                      description="Are you sure you want to delete this education? Deleting this education will remove all associated data, including contacts, interactions and notes."
-                      onConfirm={() => handleDelete(row.original.id)}
-                    />
-                  )}
-                </div>
-              </PopoverContent>
-            </Popover>
-          </div>
+          <TableRowActionsMenu
+            canUpdate={canUpdate}
+            canDelete={canDelete}
+            onEdit={() => router.push(`/dashboard/education/${row.original.id}/edit`)}
+            onView={() => router.push(`/dashboard/education/${row.original.id}/view`)}
+            onSendEmail={handleSendEmail}
+            recipientEmail={row.original.email}
+            deleteTitle="Delete this Education"
+            deleteDescription="Are you sure you want to delete this education? Deleting this education will remove all associated data, including contacts, interactions and notes."
+            deleteLabel="Delete Education"
+            onDelete={() => handleDelete(row.original.id)}
+          />
         );
       },
       size: 64,
