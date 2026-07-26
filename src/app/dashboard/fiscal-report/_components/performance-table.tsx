@@ -13,6 +13,7 @@ import { cn } from '@/lib/utils';
 import { ChevronDown, ChevronUp, ChevronsUpDown, Download, Pencil, Plus, Search } from 'lucide-react';
 import Button from '@/components/atoms/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import useScrollShadows from '@/hooks/use-scroll-shadows';
 
 const MONTHS_INITIAL = ['jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const;
 const MONTHS_FINAL = ['jan', 'feb', 'mar', 'apr', 'may', 'jun'] as const;
@@ -116,24 +117,13 @@ export default function PerformanceTable({
 }: PerformanceTableProps) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-  const [showLeftShadow, setShowLeftShadow] = React.useState(false);
-  const [showRightShadow, setShowRightShadow] = React.useState(false);
+  const { ref: scrollRef, hasScrolledLeft: showLeftShadow, hasScrolledRight: showRightShadow, updateShadows } =
+    useScrollShadows<HTMLDivElement>();
 
+  // Re-check scroll shadows whenever the row data changes (widths can shift)
   React.useEffect(() => {
-    const el = scrollRef.current;
-    if (!el) return;
-    function update() {
-      const { scrollLeft, scrollWidth, clientWidth } = el!;
-      setShowLeftShadow(scrollLeft > 0);
-      setShowRightShadow(scrollLeft < scrollWidth - clientWidth - 1);
-    }
-    update();
-    el.addEventListener('scroll', update, { passive: true });
-    const ro = new ResizeObserver(update);
-    ro.observe(el);
-    return () => { el.removeEventListener('scroll', update); ro.disconnect(); };
-  }, []);
+    updateShadows();
+  }, [data, updateShadows]);
 
   const allMonths = React.useMemo(() => [
     ...MONTHS_INITIAL.map((key) => ({ key, year: initialYear })),
