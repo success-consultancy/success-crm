@@ -61,8 +61,8 @@ const CheckInPage = () => {
 
   const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
     setParams([
-      { name: 'from', value: range.from?.toISOString() || null },
-      { name: 'to', value: range.to?.toISOString() || null },
+      { name: 'from', value: range.from?.toISOString().split('T')[0] || null },
+      { name: 'to', value: range.to?.toISOString().split('T')[0] || null },
       { name: 'page', value: null },
     ]);
   };
