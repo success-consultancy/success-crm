@@ -4,10 +4,15 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { Edit, EllipsisVertical, Eye, Mail, MessageCircle, Trash2 } from 'lucide-react';
+import { ChevronRight, Edit, EllipsisVertical, Eye, FolderInput, Mail, MessageCircle, Trash2 } from 'lucide-react';
 import DeleteDialog from './delete.dialog';
 import EmailDialog from './email.dialog';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
+
+export interface RowActionMoveOption {
+  id: string;
+  title: string;
+}
 
 interface TableRowActionsMenuProps {
   canUpdate?: boolean;
@@ -17,6 +22,12 @@ interface TableRowActionsMenuProps {
   onSendSms?: () => void;
   onSendEmail?: (payload: SendEmailSchemaType) => void;
   recipientEmail?: string;
+  // Optional "Move to" submenu: pass the target options and a select handler.
+  moveTo?: {
+    options: RowActionMoveOption[];
+    onSelect: (option: RowActionMoveOption) => void;
+    label?: string;
+  };
   deleteTitle: string;
   deleteDescription: React.ReactNode;
   deleteLabel: string;
@@ -41,6 +52,7 @@ const TableRowActionsMenu = ({
   onSendSms,
   onSendEmail,
   recipientEmail,
+  moveTo,
   deleteTitle,
   deleteDescription,
   deleteLabel,
@@ -49,10 +61,11 @@ const TableRowActionsMenu = ({
   animated = false,
 }: TableRowActionsMenuProps) => {
   const menuItemClassName = cn(itemClassName, animated && animatedItemClassName);
+  const [showMove, setShowMove] = React.useState(false);
 
   return (
     <div className="flex justify-center">
-      <Popover>
+      <Popover onOpenChange={(o) => !o && setShowMove(false)}>
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
@@ -75,6 +88,32 @@ const TableRowActionsMenu = ({
                 <Eye strokeWidth={1.5} className="h-5 w-5" />
                 View
               </Button>
+            )}
+            {moveTo && moveTo.options.length > 0 && (
+              <>
+                <Button
+                  variant="ghost"
+                  className={cn(menuItemClassName, 'justify-between')}
+                  onClick={() => setShowMove((s) => !s)}
+                >
+                  <span className="flex items-center gap-2">
+                    <FolderInput strokeWidth={1.5} className="h-5 w-5" />
+                    {moveTo.label ?? 'Move to'}
+                  </span>
+                  <ChevronRight className={cn('h-4 w-4 transition-transform', showMove && 'rotate-90')} />
+                </Button>
+                {showMove &&
+                  moveTo.options.map((option) => (
+                    <Button
+                      key={option.id}
+                      variant="ghost"
+                      className={cn(menuItemClassName, 'pl-9')}
+                      onClick={() => moveTo.onSelect(option)}
+                    >
+                      {option.title}
+                    </Button>
+                  ))}
+              </>
             )}
             <Button variant="ghost" className={menuItemClassName} onClick={onSendSms}>
               <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
