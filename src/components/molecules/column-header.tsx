@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, ChevronDown, Search, X } from 'lucide-react';
+import { ArrowDown, ArrowDownAZ, ArrowDownZA, ArrowUp, ChevronDown, EyeOff, Search, X } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import useSearchParams from '@/hooks/use-search-params';
 import { cn } from '@/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover';
+import { useTableContext, useColumnId } from './table-context-provider';
 
 type Props = {
   title: string;
@@ -23,6 +24,8 @@ const ColumnHeader = (props: Props) => {
   const [searchValue, setSearchValue] = useState('');
   const [open, setOpen] = useState(false);
   const { searchParams, setParams } = useSearchParams();
+  const columnId = useColumnId();
+  const hideColumn = useTableContext()?.hideColumn;
 
   // Initialize sorting state from URL params
   useEffect(() => {
@@ -217,6 +220,22 @@ const ColumnHeader = (props: Props) => {
               </button>
             )}
           </div>
+          )}
+
+          {/* Hide this column (persists via the table's column-visibility store) */}
+          {hideColumn && columnId && (
+            <div className="p-2 border-t border-border">
+              <button
+                onClick={() => {
+                  hideColumn(columnId);
+                  setOpen(false);
+                }}
+                className="flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left w-full"
+              >
+                <EyeOff className="h-4 w-4" />
+                <span>Hide column</span>
+              </button>
+            </div>
           )}
         </div>
       </PopoverContent>

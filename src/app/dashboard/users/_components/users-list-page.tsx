@@ -28,6 +28,7 @@ import { useGetUsers } from '@/query/get-user';
 import { useGetRoles } from '@/query/get-roles';
 import { useDeleteUser } from '@/mutations/user/delete-user';
 import { usePermissions } from '@/hooks/use-permissions';
+import useAuthStore from '@/store/auth-store';
 import { useExportUsers } from '@/mutations/user/export-users';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 
@@ -46,6 +47,7 @@ const ROLE_LABELS: Record<number, string> = {
 
 const UsersListPage = () => {
   const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('users');
+  const isAdmin = useAuthStore((s) => s.profile?.roleId === 1);
   const router = useRouter();
   const { data: users = [], isLoading } = useGetUsers();
   const { data: roles } = useGetRoles();
@@ -146,12 +148,14 @@ const UsersListPage = () => {
             className="max-w-[18rem]"
           />
           <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/dashboard/roles')}
-            >
-              Manage roles
-            </Button>
+            {isAdmin && (
+              <Button
+                variant="outline"
+                onClick={() => router.push('/dashboard/roles')}
+              >
+                Manage roles
+              </Button>
+            )}
             <Button
               variant="outline"
               LeftIcon={Download}

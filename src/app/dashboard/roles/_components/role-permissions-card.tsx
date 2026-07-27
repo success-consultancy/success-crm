@@ -39,13 +39,17 @@ const ROLE_LABEL: Record<number, string> = {
   5: 'Lead Management',
 };
 
+const SUPER_ADMIN_ID = 1;
+const ALL_ACTIONS: CrudActions = { create: true, read: true, update: true, delete: true };
+
 const emptyActions = (): CrudActions => ({ create: false, read: false, update: false, delete: false });
 
 // Build the permissions map for a role, filling in empty defaults for any missing service.
 const buildPermissions = (role: RolePermissions): RoleCrudPermissions => {
   const base = {} as RoleCrudPermissions;
   SERVICES.forEach(({ key }) => {
-    base[key] = role.permissions?.[key] ?? emptyActions();
+    // Super admin always has full access — lock it regardless of DB value.
+    base[key] = role.id === SUPER_ADMIN_ID ? ALL_ACTIONS : (role.permissions?.[key] ?? emptyActions());
   });
   return base;
 };
@@ -58,6 +62,8 @@ interface Props {
 export default function RolePermissionsCard({ roles, readonly = false }: Props) {
   const [activeRoleId, setActiveRoleId] = useState(roles[0]?.id || 1);
   const activeRole = roles.find((r) => r.id === activeRoleId)!;
+  // Super admin permissions are always locked — no editing regardless of viewer role.
+  const isActiveRoleLocked = activeRole?.id === SUPER_ADMIN_ID;;
 
   const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => buildPermissions(activeRole));
 
@@ -122,8 +128,8 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
 
       {/* Body */}
       <div className="p-4 flex flex-col gap-4">
-        {/* Save / Reset — admin only, shown when dirty */}
-        {!readonly && isDirty && (
+        {/* Save / Reset — admin only, shown when dirty (hidden for super admin — always locked) */}
+        {!readonly && !isActiveRoleLocked && isDirty && (
           <div className="flex items-center justify-end gap-2">
             <button
               type="button"
@@ -171,8 +177,8 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
                         <div className="flex items-center justify-center">
                           <Checkbox
                             checked={permissions[key]?.[actionKey] ?? false}
-                            onCheckedChange={(v) => !readonly && toggle(key, actionKey, !!v)}
-                            disabled={readonly}
+                            onCheckedChange={(v) => !readonly && !isActiveRoleLocked && toggle(key, actionKey, !!v)}
+                            disabled={readonly || isActiveRoleLocked}
                           />
                         </div>
                       </td>

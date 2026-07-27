@@ -19,7 +19,7 @@ import useSearchParams from '@/hooks/use-search-params';
 import { TableCell, TableRow } from '../ui/table';
 import TableSearchInput from '../molecules/table-search';
 import { Separator } from '../ui/separator';
-import { TableContextProvider } from '../molecules/table-context-provider';
+import { TableContextProvider, ColumnIdProvider } from '../molecules/table-context-provider';
 import { cn } from '@/lib/utils';
 import Pagination from '../molecules/pagination-component';
 import { ColumnSelector } from '../molecules/table-column-selector';
@@ -138,25 +138,31 @@ const TableComponent = <TData, TValue>({
 
       // Check for saved preferences in localStorage
       let savedColumns = new Set<string>();
+      let hiddenColumns = new Set<string>();
       if (typeof window !== 'undefined') {
         try {
           const stored = localStorage.getItem(storageKey);
           if (stored) {
             savedColumns = new Set(JSON.parse(stored) as string[]);
           }
+          // Columns explicitly hidden from a column-header menu stay hidden across reloads.
+          const storedHidden = localStorage.getItem(`${storageKey}-hidden`);
+          if (storedHidden) {
+            hiddenColumns = new Set(JSON.parse(storedHidden) as string[]);
+          }
         } catch (e) {
           console.error('Error reading column visibility from localStorage:', e);
         }
       }
 
-      // Merge default columns with saved preferences
+      // Merge default columns with saved preferences, minus any explicitly hidden ones
       const mergedVisible = new Set([...defaultVisible, ...savedColumns]);
 
       // Set visibility for all columns
       const initialVisibility: Record<string, boolean> = {};
       columns.forEach((column) => {
         const columnId = (column as any).id;
-        initialVisibility[columnId] = mergedVisible.has(columnId);
+        initialVisibility[columnId] = mergedVisible.has(columnId) && !hiddenColumns.has(columnId);
       });
       setColumnVisibility(initialVisibility);
     }
@@ -221,6 +227,28 @@ const TableComponent = <TData, TValue>({
 
   const paginationMethods = usePagination();
 
+  // Hide a single column from its header menu, persisting the new visible set to
+  // localStorage so it survives reloads (mirrors the ColumnSelector's behavior).
+  const hideColumn = React.useCallback(
+    (columnId: string) => {
+      const col = table.getColumn(columnId);
+      if (!col) return;
+      if (typeof window !== 'undefined') {
+        try {
+          const key = `${storageKey}-hidden`;
+          const hidden: string[] = JSON.parse(localStorage.getItem(key) || '[]');
+          if (!hidden.includes(columnId)) {
+            localStorage.setItem(key, JSON.stringify([...hidden, columnId]));
+          }
+        } catch (e) {
+          console.error('Error persisting hidden column:', e);
+        }
+      }
+      col.toggleVisibility(false);
+    },
+    [table, storageKey],
+  );
+
   // Calculate total table width based on column sizes
   const totalTableWidth = React.useMemo(() => {
     return table.getAllColumns().reduce((acc, column) => {
@@ -272,7 +300,7 @@ const TableComponent = <TData, TValue>({
   }
 
   return (
-    <TableContextProvider state={{ rowSelectionState, isLoading: isLoading }}>
+    <TableContextProvider state={{ rowSelectionState, isLoading: isLoading, hideColumn }}>
       <div className={cn(['flex flex-col p-4 bg-white-100 rounded-xl border border-gray-50 h-full', className])}>
         {showHeaderSection && (
           <div className="flex w-full items-center justify-between pb-5 gap-5">
@@ -350,7 +378,11 @@ const TableComponent = <TData, TValue>({
                       }}
                       className="py-0 select-none leading-[150%] overflow-hidden text-ellipsis whitespace-nowrap"
                     >
-                      {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}
+                      {header.isPlaceholder ? null : (
+                        <ColumnIdProvider value={header.column.id}>
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                        </ColumnIdProvider>
+                      )}
                       {header.column.getCanResize() && idx < headerGroup.headers.length - 1 && (
                         <div
                           onMouseDown={header.getResizeHandler()}

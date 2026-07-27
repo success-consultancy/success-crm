@@ -37,11 +37,13 @@ export function ColumnSelector<TData>({
 
     try {
       const stored = localStorage.getItem(storageKey);
-      if (stored) {
-        // Merge saved preferences with default columns
-        const savedColumns = new Set(JSON.parse(stored) as string[]);
-        return new Set([...defaultVisible, ...savedColumns]);
+      const base = stored ? new Set([...defaultVisible, ...(JSON.parse(stored) as string[])]) : defaultVisible;
+      // Columns hidden from a header menu should show as unchecked here.
+      const storedHidden = localStorage.getItem(`${storageKey}-hidden`);
+      if (storedHidden) {
+        (JSON.parse(storedHidden) as string[]).forEach((id) => base.delete(id));
       }
+      return base;
     } catch (e) {
       console.error('Error reading from localStorage:', e);
     }
@@ -66,16 +68,25 @@ export function ColumnSelector<TData>({
       );
 
       const stored = localStorage.getItem(storageKey);
-      if (stored) {
-        // Merge saved preferences with default columns
-        const savedColumns = new Set(JSON.parse(stored) as string[]);
-        setSelected(new Set([...defaultVisible, ...savedColumns]));
-      } else {
-        // If no stored data, use only default columns
-        setSelected(defaultVisible);
+      const base = stored ? new Set([...defaultVisible, ...(JSON.parse(stored) as string[])]) : defaultVisible;
+      // Columns hidden from a header menu should show as unchecked here.
+      const storedHidden = localStorage.getItem(`${storageKey}-hidden`);
+      if (storedHidden) {
+        (JSON.parse(storedHidden) as string[]).forEach((id) => base.delete(id));
       }
+      setSelected(base);
     }
   }, [table, storageKey, allColumns.length]); // Run when table is ready
+
+  // Re-sync checkboxes from the table's live visibility each time the menu opens,
+  // so columns hidden elsewhere (e.g. a column-header "Hide column") show as
+  // unchecked immediately, not only after a refresh.
+  useEffect(() => {
+    if (open) {
+      setSelected(new Set(allColumns.filter((col) => col.getIsVisible()).map((col) => col.id)));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
 
   const handleApply = () => {
     allColumns.forEach((col) => {
@@ -84,6 +95,17 @@ export function ColumnSelector<TData>({
 
     if (typeof window !== 'undefined') {
       localStorage.setItem(storageKey, JSON.stringify(Array.from(selected)));
+      // Re-enabling a column here clears any "hidden from header menu" flag so it shows again.
+      try {
+        const key = `${storageKey}-hidden`;
+        const stored = localStorage.getItem(key);
+        if (stored) {
+          const hidden = (JSON.parse(stored) as string[]).filter((id) => !selected.has(id));
+          localStorage.setItem(key, JSON.stringify(hidden));
+        }
+      } catch (e) {
+        console.error('Error updating hidden columns:', e);
+      }
     }
 
     setOpen(false);

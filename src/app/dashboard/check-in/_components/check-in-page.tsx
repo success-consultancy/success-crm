@@ -33,6 +33,8 @@ const CheckInPage = () => {
   const { data: activeCountData } = useGetCheckIns({
     q: filterParams?.q?.trim() || undefined,
     q_field: filterParams?.q_field || undefined,
+    from: filterParams?.from || undefined,
+    to: filterParams?.to || undefined,
     tab: 'active',
     limit: '1',
     page: '1',
@@ -40,6 +42,8 @@ const CheckInPage = () => {
   const { data: historyCountData } = useGetCheckIns({
     q: filterParams?.q?.trim() || undefined,
     q_field: filterParams?.q_field || undefined,
+    from: filterParams?.from || undefined,
+    to: filterParams?.to || undefined,
     tab: 'history',
     limit: '1',
     page: '1',
@@ -60,9 +64,15 @@ const CheckInPage = () => {
   };
 
   const handleDateRangeApply = (range: { from: Date | undefined; to: Date | undefined }) => {
+    let toValue: string | null = null;
+    if (range.to) {
+      const endOfDay = new Date(range.to);
+      endOfDay.setHours(23, 59, 59, 999);
+      toValue = endOfDay.toISOString();
+    }
     setParams([
       { name: 'from', value: range.from?.toISOString() || null },
-      { name: 'to', value: range.to?.toISOString() || null },
+      { name: 'to', value: toValue },
       { name: 'page', value: null },
     ]);
   };

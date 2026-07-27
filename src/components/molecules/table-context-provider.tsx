@@ -3,9 +3,17 @@ import * as React from 'react';
 type TableContextState = {
   rowSelectionState: {} | undefined;
   isLoading: boolean;
+  /** Hide a column by id (and persist the change). Provided by TableComponent. */
+  hideColumn?: (columnId: string) => void;
 };
 
 const TableContext = React.createContext<TableContextState | null>(null);
+
+// Per-column context so a header (e.g. ColumnHeader) knows its own column id
+// without every column definition having to pass it explicitly.
+const ColumnIdContext = React.createContext<string | undefined>(undefined);
+export const ColumnIdProvider = ColumnIdContext.Provider;
+export const useColumnId = () => React.useContext(ColumnIdContext);
 
 interface EventContextProviderProps {
   state: TableContextState;
