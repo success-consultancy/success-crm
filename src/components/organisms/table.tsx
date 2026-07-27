@@ -14,6 +14,7 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import usePagination from '@/hooks/use-pagination';
+import useScrollShadows from '@/hooks/use-scroll-shadows';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import useSearchParams from '@/hooks/use-search-params';
 import { TableCell, TableRow } from '../ui/table';
@@ -249,6 +250,13 @@ const TableComponent = <TData, TValue>({
     [table, storageKey],
   );
 
+  const { ref: scrollContainerRef, hasScrolledLeft, hasScrolledRight, updateShadows } = useScrollShadows<HTMLDivElement>();
+
+  // Re-check scroll shadows whenever the row data changes (widths can shift)
+  React.useEffect(() => {
+    updateShadows();
+  }, [data, updateShadows]);
+
   // Calculate total table width based on column sizes
   const totalTableWidth = React.useMemo(() => {
     return table.getAllColumns().reduce((acc, column) => {
@@ -270,9 +278,13 @@ const TableComponent = <TData, TValue>({
     const isFirstRightPinnedColumn = isPinned === 'right' && column.getIsFirstColumn('right');
 
     const boxShadow = isLastLeftPinnedColumn
-      ? 'inset -4px 0 6px -4px rgba(0,0,0,0.12)'
+      ? hasScrolledLeft
+        ? 'inset -4px 0 6px -4px rgba(0,0,0,0.12)'
+        : undefined
       : isFirstRightPinnedColumn
-        ? 'inset 4px 0 6px -4px rgba(0,0,0,0.12)'
+        ? hasScrolledRight
+          ? 'inset 4px 0 6px -4px rgba(0,0,0,0.12)'
+          : undefined
         : undefined;
 
     const backgroundColor = isPinned && isHeaderColumn ? 'var(--component-hovered-light)' : undefined;
@@ -348,7 +360,11 @@ const TableComponent = <TData, TValue>({
         {tableHeaderSection}
 
         {/* Single scrollable container for the entire table */}
-        <div className="overflow-auto flex-1 min-h-0 custom-scrollbar" style={{ maxHeight: tableHeight }}>
+        <div
+          ref={scrollContainerRef}
+          className="overflow-auto flex-1 min-h-0 custom-scrollbar"
+          style={{ maxHeight: tableHeight }}
+        >
           <table
             className="w-full caption-bottom !border-none"
             style={{ minWidth: `${totalTableWidth}px`, width: '100%', tableLayout: 'fixed' }}
@@ -504,7 +520,7 @@ const TableComponent = <TData, TValue>({
           </div>
         )}
       </div>
-    </TableContextProvider>
+    </TableContextProvider >
   );
 };
 
