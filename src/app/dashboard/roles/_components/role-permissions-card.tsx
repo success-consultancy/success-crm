@@ -63,7 +63,7 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
   const [activeRoleId, setActiveRoleId] = useState(roles[0]?.id || 1);
   const activeRole = roles.find((r) => r.id === activeRoleId)!;
   // Super admin permissions are always locked — no editing regardless of viewer role.
-  const isActiveRoleLocked = activeRole?.id === SUPER_ADMIN_ID;;
+  const isActiveRoleLocked = activeRole?.id === SUPER_ADMIN_ID;
 
   const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => buildPermissions(activeRole));
 
@@ -71,13 +71,14 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
   // a change back to its original value clears the Reset/Save buttons (CRM-159).
   const isDirty = useMemo(
     () =>
+      !isActiveRoleLocked &&
       SERVICES.some(({ key }) =>
         ACTIONS.some(
           ({ key: action }) =>
             (permissions[key]?.[action] ?? false) !== (activeRole.permissions?.[key]?.[action] ?? false),
         ),
       ),
-    [permissions, activeRole],
+    [permissions, activeRole, isActiveRoleLocked],
   );
 
   const { mutate: updatePermissions, isPending } = useUpdateRolePermissions();
@@ -131,11 +132,7 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
         {/* Save / Reset — admin only, shown when dirty (hidden for super admin — always locked) */}
         {!readonly && !isActiveRoleLocked && isDirty && (
           <div className="flex items-center justify-end gap-2">
-            <button
-              type="button"
-              onClick={handleReset}
-              className="text-xs text-gray-400 hover:text-gray-600 underline"
-            >
+            <button type="button" onClick={handleReset} className="text-xs text-gray-400 hover:text-gray-600 underline">
               Reset
             </button>
             <Button onClick={handleSave} disabled={isPending} className="h-8 text-xs px-3">
@@ -165,13 +162,8 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
               </thead>
               <tbody>
                 {SERVICES.map(({ key, label }, idx) => (
-                  <tr
-                    key={key}
-                    className={idx < SERVICES.length - 1 ? 'border-b border-[#EBEBEB]' : ''}
-                  >
-                    <td className="sticky left-0 bg-white px-3 py-3.5 text-sm text-[#1C1C1C]">
-                      {label}
-                    </td>
+                  <tr key={key} className={idx < SERVICES.length - 1 ? 'border-b border-[#EBEBEB]' : ''}>
+                    <td className="sticky left-0 bg-white px-3 py-3.5 text-sm text-[#1C1C1C]">{label}</td>
                     {ACTIONS.map(({ key: actionKey }) => (
                       <td key={actionKey} className="px-3 py-3.5 text-center">
                         <div className="flex items-center justify-center">
