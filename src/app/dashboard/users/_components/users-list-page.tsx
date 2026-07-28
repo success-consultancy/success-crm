@@ -132,7 +132,7 @@ const UsersListPage = () => {
   return (
     <Container className="flex flex-col h-full overflow-hidden">
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h5 text-content-heading font-bold">Users &amp; permissions</h3>
+        <h3 className="text-h5 text-content-heading font-bold">{isAdmin ? 'Users & permissions' : 'Users'}</h3>
       </Portal>
 
       <div className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 h-full overflow-hidden">
@@ -276,14 +276,16 @@ const UsersListPage = () => {
                                 <Clock className="h-4 w-4" />
                                 View time sheet
                               </Button>
-                              <Button
-                                variant="ghost"
-                                className="justify-start gap-2"
-                                onClick={() => router.push('/dashboard/roles')}
-                              >
-                                <Shield className="h-4 w-4" />
-                                Manage permissions
-                              </Button>
+                              {isAdmin && (
+                                <Button
+                                  variant="ghost"
+                                  className="justify-start gap-2"
+                                  onClick={() => router.push('/dashboard/roles')}
+                                >
+                                  <Shield className="h-4 w-4" />
+                                  Manage permissions
+                                </Button>
+                              )}
                               {canDelete && (
                                 <DeleteDialog
                                   trigger={

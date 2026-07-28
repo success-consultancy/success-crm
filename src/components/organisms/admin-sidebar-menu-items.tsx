@@ -16,6 +16,7 @@ const AdminSidebarMenuItems = () => {
   const { data: roles } = useGetRoles();
 
   const rolePermissions = roles?.find((r) => r.id === roleId)?.permissions;
+  const isAdmin = roleId === 1;
 
   const canSee = (item: SubMenuItem | MenuItem): boolean => {
     // Role-list check (hardcoded restriction)
@@ -34,7 +35,9 @@ const AdminSidebarMenuItems = () => {
     if (!canSee(item)) return acc;
 
     if (item.subItems) {
-      const visibleSubItems = item.subItems.filter((sub) => canSee(sub));
+      const visibleSubItems = item.subItems
+        .filter((sub) => canSee(sub))
+        .map((sub) => (sub.href === '/dashboard/users' && !isAdmin ? { ...sub, title: 'Users' } : sub));
       if (visibleSubItems.length === 0) return acc;
       acc.push({ ...item, subItems: visibleSubItems });
     } else {
