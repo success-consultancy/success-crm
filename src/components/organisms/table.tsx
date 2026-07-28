@@ -331,7 +331,7 @@ const TableComponent = <TData, TValue>({
             </div>
           </div>
         )}
-        {table.getSelectedRowModel().rows.length > 0 && (
+        {table.getSelectedRowModel().rows.length > 0 && (onSendEmail || onBulkDelete) && (
           <div className="flex items-center gap-3 ml-[9px]">
             {onSendEmail && (
               <EmailDialog
@@ -343,17 +343,19 @@ const TableComponent = <TData, TValue>({
                 }))}
               />
             )}
-            <DeleteDialog
-              trigger={<Trash2 />}
-              title={bulkDeleteTitle || 'Delete Leads'}
-              description={bulkDeleteDescription || ''}
-              confirmText={bulkDeleteConfirmText}
-              onConfirm={() => {
-                const ids = table.getSelectedRowModel().rows.map((row: any) => row.original.id);
-                onBulkDelete?.(ids);
-                table.toggleAllRowsSelected(false);
-              }}
-            />
+            {onBulkDelete && (
+              <DeleteDialog
+                trigger={<Trash2 />}
+                title={bulkDeleteTitle || 'Delete Leads'}
+                description={bulkDeleteDescription || ''}
+                confirmText={bulkDeleteConfirmText}
+                onConfirm={() => {
+                  const ids = table.getSelectedRowModel().rows.map((row: any) => row.original.id);
+                  onBulkDelete(ids);
+                  table.toggleAllRowsSelected(false);
+                }}
+              />
+            )}
           </div>
         )}
 

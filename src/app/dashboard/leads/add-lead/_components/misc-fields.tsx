@@ -47,14 +47,13 @@ const MiscStep = () => {
   const { data: users } = useGetUsers();
 
   const userOptions = useMemo(() => {
-    if (users) {
-      return users?.map((user) => {
-        return {
-          label: user.firstName + '' + user.lastName,
-          value: '' + user.id,
-        };
-      });
-    }
+    if (!users) return [];
+    return users
+      .map((user) => ({
+        label: `${user.firstName ?? ''} ${user.lastName ?? ''}`.trim(),
+        value: '' + user.id,
+      }))
+      .sort((a, b) => a.label.localeCompare(b.label, undefined, { sensitivity: 'base' }));
   }, [users]);
 
   return (
