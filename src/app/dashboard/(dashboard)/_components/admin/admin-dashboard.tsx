@@ -3,9 +3,8 @@
 import React from 'react';
 import AdminStatCards from './stat-cards';
 import ConversionRates from './conversion-rates';
+import OutcomeDonuts from './outcome-donuts';
 import EmployeeRankingTable from './employee-ranking-table';
-import ClientCountryChart from './client-country-chart';
-import ProcessingInsightsChart from './processing-insights-chart';
 import AnnouncementsSection from './announcements-section';
 
 const AdminDashboard = () => {
@@ -15,16 +14,9 @@ const AdminDashboard = () => {
 
       <ConversionRates />
 
-      <EmployeeRankingTable />
+      <OutcomeDonuts />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div className="lg:col-span-7">
-          <ClientCountryChart />
-        </div>
-        <div className="lg:col-span-5">
-          <ProcessingInsightsChart />
-        </div>
-      </div>
+      <EmployeeRankingTable />
 
       <AnnouncementsSection />
     </div>

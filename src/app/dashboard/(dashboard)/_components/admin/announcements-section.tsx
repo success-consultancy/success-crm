@@ -38,29 +38,41 @@ const AnnouncementsSection = () => {
         <p className="text-sm text-content-subtitle py-4 text-center">No announcements yet</p>
       ) : (
         <div className="space-y-3">
-          {data.rows.map((announcement) => (
-            <Link
-              key={announcement.id}
-              href={ROUTES.VIEW_ANNOUNCEMENT(announcement.id)}
-              className="flex gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
-            >
-              <div className="bg-primary/10 rounded-lg p-2 shrink-0 h-fit">
-                <Megaphone className="w-4 h-4 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <p className="text-b14-500 text-content-heading truncate group-hover:text-primary transition-colors">
-                  {announcement.title}
-                </p>
-                <p className="text-c1 text-content-subtitle mt-0.5">
-                  {new Date(announcement.createdAt).toLocaleDateString('en-AU', {
-                    day: 'numeric',
-                    month: 'short',
-                    year: 'numeric',
-                  })}
-                </p>
-              </div>
-            </Link>
-          ))}
+          {data.rows.map((announcement) => {
+            const author = announcement.user ?? announcement.User;
+            return (
+              <Link
+                key={announcement.id}
+                href={ROUTES.VIEW_ANNOUNCEMENT(announcement.id)}
+                className="flex gap-3 p-2.5 rounded-lg hover:bg-gray-50 transition-colors group"
+              >
+                {announcement.photoURL ? (
+                  <img
+                    src={announcement.photoURL}
+                    alt={announcement.title}
+                    className="w-10 h-10 rounded-lg object-cover shrink-0"
+                  />
+                ) : (
+                  <div className="bg-primary/10 rounded-lg p-2 shrink-0 h-fit">
+                    <Megaphone className="w-4 h-4 text-primary" />
+                  </div>
+                )}
+                <div className="min-w-0">
+                  <p className="text-b14-500 text-content-heading truncate group-hover:text-primary transition-colors">
+                    {announcement.title}
+                  </p>
+                  <p className="text-c1 text-content-subtitle mt-0.5">
+                    {author ? `by ${author.firstName} ${author.lastName} • ` : ''}
+                    {new Date(announcement.createdAt).toLocaleDateString('en-AU', {
+                      day: 'numeric',
+                      month: 'short',
+                      year: 'numeric',
+                    })}
+                  </p>
+                </div>
+              </Link>
+            );
+          })}
         </div>
       )}
     </CardContainer>
