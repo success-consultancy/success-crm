@@ -15,7 +15,7 @@ export const personalDetailsSchema = z.object({
     .string({ message: 'Last name is required' })
     .min(1, { message: 'Last name is required' })
     .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
-  dob: z.string().nullable().optional(),
+  dob: z.string({ message: 'Date of birth is required' }).min(1, { message: 'Date of birth is required' }),
   address: z.string().nullable().optional(),
   qualification: z.string().nullable().optional(),
   occupation: z.string().nullable().optional(),
@@ -34,10 +34,14 @@ export const passportDetailsSchema = z.object({
 
 export const serviceDetailsSchema = z.object({
   location: z.string().nullable().optional(),
-  serviceType: z.array(z.string()).default([]),
+  serviceType: z
+    .array(z.string(), { message: 'Service type is required' })
+    .min(1, { message: 'Service type is required' }),
   sourceId: z.number().nullable().optional(),
   userId: z.number().nullable().optional(),
-  status: z.string().nullable().optional(),
+  status: z
+    .string({ message: 'Status is required' })
+    .min(1, { message: 'Status is required' }),
   remarks: z.string().nullable().optional(),
   files: z
     .array(

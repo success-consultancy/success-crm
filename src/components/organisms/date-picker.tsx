@@ -29,7 +29,7 @@ interface DatePickerProps {
   onTimeChange?: (time: string) => void;
   timeLabel?: string;
   timeId?: string;
-  error?: boolean;
+  error?: string | boolean;
   label?: string;
 }
 
@@ -116,6 +116,7 @@ export function DatePicker({
               </PopoverContent>
             )}
           </Popover>
+          {typeof error === 'string' && error && <div className="text-sm text-primary-red mt-1">{error}</div>}
         </div>
         {needTime && (
           <div className="flex !w-[100px] flex-col flex-1">
