@@ -23,7 +23,7 @@ const ChartCard = ({ title, children, className, headerRight, isLoading }: Chart
   return (
     <CardContainer className={cn('p-5', className)}>
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-content-heading">{title}</h4>
+        <h4 className="text-b14-600 text-neutral-black">{title}</h4>
         {headerRight}
       </div>
       {isLoading ? <ChartCardSkeleton /> : children}

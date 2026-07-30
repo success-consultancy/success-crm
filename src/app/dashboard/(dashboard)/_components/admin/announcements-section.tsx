@@ -35,7 +35,7 @@ const AnnouncementsSection = () => {
           ))}
         </div>
       ) : !data?.rows?.length ? (
-        <p className="text-sm text-content-subtitle py-4 text-center">No announcements yet</p>
+        <p className="text-b14 text-neutral-light-grey py-4 text-center">No announcements yet</p>
       ) : (
         <div className="space-y-[22px]">
           {data.rows.map((announcement) => {
@@ -61,10 +61,10 @@ const AnnouncementsSection = () => {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-b14-500 text-content-heading truncate group-hover:text-primary transition-colors">
+                  <p className="text-b14-500 text-neutral-black truncate group-hover:text-primary transition-colors">
                     {announcement.title}
                   </p>
-                  <p className="text-c1 text-content-subtitle mt-0.5">
+                  <p className="text-c1 text-neutral-light-grey mt-0.5">
                     {author ? `by ${author.firstName} ${author.lastName} • ` : ''}
                     {date} at {time}
                   </p>

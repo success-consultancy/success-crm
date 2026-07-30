@@ -81,7 +81,7 @@ const EmployeeRankingTable = () => {
   return (
     <CardContainer className="p-5">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-content-heading">Employees clients and performance</h4>
+        <h4 className="text-b14-600 text-neutral-black">Employees clients and performance</h4>
         <Select value={month} onValueChange={setMonth}>
           <SelectTrigger size="sm" className="w-[130px] text-xs">
             <SelectValue />
@@ -109,7 +109,7 @@ const EmployeeRankingTable = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-c1 text-content-subtitle">
+            <tr className="border-b text-left text-c1 text-neutral-light-grey">
               <th className="pb-3 pr-4 font-medium">S.N</th>
               <th className="pb-3 pr-4 font-medium">Employee</th>
               {tab === 'clients' ? (
@@ -142,42 +142,42 @@ const EmployeeRankingTable = () => {
               ))
             ) : paged.length === 0 ? (
               <tr>
-                <td colSpan={8} className="py-8 text-center text-content-subtitle text-sm">
+                <td colSpan={8} className="py-8 text-center text-neutral-light-grey text-b14">
                   No employee data available
                 </td>
               </tr>
             ) : (
               paged.map((emp, idx) => (
                 <tr key={emp.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                  <td className="py-3 pr-4 text-content-subtitle">{(page - 1) * pageSize + idx + 1}</td>
+                  <td className="py-3 pr-4 text-neutral-light-grey">{(page - 1) * pageSize + idx + 1}</td>
                   <td className="py-3 pr-4">
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-7 w-7">
-                        <AvatarFallback className="text-[10px] bg-primary/10 text-primary">
+                        <AvatarFallback className="text-c2 bg-primary/10 text-primary">
                           {emp.firstName?.[0]}
                           {emp.lastName?.[0]}
                         </AvatarFallback>
                       </Avatar>
                       <div>
-                        <p className="text-b14-500 text-content-heading">
+                        <p className="text-b14-500 text-neutral-black">
                           {emp.firstName} {emp.lastName}
                         </p>
-                        <p className="text-c2 text-content-subtitle">{emp.email}</p>
+                        <p className="text-c2 text-neutral-light-grey">{emp.email}</p>
                       </div>
                     </div>
                   </td>
                   {tab === 'clients' ? (
                     <>
                       {SERVICE_WEIGHTS.map(({ key }) => (
-                        <td key={key} className="py-3 pr-4 text-right text-b14 text-content-heading">
+                        <td key={key} className="py-3 pr-4 text-right text-b14 text-neutral-black">
                           {emp[key]}
                         </td>
                       ))}
-                      <td className="py-3 text-right text-b14-600 text-content-heading">{emp.clientCount}</td>
+                      <td className="py-3 text-right text-b14-600 text-neutral-black">{emp.clientCount}</td>
                     </>
                   ) : (
                     <>
-                      <td className="py-3 pr-4 text-right text-b14 text-content-heading">{emp.clientCount}</td>
+                      <td className="py-3 pr-4 text-right text-b14 text-neutral-black">{emp.clientCount}</td>
                       <td className="py-3 pr-4 text-right text-b14 text-utility-green font-medium">
                         {emp.convertedCount}
                       </td>
@@ -205,7 +205,7 @@ const EmployeeRankingTable = () => {
       </div>
 
       {rows.length > 0 && (
-        <div className="flex items-center justify-between mt-4 text-c1 text-content-subtitle">
+        <div className="flex items-center justify-between mt-4 text-c1 text-neutral-light-grey">
           <div className="flex items-center gap-2">
             <Select
               value={String(pageSize)}

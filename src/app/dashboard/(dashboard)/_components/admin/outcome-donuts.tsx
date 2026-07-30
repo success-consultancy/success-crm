@@ -34,7 +34,7 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
   return (
     <CardContainer className="p-5">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-content-heading">{title}</h4>
+        <h4 className="text-b14-600 text-neutral-black">{title}</h4>
         <Link href={href} className="text-c1 text-primary flex items-center gap-1 hover:underline">
           View <ArrowUpRight className="w-3 h-3" />
         </Link>
@@ -51,15 +51,15 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-h4 font-bold text-content-heading">{total}</span>
+            <span className="text-h4 font-semibold text-neutral-black">{total}</span>
           </div>
         </div>
         <ul className="space-y-2 min-w-0">
           {segments.map((s) => (
             <li key={s.label} className="flex items-center gap-2 text-c1">
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />
-              <span className="text-content-subtitle truncate">{s.label}</span>
-              <span className="text-content-heading font-medium ml-auto">{s.value}</span>
+              <span className="text-neutral-light-grey truncate">{s.label}</span>
+              <span className="text-neutral-black font-medium ml-auto">{s.value}</span>
             </li>
           ))}
         </ul>
