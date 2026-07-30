@@ -67,7 +67,19 @@ const ConversionRates = () => {
             formatter={(value) => `${value}%`}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
           />
-          <Legend wrapperStyle={{ fontSize: 12 }} iconType="circle" />
+          <Legend
+            content={({ payload }) => (
+              <ul className="flex justify-center text-b12-500" style={{ gap: 24, marginTop: 32 }}>
+                {payload?.map((entry) => (
+                  <li key={entry.value} className="flex items-center gap-1.5">
+                    <span className="size-2 rounded-full" style={{ backgroundColor: entry.color }} />
+                    {entry.value}
+                  </li>
+                ))}
+              </ul>
+            )}
+          />
+
           {SERIES.map(({ key, color }) => (
             <Line
               key={key}

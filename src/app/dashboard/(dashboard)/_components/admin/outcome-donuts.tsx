@@ -43,7 +43,7 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
         <div className="relative w-[160px] h-[160px] shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={segments} dataKey="value" nameKey="label" innerRadius={55} outerRadius={78} strokeWidth={0}>
+              <Pie data={segments} dataKey="value" nameKey="label" innerRadius={46} outerRadius={78} strokeWidth={0}>
                 {segments.map((s) => (
                   <Cell key={s.label} fill={s.color} />
                 ))}
