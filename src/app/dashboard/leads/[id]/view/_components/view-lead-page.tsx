@@ -54,7 +54,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
           )}
           {activeTab === 'transition' && <Transition lead={lead} />}
           {activeTab === 'history' && <History lead={lead} />}
-          {activeTab === 'follow-up' && <FollowUp id={lead.id.toString()} followableType="" />}
+          {activeTab === 'follow-up' && <FollowUp id={lead.id.toString()} followableType="lead" />}
         </div>
       </div>
     </Container>

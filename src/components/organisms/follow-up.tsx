@@ -25,6 +25,10 @@ type FollowUp = {
   status: 'Upcoming' | 'Completed' | 'Missed';
 };
 
+// Format a Date as a local YYYY-MM-DD (avoids the UTC shift that toISOString causes).
+const toDateOnly = (d: Date) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+
 const getStatusColor = (status: FollowUp['status']) => {
   switch (status) {
     case 'Upcoming':
@@ -60,6 +64,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     remindMe: false,
     remindClient: false,
   });
+  const [formErrors, setFormErrors] = React.useState<{ date?: string; time?: string }>({});
   const [upcoming, setUpcoming] = React.useState<FollowUp[]>([]);
   const [previous, setPrevious] = React.useState<FollowUp[]>([]);
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
@@ -133,11 +138,20 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate required fields and show inline messages (CRM-187).
+    const errors: { date?: string; time?: string } = {};
+    if (!formData.date) errors.date = 'Follow-up date is required';
+    if (!formData.time) errors.time = 'Time is required';
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
     try {
       await addFollowUp.mutateAsync({
-        date: formData?.date ? formData.date?.toString() : '',
+        date: toDateOnly(formData.date!),
         time: formData.time,
         note: formData.note || null,
+        remindMe: formData.remindMe,
+        remindClient: formData.remindClient,
         followableId: Number(id),
         followableType: followableType,
       });
@@ -148,6 +162,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
         remindMe: false,
         remindClient: false,
       });
+      setFormErrors({});
       setAddDialogOpen(false);
     } catch {
       // mutation's onError surfaces a toast; keep the dialog open so the user can retry
@@ -163,6 +178,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       remindMe: false,
       remindClient: false,
     });
+    setFormErrors({});
   };
 
   const openEdit = (f: FollowUp) => {
@@ -227,27 +243,34 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
 
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
-                  <Label htmlFor="date">Follow-up date</Label>
+                  <Label htmlFor="date">
+                    Follow-up date <span className="text-red-500">*</span>
+                  </Label>
                   <div className="relative">
                     <DatePicker
                       mode="single"
                       selected={formData.date ?? undefined}
                       onSelect={(date) => {
-                        console.log(date);
-
-                        setFormData({
-                          ...formData,
-                          date: date ?? null,
-                        });
+                        setFormData({ ...formData, date: date ?? null });
+                        if (date) setFormErrors((prev) => ({ ...prev, date: undefined }));
                       }}
                     />
                     <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
                   </div>
+                  {formErrors.date && <p className="text-sm text-red-500">{formErrors.date}</p>}
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="time">Time</Label>
-                  <Select value={formData.time} onValueChange={(value) => setFormData({ ...formData, time: value })}>
+                  <Label htmlFor="time">
+                    Time <span className="text-red-500">*</span>
+                  </Label>
+                  <Select
+                    value={formData.time}
+                    onValueChange={(value) => {
+                      setFormData({ ...formData, time: value });
+                      setFormErrors((prev) => ({ ...prev, time: undefined }));
+                    }}
+                  >
                     <SelectTrigger>
                       <SelectValue placeholder="Select follow-up time" />
                     </SelectTrigger>
@@ -259,6 +282,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                       ))}
                     </SelectContent>
                   </Select>
+                  {formErrors.time && <p className="text-sm text-red-500">{formErrors.time}</p>}
                 </div>
 
                 <div className="space-y-2">
