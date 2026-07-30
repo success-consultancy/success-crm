@@ -10,6 +10,8 @@ import { useDeleteAppointment } from '@/mutations/appointments/delete-appointmen
 import { CloseCircle } from 'iconsax-reactjs';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { usePermissions } from '@/hooks/use-permissions';
+import useAuthStore from '@/store/auth-store';
 
 interface AppointmentPreviewProps {
   appointment: IAppointment;
@@ -27,6 +29,9 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
   disableHeader = false,
 }) => {
   const { mutateAsync: deleteAppointment } = useDeleteAppointment();
+  const { delete: canDeletePermission } = usePermissions('appointment');
+  const currentUserId = useAuthStore((s) => s.profile?.id);
+  const canDelete = canDeletePermission || currentUserId === appointment.createdById;
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -86,9 +91,11 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
               <Button variant="ghost" size="icon" onClick={() => onEdit(appointment)}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={handleDeleteClick}>
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {canDelete && (
+                <Button variant="ghost" size="icon" onClick={handleDeleteClick}>
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
               <Button variant="ghost" size="icon" onClick={onClose}>
                 <X className="h-4 w-4" />
               </Button>
