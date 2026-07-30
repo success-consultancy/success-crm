@@ -8,11 +8,11 @@ import ChartCard from '../shared/chart-card';
 type DatePreset = 'this_month' | 'this_quarter' | 'this_year' | 'all_time';
 
 const SERIES = [
-  { key: 'Education', color: '#7c3aed' },
-  { key: 'Visa', color: '#22c55e' },
-  { key: 'Skill', color: '#f97316' },
-  { key: 'Tribunal', color: '#3b82f6' },
-  { key: 'Insurance', color: '#ec4899' },
+  { key: 'Education', color: '#8142CF' },
+  { key: 'Visa', color: '#5FA05B' },
+  { key: 'Skill', color: '#E89855' },
+  { key: 'Tribunal', color: '#5A6CDF' },
+  { key: 'Insurance', color: '#DE689F' },
 ] as const;
 
 // ponytail: backend only exposes an aggregate conversion % per service (see get-stats-converted.ts),

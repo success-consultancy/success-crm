@@ -16,16 +16,16 @@ interface Segment {
 // ponytail: no /stats endpoint returns visa/student outcome-stage counts yet — placeholder
 // until useGetVisaOutcomes / useGetStudentOutcomes-style hooks exist.
 const VISA_OUTCOMES: Segment[] = [
-  { label: 'In Progress', value: 48, color: '#3b82f6' },
-  { label: 'Granted', value: 24, color: '#22c55e' },
-  { label: 'Refused', value: 16, color: '#ef4444' },
+  { label: 'In Progress', value: 48, color: '#5A98FE' },
+  { label: 'Granted', value: 24, color: '#0FDFAE' },
+  { label: 'Refused', value: 16, color: '#FF5B77' },
 ];
 
 const STUDENT_OUTCOMES: Segment[] = [
-  { label: 'Application Submitted', value: 32, color: '#3b82f6' },
-  { label: 'Offer Received', value: 19, color: '#22c55e' },
-  { label: 'Fee Paid', value: 11, color: '#eab308' },
-  { label: 'Withdrawn', value: 21, color: '#ef4444' },
+  { label: 'Application Submitted', value: 32, color: '#7491ED' },
+  { label: 'Offer Received', value: 19, color: '#7EDE7E' },
+  { label: 'Fee Paid', value: 11, color: '#FFDE39' },
+  { label: 'Withdrawn', value: 21, color: '#F75656' },
 ];
 
 const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: string; segments: Segment[] }) => {
