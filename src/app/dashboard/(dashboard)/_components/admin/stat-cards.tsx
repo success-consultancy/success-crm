@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import {
   Users,
   UserCheck,
@@ -100,9 +99,9 @@ const AdminStatCards = () => {
               <CardContainer key={key} className="rounded-xl shadow-[0_1px_1px_rgba(10,13,18,0.05)] px-5 pt-4 pb-5">
                 <div className="flex items-start justify-between gap-[18px]">
                   <div className="flex flex-col gap-[18px] min-w-0">
-                    <p className="text-[13px] leading-[18px] font-medium text-content-heading">{label}</p>
+                    <p className="text-b14-500 text-neutral-black">{label}</p>
                     <div className="flex flex-col gap-1.5">
-                      <p className="text-h4 font-semibold text-content-heading">
+                      <p className="text-h4 font-semibold text-neutral-black">
                         {data?.counts[key]?.toLocaleString() ?? '—'}
                       </p>
                       <p className="text-c1 flex items-center gap-1.5">
@@ -110,7 +109,7 @@ const AdminStatCards = () => {
                           {positive ? '+' : ''}
                           {changePct}%
                         </span>
-                        <span className="text-content-subtitle">vs last year</span>
+                        <span className="text-neutral-light-grey">vs last year</span>
                       </p>
                     </div>
                   </div>

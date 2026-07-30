@@ -89,6 +89,8 @@ Use **nuqs** (`src/hooks/use-search-params.ts`) for type-safe URL search params 
 
 Tailwind CSS 4 with CSS variables for theming. Custom colors, spacing, shadows, and grid templates are defined in `tailwind.config.ts`. Font: Inter (body), Figtree (headings).
 
+**Typography & color tokens:** Use the typography scale and color tokens already defined in `src/app/globals.css` instead of arbitrary Tailwind values. Font-size/weight scale: `text-h1`–`text-h6` (headings), `text-b12`/`b13`/`b14`/`b16` with `-500`/`-600`/`-700` weight suffixes, `text-c1`/`c2` (captions). Color tokens: `text-neutral-black` (`#1c1c1c`), `text-neutral-light-grey` (`#757575`), `border-neutral-border-light` (`#ebebeb`), `text-utility-red`/`text-utility-green`, etc. Do not write `text-[13px]`, `leading-[18px]`, or one-off hex colors when a token already covers the size/weight/color you need — check `globals.css` first. It's fine to layer a `font-*` weight override on top of a size token when no exact combined token exists (e.g. `text-h4 font-semibold`). Only fall back to a raw arbitrary value when no reasonably close token exists.
+
 ### Environment
 
 ```
