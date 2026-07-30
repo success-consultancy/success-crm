@@ -11,6 +11,7 @@ import { InfoField } from '@/components/atoms/info-field';
 import { Form, FormField } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
 import Input from '@/components/molecules/input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { DatePicker } from '@/components/organisms/date-picker';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 
@@ -30,7 +31,7 @@ const toDefaults = (lead: ILead): FormValues => ({
   lastName: lead.lastName,
   email: lead.email,
   phone: lead.phone,
-  dob: lead.dob ?? null,
+  dob: lead.dob ?? '',
   address: lead.address ?? null,
   qualification: lead.qualification ?? null,
   occupation: lead.occupation ?? null,
@@ -130,7 +131,9 @@ const PersonalDetails = ({ lead }: { lead: ILead }) => {
             <FormField
               control={control}
               name="phone"
-              render={({ field }) => <Input label="Phone number" {...field} error={errors.phone?.message} />}
+              render={({ field }) => (
+                <PhoneNumberInput label="Phone number" value={field.value} onChange={field.onChange} error={errors.phone?.message} />
+              )}
             />
             <FormField
               control={control}
@@ -141,7 +144,7 @@ const PersonalDetails = ({ lead }: { lead: ILead }) => {
                   <DatePicker
                     side="top"
                     value={field.value ? new Date(field.value) : undefined}
-                    onChange={(date) => field.onChange(date ? format(date, 'MM/dd/yyyy') : null)}
+                    onChange={(date) => field.onChange(date ? format(date, 'MM/dd/yyyy') : '')}
                     placeholder="MM/DD/YYYY"
                     className="h-12 text-b2 w-full"
                     disableFutureDates

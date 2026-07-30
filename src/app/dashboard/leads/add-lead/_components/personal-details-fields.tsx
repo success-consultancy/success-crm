@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo } from 'react';
 import Input from '@/components/molecules/input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { FormField } from '@/components/ui/form';
 import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
@@ -65,7 +66,7 @@ const PersonalDetailsStep = () => {
               }}
               placeholder="DD/MM/YYYY"
               className="w-full"
-              error={!!errors.dob?.message}
+              error={errors.dob?.message}
             />
           )}
         />
@@ -77,7 +78,9 @@ const PersonalDetailsStep = () => {
         <FormField
           control={control}
           name="phone"
-          render={({ field }) => <Input {...field} label="Phone number" error={errors.phone?.message} />}
+          render={({ field }) => (
+            <PhoneNumberInput label="Phone number" value={field.value} onChange={field.onChange} error={errors.phone?.message} />
+          )}
         />
         <FormField
           control={control}

@@ -40,7 +40,7 @@ export const buildLeadSectionPayload = (
     lastName: overrides.lastName ?? lead.lastName,
     email: overrides.email ?? lead.email,
     phone: overrides.phone ?? lead.phone,
-    dob: overrides.dob ?? lead.dob ?? null,
+    dob: overrides.dob ?? lead.dob ?? '',
     address: overrides.address ?? lead.address ?? null,
     qualification: overrides.qualification ?? lead.qualification ?? null,
     occupation: overrides.occupation ?? lead.occupation ?? null,
