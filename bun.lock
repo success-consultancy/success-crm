@@ -44,6 +44,7 @@
         "iconsax-reactjs": "^0.0.8",
         "lodash": "^4.17.21",
         "lucide-react": "^0.525.0",
+        "luxon": "^3.7.2",
         "next": "16.0.10",
         "nuqs": "^2.4.3",
         "qs": "^6.14.0",
@@ -71,6 +72,7 @@
       },
       "devDependencies": {
         "@tailwindcss/postcss": "^4",
+        "@types/luxon": "^3.7.2",
         "@types/node": "^20",
         "@types/qs": "^6.14.0",
         "@types/react": "19.2.4",
@@ -477,6 +479,8 @@
     "@types/json5": ["@types/json5@0.0.29", "", {}, "sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ=="],
 
     "@types/lodash": ["@types/lodash@4.17.20", "", {}, "sha512-H3MHACvFUEiujabxhaI/ImO6gUrd8oOurg7LQtS7mbwIXA/cUqWrvBsaeJ23aZEPk1TAYkurjfMbSELfoCXlGA=="],
+
+    "@types/luxon": ["@types/luxon@3.7.2", "", {}, "sha512-gW+Oib+vUtGJBtNC8V9Reww0oIpusw+4m81uncg9REGZAJfqOQHfo/nkabnc7w0QReXyPqjrbWMJk6NuAkiX3Q=="],
 
     "@types/node": ["@types/node@20.19.19", "", { "dependencies": { "undici-types": "~6.21.0" } }, "sha512-pb1Uqj5WJP7wrcbLU7Ru4QtA0+3kAXrkutGiD26wUKzSMgNNaPARTUDQmElUXp64kh3cWdou3Q0C7qwwxqSFmg=="],
 

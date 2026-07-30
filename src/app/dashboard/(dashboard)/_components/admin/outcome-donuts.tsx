@@ -6,27 +6,44 @@ import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { ArrowUpRight } from 'lucide-react';
 import CardContainer from '@/components/atoms/card-container';
 import { ROUTES } from '@/config/routes';
+import { useGetVisaOutcomes, useGetStudentOutcomes, OutcomeSegment } from '@/query/get-outcome-stats';
 
-interface Segment {
-  label: string;
-  value: number;
+interface Segment extends OutcomeSegment {
   color: string;
 }
 
-// ponytail: no /stats endpoint returns visa/student outcome-stage counts yet — placeholder
-// until useGetVisaOutcomes / useGetStudentOutcomes-style hooks exist.
-const VISA_OUTCOMES: Segment[] = [
-  { label: 'In Progress', value: 48, color: '#5A98FE' },
-  { label: 'Granted', value: 24, color: '#0FDFAE' },
-  { label: 'Refused', value: 16, color: '#FF5B77' },
-];
+const FALLBACK_COLOR = '#9CA3AF';
 
-const STUDENT_OUTCOMES: Segment[] = [
-  { label: 'Application Submitted', value: 32, color: '#7491ED' },
-  { label: 'Offer Received', value: 19, color: '#7EDE7E' },
-  { label: 'Fee Paid', value: 11, color: '#FFDE39' },
-  { label: 'Withdrawn', value: 21, color: '#F75656' },
-];
+// VisaApplicant.status → color, so a status keeps its color regardless of which other statuses appear
+const VISA_COLORS: Record<string, string> = {
+  New: '#9CA3AF',
+  'Collecting Docs': '#5A98FE',
+  'Ready To Submit': '#7491ED',
+  Submitted: '#0FDFAE',
+  'Info Requested': '#FFDE39',
+  Approved: '#22C55E',
+  Withdrawn: '#F97316',
+  Refused: '#FF5B77',
+  Discontinued: '#EF4444',
+  'Follow Up': '#A855F7',
+};
+
+// Student.status → color, so a status keeps its color regardless of which other statuses appear
+const STUDENT_COLORS: Record<string, string> = {
+  New: '#9CA3AF',
+  Checklist: '#5A98FE',
+  'Application Ready': '#7491ED',
+  'Application Submitted': '#0FDFAE',
+  'Offer Received': '#7EDE7E',
+  'Waiting Payment': '#FFDE39',
+  'Fee Paid': '#22C55E',
+  'Coe Received': '#A855F7',
+  Withdrawn: '#F97316',
+  Discontinued: '#F75656',
+};
+
+const withColors = (segments: OutcomeSegment[] | undefined, colors: Record<string, string>): Segment[] =>
+  (segments ?? []).map((s) => ({ ...s, color: colors[s.label] ?? FALLBACK_COLOR }));
 
 const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: string; segments: Segment[] }) => {
   const total = segments.reduce((sum, s) => sum + s.value, 0);
@@ -68,11 +85,20 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
   );
 };
 
-const OutcomeDonuts = () => (
-  <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-    <OutcomeDonutCard title="Visa outcomes" href={ROUTES.VISA} segments={VISA_OUTCOMES} />
-    <OutcomeDonutCard title="Students outcomes" href={ROUTES.EDUCATION} segments={STUDENT_OUTCOMES} />
-  </div>
-);
+const OutcomeDonuts = () => {
+  const { data: visaOutcomes } = useGetVisaOutcomes();
+  const { data: studentOutcomes } = useGetStudentOutcomes();
+
+  return (
+    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <OutcomeDonutCard title="Visa outcomes" href={ROUTES.VISA} segments={withColors(visaOutcomes, VISA_COLORS)} />
+      <OutcomeDonutCard
+        title="Students outcomes"
+        href={ROUTES.EDUCATION}
+        segments={withColors(studentOutcomes, STUDENT_COLORS)}
+      />
+    </div>
+  );
+};
 
 export default OutcomeDonuts;

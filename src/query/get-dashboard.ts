@@ -13,7 +13,9 @@ export interface DashboardCounts {
   tribunalReview: number;
 }
 
-const getDashboard = async (): Promise<{ counts: DashboardCounts }> => {
+export type DashboardChangePct = Record<keyof DashboardCounts, number | null>;
+
+const getDashboard = async (): Promise<{ counts: DashboardCounts; changePct: DashboardChangePct }> => {
   const res = await api.get('/auth/dashboard');
   return res.data;
 };

@@ -10,6 +10,13 @@ export interface EmployeeRanking {
   profileUrl: string | null;
   clientCount: number;
   convertedCount: number;
+  services: {
+    student: number;
+    visa: number;
+    skill: number;
+    tribunal: number;
+    insurance: number;
+  };
 }
 
 const getEmployeeRanking = async (startDate?: string, endDate?: string): Promise<EmployeeRanking[]> => {

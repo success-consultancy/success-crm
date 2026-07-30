@@ -40,4 +40,7 @@ export const QUERY_KEYS = {
   GET_PROCESSING_INSIGHTS: 'get-processing-insights',
   GET_EMPLOYEE_RANKING: 'get-employee-ranking',
   GET_ALL_SERVICE_DATA: 'get-all-service-data',
+  GET_CONVERTED_BY_MONTH: 'get-converted-by-month',
+  GET_VISA_OUTCOMES: 'get-visa-outcomes',
+  GET_STUDENT_OUTCOMES: 'get-student-outcomes',
 };
