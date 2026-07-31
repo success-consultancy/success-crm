@@ -33,11 +33,12 @@ const getInsurance = async (params?: FilterParams) => {
   return res.data as IInsuranceResponseType;
 };
 
-export const useGetInsurance = (params?: FilterParams) => {
+export const useGetInsurance = (params?: FilterParams, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => getInsurance(params),
     queryKey: [QUERY_KEYS.GET_INSURANCE, params],
     refetchOnWindowFocus: false,
+    enabled: options?.enabled,
   });
 };
 

@@ -57,10 +57,10 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
         </Link>
       </div>
       <div className="flex items-center gap-6">
-        <div className="relative w-[160px] h-[160px] shrink-0">
+        <div className="relative basis-[60%] aspect-square">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={segments} dataKey="value" nameKey="label" innerRadius={46} outerRadius={78} strokeWidth={0}>
+              <Pie data={segments} dataKey="value" nameKey="label" innerRadius="58%" outerRadius="98%" strokeWidth={0}>
                 {segments.map((s) => (
                   <Cell key={s.label} fill={s.color} />
                 ))}
@@ -71,7 +71,7 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
             <span className="text-h4 font-semibold text-neutral-black">{total}</span>
           </div>
         </div>
-        <ul className="space-y-2 min-w-0">
+        <ul className="basis-[40%] space-y-2 min-w-0">
           {segments.map((s) => (
             <li key={s.label} className="flex items-center gap-2 text-c1">
               <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: s.color }} />

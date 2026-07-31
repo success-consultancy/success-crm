@@ -31,11 +31,12 @@ const getSkillAssessments = async (params?: SkillAssessmentFilterParams) => {
   return res.data as ISkillAssessmentResponseType;
 };
 
-export const useGetSkillAssessments = (params?: SkillAssessmentFilterParams) => {
+export const useGetSkillAssessments = (params?: SkillAssessmentFilterParams, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => getSkillAssessments(params),
     queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS, params],
     refetchOnWindowFocus: false,
+    enabled: options?.enabled,
   });
 };
 
