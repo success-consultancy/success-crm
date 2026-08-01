@@ -5,6 +5,7 @@ import { useAddTribunalReview } from '@/mutations/tribunal-review/add-tribunal-r
 import { useAddVisa } from '@/mutations/visas/add-visa';
 import { ILead } from '@/types/response-types/leads-response';
 import { useToastContext } from '@/context/toast-context';
+import { api } from '@/lib/api';
 
 export type MoveServiceId = 'students' | 'visa' | 'skill' | 'insurance' | 'tribunal';
 
@@ -36,7 +37,17 @@ const showMoveToastOnce = (key: string, fn: () => void) => {
 // Only the fields common to every service application are carried over from the lead.
 const createGenericPayload = (lead: ILead) => {
   const payload: Record<string, any> = {};
-  const keys = ['firstName', 'lastName', 'email', 'phone', 'country', 'userId', 'sourceId', 'remarks', 'files'] as const;
+  const keys = [
+    'firstName',
+    'lastName',
+    'email',
+    'phone',
+    'country',
+    'userId',
+    'sourceId',
+    'remarks',
+    'files',
+  ] as const;
   keys.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(lead, key)) payload[key] = (lead as any)[key];
   });
@@ -56,7 +67,7 @@ export const useMoveLead = () => {
   const addInsurance = useAddInsurance();
   const addTribunalReview = useAddTribunalReview();
 
-  const moveLead = (lead: ILead, serviceId: MoveServiceId) => {
+  const moveLead = async (lead: ILead, serviceId: MoveServiceId) => {
     const payload = createGenericPayload(lead);
     if (!payload.firstName || !payload.email) {
       error('Cannot move lead: first name and email are required');
@@ -64,6 +75,23 @@ export const useMoveLead = () => {
     }
     const leadId = lead.id.toString();
     const service = MOVE_SERVICES.find((s) => s.id === serviceId);
+
+    let clientIds = lead.clientIds;
+    if (!clientIds) {
+      try {
+        const res = await api.get(`/lead/${leadId}`);
+        clientIds = res.data?.clientIds;
+      } catch {
+        // Ignore — the backend updateClient guard is the safety net.
+      }
+    }
+    if (service) {
+      const existing = clientIds?.[service.clientKey] as unknown[] | undefined;
+      if (Array.isArray(existing) && existing.length > 0) {
+        error(`This lead has already been moved to ${service.title}.`);
+        return Promise.reject(new Error('Lead already moved to this service'));
+      }
+    }
 
     let request: Promise<unknown>;
     switch (serviceId) {

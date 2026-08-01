@@ -3,7 +3,7 @@ import AddLeadForm from './_components/add-lead-form';
 
 const page = () => {
   return (
-    <Container className="flex flex-col py-5 gap-8">
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5 gap-4">
       <AddLeadForm mode="add" />
     </Container>
   );

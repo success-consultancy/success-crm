@@ -257,6 +257,19 @@ const TableComponent = <TData, TValue>({
     updateShadows();
   }, [data, updateShadows]);
 
+  // Track the scroll container's inner width so we can spread any leftover space
+  // across the data columns when not all columns are shown (CRM-181).
+  const [containerWidth, setContainerWidth] = React.useState(0);
+  React.useEffect(() => {
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const measure = () => setContainerWidth(el.clientWidth);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [scrollContainerRef]);
+
   // Calculate total table width based on column sizes
   const totalTableWidth = React.useMemo(() => {
     return table.getAllColumns().reduce((acc, column) => {
@@ -268,6 +281,20 @@ const TableComponent = <TData, TValue>({
       return acc + column.getSize();
     }, 0);
   }, [table]);
+
+  // When the visible columns don't fill the container (some columns hidden),
+  // spread the leftover width evenly across the unpinned "data" columns so the
+  // table fills the width instead of leaving a trailing gap (CRM-181). Pinned
+  // columns keep their fixed size — sticky offsets depend only on those.
+  const visibleLeafColumns = table.getVisibleLeafColumns();
+  const renderedColumnsWidth = visibleLeafColumns.reduce((acc, c) => acc + c.getSize(), 0);
+  const unpinnedVisibleCount = visibleLeafColumns.filter((c) => !c.getIsPinned()).length;
+  const flexExtraPerColumn =
+    containerWidth > renderedColumnsWidth && unpinnedVisibleCount > 0
+      ? (containerWidth - renderedColumnsWidth) / unpinnedVisibleCount
+      : 0;
+  const getColumnWidth = <T,>(column: Column<T>): number =>
+    column.getSize() + (column.getIsPinned() ? 0 : flexExtraPerColumn);
 
   //important styles to make sticky column pinning
   const getCommonPinningStyles = <T,>(column: Column<T>, isHeaderColumn?: boolean): CSSProperties => {
@@ -294,7 +321,7 @@ const TableComponent = <TData, TValue>({
       left: isPinned === 'left' ? `${column.getStart('left')}px` : undefined,
       right: isPinned === 'right' ? `${column.getAfter('right')}px` : undefined,
       position: isPinned ? 'sticky' : 'relative',
-      width: column.getSize(),
+      width: getColumnWidth(column),
       zIndex: isPinned ? 10 : 0,
       backgroundColor,
       willChange: isPinned ? 'transform' : undefined,
@@ -389,9 +416,9 @@ const TableComponent = <TData, TValue>({
                       key={header.id}
                       style={{
                         position: 'relative',
-                        width: `${header.getSize()}px`,
-                        minWidth: `${header.getSize()}px`,
-                        maxWidth: `${header.getSize()}px`,
+                        width: `${getColumnWidth(header.column)}px`,
+                        minWidth: `${getColumnWidth(header.column)}px`,
+                        maxWidth: `${getColumnWidth(header.column)}px`,
                         ...getCommonPinningStyles(header.column, true),
                       }}
                       className="py-0 select-none leading-[150%] overflow-hidden text-ellipsis whitespace-nowrap"
@@ -458,9 +485,9 @@ const TableComponent = <TData, TValue>({
                         ])}
                         key={cell.id}
                         style={{
-                          width: `${cell.column.getSize()}px`,
-                          minWidth: `${cell.column.getSize()}px`,
-                          maxWidth: `${cell.column.getSize()}px`,
+                          width: `${getColumnWidth(cell.column)}px`,
+                          minWidth: `${getColumnWidth(cell.column)}px`,
+                          maxWidth: `${getColumnWidth(cell.column)}px`,
                           ...getCommonPinningStyles(cell.column),
                         }}
                       >

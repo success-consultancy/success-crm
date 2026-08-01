@@ -13,8 +13,10 @@ const Page = () => {
   }
 
   return (
-    <Container>
-      <AddEducationService userId={me?.data?.id} />
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
+        <AddEducationService userId={me?.data?.id} />
+      </div>
     </Container>
   );
 };

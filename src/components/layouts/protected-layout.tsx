@@ -38,7 +38,9 @@ const ProtectedLayout = ({ children }: Props) => {
   const contentMargin = isCollapsed ? 'ml-16' : 'ml-64';
 
   return (
-    <div className="flex">
+    // Lock the shell to the viewport so only the inner content area scrolls —
+    // otherwise the window/body scrolls too, giving a double scrollbar (CRM-178).
+    <div className="flex h-screen overflow-hidden">
       <AdminSidebar />
 
       <div className="flex flex-col grow overflow-hidden h-screen">

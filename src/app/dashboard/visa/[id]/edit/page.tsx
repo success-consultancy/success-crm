@@ -66,14 +66,16 @@ const EditVisaServicePage = () => {
   };
 
   return (
-    <Container className="flex flex-col py-10 gap-8">
-      <VisaService
-        userId={data?.userId}
-        formState={FORM_STATE.EDIT}
-        id={Number(params.id)}
-        defaultValues={defaultValues as Partial<NewVisaServiceType>}
-        accounts={data?.accounts || []}
-      />
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
+        <VisaService
+          userId={data?.userId}
+          formState={FORM_STATE.EDIT}
+          id={Number(params.id)}
+          defaultValues={defaultValues as Partial<NewVisaServiceType>}
+          accounts={data?.accounts || []}
+        />
+      </div>
     </Container>
   );
 };

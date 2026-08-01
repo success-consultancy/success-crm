@@ -14,8 +14,10 @@ const Page = () => {
   }
 
   return (
-    <Container>
-      <VisaService userId={me?.data?.id} formState={FORM_STATE.ADD} />
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
+        <VisaService userId={me?.data?.id} formState={FORM_STATE.ADD} />
+      </div>
     </Container>
   );
 };

@@ -130,7 +130,8 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
           <h3 className="text-h4 text-content-heading font-bold">{mode === 'edit' ? 'Edit lead' : 'New lead'}</h3>
         </div>
       </Portal>
-      <div>
+      {/* Single internal scroll region so the page doesn't double-scroll (CRM-178). */}
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
         <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1', 'item-2', 'item-3']}>
           <FormAccordion value="item-1" title="Personal Details">
             <PersonalDetailsStep />
@@ -143,7 +144,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
           </FormAccordion>
         </Accordion>
       </div>
-      <div className="flex items-center justify-end gap-4 mt-6">
+      <div className="shrink-0 flex items-center justify-end gap-4 pt-4">
         <Button onClick={handleSubmit(onSubmit)}>{mode === 'edit' ? 'Update Lead' : 'Add Lead'}</Button>
         <Button variant="outline" onClick={() => router.back()}>
           Cancel

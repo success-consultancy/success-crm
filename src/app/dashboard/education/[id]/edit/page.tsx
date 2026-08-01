@@ -62,8 +62,10 @@ const EditEducationServicePage = () => {
   };
 
   return (
-    <Container className="flex flex-col py-10 gap-8">
-      <EditEducationServiceAny defaultValues={defaultValues} id={Number(params.id)} />
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5">
+      <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
+        <EditEducationServiceAny defaultValues={defaultValues} id={Number(params.id)} />
+      </div>
     </Container>
   );
 };
