@@ -21,60 +21,28 @@ interface StatCard {
   Icon: LucideIcon;
   color: string;
   bgColor: string;
-  // ponytail: backend has no % change baseline yet — placeholder until an endpoint exists
-  changePct: number;
 }
 
 const STAT_CARDS: StatCard[] = [
-  {
-    key: 'uniqueClientCount',
-    label: 'Unique Clients',
-    Icon: Users,
-    color: 'text-[#001aff]',
-    bgColor: 'bg-[#ebedff]',
-    changePct: 40,
-  },
-  { key: 'users', label: 'CRM Users', Icon: UserCheck, color: 'text-[#007b93]', bgColor: 'bg-[#e4f9fa]', changePct: 60 },
-  { key: 'leads', label: 'Leads', Icon: TrendingUp, color: 'text-[#016edf]', bgColor: 'bg-[#ebf4ff]', changePct: 35 },
-  {
-    key: 'students',
-    label: 'Students',
-    Icon: GraduationCap,
-    color: 'text-[#7300ff]',
-    bgColor: 'bg-[#f4ebff]',
-    changePct: -0.5,
-  },
-  {
-    key: 'visaApplicants',
-    label: 'Visa Applicants',
-    Icon: Globe,
-    color: 'text-[#0eae02]',
-    bgColor: 'bg-[#e8fbe7]',
-    changePct: 15,
-  },
+  { key: 'uniqueClientCount', label: 'Unique Clients', Icon: Users, color: 'text-[#001aff]', bgColor: 'bg-[#ebedff]' },
+  { key: 'users', label: 'CRM Users', Icon: UserCheck, color: 'text-[#007b93]', bgColor: 'bg-[#e4f9fa]' },
+  { key: 'leads', label: 'Leads', Icon: TrendingUp, color: 'text-[#016edf]', bgColor: 'bg-[#ebf4ff]' },
+  { key: 'students', label: 'Students', Icon: GraduationCap, color: 'text-[#7300ff]', bgColor: 'bg-[#f4ebff]' },
+  { key: 'visaApplicants', label: 'Visa Applicants', Icon: Globe, color: 'text-[#0eae02]', bgColor: 'bg-[#e8fbe7]' },
   {
     key: 'skillAssessments',
     label: 'Skill Assessments',
     Icon: ClipboardList,
     color: 'text-[#ff7400]',
     bgColor: 'bg-[#fff5eb]',
-    changePct: -4,
   },
-  {
-    key: 'tribunalReview',
-    label: 'Tribunal Reviews',
-    Icon: Scale,
-    color: 'text-[#bb00ff]',
-    bgColor: 'bg-[#faebff]',
-    changePct: -16,
-  },
+  { key: 'tribunalReview', label: 'Tribunal Reviews', Icon: Scale, color: 'text-[#bb00ff]', bgColor: 'bg-[#faebff]' },
   {
     key: 'insuranceApplicants',
     label: 'Insurance',
     Icon: ShieldCheck,
     color: 'text-[#fb0b7b]',
     bgColor: 'bg-[#fceef4]',
-    changePct: 23,
   },
 ];
 
@@ -93,8 +61,10 @@ const AdminStatCards = () => {
               </div>
             </CardContainer>
           ))
-        : STAT_CARDS.map(({ key, label, Icon, color, bgColor, changePct }) => {
-            const positive = changePct >= 0;
+        : STAT_CARDS.map(({ key, label, Icon, color, bgColor }) => {
+            const changePct = data?.changePct[key];
+            const isNew = changePct === null;
+            const positive = (changePct ?? 0) >= 0;
             return (
               <CardContainer key={key} className="rounded-xl shadow-[0_1px_1px_rgba(10,13,18,0.05)] px-5 pt-4 pb-5">
                 <div className="flex items-start justify-between gap-[18px]">
@@ -105,9 +75,13 @@ const AdminStatCards = () => {
                         {data?.counts[key]?.toLocaleString() ?? '—'}
                       </p>
                       <p className="text-c1 flex items-center gap-1.5">
-                        <span className={cn('font-medium', positive ? 'text-[#01840c]' : 'text-utility-red')}>
-                          {positive ? '+' : ''}
-                          {changePct}%
+                        <span
+                          className={cn(
+                            'font-medium',
+                            isNew ? 'text-neutral-light-grey' : positive ? 'text-[#01840c]' : 'text-utility-red',
+                          )}
+                        >
+                          {isNew ? 'New' : `${positive ? '+' : ''}${changePct}%`}
                         </span>
                         <span className="text-neutral-light-grey">vs last year</span>
                       </p>

@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
+import { DateTime } from 'luxon';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useGetConvertedByMonth } from '@/query/get-converted-by-month';
 import ChartCard from '../shared/chart-card';
 
 type DatePreset = 'this_month' | 'this_quarter' | 'this_year' | 'all_time';
@@ -15,25 +17,32 @@ const SERIES = [
   { key: 'Insurance', color: '#DE689F' },
 ] as const;
 
-// ponytail: backend only exposes an aggregate conversion % per service (see get-stats-converted.ts),
-// not a monthly breakdown — placeholder series until a monthly endpoint exists.
-const MONTHLY_DATA = [
-  { month: 'Jan', Education: 55, Visa: 25, Skill: 55, Tribunal: 10, Insurance: 30 },
-  { month: 'Feb', Education: 58, Visa: 28, Skill: 52, Tribunal: 12, Insurance: 32 },
-  { month: 'Mar', Education: 60, Visa: 30, Skill: 58, Tribunal: 15, Insurance: 35 },
-  { month: 'Apr', Education: 68, Visa: 35, Skill: 60, Tribunal: 18, Insurance: 40 },
-  { month: 'May', Education: 72, Visa: 45, Skill: 65, Tribunal: 20, Insurance: 50 },
-  { month: 'Jun', Education: 85, Visa: 55, Skill: 68, Tribunal: 22, Insurance: 58 },
-  { month: 'Jul', Education: 80, Visa: 60, Skill: 72, Tribunal: 25, Insurance: 55 },
-  { month: 'Aug', Education: 78, Visa: 58, Skill: 62, Tribunal: 20, Insurance: 50 },
-  { month: 'Sep', Education: 82, Visa: 62, Skill: 65, Tribunal: 18, Insurance: 52 },
-  { month: 'Oct', Education: 88, Visa: 65, Skill: 70, Tribunal: 22, Insurance: 58 },
-  { month: 'Nov', Education: 78, Visa: 60, Skill: 75, Tribunal: 25, Insurance: 62 },
-  { month: 'Dec', Education: 90, Visa: 70, Skill: 78, Tribunal: 20, Insurance: 65 },
-];
+// backend defaults omitted dates to a trailing 12-month window, not all-time —
+// "All Time" must pass an explicit early startDate to actually get everything.
+function getPresetDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
+  const now = DateTime.now();
+  if (preset === 'all_time') return { startDate: DateTime.fromObject({ year: 2000 }).toISO() ?? undefined };
+  const start = preset === 'this_month' ? now.startOf('month') : preset === 'this_quarter' ? now.startOf('quarter') : now.startOf('year');
+  return { startDate: start.toISO() ?? undefined, endDate: now.toISO() ?? undefined };
+}
 
 const ConversionRates = () => {
   const [preset, setPreset] = useState<DatePreset>('this_year');
+  const { startDate, endDate } = useMemo(() => getPresetDateRange(preset), [preset]);
+  const { data } = useGetConvertedByMonth(startDate, endDate);
+
+  const monthlyData = useMemo(
+    () =>
+      (data ?? []).map(({ month, Education, Visa, Skill, AAT, Health }) => ({
+        month,
+        Education,
+        Visa,
+        Skill,
+        Tribunal: AAT,
+        Insurance: Health,
+      })),
+    [data],
+  );
 
   return (
     <ChartCard
@@ -53,7 +62,7 @@ const ConversionRates = () => {
       }
     >
       <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={MONTHLY_DATA} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>
+        <LineChart data={monthlyData} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
           <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis

@@ -34,11 +34,12 @@ const getEducation = async (params: EducationFilterParams) => {
   return res.data as EducationsResponseType;
 };
 
-export const useGetEducation = (params: EducationFilterParams) => {
+export const useGetEducation = (params: EducationFilterParams, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => getEducation(params),
     queryKey: [QUERY_KEYS.GET_EDUCATIONS, params],
     refetchOnWindowFocus: false,
+    enabled: options?.enabled,
   });
 };
 

@@ -35,25 +35,13 @@ function getMonthDateRange(month: string) {
   return { startDate: start.toISOString(), endDate: end.toISOString() };
 }
 
-// ponytail: useGetEmployeeRanking only returns a single clientCount/convertedCount pair,
-// not a per-service breakdown — placeholder split until the endpoint returns per-service counts.
-const SERVICE_WEIGHTS = [
-  { key: 'student', label: 'Student', weight: 0.3 },
-  { key: 'visa', label: 'Visa', weight: 0.25 },
-  { key: 'skill', label: 'Skill', weight: 0.2 },
-  { key: 'tribunal', label: 'Tribunal', weight: 0.15 },
-  { key: 'insurance', label: 'Insurance', weight: 0.1 },
+const SERVICE_COLUMNS = [
+  { key: 'student', label: 'Student' },
+  { key: 'visa', label: 'Visa' },
+  { key: 'skill', label: 'Skill' },
+  { key: 'tribunal', label: 'Tribunal' },
+  { key: 'insurance', label: 'Insurance' },
 ] as const;
-
-function deriveServiceBreakdown(total: number) {
-  return SERVICE_WEIGHTS.reduce(
-    (acc, { key, weight }) => {
-      acc[key] = Math.round(total * weight);
-      return acc;
-    },
-    {} as Record<(typeof SERVICE_WEIGHTS)[number]['key'], number>,
-  );
-}
 
 const EmployeeRankingTable = () => {
   const [tab, setTab] = useState<'clients' | 'performance'>('clients');
@@ -71,7 +59,7 @@ const EmployeeRankingTable = () => {
         const convertedCount = Number(emp.convertedCount) || 0;
         const lostCount = clientCount - convertedCount;
         const conversionRate = clientCount > 0 ? (convertedCount / clientCount) * 100 : 0;
-        return { ...emp, clientCount, convertedCount, lostCount, conversionRate, ...deriveServiceBreakdown(clientCount) };
+        return { ...emp, clientCount, convertedCount, lostCount, conversionRate };
       })
       .filter((emp) => emp.clientCount > 0);
   }, [data]);
@@ -114,7 +102,7 @@ const EmployeeRankingTable = () => {
               <th className="pb-3 pr-4 font-medium">Employee</th>
               {tab === 'clients' ? (
                 <>
-                  {SERVICE_WEIGHTS.map(({ key, label }) => (
+                  {SERVICE_COLUMNS.map(({ key, label }) => (
                     <th key={key} className="pb-3 pr-4 font-medium text-right">
                       {label}
                     </th>
@@ -168,9 +156,9 @@ const EmployeeRankingTable = () => {
                   </td>
                   {tab === 'clients' ? (
                     <>
-                      {SERVICE_WEIGHTS.map(({ key }) => (
+                      {SERVICE_COLUMNS.map(({ key }) => (
                         <td key={key} className="py-3 pr-4 text-right text-b14 text-neutral-black">
-                          {emp[key]}
+                          {emp.services[key]}
                         </td>
                       ))}
                       <td className="py-3 text-right text-b14-600 text-neutral-black">{emp.clientCount}</td>

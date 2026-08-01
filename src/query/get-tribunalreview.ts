@@ -32,11 +32,12 @@ const getTribunalReviews = async (params?: FilterParams) => {
   return res.data as ITribunalReviewResponseType;
 };
 
-export const useGetTribunalReviews = (params?: FilterParams) => {
+export const useGetTribunalReviews = (params?: FilterParams, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => getTribunalReviews(params),
     queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW, params],
     refetchOnWindowFocus: false,
+    enabled: options?.enabled,
   });
 };
 

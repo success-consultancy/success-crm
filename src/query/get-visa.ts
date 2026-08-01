@@ -31,11 +31,12 @@ const getVisa = async (params?: VisaFilterParams) => {
   return res.data as IVisaResponseType;
 };
 
-export const useGetVisa = (params?: VisaFilterParams) => {
+export const useGetVisa = (params?: VisaFilterParams, options?: { enabled?: boolean }) => {
   return useQuery({
     queryFn: () => getVisa(params),
     queryKey: [QUERY_KEYS.GET_VISAS, params],
     refetchOnWindowFocus: false,
+    enabled: options?.enabled,
   });
 };
 
