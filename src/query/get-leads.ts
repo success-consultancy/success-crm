@@ -74,7 +74,7 @@ const getFollowUp = async (id: string, type: string) => {
 export const useGetFollowUp = (id: string, type: string) => {
   return useQuery({
     queryFn: () => getFollowUp(id, type),
-    queryKey: [QUERY_KEYS.GET_FOLLOW_UP, id],
+    queryKey: [QUERY_KEYS.GET_FOLLOW_UP, id, type],
     refetchOnWindowFocus: false,
   });
 };

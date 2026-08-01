@@ -8,6 +8,7 @@ import { CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import React from 'react';
@@ -75,6 +76,30 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     time: '',
     note: '',
   });
+  const [dateRange, setDateRange] = React.useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
+  const [rangeOpen, setRangeOpen] = React.useState(false);
+
+  // Start of today — used to disable past dates when scheduling a follow-up.
+  const today = React.useMemo(() => {
+    const d = new Date();
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, []);
+
+  // Filter the Previous list to the selected date range (inclusive). Either
+  // bound is optional — an open-ended range filters on just the set side.
+  const filteredPrevious = React.useMemo(() => {
+    const { from, to } = dateRange;
+    if (!from && !to) return previous;
+    const fromTs = from ? new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime() : -Infinity;
+    const toTs = to
+      ? new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59, 999).getTime()
+      : Infinity;
+    return previous.filter((f) => {
+      const t = new Date(f.date).getTime();
+      return t >= fromTs && t <= toTs;
+    });
+  }, [previous, dateRange]);
 
   React.useEffect(() => {
     if (!followUp) {
@@ -84,24 +109,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     }
 
     const now = new Date();
-    now.setSeconds(0, 0);
-
-    const parseTime = (timeStr?: string): { hours: number; minutes: number } => {
-      if (!timeStr) return { hours: 0, minutes: 0 };
-      const ampmMatch = timeStr.match(/^(\d{1,2}):?(\d{2})?\s*(AM|PM)$/i);
-      if (ampmMatch) {
-        let hours = parseInt(ampmMatch[1], 10);
-        const minutes = parseInt(ampmMatch[2] ?? '0', 10);
-        const isPM = ampmMatch[3].toUpperCase() === 'PM';
-        if (hours === 12) hours = 0;
-        if (isPM) hours += 12;
-        return { hours, minutes };
-      }
-      const hm = timeStr.split(':');
-      const hours = parseInt(hm[0] ?? '0', 10);
-      const minutes = parseInt(hm[1] ?? '0', 10);
-      return { hours, minutes };
-    };
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
     const upcomingList: FollowUp[] = [];
     const previousList: FollowUp[] = [];
@@ -111,10 +119,11 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       if (!datePart) return;
       const baseDate = new Date(datePart);
       if (isNaN(baseDate.getTime())) return;
-      const { hours, minutes } = parseTime(fu?.time as string | undefined);
-      const event = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate(), hours, minutes, 0, 0);
 
-      const isUpcoming = event.getTime() >= now.getTime();
+      // Status is date-based: once the follow-up date arrives (today or earlier)
+      // the reminder has already fired, so it belongs in Previous/Completed.
+      const eventDate = new Date(baseDate.getFullYear(), baseDate.getMonth(), baseDate.getDate());
+      const isUpcoming = eventDate.getTime() > todayStart.getTime();
 
       const item: FollowUp = {
         id: fu?.id ?? index,
@@ -137,6 +146,9 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
   }, [followUp]);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent duplicate follow-ups from rapid double-clicks (CRM-184).
+    if (addFollowUp.isPending) return;
 
     // Validate required fields and show inline messages (CRM-187).
     const errors: { date?: string; time?: string } = {};
@@ -170,7 +182,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
   };
 
   const handleCancel = () => {
-    // Reset form
+    // Reset form and close the add dialog.
     setFormData({
       date: null,
       time: '',
@@ -179,6 +191,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       remindClient: false,
     });
     setFormErrors({});
+    setAddDialogOpen(false);
   };
 
   const openEdit = (f: FollowUp) => {
@@ -193,7 +206,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!editData.id) return;
+    if (!editData.id || updateFollowUp.isPending) return;
     updateFollowUp.mutateAsync({
       id: editData.id,
       date: editData.date ? editData.date.toString() : '',
@@ -250,6 +263,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                     <DatePicker
                       mode="single"
                       selected={formData.date ?? undefined}
+                      disabled={{ before: today }}
                       onSelect={(date) => {
                         setFormData({ ...formData, date: date ?? null });
                         if (date) setFormErrors((prev) => ({ ...prev, date: undefined }));
@@ -321,10 +335,12 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">
-                  <Button type="button" variant="outline" onClick={handleCancel}>
+                  <Button type="button" variant="outline" onClick={handleCancel} disabled={addFollowUp.isPending}>
                     Cancel
                   </Button>
-                  <Button type="submit">Save</Button>
+                  <Button type="submit" disabled={addFollowUp.isPending}>
+                    {addFollowUp.isPending ? 'Saving…' : 'Save'}
+                  </Button>
                 </div>
               </form>
             </DialogContent>
@@ -377,12 +393,49 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       <CardContainer>
         <div className="flex justify-between items-center p-4 border-b">
           <h2 className="font-semibold text-lg">Previous</h2>
-          <Button variant="outline" size="sm">
-            Date range
-          </Button>
+          <Popover open={rangeOpen} onOpenChange={setRangeOpen}>
+            <PopoverTrigger asChild>
+              <Button variant="outline" size="sm">
+                {dateRange.from || dateRange.to
+                  ? `${dateRange.from ? dateRange.from.toLocaleDateString() : '…'} – ${
+                      dateRange.to ? dateRange.to.toLocaleDateString() : '…'
+                    }`
+                  : 'Date range'}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent align="end" className="w-auto space-y-4 p-4">
+              <div className="space-y-2">
+                <Label>From</Label>
+                <DatePicker
+                  mode="single"
+                  selected={dateRange.from ?? undefined}
+                  onSelect={(date) => setDateRange((r) => ({ ...r, from: date ?? null }))}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label>To</Label>
+                <DatePicker
+                  mode="single"
+                  selected={dateRange.to ?? undefined}
+                  onSelect={(date) => setDateRange((r) => ({ ...r, to: date ?? null }))}
+                />
+              </div>
+              <div className="flex justify-between pt-1">
+                <Button type="button" variant="ghost" size="sm" onClick={() => setDateRange({ from: null, to: null })}>
+                  Clear
+                </Button>
+                <Button type="button" size="sm" onClick={() => setRangeOpen(false)}>
+                  Apply
+                </Button>
+              </div>
+            </PopoverContent>
+          </Popover>
         </div>
         <CardContent className="divide-y">
-          {previous.map((f) => (
+          {filteredPrevious.length === 0 && (
+            <p className="py-4 text-sm text-gray-500">No follow-ups in this range.</p>
+          )}
+          {filteredPrevious.map((f) => (
             <div key={f.id} className="flex items-start justify-between py-4">
               <div className="flex items-center space-x-4">
                 <div className="flex flex-col items-center justify-center w-12 h-12 rounded-md bg-gray-100">
@@ -400,22 +453,9 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                 </div>
               </div>
 
+              {/* Completed follow-ups are read-only — no edit/delete. */}
               <div className="flex items-center space-x-2">
                 <Badge className={getStatusColor(f.status)}>{f.status}</Badge>
-                <Button variant="ghost" size="icon" onClick={() => openEdit(f)}>
-                  <Pencil size={16} />
-                </Button>
-                <DeleteDialog
-                  title="Delete follow-up?"
-                  description="This action cannot be undone."
-                  trigger={
-                    <Button variant="ghost" size="icon">
-                      <Trash2 size={16} />
-                    </Button>
-                  }
-                  confirmText="Delete"
-                  onConfirm={() => deleteFollowUp.mutate({ id: f.id })}
-                />
               </div>
             </div>
           ))}
@@ -470,10 +510,17 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">
-              <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setEditDialogOpen(false)}
+                disabled={updateFollowUp.isPending}
+              >
                 Cancel
               </Button>
-              <Button type="submit">Update</Button>
+              <Button type="submit" disabled={updateFollowUp.isPending}>
+                {updateFollowUp.isPending ? 'Updating…' : 'Update'}
+              </Button>
             </div>
           </form>
         </DialogContent>

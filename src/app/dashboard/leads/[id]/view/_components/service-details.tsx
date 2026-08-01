@@ -26,7 +26,6 @@ const STATUS_OPTIONS = [
   { value: LeadStatusTypes.Negotiation, label: 'Negotiation' },
   { value: LeadStatusTypes.Converted, label: 'Converted' },
   { value: LeadStatusTypes.NotConverted, label: 'Not Converted' },
-  { value: LeadStatusTypes.NotInterested, label: 'Not Interested' },
   { value: LeadStatusTypes.FollowUp, label: 'Follow Up' },
 ];
 

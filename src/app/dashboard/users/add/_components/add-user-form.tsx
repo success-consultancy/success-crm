@@ -31,33 +31,6 @@ const ROLE_OPTIONS = [
   { label: 'Lead Management', value: '5' },
 ];
 
-type PermissionKey =
-  | 'dashboardManagement'
-  | 'agencyAgreementManagement'
-  | 'userManagement'
-  | 'universityManagement'
-  | 'courseManagement'
-  | 'sourceManagement'
-  | 'settingManagement';
-
-const PERMISSION_LABELS: Record<PermissionKey, string> = {
-  dashboardManagement: 'Dashboard',
-  agencyAgreementManagement: 'Agency Agreement',
-  userManagement: 'User Management',
-  universityManagement: 'University Management',
-  courseManagement: 'Course Management',
-  sourceManagement: 'Source Management',
-  settingManagement: 'Settings',
-};
-
-const ROLE_PERMISSIONS: Record<number, Record<PermissionKey, boolean>> = {
-  1: { dashboardManagement: true, agencyAgreementManagement: true, userManagement: true, universityManagement: true, courseManagement: true, sourceManagement: true, settingManagement: true },
-  2: { dashboardManagement: true, agencyAgreementManagement: true, userManagement: true, universityManagement: true, courseManagement: true, sourceManagement: true, settingManagement: false },
-  3: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
-  4: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
-  5: { dashboardManagement: true, agencyAgreementManagement: false, userManagement: false, universityManagement: false, courseManagement: false, sourceManagement: false, settingManagement: false },
-};
-
 const STATUS_OPTIONS = [
   { label: 'Active', value: 'true' },
   { label: 'Inactive', value: 'false' },
@@ -132,7 +105,6 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
   const firstName = useWatch({ control, name: 'firstName' });
   const lastName = useWatch({ control, name: 'lastName' });
   const selectedColor = useWatch({ control, name: 'color' });
-  const selectedRoleId = useWatch({ control, name: 'roleId' });
 
   const activeColor = selectedColor ||
     (firstName || lastName
@@ -224,7 +196,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         </h3>
       </Portal>
 
-      <Accordion type="multiple" className="w-full space-y-4" defaultValue={['basic', 'permissions']}>
+      <Accordion type="multiple" className="w-full space-y-4" defaultValue={['basic']}>
         <FormAccordion value="basic" title="Basic Information">
           <div className="grid grid-cols-3 gap-6">
             <FormField
@@ -398,28 +370,6 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
           </div>
         </FormAccordion>
 
-        <FormAccordion value="permissions" title="Permissions">
-          <div className="space-y-3">
-            <p className="text-sm text-gray-500">
-              Permissions are automatically assigned based on the selected role and cannot be customised per user.
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              {(Object.entries(PERMISSION_LABELS) as [PermissionKey, string][]).map(([key, label]) => {
-                const granted = ROLE_PERMISSIONS[selectedRoleId]?.[key] ?? false;
-                return (
-                  <div key={key} className="flex items-center gap-2 py-1">
-                    <span className={`w-4 h-4 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold ${granted ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-400'}`}>
-                      {granted ? '✓' : '–'}
-                    </span>
-                    <Label className={`text-sm font-normal ${granted ? 'text-gray-800' : 'text-gray-400'}`}>
-                      {label}
-                    </Label>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        </FormAccordion>
       </Accordion>
 
       <div className="flex items-center justify-end gap-4 mt-6">

@@ -33,7 +33,13 @@ function formatDate(dateString: string | null | undefined): string {
 function getClosingDate(lead: ILead): string {
   const history = lead.leadStageHistory;
   if (!history) return '-';
-  const closedEntry = history.find((h) => (h.stage === LeadStatusTypes.Converted || h.stage === LeadStatusTypes.NotInterested) && h.startDate);
+  const closedEntry = history.find(
+    (h) =>
+      (h.stage === LeadStatusTypes.Converted ||
+        h.stage === LeadStatusTypes.NotConverted ||
+        h.stage === LeadStatusTypes.NotInterested) &&
+      h.startDate,
+  );
   return closedEntry ? formatDate(closedEntry.startDate) : '-';
 }
 
@@ -46,7 +52,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
     LeadStatusTypes.New,
     LeadStatusTypes.Negotiation,
     LeadStatusTypes.Converted,
-    LeadStatusTypes.NotInterested,
+    LeadStatusTypes.NotConverted,
   ];
 
   const currentStage = lead.leadStage || lead.status || LeadStatusTypes.New;
@@ -67,7 +73,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   };
 
   const handleWonLost = (type: 'won' | 'lost') => {
-    const stage = type === 'won' ? LeadStatusTypes.Converted : LeadStatusTypes.NotInterested;
+    const stage = type === 'won' ? LeadStatusTypes.Converted : LeadStatusTypes.NotConverted;
     setPendingStage(stage);
     setConfirmOpen(true);
   };
@@ -178,7 +184,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
           </button>
           <button
             onClick={() => handleWonLost('lost')}
-            className={`px-4 py-2 rounded-md font-medium ${currentStage === LeadStatusTypes.NotInterested ? 'bg-red-500 text-white' : 'bg-red-100 text-red-700'
+            className={`px-4 py-2 rounded-md font-medium ${currentStage === LeadStatusTypes.NotConverted || currentStage === LeadStatusTypes.NotInterested ? 'bg-red-500 text-white' : 'bg-red-100 text-red-700'
               }`}
           >
             Lost
