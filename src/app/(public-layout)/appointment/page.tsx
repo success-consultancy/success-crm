@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { ROUTES } from '@/config/routes';
 import AppointmentHeader from './_components/appointment-header';
 import AppointmentStepper from './_components/appointment-stepper';
 import StepBranch from './_components/step-branch';
@@ -126,7 +127,7 @@ const AppointmentPage = () => {
                 </div>
                 <StepSuccess
                   data={data}
-                  onGoHome={() => (window.location.href = '/')}
+                  onGoHome={() => (window.location.href = ROUTES.PUBLIC_APPOINTMENT)}
                   onBack={() => setStep(4)}
                 />
               </>

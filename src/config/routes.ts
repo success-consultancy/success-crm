@@ -49,4 +49,5 @@ export const ROUTES = {
   PROFILE: '/dashboard/profile',
   LOGIN: '/login',
   FORGOT_PASSWORD: '/forgot-password',
+  PUBLIC_APPOINTMENT: '/appointment',
 };
