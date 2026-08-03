@@ -98,8 +98,8 @@ const EmployeeRankingTable = () => {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b text-left text-c1 text-neutral-light-grey">
-              <th className="pb-3 pr-4 font-medium">S.N</th>
-              <th className="pb-3 pr-4 font-medium">Employee</th>
+              <th className="pb-3 p-4 font-medium">S.N</th>
+              <th className="pb-3 p-4 font-medium">Employee</th>
               {tab === 'clients' ? (
                 <>
                   {SERVICE_COLUMNS.map(({ key, label }) => (
@@ -136,9 +136,9 @@ const EmployeeRankingTable = () => {
               </tr>
             ) : (
               paged.map((emp, idx) => (
-                <tr key={emp.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors">
-                  <td className="py-3 pr-4 text-neutral-light-grey">{(page - 1) * pageSize + idx + 1}</td>
-                  <td className="py-3 pr-4">
+                <tr key={emp.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors p-4">
+                  <td className="py-3 p-4 text-neutral-light-grey">{(page - 1) * pageSize + idx + 1}</td>
+                  <td className="py-3 p-4">
                     <div className="flex items-center gap-2.5">
                       <Avatar className="h-7 w-7">
                         <AvatarFallback className="text-c2 bg-primary/10 text-primary">
@@ -172,13 +172,12 @@ const EmployeeRankingTable = () => {
                       <td className="py-3 pr-4 text-right text-b14 text-utility-red font-medium">{emp.lostCount}</td>
                       <td className="py-3 text-right">
                         <span
-                          className={`text-b14-600 ${
-                            emp.conversionRate >= 50
-                              ? 'text-utility-green'
-                              : emp.conversionRate >= 25
-                                ? 'text-[#fd7e14]'
-                                : 'text-utility-red'
-                          }`}
+                          className={`text-b14-600 ${emp.conversionRate >= 50
+                            ? 'text-utility-green'
+                            : emp.conversionRate >= 25
+                              ? 'text-[#fd7e14]'
+                              : 'text-utility-red'
+                            }`}
                         >
                           {emp.conversionRate.toFixed(1)}%
                         </span>
