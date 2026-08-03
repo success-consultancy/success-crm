@@ -201,9 +201,9 @@ export default function PerformanceTable({
   const nameCol = table.getColumn('name');
 
   return (
-    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)]">
+    <div className="bg-white border border-stroke-divider rounded-lg overflow-hidden shadow-[0px_1px_2px_rgba(0,0,0,0.04)] flex flex-col flex-1 min-h-0">
       {/* Card header */}
-      <div className={cn('border-b mx-4', BD)}>
+      <div className={cn('border-b mx-4 shrink-0', BD)}>
         <div className={cn('py-4 border-b', BD)}>
           <h3 className="text-[15px] font-semibold text-content-heading">{title}</h3>
         </div>
@@ -269,8 +269,8 @@ export default function PerformanceTable({
       </div>
 
       {/* Scrollable table */}
-      <div className={cn('px-4 border-l border-r rounded-lg', BD)}>
-        <div ref={scrollRef} className="overflow-x-auto">
+      <div className={cn('px-4 border-l border-r rounded-lg flex-1 min-h-0 flex flex-col', BD)}>
+        <div ref={scrollRef} className="overflow-auto flex-1 min-h-0">
           <table className="border border-spacing-0" style={{ width: 'max-content', minWidth: '100%' }}>
             <thead>
               {/* Row 1: group headers */}
@@ -281,7 +281,7 @@ export default function PerformanceTable({
                   onClick={() => snCol?.toggleSorting()}
                   style={{ width: 48, minWidth: 48 }}
                   className={cn(
-                    'sticky left-0 z-20 px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
+                    'sticky left-0 top-0 z-30 px-3 text-left text-[11px] font-bold text-content-heading border-b border-r align-middle cursor-pointer select-none',
                     BD,
                     H_BG,
                   )}
@@ -297,7 +297,7 @@ export default function PerformanceTable({
                   onClick={() => nameCol?.toggleSorting()}
                   style={{ width: 260, minWidth: 260, ...(showLeftShadow ? LEFT_SHADOW_STYLE : LEFT_BORDER_ONLY) }}
                   className={cn(
-                    'sticky left-[48px] z-20 px-3 text-left text-[11px] font-bold text-content-heading border-b align-middle cursor-pointer select-none',
+                    'sticky left-[48px] top-0 z-30 px-3 text-left text-[11px] font-bold text-content-heading border-b align-middle cursor-pointer select-none',
                     BD,
                     H_BG,
                   )}
@@ -316,7 +316,7 @@ export default function PerformanceTable({
                       key={`grp-${key}`}
                       colSpan={2}
                       className={cn(
-                        'text-center text-[11px] font-bold text-content-heading border-b border-r h-9 px-2 whitespace-nowrap',
+                        'sticky top-0 z-20 text-center text-[11px] font-bold text-content-heading border-b border-r h-9 px-2 whitespace-nowrap',
                         BD,
                         isCurrent ? 'bg-green-100 text-green-700' : H_BG,
                       )}
@@ -330,7 +330,7 @@ export default function PerformanceTable({
                 <th
                   colSpan={3}
                   className={cn(
-                    'sticky z-20 text-center text-[11px] font-bold text-content-heading border-b h-9',
+                    'sticky top-0 z-30 text-center text-[11px] font-bold text-content-heading border-b h-9',
                     BD,
                     H_BG,
                   )}
@@ -353,7 +353,7 @@ export default function PerformanceTable({
                     <React.Fragment key={`sub-${key}`}>
                       <th
                         className={cn(
-                          'text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
+                          'sticky top-9 z-20 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
                           BD,
                           isCurrent ? 'bg-green-50' : H_BG,
                         )}
@@ -362,7 +362,7 @@ export default function PerformanceTable({
                       </th>
                       <th
                         className={cn(
-                          'text-center text-[10px] font-semibold text-content-subtitle border-b border-r h-8 w-[62px] px-2',
+                          'sticky top-9 z-20 text-center text-[10px] font-semibold text-content-subtitle border-b border-r h-8 w-[62px] px-2',
                           BD,
                           isCurrent ? 'bg-green-50' : H_BG,
                         )}
@@ -374,7 +374,7 @@ export default function PerformanceTable({
                 })}
                 <th
                   className={cn(
-                    'sticky z-20 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
+                    'sticky top-9 z-30 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
                     BD,
                     H_BG,
                   )}
@@ -384,7 +384,7 @@ export default function PerformanceTable({
                 </th>
                 <th
                   className={cn(
-                    'sticky z-20 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
+                    'sticky top-9 z-30 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[62px] px-2',
                     BD,
                     H_BG,
                   )}
@@ -394,7 +394,7 @@ export default function PerformanceTable({
                 </th>
                 <th
                   className={cn(
-                    'sticky z-20 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[89px] px-2',
+                    'sticky top-9 z-30 text-center text-[10px] font-semibold text-content-subtitle border-b h-8 w-[89px] px-2',
                     BD,
                     H_BG,
                   )}
@@ -565,7 +565,7 @@ export default function PerformanceTable({
                     colSpan={2}
                     style={{ minWidth: 308, ...(showLeftShadow ? LEFT_SHADOW_STYLE : LEFT_BORDER_ONLY) }}
                     className={cn(
-                      'sticky left-0 z-10 px-3 text-[13px] font-semibold text-content-heading border-b',
+                      'sticky left-0 bottom-0 z-30 px-3 text-[13px] font-semibold text-content-heading border-b',
                       BD,
                       TOTAL_BG,
                     )}
@@ -581,8 +581,9 @@ export default function PerformanceTable({
                       <React.Fragment key={`total-${key}`}>
                         <td
                           className={cn(
-                            'text-center text-[13px] font-semibold text-content-heading border-b px-2',
+                            'sticky bottom-0 z-20 text-center text-[13px] font-semibold text-content-heading border-b px-2',
                             BD,
+                            TOTAL_BG,
                             isCurrent && 'bg-green-50/60',
                           )}
                         >
@@ -590,8 +591,9 @@ export default function PerformanceTable({
                         </td>
                         <td
                           className={cn(
-                            'text-center text-[13px] font-semibold border-b border-r px-2',
+                            'sticky bottom-0 z-20 text-center text-[13px] font-semibold border-b border-r px-2',
                             BD,
+                            TOTAL_BG,
                             isCurrent && 'bg-green-50/60',
                             a >= t ? 'text-green-600' : 'text-red-500',
                           )}
@@ -603,7 +605,7 @@ export default function PerformanceTable({
                   })}
                   <td
                     className={cn(
-                      'sticky z-10 text-center text-[13px] font-semibold text-content-heading border-b px-2',
+                      'sticky bottom-0 z-30 text-center text-[13px] font-semibold text-content-heading border-b px-2',
                       BD,
                       TOTAL_BG,
                     )}
@@ -613,7 +615,7 @@ export default function PerformanceTable({
                   </td>
                   <td
                     className={cn(
-                      'sticky z-10 text-center text-[13px] font-semibold text-green-600 border-b px-2',
+                      'sticky bottom-0 z-30 text-center text-[13px] font-semibold text-green-600 border-b px-2',
                       BD,
                       TOTAL_BG,
                     )}
@@ -621,7 +623,7 @@ export default function PerformanceTable({
                   >
                     {totals.totalActual}
                   </td>
-                  <td className={cn('sticky z-10 border-b px-2', BD, TOTAL_BG)} style={{ right: S_PROGRESS_R }}>
+                  <td className={cn('sticky bottom-0 z-30 border-b px-2', BD, TOTAL_BG)} style={{ right: S_PROGRESS_R }}>
                     <ProgressBar actual={totals.totalActual} target={totals.totalTarget} />
                   </td>
                 </tr>

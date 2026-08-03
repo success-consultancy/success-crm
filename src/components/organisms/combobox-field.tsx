@@ -85,8 +85,9 @@ const ComboboxField = <T extends FieldValues>({
                   <CommandItem
                     key={option.value}
                     value={option.value}
-                    onSelect={(currentValue) => {
-                      field.onChange(currentValue === field.value ? '' : currentValue);
+                    keywords={[option.label]}
+                    onSelect={() => {
+                      field.onChange(option.value === field.value ? '' : option.value);
                       setOpen(false);
                     }}
                   >

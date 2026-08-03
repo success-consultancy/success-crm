@@ -39,7 +39,7 @@ const ROLES: Record<number, string> = {
 
 const EmployeesListPage = () => {
   const router = useRouter();
-  const { data: users = [], isLoading } = useGetUsers();
+  const { data: users = [], isLoading } = useGetUsers({ includeInactive: true });
 
   const [search, setSearch] = useState('');
   const [roleFilter, setRoleFilter] = useState<RoleFilter>('all');

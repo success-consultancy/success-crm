@@ -65,7 +65,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     remindMe: false,
     remindClient: false,
   });
-  const [formErrors, setFormErrors] = React.useState<{ date?: string; time?: string }>({});
+  const [formErrors, setFormErrors] = React.useState<{ date?: string; time?: string; note?: string }>({});
   const [upcoming, setUpcoming] = React.useState<FollowUp[]>([]);
   const [previous, setPrevious] = React.useState<FollowUp[]>([]);
   const [addDialogOpen, setAddDialogOpen] = React.useState(false);
@@ -76,6 +76,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     time: '',
     note: '',
   });
+  const [editErrors, setEditErrors] = React.useState<{ note?: string }>({});
   const [dateRange, setDateRange] = React.useState<{ from: Date | null; to: Date | null }>({ from: null, to: null });
   const [rangeOpen, setRangeOpen] = React.useState(false);
 
@@ -92,9 +93,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     const { from, to } = dateRange;
     if (!from && !to) return previous;
     const fromTs = from ? new Date(from.getFullYear(), from.getMonth(), from.getDate()).getTime() : -Infinity;
-    const toTs = to
-      ? new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59, 999).getTime()
-      : Infinity;
+    const toTs = to ? new Date(to.getFullYear(), to.getMonth(), to.getDate(), 23, 59, 59, 999).getTime() : Infinity;
     return previous.filter((f) => {
       const t = new Date(f.date).getTime();
       return t >= fromTs && t <= toTs;
@@ -150,10 +149,11 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
     // Prevent duplicate follow-ups from rapid double-clicks (CRM-184).
     if (addFollowUp.isPending) return;
 
-    // Validate required fields and show inline messages (CRM-187).
-    const errors: { date?: string; time?: string } = {};
+    // Validate required fields and show inline messages
+    const errors: { date?: string; time?: string; note?: string } = {};
     if (!formData.date) errors.date = 'Follow-up date is required';
     if (!formData.time) errors.time = 'Time is required';
+    if (!formData.note.trim()) errors.note = 'Note is required';
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
 
@@ -161,7 +161,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       await addFollowUp.mutateAsync({
         date: toDateOnly(formData.date!),
         time: formData.time,
-        note: formData.note || null,
+        note: formData.note.trim(),
         remindMe: formData.remindMe,
         remindClient: formData.remindClient,
         followableId: Number(id),
@@ -201,21 +201,27 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
       time: f.time || '',
       note: f.title === 'Follow-up' ? '' : f.title,
     });
+    setEditErrors({});
     setEditDialogOpen(true);
   };
 
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!editData.id || updateFollowUp.isPending) return;
+    if (!editData.note.trim()) {
+      setEditErrors({ note: 'Note is required' });
+      return;
+    }
     updateFollowUp.mutateAsync({
       id: editData.id,
       date: editData.date ? editData.date.toString() : '',
       time: editData.time,
-      note: editData.note || null,
+      note: editData.note.trim(),
       followableId: Number(id),
       followableType: followableType,
     });
     setEditDialogOpen(false);
+    setEditErrors({});
     setEditData({ id: null, date: null, time: '', note: '' });
   };
 
@@ -300,14 +306,20 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="note">Note</Label>
+                  <Label htmlFor="note">
+                    Note <span className="text-red-500">*</span>
+                  </Label>
                   <Textarea
                     id="note"
                     value={formData.note}
-                    onChange={(e) => setFormData({ ...formData, note: e.target.value })}
+                    onChange={(e) => {
+                      setFormData({ ...formData, note: e.target.value });
+                      if (e.target.value.trim()) setFormErrors((prev) => ({ ...prev, note: undefined }));
+                    }}
                     placeholder="Type something..."
                     className="min-h-[100px] resize-none"
                   />
+                  {formErrors.note && <p className="text-sm text-red-500">{formErrors.note}</p>}
                 </div>
 
                 <div className="flex items-center space-x-6">
@@ -432,9 +444,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
           </Popover>
         </div>
         <CardContent className="divide-y">
-          {filteredPrevious.length === 0 && (
-            <p className="py-4 text-sm text-gray-500">No follow-ups in this range.</p>
-          )}
+          {filteredPrevious.length === 0 && <p className="py-4 text-sm text-gray-500">No follow-ups in this range.</p>}
           {filteredPrevious.map((f) => (
             <div key={f.id} className="flex items-start justify-between py-4">
               <div className="flex items-center space-x-4">
@@ -499,14 +509,20 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="edit-note">Note</Label>
+              <Label htmlFor="edit-note">
+                Note <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 id="edit-note"
                 value={editData.note}
-                onChange={(e) => setEditData((s) => ({ ...s, note: e.target.value }))}
+                onChange={(e) => {
+                  setEditData((s) => ({ ...s, note: e.target.value }));
+                  if (e.target.value.trim()) setEditErrors((prev) => ({ ...prev, note: undefined }));
+                }}
                 placeholder="Type something..."
                 className="min-h-[100px] resize-none"
               />
+              {editErrors.note && <p className="text-sm text-red-500">{editErrors.note}</p>}
             </div>
 
             <div className="flex justify-end space-x-3 pt-4">

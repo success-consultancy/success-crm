@@ -230,7 +230,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   const nameColumnHeader = type === 'visa_application' ? 'Visa name' : 'Course name';
 
   return (
-    <Container className="flex flex-col max-h-full overflow-hidden p-0">
+    <Container className="flex flex-col flex-1 min-h-0 overflow-hidden p-0">
       <Portal rootId={PortalIds.DashboardHeader}>
         <h3 className="text-h5 text-content-heading font-bold">{pageTitle}</h3>
       </Portal>
@@ -239,9 +239,9 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
         <CreateFiscalReportModal isOpen={isCreateOpen} onClose={() => setIsCreateOpen(false)} type={type} />
 
         {/* ── Body ── */}
-        <div className="flex flex-col gap-4 p-4 overflow-y-auto flex-1">
+        <div className="flex flex-col gap-4 p-4 overflow-hidden flex-1 min-h-0">
           {/* KPI Cards */}
-          <div className="flex gap-4">
+          <div className="flex gap-4 shrink-0">
             {isLoading ? (
               <>
                 <KpiSkeleton />

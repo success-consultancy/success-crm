@@ -10,6 +10,7 @@ import AdminHeader from '../templates/admin-header';
 import { useGetMe } from '@/query/get-me';
 import { ROUTES } from '@/config/routes';
 import { useSidebarStore } from '@/store/sidebar-store';
+import { getAccessToken } from '@/utils/auth-token';
 
 type Props = {
   children?: React.ReactNode;
@@ -25,6 +26,16 @@ const ProtectedLayout = ({ children }: Props) => {
       router.replace(ROUTES.LOGIN);
     }
   }, [isLoading, isError, user, router]);
+
+  useEffect(() => {
+    const handlePageShow = (event: PageTransitionEvent) => {
+      if (event.persisted && !getAccessToken()) {
+        window.location.replace(ROUTES.LOGIN);
+      }
+    };
+    window.addEventListener('pageshow', handlePageShow);
+    return () => window.removeEventListener('pageshow', handlePageShow);
+  }, []);
 
   if (isLoading || (!user && !isError)) {
     return <PageLoader />;

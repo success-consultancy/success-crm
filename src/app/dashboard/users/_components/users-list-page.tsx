@@ -49,7 +49,7 @@ const UsersListPage = () => {
   const { create: canCreate, update: canUpdate, delete: canDelete } = usePermissions('users');
   const isAdmin = useAuthStore((s) => s.profile?.roleId === 1);
   const router = useRouter();
-  const { data: users = [], isLoading } = useGetUsers();
+  const { data: users = [], isLoading } = useGetUsers({ includeInactive: true });
   const { data: roles } = useGetRoles();
   const { mutate: deleteUser } = useDeleteUser();
   const { mutate: exportUsers, isPending: isExporting } = useExportUsers();

@@ -34,11 +34,13 @@ const getUsers = async (params: UserFilterParams) => {
   return res.data as IUser[];
 };
 
-export const useGetUsers = (params?: UserFilterParams) => {
+export const useGetUsers = (params?: UserFilterParams & { includeInactive?: boolean }) => {
+  const { includeInactive, ...queryParams } = params ?? {};
   return useQuery({
-    queryFn: () => getUsers(params!),
-    queryKey: [GET_USERS, params],
+    queryFn: () => getUsers(queryParams as UserFilterParams),
+    queryKey: [GET_USERS, queryParams],
     refetchOnWindowFocus: false,
+    select: includeInactive ? undefined : (data) => (data ?? []).filter((u) => u.isActive),
   });
 };
 const getUserById = async (id: string) => {
