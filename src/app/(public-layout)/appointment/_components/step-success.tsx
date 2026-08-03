@@ -99,11 +99,10 @@ function formatSlotInfoShort(dateStr: string, time: string): string {
 
 // Returns UTC datetime string like "20260422T230000Z"
 function getUTCDatetimeStr(dateStr: string, time24: string): string {
-  const utcDate = new Date(`${dateStr}T${time24}:00${
-    new Intl.DateTimeFormat('en', { timeZone: 'Australia/Sydney', timeZoneName: 'longOffset' })
+  const utcDate = new Date(`${dateStr}T${time24}:00${new Intl.DateTimeFormat('en', { timeZone: 'Australia/Sydney', timeZoneName: 'longOffset' })
       .formatToParts(new Date(`${dateStr}T${time24}:00`))
       .find((p) => p.type === 'timeZoneName')!.value.replace('GMT', '')
-  }`);
+    }`);
   const pad = (n: number) => String(n).padStart(2, '0');
   return (
     `${utcDate.getUTCFullYear()}${pad(utcDate.getUTCMonth() + 1)}${pad(utcDate.getUTCDate())}` +
@@ -400,7 +399,7 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
               <Phone className="w-4 h-4 text-[#484848] mt-0.5 shrink-0" strokeWidth={1.5} />
               <div className="flex flex-col gap-1">
                 <p className="font-semibold text-[14px] leading-[20px] text-[#1c1c1c]">Phone</p>
-                <p className="text-[14px] leading-[20px] text-[#484848]">+61 {data.phone}</p>
+                <p className="text-[14px] leading-[20px] text-[#484848]">{data.phone}</p>
               </div>
             </div>
             {data.description && (
