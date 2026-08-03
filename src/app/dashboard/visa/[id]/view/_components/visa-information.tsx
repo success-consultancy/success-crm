@@ -10,6 +10,7 @@ import toast from 'react-hot-toast';
 import { InfoField } from '@/components/atoms/info-field';
 import { Label } from '@/components/ui/label';
 import TextInput from '@/components/molecules/text-input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
@@ -247,10 +248,17 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               {...form.register('sponsorEmail')}
               error={errors.sponsorEmail?.message}
             />
-            <TextInput
-              label="Sponsor phone"
-              {...form.register('sponsorPhone')}
-              error={errors.sponsorPhone?.message}
+            <FormField
+              control={control}
+              name="sponsorPhone"
+              render={({ field }) => (
+                <PhoneNumberInput
+                  label="Sponsor phone"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.sponsorPhone?.message}
+                />
+              )}
             />
             <SelectField
               control={control}

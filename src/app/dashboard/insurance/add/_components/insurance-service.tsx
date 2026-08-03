@@ -9,6 +9,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { format } from 'date-fns';
 
 import TextInput from '@/components/molecules/text-input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
@@ -219,7 +220,18 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
               <FormErrorMessage message={errors.dob?.message} />
             </div>
             <TextInput type="email" label="Email address" {...register('email')} error={errors.email?.message} />
-            <TextInput label="Phone number" {...register('phone')} error={errors.phone?.message} />
+            <FormField
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <PhoneNumberInput
+                  label="Phone number"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.phone?.message}
+                />
+              )}
+            />
             <TextInput label="Nationality" {...register('country')} error={errors.country?.message} />
             <TextInput label="Address" {...register('address')} error={errors.address?.message} />
             <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />

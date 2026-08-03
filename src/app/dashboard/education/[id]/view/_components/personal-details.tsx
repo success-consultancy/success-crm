@@ -8,6 +8,7 @@ import toast from 'react-hot-toast';
 
 import { Label } from '@/components/ui/label';
 import TextInput from '@/components/molecules/text-input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
@@ -125,7 +126,18 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
               <FormErrorMessage message={errors.dob?.message} />
             </div>
             <TextInput type="email" label="Email" {...register('email')} error={errors.email?.message} />
-            <TextInput label="Phone Number" {...register('phone')} error={errors.phone?.message} />
+            <FormField
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <PhoneNumberInput
+                  label="Phone number"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.phone?.message}
+                />
+              )}
+            />
             <FormField
               control={control}
               name="country"

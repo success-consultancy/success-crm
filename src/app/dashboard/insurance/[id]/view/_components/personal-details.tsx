@@ -11,9 +11,11 @@ import { InfoField } from '@/components/atoms/info-field';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import TextInput from '@/components/molecules/text-input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
+import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildInsuranceSectionPayload } from './insurance-section-payload';
@@ -140,7 +142,18 @@ const PersonalDetails = ({ visa }: { visa: IInsurance }) => {
               <FormErrorMessage message={errors.dob?.message} />
             </div>
             <TextInput type="email" label="Email address" {...register('email')} error={errors.email?.message} />
-            <TextInput label="Phone number" {...register('phone')} error={errors.phone?.message} />
+            <FormField
+              control={control}
+              name="phone"
+              render={({ field }) => (
+                <PhoneNumberInput
+                  label="Phone number"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.phone?.message}
+                />
+              )}
+            />
             <TextInput label="Nationality" {...register('country')} error={errors.country?.message} />
             <TextInput label="Address" {...register('address')} error={errors.address?.message} />
             <TextInput label="Passport number" {...register('passport')} error={errors.passport?.message} />

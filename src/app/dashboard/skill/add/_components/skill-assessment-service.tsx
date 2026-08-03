@@ -12,6 +12,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import TextInput from '@/components/molecules/text-input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
@@ -371,7 +372,18 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 {...register('email')}
                 error={errors.email?.message}
               />
-              <TextInput label="Phone number" required {...register('phone')} error={errors.phone?.message} />
+              <FormField
+                control={control}
+                name="phone"
+                render={({ field }) => (
+                  <PhoneNumberInput
+                    label="Phone number"
+                    value={field.value}
+                    onChange={field.onChange}
+                    error={errors.phone?.message}
+                  />
+                )}
+              />
               <FormField
                 control={control}
                 name="country"

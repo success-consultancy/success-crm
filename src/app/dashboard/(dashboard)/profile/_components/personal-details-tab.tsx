@@ -13,6 +13,7 @@ import { useGenerateClockInCode } from '@/mutations/auth/generate-clockin-code';
 import { ROLE_LABELS } from '@/constants/roles-constants';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import Input from '@/components/molecules/input';
+import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import Button from '@/components/atoms/button';
 import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
 import axios from 'axios';
@@ -203,7 +204,14 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           <FormField
             control={control}
             name="phone"
-            render={({ field }) => <Input {...field} label="Phone number" error={errors.phone?.message} />}
+            render={({ field }) => (
+              <PhoneNumberInput
+                label="Phone number"
+                value={field.value}
+                onChange={field.onChange}
+                error={errors.phone?.message}
+              />
+            )}
           />
           <FormField
             control={control}

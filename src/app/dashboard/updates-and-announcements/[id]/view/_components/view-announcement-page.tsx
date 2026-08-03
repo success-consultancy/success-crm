@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation';
 import { format, parseISO, isValid } from 'date-fns';
 import { Pencil, Share2, Trash2, ArrowLeft } from 'lucide-react';
-import { toast } from 'sonner';
+import useToast from '@/hooks/use-toast';
 import { useGetAnnouncementById } from '@/query/get-announcements';
 import { useDeleteAnnouncement } from '@/mutations/announcement/delete-announcement';
 import Container from '@/components/atoms/container';
@@ -32,6 +32,7 @@ const formatDate = (date: string | null) => {
 
 const ViewAnnouncementPage = ({ id }: Props) => {
   const router = useRouter();
+  const toast = useToast();
   const { data: announcement, isLoading } = useGetAnnouncementById(id);
   const { mutate: deleteAnnouncement } = useDeleteAnnouncement();
 
