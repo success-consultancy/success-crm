@@ -8,6 +8,7 @@ import { ChevronRight, Edit, EllipsisVertical, Eye, FolderInput, Mail, MessageCi
 import DeleteDialog from './delete.dialog';
 import EmailDialog from './email.dialog';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
+import { Trash01 } from '@untitledui/icons';
 
 export interface RowActionMoveOption {
   id: string;
@@ -136,7 +137,7 @@ const TableRowActionsMenu = ({
               <DeleteDialog
                 trigger={
                   <Button variant="ghost" className={cn(menuItemClassName, 'text-red hover:text-red')}>
-                    <Trash2 strokeWidth={1.5} className="h-5 w-5" />
+                    <Trash01 strokeWidth={1.5} className="h-5 w-5" />
                     {deleteLabel}
                   </Button>
                 }
