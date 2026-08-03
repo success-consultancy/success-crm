@@ -66,7 +66,17 @@ export const useAnnouncementColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-48 h-6" />;
-        return <div className="truncate font-medium">{row.original.title}</div>;
+        const url = row.original.photoURL;
+        return (
+          <div className="flex items-center gap-3">
+            {url ? (
+              <img src={url} alt={row.original.title} className="h-10 w-16 shrink-0 object-cover rounded" />
+            ) : (
+              <div className="h-10 w-16 shrink-0 rounded bg-gray-100" />
+            )}
+            <div className="truncate font-medium">{row.original.title}</div>
+          </div>
+        );
       },
       size: 800,
       meta: { isVisible: true },
@@ -85,26 +95,32 @@ export const useAnnouncementColumn = (
       meta: { isVisible: true },
     },
     {
-      id: 'announcement-photo',
-      header: () => <span className="font-medium">Image</span>,
-      cell: function Cell({ row }) {
-        const tableCtx = useTableContext();
-        if (tableCtx?.isLoading) return <Skeleton className="w-16 h-10" />;
-        const url = row.original.photoURL;
-        if (!url) return <div className="text-gray-400 text-sm">No image</div>;
-        return <img src={url} alt={row.original.title} className="h-10 w-16 object-cover rounded" />;
-      },
-      size: 200,
-      meta: { isVisible: true },
-      enableSorting: false,
-    },
-    {
       id: 'announcement-created-at',
-      header: () => <ColumnHeader title="Published" keyParam="createdAt" />,
+      header: () => <ColumnHeader title="Published At" keyParam="createdAt" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-28 h-6" />;
         const date = row.original.createdAt;
+        if (!date) return <div>-</div>;
+        try {
+          const parsed = parseISO(date);
+          if (!isValid(parsed)) return <div>-</div>;
+          return <div>{format(parsed, 'MMM dd, yyyy')}</div>;
+        } catch {
+          return <div>-</div>;
+        }
+      },
+      enableSorting: true,
+      size: 160,
+      meta: { isVisible: true },
+    },
+    {
+      id: 'announcement-updated-at',
+      header: () => <ColumnHeader title="Updated At" keyParam="updatedAt" />,
+      cell: function Cell({ row }) {
+        const tableCtx = useTableContext();
+        if (tableCtx?.isLoading) return <Skeleton className="w-28 h-6" />;
+        const date = row.original.updatedAt;
         if (!date) return <div>-</div>;
         try {
           const parsed = parseISO(date);

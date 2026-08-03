@@ -16,6 +16,7 @@ import DatePicker from '@/components/atoms/date-picker';
 import { useAddFollowUp, useDeleteFollowUp, useUpdateFollowUp } from '@/mutations/leads/follow-up';
 import { useGetFollowUp } from '@/query/get-leads';
 import DeleteDialog from '@/components/organisms/delete.dialog';
+import { EmptyState } from '@/components/common/empty-state';
 
 type FollowUp = {
   id: number;
@@ -359,6 +360,9 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
           </Dialog>
         </div>
         <CardContent className="divide-y">
+          {upcoming.length === 0 && (
+            <EmptyState title="No upcoming follow-ups" description="Scheduled follow-ups will appear here." />
+          )}
           {upcoming.map((f) => (
             <div key={f.id} className="flex items-start justify-between py-4">
               {/* Date Badge */}

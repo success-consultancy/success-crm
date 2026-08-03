@@ -6,6 +6,7 @@ import { ILead } from '@/types/response-types/leads-response';
 import { useState } from 'react';
 import Button from '@/components/atoms/button';
 import Loading from '@/components/organisms/loading';
+import { EmptyState } from '@/components/common/empty-state';
 
 type LeadHistoryItem = {
   versionId: string;
@@ -69,7 +70,10 @@ export const History = ({ lead }: { lead: ILead }) => {
       <h2 className="text-lg font-semibold mb-4">Lead history</h2>
       <div className="space-y-6">
         <Loading isLoading={isLoading}>
-          {logs?.map((log, i) => (
+          {!logs?.length ? (
+            <EmptyState title="No history yet" description="Changes to this lead will appear here." />
+          ) : (
+            logs.map((log, i) => (
             <div key={log.versionId} className="relative pl-6">
               {/* Timeline dot */}
               <span className={cn('absolute left-0 top-2 h-3 w-3 rounded-full', 'bg-sky-500')} />
@@ -87,7 +91,8 @@ export const History = ({ lead }: { lead: ILead }) => {
 
               {i < logs.length - 1 && <Separator className="absolute left-[5px] top-6 h-full w-[1px] bg-gray-300" />}
             </div>
-          ))}
+            ))
+          )}
         </Loading>
       </div>
     </CardContainer>

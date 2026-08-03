@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { useState } from 'react';
 import Button from '@/components/atoms/button';
 import { useGetEducationLog } from '@/query/get-education';
+import { EmptyState } from '@/components/common/empty-state';
 
 type LeadHistoryItem = {
   versionId: string;
@@ -66,25 +67,29 @@ export const History = ({ id }: { id: string }) => {
     <CardContainer className="w-full">
       <h2 className="text-lg font-semibold mb-4">Student history</h2>
       <div className="space-y-6">
-        {logs?.map((log, i) => (
-          <div key={log.versionId} className="relative pl-6">
-            {/* Timeline dot */}
-            <span className={cn('absolute left-0 top-2 h-3 w-3 rounded-full', 'bg-sky-500')} />
-            <div>
-              <p className="text-b1-b">Student {log.versionTypeName}</p>
-              <p className="text-b1 text-neutral-light-grey mt-1">
-                by {log.updatedBy}, {log.formattedDate}, {log.formattedTime}
-              </p>
+        {!logs?.length ? (
+          <EmptyState title="No history yet" description="Changes to this student will appear here." />
+        ) : (
+          logs.map((log, i) => (
+            <div key={log.versionId} className="relative pl-6">
+              {/* Timeline dot */}
+              <span className={cn('absolute left-0 top-2 h-3 w-3 rounded-full', 'bg-sky-500')} />
+              <div>
+                <p className="text-b1-b">Student {log.versionTypeName}</p>
+                <p className="text-b1 text-neutral-light-grey mt-1">
+                  by {log.updatedBy}, {log.formattedDate}, {log.formattedTime}
+                </p>
 
-              {/* Show summary descriptions for updates */}
-              {log.versionType === 2 && log.summaryDescriptions.length > 0 && (
-                <ExpandableDescriptions descriptions={log.summaryDescriptions} />
-              )}
+                {/* Show summary descriptions for updates */}
+                {log.versionType === 2 && log.summaryDescriptions.length > 0 && (
+                  <ExpandableDescriptions descriptions={log.summaryDescriptions} />
+                )}
+              </div>
+
+              {i < logs.length - 1 && <Separator className="absolute left-[5px] top-6 h-full w-[1px] bg-gray-300" />}
             </div>
-
-            {i < logs.length - 1 && <Separator className="absolute left-[5px] top-6 h-full w-[1px] bg-gray-300" />}
-          </div>
-        ))}
+          ))
+        )}
       </div>
     </CardContainer>
   );
