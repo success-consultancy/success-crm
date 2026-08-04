@@ -221,7 +221,7 @@ const FileUploader = (props: Props) => {
             isDragActive ? 'border-primary-blue bg-blue-50' : 'border-neutral-border'
           }`}
         >
-          <div {...getRootProps()} className="flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4">
+          <div {...getRootProps()} className="relative flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4">
             <input {...getInputProps()} />
             <CloudUpload className="text-primary-blue h-7 w-7" />
             <div className="flex flex-col items-center gap-0.5">
