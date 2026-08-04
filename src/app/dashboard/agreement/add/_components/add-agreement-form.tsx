@@ -35,6 +35,7 @@ import { format, isValid } from 'date-fns';
 import { FORM_STATE, UploadedFileMeta } from '@/types/common';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   userId: number | undefined;
@@ -168,7 +169,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
 
       <form className="w-full bg-white rounded-lg p-6 space-y-6" onSubmit={handleSubmit(submitHandler)}>
         {/* University and Type Row */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <Label className="text-b2">
               University <span className="text-red-500">*</span>
@@ -205,7 +206,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         </div>
 
         {/* Group Row */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <SelectField name="group" label="Group" control={control} options={groupOptions} placeholder="Group" />
             <FormErrorMessage message={errors.group?.message} />
@@ -219,7 +220,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         </div>
 
         {/* Start Date and End Date Row */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <Controller
               name="startDate"
@@ -286,7 +287,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         </div>
 
         {/* Commission and Location Row */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <Label className="text-b2">Commission (%)</Label>
             <TextInput {...register('commission')} placeholder="Commission (%)" error={errors.commission?.message} />
@@ -349,11 +350,11 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         </div>
 
         {/* Submit Button */}
-        <div className="flex justify-end pt-4">
+        <FormActions>
           <Button type="submit" loading={isPending}>
             {isEditMode ? 'Save Changes' : 'Add Agreement'}
           </Button>
-        </div>
+        </FormActions>
       </form>
     </Container>
   );

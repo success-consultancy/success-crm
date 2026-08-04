@@ -22,6 +22,7 @@ import useAuthStore from '@/store/auth-store';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { useGetBranches } from '@/query/get-branches';
 import toast from 'react-hot-toast';
+import { FormActions } from '@/components/organisms/form-actions';
 
 const ROLE_OPTIONS = [
   { label: 'Admin', value: '1' },
@@ -196,9 +197,9 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         </h3>
       </Portal>
 
-      <Accordion type="multiple" className="w-full space-y-4" defaultValue={['basic']}>
+      <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['basic']}>
         <FormAccordion value="basic" title="Basic Information">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <FormField
               control={control}
               name="firstName"
@@ -372,7 +373,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
 
       </Accordion>
 
-      <div className="flex items-center justify-end gap-4 mt-6">
+      <FormActions>
         <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>
           {mode === 'edit'
             ? isPending ? 'Saving...' : 'Save Changes'
@@ -381,7 +382,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         <Button variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </Form>
   );
 };

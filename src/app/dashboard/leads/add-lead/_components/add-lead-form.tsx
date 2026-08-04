@@ -24,6 +24,7 @@ import MiscStep from './misc-fields';
 import VisaAndServiceStep from './visa-and-service-fields';
 import { ROUTES } from '@/config/routes';
 import { ArrowLeft } from 'lucide-react';
+import { FormActions } from '@/components/organisms/form-actions';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -132,7 +133,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       </Portal>
       {/* Single internal scroll region so the page doesn't double-scroll (CRM-178). */}
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
-        <Accordion type="multiple" className="w-full space-y-4" defaultValue={['item-1', 'item-2', 'item-3']}>
+        <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1', 'item-2', 'item-3']}>
           <FormAccordion value="item-1" title="Personal Details">
             <PersonalDetailsStep />
           </FormAccordion>
@@ -144,12 +145,12 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
           </FormAccordion>
         </Accordion>
       </div>
-      <div className="shrink-0 flex items-center justify-end gap-4 pt-4">
+      <FormActions className="shrink-0">
         <Button onClick={handleSubmit(onSubmit)}>{mode === 'edit' ? 'Update Lead' : 'Add Lead'}</Button>
         <Button variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </Form>
   );
 };

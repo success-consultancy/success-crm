@@ -29,8 +29,8 @@ const SelectCommon = ({ maxHeight = 200, ...props }: Props) => {
   const listHeight = Math.min(calculatedHeight, maxHeight);
 
   return (
-    <div className="flex flex-col gap-2 flex-1">
-      <Label className="text-b3-b font-semibold">{props.label}</Label>
+    <div className="flex flex-col gap-1 flex-1">
+      <Label className="text-sm font-medium text-neutral-black">{props.label}</Label>
 
       <Select value={props.value} onValueChange={props.onSelect}>
         <SelectTrigger

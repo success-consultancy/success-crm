@@ -39,6 +39,7 @@ import Accounts from '../../[id]/view/_components/accounts';
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   userId: number | undefined;
@@ -204,10 +205,10 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
           </h3>
         </div>
       </Portal>
-      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
+      <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
@@ -286,7 +287,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
 
         {/* Visa Information */}
         <FormAccordion value="item-2" title="Visa Information">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <FormField
               control={control}
               name="currentVisa"
@@ -567,7 +568,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         {/* Accounts — inline form on add, existing accounts panel on edit */}
         {isAdd ? (
           <FormAccordion value="item-4" title="Accounts">
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <TextInput
                 label="Fee payment plan"
                 {...register('accounts.planname')}
@@ -653,7 +654,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-5">
             <FormField
               control={control}
               name="sourceId"
@@ -696,14 +697,14 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-end mt-6">
+      <FormActions>
         <Button loading={isPending} loadingText={isAdd ? 'Processing' : 'Updating'} type="submit" variant="primary">
           {isAdd ? 'Add Visa Applicant' : 'Update Visa Applicant'}
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

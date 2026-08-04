@@ -37,6 +37,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { EducationStatusTypes } from '@/types/response-types/education-response';
 import { ArrowLeft } from 'lucide-react';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   userId: number | undefined;
@@ -161,10 +162,10 @@ export function AddEducationService({ userId }: Props) {
           <h3 className="text-h4 text-content-heading font-bold">New Student</h3>
         </div>
       </Portal>
-      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
+      <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <TextInput label="First Name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
@@ -260,7 +261,7 @@ export function AddEducationService({ userId }: Props) {
         {/* Course Information */}
         <FormAccordion value="item-2" title="Course Information">
           <>
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-5">
               <ComboboxField
                 control={control}
                 name="universityId"
@@ -286,7 +287,7 @@ export function AddEducationService({ userId }: Props) {
                 placeholder="Select course"
               />
             </div>
-            <div className="grid grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-3 gap-5 mt-6">
               <div className="space-y-2">
                 <Controller
                   name="startDate"
@@ -342,7 +343,7 @@ export function AddEducationService({ userId }: Props) {
         {/* Fee Structure */}
         <FormAccordion value="item-3" title="Fee Structure">
           <>
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <TextInput
                 label="Plan Name"
                 {...register('courseFee.planname')}
@@ -403,7 +404,7 @@ export function AddEducationService({ userId }: Props) {
         {/* Accounts */}
         <FormAccordion value="item-4" title="Accounts">
           <>
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <TextInput disabled label="Plan Name" {...register('courseFee.accounts.planname')} />
               <TextInput label="Amount" disabled {...register('courseFee.accounts.amount')} />
               <div className="space-y-2">
@@ -466,7 +467,7 @@ export function AddEducationService({ userId }: Props) {
 
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-5">
             <FormField
               control={control}
               name="userId"
@@ -500,14 +501,14 @@ export function AddEducationService({ userId }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-end mt-6">
+      <FormActions>
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>
-        <Button type="button" variant="outline" className="ml-3" onClick={() => router.back()}>
+        <Button type="button" variant="outline" onClick={() => router.back()}>
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

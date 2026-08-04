@@ -36,7 +36,7 @@ import { useCalendarData, type CalendarItem } from './use-calendar-data';
 import { VisaExpiryEvent, getCategoryColor } from './use-visa-expiries';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
-import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 
 // ==========================================
@@ -777,12 +777,12 @@ const AppointmentPopover = ({ setEditingAppointment, apt, children }: { setEditi
           />
         </PopoverContent>
       </Popover>
-      <ConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        setIsOpen={setIsDeleteDialogOpen}
+      <DeleteDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
         title="Delete Appointment"
-        message={`Are you sure you want to delete "${apt.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        description={`Are you sure you want to delete "${apt.title}"? This action cannot be undone.`}
+        confirmText="Yes, delete"
         cancelText="Cancel"
         onConfirm={handleDelete}
         loading={isDeleting}

@@ -27,6 +27,7 @@ import FormErrorMessage from '@/components/atoms/form-error-message';
 import FileUploader from '@/components/organisms/file-uploader';
 import { FORM_STATE } from '@/types/common';
 import { toast } from 'sonner';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   formState: FORM_STATE;
@@ -179,11 +180,11 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
         </div>
 
         {/* Submit */}
-        <div className="flex justify-end pt-4">
+        <FormActions>
           <Button type="submit" loading={isPending}>
             {isEditMode ? 'Save Changes' : 'Publish Announcement'}
           </Button>
-        </div>
+        </FormActions>
       </form>
     </Container>
   );

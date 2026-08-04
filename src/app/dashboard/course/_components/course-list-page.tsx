@@ -347,7 +347,6 @@ const CourseListPage = () => {
                                   </span>
                                 }
                                 confirmText="Yes, delete"
-                                confirmClassName="bg-red-600 hover:bg-red-700 text-white"
                                 onConfirm={() => deleteCourse(course.id)}
                               />
                             )}

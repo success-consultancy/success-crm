@@ -305,7 +305,6 @@ const OccupationListPage = () => {
                               title="Delete occupation"
                               description="Are you sure you want to delete this occupation?"
                               confirmText="Yes, delete"
-                              confirmClassName="bg-red-600 hover:bg-red-700 text-white"
                               onConfirm={() => deleteOccupation(occ.id)}
                             />
                           )}

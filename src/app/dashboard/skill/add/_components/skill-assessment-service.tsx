@@ -35,6 +35,7 @@ import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessm
 import { ArrowLeft } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   userId: number | undefined;
@@ -333,10 +334,10 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         </div>
       </Portal>
       <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
-        <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1']}>
+        <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1']}>
           {/* Personal Details */}
           <FormAccordion value="item-1" title="Personal details">
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <TextInput label="First name" required {...register('firstName')} error={errors.firstName?.message} />
               <TextInput
                 label="Middle name (optional)"
@@ -440,7 +441,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
 
           {/* Visa & Service Details */}
           <FormAccordion value="item-2" title="Visa & service details">
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <FormField
                 control={control}
                 name="currentVisa"
@@ -599,7 +600,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           {/* Accounts */}
           {formState === FORM_STATE.ADD && (
             <FormAccordion value="item-3" title="Accounts">
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-3 gap-5">
                 <TextInput
                   label="Fee payment plan"
                   {...register('payment')}
@@ -654,7 +655,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
 
           {/* Misc */}
           <FormAccordion value="item-4" title="Misc">
-            <div className="grid grid-cols-2 gap-6">
+            <div className="grid grid-cols-2 gap-5">
               <SelectField
                 control={control}
                 name="sourceId"
@@ -688,7 +689,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           </FormAccordion>
         </Accordion>
 
-        <div className="flex justify-end mt-6">
+        <FormActions>
           <Button
             loading={isPending}
             loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'}
@@ -700,7 +701,6 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           <Button
             type="button"
             variant="outline"
-            className="ml-3"
             onClick={() => {
               reset();
               router.back();
@@ -708,7 +708,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           >
             Cancel
           </Button>
-        </div>
+        </FormActions>
       </form>
     </>
   );

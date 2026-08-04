@@ -9,7 +9,7 @@ import { Cross, Pencil, Trash2, X } from 'lucide-react';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { CloseCircle } from 'iconsax-reactjs';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
-import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 import { usePermissions } from '@/hooks/use-permissions';
 import useAuthStore from '@/store/auth-store';
 
@@ -171,12 +171,12 @@ const AppointmentPreview: React.FC<AppointmentPreviewProps> = ({
         )}
       </div>
 
-      <ConfirmationDialog
-        isOpen={isDeleteDialogOpen}
-        setIsOpen={setIsDeleteDialogOpen}
+      <DeleteDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
         title="Delete Appointment"
-        message={`Are you sure you want to delete "${appointment.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        description={`Are you sure you want to delete "${appointment.title}"? This action cannot be undone.`}
+        confirmText="Yes, delete"
         cancelText="Cancel"
         onConfirm={handleDelete}
         loading={isDeleting}

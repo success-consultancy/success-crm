@@ -42,6 +42,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 import { ArrowLeft } from 'lucide-react';
+import { FormActions } from '@/components/organisms/form-actions';
 
 interface Props {
   userId: number | undefined;
@@ -191,10 +192,10 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
           </h3>
         </div>
       </Portal>
-      <Accordion type="multiple" className="w-full space-y-6" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
+      <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
@@ -274,7 +275,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
 
         {/* Visa Information */}
         <FormAccordion value="item-2" title="Visa & service details">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-3 gap-5">
             <FormField
               control={control}
               name="currentVisa"
@@ -419,7 +420,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         {/* Accounts */}
         {formState === FORM_STATE.ADD && (
           <FormAccordion value="item-4" title="Accounts">
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-3 gap-5">
               <TextInput
                 label="Fee payment plan"
                 {...register('accounts.planname')}
@@ -502,7 +503,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
 
         {/* Misc */}
         <FormAccordion value="item-6" title="Misc">
-          <div className="grid grid-cols-2 gap-6">
+          <div className="grid grid-cols-2 gap-5">
             <FormField
               control={control}
               name="sourceId"
@@ -554,7 +555,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-end mt-6">
+      <FormActions>
         <Button
           loading={addTribunalReviewPending || updateTribunalReviewPending}
           loadingText="Processing"
@@ -566,7 +567,6 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         <Button
           type="button"
           variant="outline"
-          className="ml-3"
           onClick={() => {
             reset();
             router.back();
@@ -574,7 +574,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         >
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

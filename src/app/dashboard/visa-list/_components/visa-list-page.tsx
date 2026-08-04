@@ -260,7 +260,6 @@ const VisaListPage = () => {
                                 title="Delete visa type"
                                 description="Are you sure you want to delete this visa type?"
                                 confirmText="Yes, delete"
-                                confirmClassName="bg-red-600 hover:bg-red-700 text-white"
                                 onConfirm={() => deleteVisa(visa.id)}
                               />
                             )}

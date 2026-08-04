@@ -75,12 +75,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className={cn(['inline-grid w-full items-center gap-2', className, classNames?.wrapper])}>
+      <div className={cn(['inline-grid w-full items-center gap-1', className, classNames?.wrapper])}>
         {label && (
           <label
-            className={cn(['text-b3-b font-semibold', props.disabled && 'text-content-disabled', classNames?.label])}
+            className={cn([
+              'text-sm font-medium text-neutral-black',
+              props.disabled && 'text-content-disabled',
+              classNames?.label,
+            ])}
           >
-            {label} {optionalText && <span className="text-content-placeholder font-normal">(Optional)</span>}
+            {label}{' '}
+            {optionalText && <span className="text-neutral-light-grey font-normal">(optional)</span>}
           </label>
         )}
 
@@ -90,7 +95,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           trigger={
             <div
               className={cn([
-                'flex-between group rounded-md border border-input',
+                'flex-between group rounded-md border border-neutral-border',
                 props.disabled && '',
                 // ? focused class
                 isInputFocused ? ['border-black-40'] : 'hover:border-black-20',
@@ -120,7 +125,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 onBlur={handleinputBlur}
                 ref={combinedRef}
                 className={cn([
-                  'border-none px-2 focus:outline-none !bg-transparent',
+                  'border-none px-3 focus:outline-none !bg-transparent',
                   classNames?.input,
                   !!LeftIcon && 'pl-0',
                   !!RightIcon && 'pr-0',

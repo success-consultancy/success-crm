@@ -28,6 +28,7 @@ import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, Command
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { FormActions } from '@/components/organisms/form-actions';
 
 const GROUP_OPTIONS = [
   { label: 'Higher Education', value: 'Higher Education' },
@@ -206,7 +207,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         <p className="text-lg font-bold">University details</p>
 
         {/* University name and Group */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <Label className="text-b2">
               University name <span className="text-red-500">*</span>
@@ -226,7 +227,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         </div>
 
         {/* Location and Comment */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           <div className="space-y-2">
             <Label className="text-b2">Location</Label>
             <TextInput {...register('location')} placeholder="Location" error={errors.location?.message} />
@@ -238,7 +239,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         </div>
 
         {/* University courses and Available courses */}
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-2 gap-5">
           {/* University courses — add new ones */}
           <div className="space-y-2">
             <Label className="text-b2">University courses</Label>
@@ -406,14 +407,14 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         </div>
 
         {/* Submit */}
-        <div className="flex justify-end gap-3 pt-4">
+        <FormActions>
           <ButtonLink href={ROUTES.UNIVERSITY} variant="outline">
             Cancel
           </ButtonLink>
           <Button type="submit" loading={isPending}>
             {isEditMode ? 'Save changes' : 'Add university'}
           </Button>
-        </div>
+        </FormActions>
       </form>
     </Container>
   );

@@ -29,7 +29,7 @@ const PersonalDetailsStep = () => {
 
   return (
     <div className="space-y-5">
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-3 gap-5">
         <FormField
           control={control}
           name="firstName"
