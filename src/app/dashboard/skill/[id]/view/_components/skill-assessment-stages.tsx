@@ -101,7 +101,7 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex w-full">
+        <div className="flex min-w-0 flex-1 overflow-x-auto">
           {(() => {
             const activeIndex = stages.findIndex((s) => s.active);
             return stages.map((stage, index) => (
@@ -117,7 +117,7 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
           })()}
         </div>
 
-        <div className="flex gap-2 ml-4">
+        <div className="flex gap-2 ml-4 shrink-0">
           <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
           <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
         </div>

@@ -86,13 +86,13 @@ export const VisaStages = ({ insurance }: InsuranceStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex w-full">
+        <div className="flex min-w-0 flex-1 overflow-x-auto">
           {stages.map((stage, index) => (
             <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
           ))}
         </div>
 
-        <div className="flex gap-2 ml-4">
+        <div className="flex gap-2 ml-4 shrink-0">
           <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
           <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
         </div>

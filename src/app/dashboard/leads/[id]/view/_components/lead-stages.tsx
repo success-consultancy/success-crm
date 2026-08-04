@@ -58,6 +58,9 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   const currentStage = lead.leadStage || lead.status || LeadStatusTypes.New;
   const activeIndex = mainStages.findIndex((s) => s === currentStage);
 
+  const wonEnabled = currentStage === LeadStatusTypes.Converted;
+  const lostEnabled = currentStage === LeadStatusTypes.NotConverted || currentStage === LeadStatusTypes.NotInterested;
+
   const { data: followUps } = useGetFollowUp(lead.id.toString(), 'lead');
   const hasFollowUp = Array.isArray(followUps) && followUps.length > 0;
 
@@ -95,8 +98,6 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
     );
     setPendingStage(null);
   };
-
-  console.log(currentStage);
 
   return (
     <div className="border rounded-lg shadow-sm">
@@ -139,7 +140,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-4 items-end">
-        <div className="flex w-full items-end">
+        <div className="flex min-w-0 flex-1 items-end overflow-x-auto">
           {mainStages.map((stage, index) => (
             <StageItem
               key={stage}
@@ -153,17 +154,19 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
           ))}
 
           {/* Follow-up stage indicator */}
-          <div className="relative flex flex-col items-center w-full">
-            {getDaysForStage(lead, LeadStatusTypes.FollowUp) != null && (getDaysForStage(lead, LeadStatusTypes.FollowUp) ?? 0) > 0 && (
-              <div className="mb-1">
-                <span className="inline-block bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded-full">
-                  {getDaysForStage(lead, LeadStatusTypes.FollowUp)} days
-                </span>
-              </div>
-            )}
+          <div className="group relative flex flex-col items-center w-full">
+            {getDaysForStage(lead, LeadStatusTypes.FollowUp) != null &&
+              (getDaysForStage(lead, LeadStatusTypes.FollowUp) ?? 0) > 0 && (
+                <div className="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                  <span className="inline-block whitespace-nowrap rounded-full bg-gray-700 px-2 py-0.5 text-xs font-medium text-white">
+                    {getDaysForStage(lead, LeadStatusTypes.FollowUp)} days
+                  </span>
+                </div>
+              )}
             <div
-              className={`relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full cursor-pointer ${hasFollowUp ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-800'
-                }`}
+              className={`relative inline-flex items-center justify-center px-6 py-3 text-sm font-medium whitespace-nowrap w-full cursor-pointer ${
+                hasFollowUp ? 'bg-amber-500 text-white' : 'bg-gray-100 text-gray-800'
+              }`}
               style={{
                 clipPath: `polygon(0 0, 100% 0, 100% 100%, 0 100%, 15px 50%)`,
               }}
@@ -177,15 +180,21 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
         <div className="flex gap-2 ml-4 shrink-0">
           <button
             onClick={() => handleWonLost('won')}
-            className={`px-4 py-2 rounded-md font-medium ${currentStage === LeadStatusTypes.Converted ? 'bg-green-500 text-white' : 'bg-green-100 text-green-700'
-              }`}
+            disabled={!wonEnabled}
+            className={`px-4 py-2 rounded-md font-medium disabled:cursor-not-allowed disabled:opacity-40 ${
+              currentStage === LeadStatusTypes.Converted ? 'bg-green-500 text-white' : 'bg-green-100 text-green-700'
+            }`}
           >
             Won
           </button>
           <button
             onClick={() => handleWonLost('lost')}
-            className={`px-4 py-2 rounded-md font-medium ${currentStage === LeadStatusTypes.NotConverted || currentStage === LeadStatusTypes.NotInterested ? 'bg-red-500 text-white' : 'bg-red-100 text-red-700'
-              }`}
+            disabled={!lostEnabled}
+            className={`px-4 py-2 rounded-md font-medium disabled:cursor-not-allowed disabled:opacity-40 ${
+              currentStage === LeadStatusTypes.NotConverted || currentStage === LeadStatusTypes.NotInterested
+                ? 'bg-red-500 text-white'
+                : 'bg-red-100 text-red-700'
+            }`}
           >
             Lost
           </button>

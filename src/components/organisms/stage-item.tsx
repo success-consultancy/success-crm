@@ -24,10 +24,10 @@ const StageItem = ({ name, active, completed, isFirst, days, handleStageChange }
     const bgStyle = completed && !active ? { backgroundColor: '#E2ECF3' } : {};
 
     return (
-        <div className="relative flex flex-col items-center w-full">
+        <div className="group relative flex flex-col items-center w-full">
             {days != null && days > 0 && (
-                <div className="mb-1">
-                    <span className="inline-block bg-gray-700 text-white text-xs font-medium px-2 py-0.5 rounded-full">
+                <div className="pointer-events-none absolute bottom-full left-1/2 mb-1 -translate-x-1/2 opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                    <span className="inline-block whitespace-nowrap rounded-full bg-gray-700 px-2 py-0.5 text-xs font-medium text-white">
                         {days} days
                     </span>
                 </div>
