@@ -51,6 +51,7 @@ export interface ILead {
   updatedBy: null | number;
   leadStage: string | null;
   leadStageHistory: LeadStageHistoryEntry[] | null;
+  reopenedAt: string | null;
   files: UploadedFileMeta[];
   user: {
     firstName: string;

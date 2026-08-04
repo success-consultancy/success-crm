@@ -13,6 +13,7 @@ import { Trash01 } from '@untitledui/icons';
 export interface RowActionMoveOption {
   id: string;
   title: string;
+  Icon?: (props: { className?: string }) => React.ReactElement;
 }
 
 interface TableRowActionsMenuProps {
@@ -111,6 +112,7 @@ const TableRowActionsMenu = ({
                       className={cn(menuItemClassName, 'pl-9')}
                       onClick={() => moveTo.onSelect(option)}
                     >
+                      {option.Icon && <option.Icon className="h-5 w-5 shrink-0" />}
                       {option.title}
                     </Button>
                   ))}

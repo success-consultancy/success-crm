@@ -1,5 +1,3 @@
-import { useRouter } from 'next/navigation';
-import { Edit, MessageCircle } from 'lucide-react';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { format } from 'date-fns';
 import { toast } from 'sonner';
@@ -11,7 +9,6 @@ import { useState } from 'react';
 type VisaStagesProps = { visa: ITribunalReview };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
-  const router = useRouter();
 
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
@@ -63,30 +60,6 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
     <div className="border rounded-lg">
       <div className="border-b px-6 py-3 flex justify-between">
         <p className="text-xl font-bold">Tribunal Stages</p>
-
-
-        <div className='flex gap-2'>
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/dashboard/tribunal-review/${visa.id}/edit`);
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <Edit strokeWidth={1.5} className="h-5 w-5" />
-            <span>Edit</span>
-          </div>
-
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
-            <span>Send SMS</span>
-          </div>
-        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">

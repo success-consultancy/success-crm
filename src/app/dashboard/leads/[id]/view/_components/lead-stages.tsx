@@ -1,10 +1,8 @@
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import StageItem from '@/components/organisms/stage-item';
-import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
+import { useReopenLead, useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
 import { useGetFollowUp } from '@/query/get-leads';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
-import { Edit, MessageCircle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -33,20 +31,31 @@ function formatDate(dateString: string | null | undefined): string {
 function getClosingDate(lead: ILead): string {
   const history = lead.leadStageHistory;
   if (!history) return '-';
-  const closedEntry = history.find(
-    (h) =>
-      (h.stage === LeadStatusTypes.Converted ||
-        h.stage === LeadStatusTypes.NotConverted ||
-        h.stage === LeadStatusTypes.NotInterested) &&
-      h.startDate,
-  );
+  // Reopening a lead appends further stages after a closed one, so a lead can
+  // hold several terminal entries — the latest is the one that counts.
+  const closedEntry = [...history]
+    .reverse()
+    .find(
+      (h) =>
+        (h.stage === LeadStatusTypes.Converted ||
+          h.stage === LeadStatusTypes.NotConverted ||
+          h.stage === LeadStatusTypes.NotInterested) &&
+        h.startDate,
+    );
   return closedEntry ? formatDate(closedEntry.startDate) : '-';
 }
 
+// A lead can only be reopened once it has closed — converted or disqualified.
+const CLOSED_STAGES: string[] = [
+  LeadStatusTypes.Converted,
+  LeadStatusTypes.NotConverted,
+  LeadStatusTypes.NotInterested,
+];
+
 export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
-  const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
+  const [reopenOpen, setReopenOpen] = useState(false);
 
   const mainStages = [
     LeadStatusTypes.New,
@@ -65,6 +74,9 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
   const hasFollowUp = Array.isArray(followUps) && followUps.length > 0;
 
   const updateLeadStatus = useUpdateLeadStatus();
+  const reopenLead = useReopenLead();
+
+  const canReopen = CLOSED_STAGES.includes(currentStage);
 
   const handleStageChange = (stage: string) => {
     if (stage === LeadStatusTypes.FollowUp) {
@@ -103,29 +115,6 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
     <div className="border rounded-lg shadow-sm">
       <div className="border-b px-6 py-3 flex justify-between items-center">
         <p className="text-xl font-bold">Lead stages</p>
-
-        <div className="flex gap-2">
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/dashboard/leads/${lead.id}/edit`);
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <Edit strokeWidth={1.5} className="h-5 w-5" />
-            <span>Edit</span>
-          </div>
-
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
-            <span>Send SMS</span>
-          </div>
-        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">
@@ -198,8 +187,29 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
           >
             Lost
           </button>
+
+          {canReopen && (
+            <button
+              onClick={() => setReopenOpen(true)}
+              disabled={reopenLead.isPending}
+              className="px-4 py-2 rounded-md font-medium border border-neutral-border-light bg-white text-neutral-black hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              Reopen lead
+            </button>
+          )}
         </div>
       </div>
+
+      <ConfirmationDialog
+        isOpen={reopenOpen}
+        setIsOpen={setReopenOpen}
+        title="Reopen this lead"
+        message={`This lead will move from "${currentStage}" back to the "${LeadStatusTypes.New}" stage so it can be worked again. Its stage history is kept.`}
+        confirmText="Yes, reopen"
+        cancelText="Cancel"
+        onConfirm={() => reopenLead.mutate(lead.id.toString())}
+        loading={reopenLead.isPending}
+      />
 
       {/* <ConfirmationDialog
         isOpen={confirmOpen}

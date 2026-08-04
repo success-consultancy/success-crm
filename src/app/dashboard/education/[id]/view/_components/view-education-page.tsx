@@ -16,6 +16,16 @@ import Accounts from './accounts';
 import MiscSection from './misc-section';
 import FollowUp from '@/components/organisms/follow-up';
 import SectionLoader from '@/components/molecules/section-loader';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
+import { ButtonLink } from '@/components/atoms/button-link';
+import { ArrowLeft } from 'lucide-react';
+import { ROUTES } from '@/config/routes';
+import { useRouter } from 'next/navigation';
+import RecordActions from '@/components/organisms/record-actions';
+import { usePermissions } from '@/hooks/use-permissions';
+import { useDeleteEducation } from '@/mutations/education/delete-education';
+import { useSendEmail } from '@/mutations/email-sms/email';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 import { CreateCourseFeePayload, IFeePlan } from '@/schema/education-schema';
 import { ACCOUNTABLE_TYPE } from '@/types/common';
@@ -271,6 +281,11 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
     [defaultFeeDraft, defaultAccountsDraft],
   );
 
+  const router = useRouter();
+  const { update: canUpdate, delete: canDelete } = usePermissions('education');
+  const { mutate: deleteRecord } = useDeleteEducation();
+  const { mutate: sendEmail } = useSendEmail();
+
   if (isLoading) {
     return <SectionLoader />;
   }
@@ -280,8 +295,36 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
 
   return (
     <Container className="flex flex-col py-10 gap-8 !p-6">
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <div className="flex items-center gap-4">
+          <ButtonLink href={ROUTES.EDUCATION} variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </ButtonLink>
+          <h3 className="text-h5 text-content-heading font-bold">
+            {[education.firstName, education.middleName, education.lastName].filter(Boolean).join(' ')}
+          </h3>
+        </div>
+      </Portal>
+
       <div className="bg-white rounded-lg p-4">
-        <TabsMenu items={tabs} active={activeTab} onChange={setActiveTab} />
+        <TabsMenu
+          items={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+          actions={
+            <RecordActions
+              canUpdate={canUpdate}
+              canDelete={canDelete}
+              onEdit={() => router.push(`/dashboard/education/${education.id}/edit`)}
+              onSendEmail={(payload) => sendEmail(payload)}
+              recipientEmail={education.email}
+              deleteTitle="Delete this student"
+              deleteDescription={<p>Are you sure you want to delete this student? This cannot be undone.</p>}
+              deleteConfirmText="Yes, delete"
+              onDelete={() => deleteRecord(education.id, { onSuccess: () => router.push(ROUTES.EDUCATION) })}
+            />
+          }
+        />
 
         <div className="mt-6">
           {activeTab === 'overview' && (

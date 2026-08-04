@@ -14,6 +14,16 @@ import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import Accounts from './accounts';
 import { useGetInsuranceById } from '@/query/get-insurance';
 import SectionLoader from '@/components/molecules/section-loader';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
+import { ButtonLink } from '@/components/atoms/button-link';
+import { ArrowLeft } from 'lucide-react';
+import { ROUTES } from '@/config/routes';
+import { useRouter } from 'next/navigation';
+import RecordActions from '@/components/organisms/record-actions';
+import { usePermissions } from '@/hooks/use-permissions';
+import { useDeleteInsurance } from '@/mutations/insurance/delete-insurance';
+import { useSendEmail } from '@/mutations/email-sms/email';
 
 interface VisaPageContentProps {
   studentId: string;
@@ -29,6 +39,11 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
 
   const { data: insurance, isLoading, isError } = useGetInsuranceById(studentId);
 
+  const router = useRouter();
+  const { update: canUpdate, delete: canDelete } = usePermissions('insurance');
+  const { mutate: deleteRecord } = useDeleteInsurance();
+  const { mutate: sendEmail } = useSendEmail();
+
   if (isLoading) {
     return <SectionLoader />;
   }
@@ -41,8 +56,36 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
 
   return (
     <Container className="flex flex-col py-10 gap-8 !p-6">
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <div className="flex items-center gap-4">
+          <ButtonLink href={ROUTES.INSURANCE} variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </ButtonLink>
+          <h3 className="text-h5 text-content-heading font-bold">
+            {[insurance.firstName, insurance.middleName, insurance.lastName].filter(Boolean).join(' ')}
+          </h3>
+        </div>
+      </Portal>
+
       <div className="bg-white rounded-lg p-4">
-        <TabsMenu items={tabs} active={activeTab} onChange={setActiveTab} />
+        <TabsMenu
+          items={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+          actions={
+            <RecordActions
+              canUpdate={canUpdate}
+              canDelete={canDelete}
+              onEdit={() => router.push(`/dashboard/insurance/${insurance.id}/edit`)}
+              onSendEmail={(payload) => sendEmail(payload)}
+              recipientEmail={insurance.email}
+              deleteTitle="Delete this insurance applicant"
+              deleteDescription={<p>Are you sure you want to delete this insurance applicant? This cannot be undone.</p>}
+              deleteConfirmText="Yes, delete"
+              onDelete={() => deleteRecord(insurance.id, { onSuccess: () => router.push(ROUTES.INSURANCE) })}
+            />
+          }
+        />
 
         <div className="mt-6">
           {activeTab === 'overview' && (

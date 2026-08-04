@@ -24,6 +24,8 @@ import { TableContextProvider, ColumnIdProvider } from '../molecules/table-conte
 import { cn } from '@/lib/utils';
 import Pagination from '../molecules/pagination-component';
 import { ColumnSelector } from '../molecules/table-column-selector';
+import { TableBulkMoveMenu, type TableBulkMoveProps } from '../molecules/table-bulk-move-menu';
+import { BulkActionIconButton } from '../molecules/table-bulk-action-button';
 import DeleteDialog from './delete.dialog';
 import EmailDialog from './email.dialog';
 import { Mail, Trash2 } from 'lucide-react';
@@ -67,6 +69,8 @@ interface Props<TData, TValue> {
   tableHeight?: string;
   onBulkDelete?: (ids: number[]) => void;
   onSendEmail?: (payload: SendEmailSchemaType) => void;
+  // Adds a "Move to" action to the selection toolbar.
+  bulkMoveTo?: TableBulkMoveProps<TData>;
   handleDateRangeApply?: (range: { from: Date | undefined; to: Date | undefined }) => void;
   columnPinning?: TableState['columnPinning'];
   onRowClick?: (row: TData) => void;
@@ -107,6 +111,7 @@ const TableComponent = <TData, TValue>({
   onBulkDelete,
   handleDateRangeApply,
   onSendEmail,
+  bulkMoveTo,
   columnPinning,
   showHeaderSection = true,
   showPaginationSection = true,
@@ -342,6 +347,8 @@ const TableComponent = <TData, TValue>({
               <TableSearchInput
                 searchParamField={searchKey as string}
                 className="max-w-[18rem]"
+                // 36px to match the Date range filter beside it (both are 36px in Figma).
+                classNames={{ input: 'h-9' }}
                 placeholder={`Search data here`}
               />
               <DateRangePicker onApply={handleDateRangeApply || (() => { })} />
@@ -353,11 +360,15 @@ const TableComponent = <TData, TValue>({
             </div>
           </div>
         )}
-        {table.getSelectedRowModel().rows.length > 0 && (onSendEmail || onBulkDelete) && (
-          <div className="flex items-center gap-3 ml-[9px]">
+        {table.getSelectedRowModel().rows.length > 0 && (onSendEmail || onBulkDelete || bulkMoveTo) && (
+          <div className="flex items-center gap-1 ml-[1px]">
             {onSendEmail && (
               <EmailDialog
-                trigger={<Mail className="cursor-pointer" />}
+                trigger={
+                  <BulkActionIconButton label="Send email">
+                    <Mail strokeWidth={1.5} />
+                  </BulkActionIconButton>
+                }
                 recipientsCount={table.getSelectedRowModel().rows.length}
                 onSend={onSendEmail}
                 recipients={table.getSelectedRowModel().rows.map((row) => ({
@@ -365,9 +376,14 @@ const TableComponent = <TData, TValue>({
                 }))}
               />
             )}
+            {bulkMoveTo && <TableBulkMoveMenu table={table} {...bulkMoveTo} />}
             {onBulkDelete && (
               <DeleteDialog
-                trigger={<Trash2 />}
+                trigger={
+                  <BulkActionIconButton label="Delete">
+                    <Trash2 strokeWidth={1.5} />
+                  </BulkActionIconButton>
+                }
                 title={bulkDeleteTitle || 'Delete Leads'}
                 description={bulkDeleteDescription || ''}
                 confirmText={bulkDeleteConfirmText}

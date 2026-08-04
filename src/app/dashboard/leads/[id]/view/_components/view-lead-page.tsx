@@ -14,12 +14,25 @@ import Transition from './transition';
 import { History } from './history';
 import FollowUp from '@/components/organisms/follow-up';
 import SectionLoader from '@/components/molecules/section-loader';
+import Portal from '@/components/atoms/portal';
+import { PortalIds } from '@/config/portal';
+import { ButtonLink } from '@/components/atoms/button-link';
+import { ArrowLeft } from 'lucide-react';
+import { ROUTES } from '@/config/routes';
+import { useRouter } from 'next/navigation';
+import RecordActions from '@/components/organisms/record-actions';
+import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import { usePermissions } from '@/hooks/use-permissions';
+import { useDeleteLead } from '@/mutations/leads/delete-lead';
+import { useSendEmail } from '@/mutations/email-sms/email';
+import { useMoveLead, MoveService } from '@/hooks/use-move-lead';
 
 interface LeadPageContentProps {
   leadId: string;
 }
 
 const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
+  const router = useRouter();
   const [activeTab, setActiveTab] = useState('overview');
   const tabs = [
     { label: 'Overview', value: 'overview' },
@@ -28,6 +41,12 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
     { label: 'Follow-up', value: 'follow-up' },
   ];
   const { data: lead, isLoading, isError } = useGetLeadById(leadId);
+
+  const { update: canUpdate, delete: canDelete } = usePermissions('leads');
+  const { mutate: deleteLead } = useDeleteLead();
+  const { mutate: sendEmail } = useSendEmail();
+  const { services: moveServices, moveLead } = useMoveLead();
+  const [confirmService, setConfirmService] = useState<MoveService | null>(null);
 
   if (isLoading) {
     return <SectionLoader label="Loading lead details..." />;
@@ -38,8 +57,61 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
 
   return (
     <Container className="flex flex-col py-10 gap-8 !p-6">
+      <Portal rootId={PortalIds.DashboardHeader}>
+        <div className="flex items-center gap-4">
+          <ButtonLink href={ROUTES.LEADS} variant="ghost" size="icon">
+            <ArrowLeft className="h-4 w-4" />
+          </ButtonLink>
+          <h3 className="text-h5 text-content-heading font-bold">
+            {[lead.firstName, lead.middleName, lead.lastName].filter(Boolean).join(' ')}
+          </h3>
+        </div>
+      </Portal>
+
       <div className="bg-white rounded-lg p-4">
-        <TabsMenu items={tabs} active={activeTab} onChange={setActiveTab} />
+        <TabsMenu
+          items={tabs}
+          active={activeTab}
+          onChange={setActiveTab}
+          actions={
+            <RecordActions
+              canUpdate={canUpdate}
+              canDelete={canDelete}
+              onEdit={() => router.push(`/dashboard/leads/${lead.id}/edit`)}
+              moveTo={{
+                options: moveServices,
+                onSelect: (opt) => setConfirmService(moveServices.find((s) => s.id === opt.id) ?? null),
+              }}
+              onSendEmail={(payload) => sendEmail(payload)}
+              recipientEmail={lead.email}
+              deleteTitle="Delete this lead"
+              deleteDescription={
+                <div className="flex flex-col gap-3">
+                  <p>Are you sure you want to delete this lead?</p>
+                  <p>Deleting this lead will remove all associated data, including contacts, interactions and notes.</p>
+                </div>
+              }
+              deleteConfirmText="Yes, delete"
+              onDelete={() => deleteLead(lead.id, { onSuccess: () => router.push(ROUTES.LEADS) })}
+            />
+          }
+        />
+
+        <ConfirmationDialog
+          isOpen={!!confirmService}
+          setIsOpen={(open) => {
+            if (!open) setConfirmService(null);
+          }}
+          title="Confirm move"
+          message={`Are you sure you want to move this lead to ${confirmService?.title}?`}
+          confirmText="Move"
+          cancelText="Cancel"
+          onConfirm={() => {
+            if (confirmService) moveLead(lead, confirmService.id);
+            setConfirmService(null);
+          }}
+          onCancel={() => setConfirmService(null)}
+        />
 
         <div className="mt-6">
           {activeTab === 'overview' && (

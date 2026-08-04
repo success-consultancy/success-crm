@@ -22,6 +22,7 @@ import { useSendEmail } from '@/mutations/email-sms/email';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { useExportLeads } from '@/mutations/leads/export-lead';
 import { Separator } from '@/components/ui/separator';
+import { useMoveLead, MoveServiceId } from '@/hooks/use-move-lead';
 
 // Tab Config
 const TAB_CONFIG = [
@@ -72,6 +73,8 @@ const Leads = () => {
   const handleSendEmail = (payload: SendEmailSchemaType) => {
     sendEmail(payload);
   };
+
+  const { services: moveServices, moveLeads, isBulkMoving } = useMoveLead();
 
   const LeadColumns = useLeadColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });
 
@@ -128,6 +131,15 @@ const Leads = () => {
         }
         className="bg-neutral-white !text-neutral-darkGrey"
         onBulkDelete={canDelete ? handleDeleteBulk : undefined}
+        bulkMoveTo={
+          canUpdate
+            ? {
+                options: moveServices,
+                onMove: (option, rows) => moveLeads(rows, option.id as MoveServiceId),
+                isMoving: isBulkMoving,
+              }
+            : undefined
+        }
         handleDateRangeApply={handleDateRangeApply}
         onSendEmail={handleSendEmail}
         onRowClick={handleRowClick}

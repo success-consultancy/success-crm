@@ -448,7 +448,9 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
           </Popover>
         </div>
         <CardContent className="divide-y">
-          {filteredPrevious.length === 0 && <p className="py-4 text-sm text-gray-500">No follow-ups in this range.</p>}
+          {filteredPrevious.length === 0 && (
+            <EmptyState title="No past follow-ups" description="No follow-ups in this range." />
+          )}
           {filteredPrevious.map((f) => (
             <div key={f.id} className="flex items-start justify-between py-4">
               <div className="flex items-center space-x-4">

@@ -85,6 +85,32 @@ const updateLeadStatus = async ({ id, status }: IPayloadStatus) => {
   const res = await api.patch(`/lead/${id}/status`, { status });
 };
 
+const reopenLead = async (id: string) => {
+  const res = await api.patch(`/lead/${id}/reopen`);
+  return res.data;
+};
+
+export const useReopenLead = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: reopenLead,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
+      });
+      toast('Success!', {
+        description: 'Lead has been reopened',
+      });
+    },
+    onError: (error: any) => {
+      toast('Error!', {
+        description: getApiErrorMessage(error),
+      });
+    },
+  });
+};
+
 export const useUpdateLeadStatus = () => {
   const queryClient = useQueryClient();
   return useMutation({

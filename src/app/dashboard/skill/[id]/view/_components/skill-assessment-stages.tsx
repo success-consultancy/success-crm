@@ -1,6 +1,4 @@
 import { toast } from 'sonner';
-import { useRouter } from 'next/navigation';
-import { Edit, MessageCircle } from 'lucide-react';
 import StageItem from '@/components/organisms/stage-item';
 import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
 import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
@@ -11,7 +9,6 @@ import { useState } from 'react';
 type SkillAssessmentStagesProps = { skillAssessment: ISkillAssessment };
 
 export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStagesProps) => {
-  const router = useRouter();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
 
@@ -58,29 +55,6 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
     <div className="border rounded-lg">
       <div className="border-b px-6 py-3 flex justify-between">
         <p className="text-xl font-bold">Skill assessment stages</p>
-
-        <div className="flex gap-2">
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-              router.push(`/dashboard/skill/${skillAssessment.id}/edit`);
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <Edit strokeWidth={1.5} className="h-5 w-5" />
-            <span>Edit</span>
-          </div>
-
-          <div
-            onClick={(e) => {
-              e.stopPropagation();
-            }}
-            className="flex items-center gap-2 cursor-pointer hover:bg-accent-50 px-2 py-2 text-b1"
-          >
-            <MessageCircle strokeWidth={1.5} className="h-5 w-5" />
-            <span>Send SMS</span>
-          </div>
-        </div>
       </div>
 
       <div className="px-6 py-3 flex justify-between items-center">

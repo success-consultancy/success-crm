@@ -6,22 +6,53 @@ import { useAddVisa } from '@/mutations/visas/add-visa';
 import { ILead } from '@/types/response-types/leads-response';
 import { useToastContext } from '@/context/toast-context';
 import { api } from '@/lib/api';
+import Icons from '@/assets/icons';
+import { ReactElement, useState } from 'react';
 
 export type MoveServiceId = 'students' | 'visa' | 'skill' | 'insurance' | 'tribunal';
+
+// 'invalid' = the lead is missing required fields, 'duplicate' = already in that service.
+type MoveOutcome = 'moved' | 'invalid' | 'duplicate' | 'failed';
 
 export interface MoveService {
   id: MoveServiceId;
   title: string;
   path: string;
   clientKey: keyof ILead['clientIds'];
+  // Same icon the sidebar uses for the service.
+  Icon: (props: { className?: string }) => ReactElement;
 }
 
 export const MOVE_SERVICES: MoveService[] = [
-  { id: 'students', title: 'Education service', clientKey: 'students', path: 'education' },
-  { id: 'visa', title: 'Visa service', clientKey: 'visaApplicants', path: 'visa' },
-  { id: 'skill', title: 'Skill assessment service', clientKey: 'skillAssessments', path: 'skill' },
-  { id: 'insurance', title: 'Insurance service', clientKey: 'insuranceApplicants', path: 'insurance' },
-  { id: 'tribunal', title: 'Tribunal review service', clientKey: 'tribunalReviews', path: 'tribunal-review' },
+  {
+    id: 'students',
+    title: 'Education service',
+    clientKey: 'students',
+    path: 'education',
+    Icon: Icons.EducationIcon,
+  },
+  { id: 'visa', title: 'Visa service', clientKey: 'visaApplicants', path: 'visa', Icon: Icons.VisaIcon },
+  {
+    id: 'skill',
+    title: 'Skill assessment service',
+    clientKey: 'skillAssessments',
+    path: 'skill',
+    Icon: Icons.SkillAssessmentIcon,
+  },
+  {
+    id: 'insurance',
+    title: 'Insurance service',
+    clientKey: 'insuranceApplicants',
+    path: 'insurance',
+    Icon: Icons.InsuranceIcon,
+  },
+  {
+    id: 'tribunal',
+    title: 'Tribunal review service',
+    clientKey: 'tribunalReviews',
+    path: 'tribunal-review',
+    Icon: Icons.TribunalReviewIcon,
+  },
 ];
 
 // Guards against a duplicate toast for the same move within a short window
@@ -66,13 +97,14 @@ export const useMoveLead = () => {
   const addEducation = useAddEducation();
   const addInsurance = useAddInsurance();
   const addTribunalReview = useAddTribunalReview();
+  const [isBulkMoving, setIsBulkMoving] = useState(false);
 
-  const moveLead = async (lead: ILead, serviceId: MoveServiceId) => {
+  // Performs the move without any toast, so single and bulk callers can report
+  // the result their own way.
+  const attemptMove = async (lead: ILead, serviceId: MoveServiceId): Promise<MoveOutcome> => {
     const payload = createGenericPayload(lead);
-    if (!payload.firstName || !payload.email) {
-      error('Cannot move lead: first name and email are required');
-      return Promise.reject(new Error('Missing required fields: firstName and email'));
-    }
+    if (!payload.firstName || !payload.email) return 'invalid';
+
     const leadId = lead.id.toString();
     const service = MOVE_SERVICES.find((s) => s.id === serviceId);
 
@@ -87,10 +119,7 @@ export const useMoveLead = () => {
     }
     if (service) {
       const existing = clientIds?.[service.clientKey] as unknown[] | undefined;
-      if (Array.isArray(existing) && existing.length > 0) {
-        error(`This lead has already been moved to ${service.title}.`);
-        return Promise.reject(new Error('Lead already moved to this service'));
-      }
+      if (Array.isArray(existing) && existing.length > 0) return 'duplicate';
     }
 
     let request: Promise<unknown>;
@@ -127,18 +156,69 @@ export const useMoveLead = () => {
         break;
 
       default:
-        return Promise.resolve();
+        return 'failed';
     }
 
-    const toastKey = `move-lead-${leadId}-${serviceId}`;
-    return request
-      .then((res) => {
+    return request.then((): MoveOutcome => 'moved').catch((): MoveOutcome => 'failed');
+  };
+
+  const moveLead = async (lead: ILead, serviceId: MoveServiceId) => {
+    const service = MOVE_SERVICES.find((s) => s.id === serviceId);
+    const outcome = await attemptMove(lead, serviceId);
+    const toastKey = `move-lead-${lead.id}-${serviceId}`;
+
+    switch (outcome) {
+      case 'moved':
         showMoveToastOnce(toastKey, () => success(`Lead moved to ${service?.title ?? 'the selected service'}`));
-        return res;
-      })
-      .catch(() => {
+        return;
+      case 'invalid':
+        error('Cannot move lead: first name and email are required');
+        return Promise.reject(new Error('Missing required fields: firstName and email'));
+      case 'duplicate':
+        error(`This lead has already been moved to ${service?.title ?? 'this service'}.`);
+        return Promise.reject(new Error('Lead already moved to this service'));
+      default:
         showMoveToastOnce(toastKey, () => error('Failed to move lead. Please try again.'));
-      });
+    }
+  };
+
+  /**
+   * Bulk variant of `moveLead` for the leads table's selection toolbar. Leads are moved
+   * one at a time so the API isn't hit with a burst, and the result is reported as a
+   * single summary toast instead of one toast per lead.
+   */
+  const moveLeads = async (leads: ILead[], serviceId: MoveServiceId) => {
+    const service = MOVE_SERVICES.find((s) => s.id === serviceId);
+    const serviceTitle = service?.title ?? 'the selected service';
+    const outcomes: MoveOutcome[] = [];
+
+    setIsBulkMoving(true);
+    try {
+      for (const lead of leads) {
+        outcomes.push(await attemptMove(lead, serviceId));
+      }
+    } finally {
+      setIsBulkMoving(false);
+    }
+
+    const count = (outcome: MoveOutcome) => outcomes.filter((o) => o === outcome).length;
+    const moved = count('moved');
+    const skipped = count('duplicate');
+    const failed = count('failed') + count('invalid');
+    const leadWord = (n: number) => `${n} ${n === 1 ? 'lead' : 'leads'}`;
+
+    if (moved === 0) {
+      if (skipped > 0 && failed === 0) error(`${leadWord(skipped)} already in ${serviceTitle}.`);
+      else error(`Failed to move ${failed > 0 ? leadWord(failed) : 'the selected leads'} to ${serviceTitle}.`);
+      return outcomes;
+    }
+
+    const notes = [
+      skipped > 0 ? `${skipped} already there` : null,
+      failed > 0 ? `${failed} failed` : null,
+    ].filter(Boolean);
+    success(`${leadWord(moved)} moved to ${serviceTitle}${notes.length ? ` (${notes.join(', ')})` : ''}`);
+    return outcomes;
   };
 
   const pendingServiceId: MoveServiceId | null = addVisa.isPending
@@ -153,5 +233,12 @@ export const useMoveLead = () => {
             ? 'tribunal'
             : null;
 
-  return { services: MOVE_SERVICES, moveLead, pendingServiceId, isMoving: pendingServiceId !== null };
+  return {
+    services: MOVE_SERVICES,
+    moveLead,
+    moveLeads,
+    pendingServiceId,
+    isBulkMoving,
+    isMoving: pendingServiceId !== null || isBulkMoving,
+  };
 };

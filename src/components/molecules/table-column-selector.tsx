@@ -7,6 +7,27 @@ import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
+import { useToastContext } from '@/context/toast-context';
+
+const KNOWN_ID_PREFIXES = [
+  'lead',
+  'visa',
+  'education',
+  'insurance',
+  'tribunal',
+  'skill',
+  'agreement',
+  'announcement',
+  'checkin',
+  'accounts',
+];
+
+// `lead-first-name` -> `First Name`
+const getColumnLabel = (columnId: string) => {
+  const parts = columnId.split('-');
+  const stripped = KNOWN_ID_PREFIXES.includes(parts[0]) ? parts.slice(1) : parts;
+  return stripped.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+};
 
 interface ColumnSelectorProps<TData> {
   table: Table<TData>;
@@ -21,6 +42,7 @@ export function ColumnSelector<TData>({
 }: ColumnSelectorProps<TData>) {
   const [open, setOpen] = useState(false);
   const allColumns = table.getAllColumns();
+  const { success, warning } = useToastContext();
 
   const getDefaultSelected = (): Set<string> => {
     if (typeof window === 'undefined') return new Set<string>();
@@ -89,9 +111,20 @@ export function ColumnSelector<TData>({
   }, [open]);
 
   const handleApply = () => {
+    const added = allColumns.filter((col) => selected.has(col.id) && !col.getIsVisible());
+    const removedCount = allColumns.filter((col) => !selected.has(col.id) && col.getIsVisible()).length;
+
     allColumns.forEach((col) => {
       col.toggleVisibility(selected.has(col.id));
     });
+
+    if (added.length === 1) {
+      success(`${getColumnLabel(added[0].id)} column added to the table`);
+    } else if (added.length > 1) {
+      success(`${added.length} columns added to the table`);
+    } else if (removedCount === 0) {
+      warning('Those columns are already in the table');
+    }
 
     if (typeof window !== 'undefined') {
       localStorage.setItem(storageKey, JSON.stringify(Array.from(selected)));
@@ -115,9 +148,7 @@ export function ColumnSelector<TData>({
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger className="w-full h-9 px-3 border rounded-md" asChild>
         <div className="flex items-center gap-2 w-full text-b14-500">
-          <span className="grow text-left">
-            {selected.size > 0 ? `${selected.size} items selected` : 'Select items'}
-          </span>
+          <span className="grow text-left">{`${title}: ${selected.size} selected`}</span>
           <ChevronDown className="size-4 shrink-0" />
         </div>
       </PopoverTrigger>
@@ -131,21 +162,7 @@ export function ColumnSelector<TData>({
           <CommandList className="h-[13.5rem] overflow-y-auto [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-[#f0f1f4] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-neutral-in-active-grey">
             <CommandEmpty>No results found.</CommandEmpty>
             {allColumns.map((column) => {
-              const parts = column.id.split('-');
-              const knownPrefixes = [
-                'lead',
-                'visa',
-                'education',
-                'insurance',
-                'tribunal',
-                'skill',
-                'agreement',
-                'announcement',
-                'checkin',
-                'accounts',
-              ];
-              const stripped = knownPrefixes.includes(parts[0]) ? parts.slice(1) : parts;
-              const columnName = stripped.map((word) => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+              const columnName = getColumnLabel(column.id);
 
               return (
                 <CommandItem className="p-0 m-0" key={column.id} value={columnName}>

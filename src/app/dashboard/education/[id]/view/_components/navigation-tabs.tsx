@@ -12,11 +12,13 @@ interface TabsMenuProps {
   items: TabItem[];
   active: string;
   onChange: (value: string) => void;
+  /** Right-aligned actions rendered on the same row as the tabs. */
+  actions?: React.ReactNode;
 }
 
-const TabsMenu: React.FC<TabsMenuProps> = ({ items, active, onChange }) => {
+const TabsMenu: React.FC<TabsMenuProps> = ({ items, active, onChange, actions }) => {
   return (
-    <div className="flex space-x-4 border-b">
+    <div className="sticky top-0 z-10 -mx-4 -mt-4 rounded-t-lg bg-white px-4 pt-4 flex items-center border-b">
       {items.map((item) => {
         const isActive = item.value === active;
 
@@ -33,6 +35,8 @@ const TabsMenu: React.FC<TabsMenuProps> = ({ items, active, onChange }) => {
           </button>
         );
       })}
+
+      {actions && <div className="ml-auto pb-1">{actions}</div>}
     </div>
   );
 };
