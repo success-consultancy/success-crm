@@ -19,6 +19,8 @@ export type MenuItem = {
   onClick?: () => void;
   subItems?: SubMenuItem[];
   roles?: number[];
+  /** Service key from RoleCrudPermissions — item shown when the user's role has `read` access */
+  permissionKey?: string;
 };
 
 export const menuItems: MenuItem[] = [
@@ -96,7 +98,7 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.NewsAndUpdates,
     icon: Icons.NewUpdatesIcon,
     href: '/dashboard/updates-and-announcements',
-    // all roles
+    permissionKey: 'announcement',
   },
   {
     title: DashboardTitle.Setup,
