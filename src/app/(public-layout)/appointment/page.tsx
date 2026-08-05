@@ -58,7 +58,7 @@ const AppointmentPage = () => {
 
   return (
     <div className="min-h-screen bg-white">
-      <AppointmentHeader onClose={() => window.history.back()} />
+      <AppointmentHeader onClose={() => (window.location.href = ROUTES.PUBLIC_APPOINTMENT)} />
 
       {/* Content area below fixed nav */}
       <div
