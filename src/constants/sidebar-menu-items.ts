@@ -29,12 +29,11 @@ export const menuItems: MenuItem[] = [
     icon: Icons.DashboardIcon,
     href: '/dashboard',
     exact: true,
-    // all roles
   },
   {
     title: DashboardTitle.FiscalReport,
     icon: Icons.FiscalReportIcon,
-    roles: [1, 2, 4],
+    permissionKey: 'fiscalReport',
     subItems: [
       { title: 'Visa application', href: '/dashboard/fiscal-report/visa-application' },
       { title: 'Student enrollment', href: '/dashboard/fiscal-report/student-enrollment' },
@@ -44,55 +43,54 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.AppointmentCalendar,
     icon: Icons.AppointmentCalendarIcon,
     href: '/dashboard/appointment?view=work-week',
-    // all roles
+    permissionKey: 'appointment',
   },
   {
     title: DashboardTitle.CheckIn,
     icon: Icons.CheckInIcon,
     href: '/dashboard/check-in',
-    // all roles
   },
   {
     title: DashboardTitle.Leads,
     icon: Icons.LeadsIcon,
     href: '/dashboard/leads',
-    roles: [1, 2, 3, 5],
+    permissionKey: 'leads',
   },
   {
     title: DashboardTitle.EducationService,
     icon: Icons.EducationIcon,
     href: '/dashboard/education',
-    roles: [1, 2, 3],
+    permissionKey: 'education',
   },
   {
     title: DashboardTitle.VisaService,
     icon: Icons.VisaIcon,
     href: '/dashboard/visa',
-    roles: [1, 2, 3],
+    permissionKey: 'visa',
   },
   {
     title: DashboardTitle.SkillAssessmentService,
     icon: Icons.SkillAssessmentIcon,
     href: '/dashboard/skill',
-    roles: [1, 2, 3],
+    permissionKey: 'skill',
   },
   {
     title: DashboardTitle.TribunalReview,
     icon: Icons.TribunalReviewIcon,
     href: '/dashboard/tribunal-review',
-    roles: [1, 2, 3],
+    permissionKey: 'tribunalReview',
   },
   {
     title: DashboardTitle.InsuranceService,
     icon: Icons.InsuranceIcon,
     href: '/dashboard/insurance',
-    roles: [1, 2, 3, 4],
+    permissionKey: 'insurance',
   },
   {
     title: DashboardTitle.AgencyAgreement,
     icon: Icons.AgencyAgreementIcon,
     href: '/dashboard/agreement',
-    roles: [1, 2],
+    permissionKey: 'agreement',
   },
   {
     title: DashboardTitle.NewsAndUpdates,
@@ -104,13 +102,13 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.Setup,
     icon: Icons.SetupIcon,
     subItems: [
-      { title: 'Users & permissions', href: '/dashboard/users',      permissionKey: 'users' },
-      { title: 'Occupation',          href: '/dashboard/occupation',  permissionKey: 'occupation' },
-      { title: 'Visa List',           href: '/dashboard/visa-list',   permissionKey: 'visaList' },
-      { title: 'University',          href: '/dashboard/university',  permissionKey: 'university' },
-      { title: 'Course',              href: '/dashboard/course',      permissionKey: 'course' },
-      { title: 'Source',              href: '/dashboard/source',      permissionKey: 'source' },
-      { title: 'Settings',            href: '/dashboard/settings',    permissionKey: 'settings' },
+      { title: 'Users & permissions', href: '/dashboard/users', permissionKey: 'users' },
+      { title: 'Occupation', href: '/dashboard/occupation', permissionKey: 'occupation' },
+      { title: 'Visa List', href: '/dashboard/visa-list', permissionKey: 'visaList' },
+      { title: 'University', href: '/dashboard/university', permissionKey: 'university' },
+      { title: 'Course', href: '/dashboard/course', permissionKey: 'course' },
+      { title: 'Source', href: '/dashboard/source', permissionKey: 'source' },
+      { title: 'Settings', href: '/dashboard/settings', permissionKey: 'settings' },
     ],
   },
 ];
