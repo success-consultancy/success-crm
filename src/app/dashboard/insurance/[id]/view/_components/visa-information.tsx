@@ -13,12 +13,15 @@ import TextInput from '@/components/molecules/text-input';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
+import SelectWithCommand from '@/components/molecules/select-with-command';
+import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildInsuranceSectionPayload } from './insurance-section-payload';
 import insuranceFormSchema from '@/schema/insurance';
-import { IInsurance } from '@/types/response-types/insurance-response';
+import { IInsurance, InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
+import { useGetVisaConst } from '@/query/get-visa';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
 
 const visaInfoSchema = insuranceFormSchema.pick({
@@ -63,6 +66,13 @@ const fmtDate = (s: string | null | undefined) => (s ? new Date(s).toLocaleDateS
 const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editInsurance = useEditInsurance();
+
+  const { data: visas } = useGetVisaConst();
+
+  const visaOptions = useMemo(
+    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
+    [visas],
+  );
 
   const insuranceProviders = useMemo(() => getInsuranceProviderMapping(), []);
   const insuranceTypes = useMemo(() => getInsuranceTypeMapping(), []);
@@ -117,18 +127,19 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
       {isEditing ? (
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Label className="text-b2">Visa expiry date</Label>
@@ -242,13 +253,10 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
               control={control}
               name="status"
               label="Status"
-              options={[
-                { label: 'New', value: 'New' },
-                { label: 'Processing', value: 'Processing' },
-                { label: 'Completed', value: 'Completed' },
-                { label: 'Discontinued', value: 'Discontinued' },
-                { label: 'Refunded', value: 'Refunded' },
-              ]}
+              options={Object.values(InsuranceStatusTypes).map((value) => ({
+                label: value,
+                value,
+              }))}
               placeholder="Select a status"
             />
           </div>

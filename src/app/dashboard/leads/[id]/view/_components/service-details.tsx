@@ -17,17 +17,11 @@ import { serviceDetailsSchema } from '@/schema/lead-schema';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { useGetSource } from '@/query/get-source';
-import { Location, Services } from '@/constants/lead-constants';
+import { LEAD_STATUS_COLORS, Location, Services } from '@/constants/lead-constants';
 
 type FormValues = z.infer<typeof serviceDetailsSchema>;
 
-const STATUS_OPTIONS = [
-  { value: LeadStatusTypes.New, label: 'New' },
-  { value: LeadStatusTypes.Negotiation, label: 'Negotiation' },
-  { value: LeadStatusTypes.Converted, label: 'Converted' },
-  { value: LeadStatusTypes.NotConverted, label: 'Not Converted' },
-  { value: LeadStatusTypes.FollowUp, label: 'Follow Up' },
-];
+const STATUS_OPTIONS = Object.values(LeadStatusTypes).map((value) => ({ value, label: value }));
 
 const parseServiceType = (raw: string | null | undefined): string[] => {
   if (!raw) return [];
@@ -177,7 +171,13 @@ const ServiceDetails = ({ lead }: { lead: ILead }) => {
           <InfoField title="Service type" value={serviceTypeDisplay} />
           <InfoField title="Location" value={lead.location || 'N/A'} />
           <InfoField title="Source" value={lead?.source?.name || 'N/A'} />
-          <InfoField title="Status" value={lead.status || 'N/A'} />
+          <InfoField
+            title="Status"
+            value={lead.status || 'N/A'}
+            type={lead.status ? 'badge' : undefined}
+            badgeColor={lead.status ? LEAD_STATUS_COLORS[lead.status]?.background : undefined}
+            badgeTextColor={lead.status ? LEAD_STATUS_COLORS[lead.status]?.text : undefined}
+          />
         </div>
       )}
     </EditableTitleBox>

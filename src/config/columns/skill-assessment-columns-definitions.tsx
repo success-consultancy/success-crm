@@ -10,9 +10,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { Minus, Plus } from 'lucide-react';
-import { SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { ISkillAssessment } from '@/types/response-types/skill-assessment-response';
+import { SERVICE_STATUS_COLORS } from '@/constants/status-colors';
 
 export const useSkillAssessmentColumn = (
   handleDelete: (id: number) => void,
@@ -278,32 +278,20 @@ export const useSkillAssessmentColumn = (
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case SkillAssessmentStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case SkillAssessmentStatusTypes.CollectingDocs:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Collecting docs</Badge>;
-            case SkillAssessmentStatusTypes.ReadyToSubmit:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Ready to Submit</Badge>;
-            case SkillAssessmentStatusTypes.Submitted:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Submitted</Badge>;
-            case SkillAssessmentStatusTypes.InfoRequested:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Info Requested</Badge>;
-            case SkillAssessmentStatusTypes.Approved:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Approved</Badge>;
-            case SkillAssessmentStatusTypes.Discontinued:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Discontinued</Badge>;
-            case SkillAssessmentStatusTypes.Withdrawn:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Withdrawn</Badge>;
-            case SkillAssessmentStatusTypes.Refused:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">Refused</Badge>;
-            default:
-              return status ? <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">{status}</Badge> : <span>-</span>;
-          }
-        };
+        if (!status) return <span>-</span>;
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        const colors = SERVICE_STATUS_COLORS[status];
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors?.background, color: colors?.text }}
+            >
+              {status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Skeleton } from '@/components/ui/skeleton';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
+import { LEAD_STATUS_COLORS } from '@/constants/lead-constants';
 import { ServiceType } from '@/types/leads/leads-types';
 import { LeadStatusTypes, type ILead } from '@/types/response-types/leads-response';
 import type { ColumnDef } from '@tanstack/react-table';
@@ -368,22 +369,20 @@ export const useLeadColumn = (
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case LeadStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case LeadStatusTypes.Converted:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-            case LeadStatusTypes.NotConverted:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case LeadStatusTypes.FollowUp:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
-            default:
-              return <span>{status}</span>;
-          }
-        };
+        const colors = LEAD_STATUS_COLORS[status];
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        if (!colors) return <span>{status}</span>;
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors.background, color: colors.text }}
+            >
+              {status === LeadStatusTypes.Converted ? 'Completed' : status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

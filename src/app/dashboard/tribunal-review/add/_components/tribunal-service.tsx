@@ -435,7 +435,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               render={({ field }) => (
                 <PhoneNumberInput
                   label="Sponsor phone"
-                  value={field.value}
+                  value={field.value ?? ''}
                   onChange={field.onChange}
                   error={errors.sponsorPhone?.message}
                 />

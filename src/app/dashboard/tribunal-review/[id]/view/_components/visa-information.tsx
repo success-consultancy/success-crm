@@ -22,6 +22,7 @@ import tribunalReviewFormSchema from '@/schema/tribunal-review';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetOccupations } from '@/query/get-occupations';
+import { useGetVisaConst } from '@/query/get-visa';
 
 const visaInfoSchema = tribunalReviewFormSchema.pick({
   currentVisa: true,
@@ -81,6 +82,14 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editTribunal = useUpdateTribunalReview();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
+
+  const visaOptions = useMemo(
+    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
+    [visas],
+  );
+
+  const statusOptions = Object.values(TribunalStatusTypes).map((value) => ({ label: value, value }));
 
   const anzscoOptions = useMemo(
     () =>
@@ -144,18 +153,19 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
       {isEditing ? (
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Label className="text-b2">Visa expiry date</Label>
@@ -195,18 +205,19 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
               />
               <FormErrorMessage message={errors.dueDate?.message} />
             </div>
-            <SelectField
+            <FormField
               control={control}
               name="proposedVisa"
-              label="Proposed visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Skilled Migration', value: 'Skilled Migration' },
-                { label: 'Family Visa', value: 'Family Visa' },
-                { label: 'Business Visa', value: 'Business Visa' },
-              ]}
-              placeholder="Select proposed visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Proposed visa"
+                  placeholder="Select proposed visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.proposedVisa?.message}
+                />
+              )}
             />
             <SelectField
               control={control}
@@ -255,11 +266,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
               control={control}
               name="sbsStatus"
               label="SBS/TAS status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -303,10 +310,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
               control={control}
               name="nominationStatus"
               label="Nomination status"
-              options={Object.values(TribunalStatusTypes).map((value) => ({
-                label: value,
-                value,
-              }))}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -350,12 +354,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
               control={control}
               name="visaStatus"
               label="Visa status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-                { label: 'Under Review', value: 'Under Review' },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">

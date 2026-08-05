@@ -79,11 +79,15 @@ export const newVisaServiceSchema = z.object({
 
   sponsorName: nullableString(),
 
-  sponsorEmail: z.union([z.string().email('Please enter a valid sponsor email'), z.literal('')]).optional(),
+  sponsorEmail: z
+    .union([z.string().email('Please enter a valid sponsor email'), z.literal('')])
+    .nullable()
+    .optional(),
 
   sponsorPhone: z
     .string()
     .regex(/^[0-9+\-() ]*$/, 'Sponsor phone can only contain numbers and symbols')
+    .nullable()
     .optional(),
   sbsStatus: nullableString(),
 

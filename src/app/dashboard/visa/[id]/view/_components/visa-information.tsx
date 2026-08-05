@@ -21,8 +21,10 @@ import EditableTitleBox from './editable-title-box';
 import { buildVisaSectionPayload } from './visa-section-payload';
 import { newVisaServiceSchema } from '@/schema/visa-service/new-visa.schema';
 import { IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
+import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
+import { useGetVisaConst } from '@/query/get-visa';
 
 const visaInfoSchema = newVisaServiceSchema.pick({
   currentVisa: true,
@@ -74,10 +76,18 @@ const getDateValue = (dateString: string | null | undefined): Date | undefined =
 
 const fmtDate = (s: string | null | undefined) => (s ? new Date(s).toLocaleDateString() : 'N/A');
 
+const statusOptions = Object.values(VisaStatusTypes).map((value) => ({ label: value, value }));
+
 const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editVisa = useEditVisa();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
+
+  const visaOptions = useMemo(
+    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
+    [visas],
+  );
 
   const anzscoOptions = useMemo(
     () =>
@@ -140,18 +150,19 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
       {isEditing ? (
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Label className="text-b2">Visa expiry date</Label>
@@ -189,18 +200,19 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               />
               <FormErrorMessage message={errors.dueDate?.message} />
             </div>
-            <SelectField
+            <FormField
               control={control}
               name="proposedVisa"
-              label="Proposed visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Skilled Migration', value: 'Skilled Migration' },
-                { label: 'Family Visa', value: 'Family Visa' },
-                { label: 'Business Visa', value: 'Business Visa' },
-              ]}
-              placeholder="Select proposed visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Proposed visa"
+                  placeholder="Select proposed visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.proposedVisa?.message}
+                />
+              )}
             />
             <SelectField
               control={control}
@@ -254,7 +266,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               render={({ field }) => (
                 <PhoneNumberInput
                   label="Sponsor phone"
-                  value={field.value}
+                  value={field.value ?? ''}
                   onChange={field.onChange}
                   error={errors.sponsorPhone?.message}
                 />
@@ -264,11 +276,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               control={control}
               name="csaStatus"
               label="SBS/TAS status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -311,10 +319,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               control={control}
               name="nominationStatus"
               label="Nomination status"
-              options={Object.values(VisaStatusTypes).map((value) => ({
-                label: value,
-                value,
-              }))}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -357,12 +362,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
               control={control}
               name="status"
               label="Visa status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-                { label: 'Under Review', value: 'Under Review' },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
           </div>
@@ -372,9 +372,9 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
           <InfoField title="Current visa" value={visa.currentVisa || '-'} />
           <InfoField title="Proposed visa" value={visa.proposedVisa || '-'} />
           <InfoField title="Sponsor name" value={visa.sponsorName || '-'} />
-          <InfoField title="SBS/TAS status" value={visa.csaStatus || '-'} />
-          <InfoField title="Nomination status" value={visa.nominationStatus || '-'} />
-          <InfoField title="Visa status" value={visa.status || '-'} />
+          <StatusInfoField title="SBS/TAS status" status={visa.csaStatus} />
+          <StatusInfoField title="Nomination status" status={visa.nominationStatus} />
+          <StatusInfoField title="Visa status" status={visa.status} />
           <InfoField title="Visa expiry date" value={fmtDate(visa.visaExpiry)} />
           <InfoField title="Visa stream" value={visa.visaStream || '-'} />
           <InfoField title="Sponsor email" value={visa.sponsorEmail || '-'} />

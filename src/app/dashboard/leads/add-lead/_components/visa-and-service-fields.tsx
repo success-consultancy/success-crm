@@ -14,12 +14,9 @@ import { Services } from '@/constants/lead-constants';
 import Input from '@/components/molecules/input';
 import { useGetOccupations } from '@/query/get-occupations';
 import SelectCommon from '@/components/molecules/select-common';
-const STATUS_OPTIONS = [
-  { value: 'New', label: 'New' },
-  { value: 'Converted', label: 'Converted' },
-  { value: 'Not Converted', label: 'Not Converted' },
-  { value: 'Follow Up', label: 'Follow Up' },
-];
+import { LeadStatusTypes } from '@/types/response-types/leads-response';
+
+const STATUS_OPTIONS = Object.values(LeadStatusTypes).map((value) => ({ value, label: value }));
 const VisaAndServiceStep = () => {
   const {
     control,

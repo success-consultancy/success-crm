@@ -13,6 +13,14 @@ import { Minus, Plus } from 'lucide-react';
 import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 import { ServiceType } from '@/types/leads/leads-types';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
+import { EDUCATION_STATUS_COLORS } from '@/constants/status-colors';
+
+/** Preserves the labels this table already displayed for these statuses. */
+const STATUS_LABELS: Partial<Record<EducationStatusTypes, string>> = {
+  [EducationStatusTypes.CoeReceived]: 'Completed',
+  [EducationStatusTypes.Withdrawn]: 'Not Converted',
+  [EducationStatusTypes.Discontinued]: 'Not Converted',
+};
 
 export const useEducationColumn = (
   handleDelete: (id: number) => void,
@@ -252,23 +260,20 @@ export const useEducationColumn = (
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case EducationStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case EducationStatusTypes.CoeReceived:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-            case EducationStatusTypes.Withdrawn:
-            case EducationStatusTypes.Discontinued:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case EducationStatusTypes.Checklist:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Checklist</Badge>;
-            default:
-              return <span>{status}</span>;
-          }
-        };
+        const colors = EDUCATION_STATUS_COLORS[status];
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        if (!colors) return <span>{status}</span>;
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors.background, color: colors.text }}
+            >
+              {STATUS_LABELS[status] ?? status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

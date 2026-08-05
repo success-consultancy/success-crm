@@ -17,6 +17,7 @@ import { EducationStatusTypes, IEducation } from '@/types/response-types/educati
 import { useEditEducation } from '@/mutations/education/edit-education';
 import { useGetUniversity } from '@/query/get-university';
 import { useGetCourse } from '@/query/get-course';
+import { EDUCATION_STATUS_COLORS } from '@/constants/status-colors';
 
 const courseSchema = z
   .object({
@@ -204,17 +205,40 @@ const CourseInfo = ({ education }: { education: IEducation }) => {
             title="University end date"
             value={education.endDate ? new Date(education.endDate).toLocaleDateString() : '-'}
           />
-          <ReadField title="Status" value={education.status || '-'} />
+          <ReadField
+            title="Status"
+            value={education.status || '-'}
+            badgeColors={education.status ? EDUCATION_STATUS_COLORS[education.status] : undefined}
+          />
         </div>
       )}
     </EditableTitleBox>
   );
 };
 
-const ReadField = ({ title, value }: { title: string; value: string | number }) => (
+const ReadField = ({
+  title,
+  value,
+  badgeColors,
+}: {
+  title: string;
+  value: string | number;
+  badgeColors?: { background: string; text: string };
+}) => (
   <div className="flex flex-col">
     <span className="text-b3-b">{title}</span>
-    <span className="text-neutral-dark-grey text-base font-medium">{value || '-'}</span>
+    {badgeColors ? (
+      <div>
+        <span
+          className="text-base font-medium px-2 py-1 rounded-[2px] inline-flex"
+          style={{ backgroundColor: badgeColors.background, color: badgeColors.text }}
+        >
+          {value}
+        </span>
+      </div>
+    ) : (
+      <span className="text-neutral-dark-grey text-base font-medium">{value || '-'}</span>
+    )}
   </div>
 );
 

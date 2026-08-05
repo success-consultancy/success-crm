@@ -1,6 +1,6 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
 import {toast} from 'sonner';
 
@@ -23,10 +23,7 @@ export const useEditEducation = () => {
   return useMutation({
     mutationFn: editEducation,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_EDUCATIONS || query.queryKey[0] === QUERY_KEYS.GET_EDUCATION_BY_ID,
-      });
+      invalidateServiceQueries(queryClient, 'education');
     },
     onError: (error: any) => {
       toast("Error!", {

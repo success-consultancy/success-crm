@@ -5,6 +5,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { Input } from '@/components/ui/input';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
 import { cn } from '@/lib/utils';
+import { PAYMENT_STATUS_COLORS } from '@/constants/status-colors';
 import { Pencil, Trash2 } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -17,17 +18,13 @@ const ReadOnlyCell = ({ value, isEditing, className }: { value: string; isEditin
   </div>
 );
 
-const STATUS_COLORS: Record<string, string> = {
-  Pending: 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400',
-  Paid: 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400',
-  Overdue: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400',
-  Other: 'bg-slate-100 text-slate-700 dark:bg-slate-800 dark:text-slate-400',
-};
-
 const StatusBadge = ({ status }: { status: string }) => {
-  const colorClass = STATUS_COLORS[status] ?? STATUS_COLORS.Other;
+  const colors = PAYMENT_STATUS_COLORS[status] ?? PAYMENT_STATUS_COLORS.Other;
   return (
-    <span className={cn('inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium', colorClass)}>
+    <span
+      className="inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium"
+      style={{ backgroundColor: colors.background, color: colors.text }}
+    >
       {status || '-'}
     </span>
   );

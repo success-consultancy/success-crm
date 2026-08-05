@@ -90,6 +90,8 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
     return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
   }, [visas]);
 
+  const statusOptions = Object.values(VisaStatusTypes).map((value) => ({ label: value, value }));
+
   useEffect(() => {
     if (userId) {
       setValue('userId', userId);
@@ -408,7 +410,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               render={({ field }) => (
                 <PhoneNumberInput
                   label="Sponsor phone"
-                  value={field.value}
+                  value={field.value ?? ''}
                   onChange={field.onChange}
                   error={errors.sponsorPhone?.message}
                 />
@@ -418,17 +420,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               control={control}
               name="csaStatus"
               label="SBS/TAS status"
-              options={[
-                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
-                { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
-                { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
-                { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
-                { label: VisaStatusTypes.InfoRequested, value: VisaStatusTypes.InfoRequested },
-                { label: VisaStatusTypes.Approved, value: VisaStatusTypes.Approved },
-                { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
-                { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
-                { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -472,17 +464,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               control={control}
               name="nominationStatus"
               label="Nomination status"
-              options={[
-                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
-                { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
-                { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
-                { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
-                { label: VisaStatusTypes.InfoRequested, value: VisaStatusTypes.InfoRequested },
-                { label: VisaStatusTypes.Approved, value: VisaStatusTypes.Approved },
-                { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
-                { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
-                { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">
@@ -526,17 +508,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               control={control}
               name="status"
               label="Visa status"
-              options={[
-                { label: VisaStatusTypes.New, value: VisaStatusTypes.New },
-                { label: VisaStatusTypes.CollectingDocs, value: VisaStatusTypes.CollectingDocs },
-                { label: VisaStatusTypes.ReadyToSubmit, value: VisaStatusTypes.ReadyToSubmit },
-                { label: VisaStatusTypes.Submitted, value: VisaStatusTypes.Submitted },
-                { label: VisaStatusTypes.InfoRequested, value: VisaStatusTypes.InfoRequested },
-                { label: VisaStatusTypes.Approved, value: VisaStatusTypes.Approved },
-                { label: VisaStatusTypes.Withdrawn, value: VisaStatusTypes.Withdrawn },
-                { label: VisaStatusTypes.Refused, value: VisaStatusTypes.Refused },
-                { label: VisaStatusTypes.Discontinued, value: VisaStatusTypes.Discontinued },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <div className="space-y-2">

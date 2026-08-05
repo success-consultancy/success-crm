@@ -62,7 +62,7 @@ const getTribunalReviewLog = async (id: string) => {
 export const useGetTribunalReviewLog = (id: string) => {
   return useQuery({
     queryFn: () => getTribunalReviewLog(id),
-    queryKey: [QUERY_KEYS.GET_VISA_LOG, id],
+    queryKey: [QUERY_KEYS.GET_TRIBUNAL_LOG, id],
     refetchOnWindowFocus: false,
   });
 };

@@ -1,6 +1,6 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { SkillAssessmentSchemaType } from '@/schema/skill-assessment-schema';
 
 const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
@@ -21,15 +21,8 @@ export const useEditSkillAssessment = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editSkillAssessment,
-    onSuccess: (_, variables) => {
-      // Invalidate skill assessments queries
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
-      });
-
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID, variables.id.toString()],
-      });
+    onSuccess: () => {
+      invalidateServiceQueries(queryClient, 'skillAssessment');
     },
   });
 };

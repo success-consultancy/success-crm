@@ -8,6 +8,7 @@ import { format, parse } from 'date-fns';
 import toast from 'react-hot-toast';
 
 import { InfoField } from '@/components/atoms/info-field';
+import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { Label } from '@/components/ui/label';
 import TextInput from '@/components/molecules/text-input';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -25,6 +26,7 @@ import {
 } from '@/types/response-types/skill-assessment-response';
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import { useGetOccupations } from '@/query/get-occupations';
+import { useGetVisaConst } from '@/query/get-visa';
 
 const visaServiceSchema = skillAssessmentFormSchema.pick({
   currentVisa: true,
@@ -77,6 +79,17 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
   const [isEditing, setIsEditing] = useState(false);
   const editSkill = useEditSkillAssessment();
   const { data: occupations } = useGetOccupations();
+  const { data: visas } = useGetVisaConst();
+
+  const visaOptions = useMemo(
+    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
+    [visas],
+  );
+
+  const statusOptions = Object.values(SkillAssessmentStatusTypes).map((value) => ({
+    label: value,
+    value,
+  }));
 
   const anzscoOptions = useMemo(
     () =>
@@ -156,18 +169,19 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
       {isEditing ? (
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-3 gap-6">
-            <SelectField
+            <FormField
               control={control}
               name="currentVisa"
-              label="Current visa"
-              options={[
-                { label: 'Student Visa', value: 'Student Visa' },
-                { label: 'Work Visa', value: 'Work Visa' },
-                { label: 'Tourist Visa', value: 'Tourist Visa' },
-                { label: 'Permanent Resident', value: 'Permanent Resident' },
-                { label: 'No Visa', value: 'No Visa' },
-              ]}
-              placeholder="Select current visa type"
+              render={({ field }) => (
+                <SelectWithCommand
+                  options={visaOptions}
+                  value={field.value ?? undefined}
+                  label="Current visa"
+                  placeholder="Select current visa type"
+                  onSelect={(val) => field.onChange(val)}
+                  error={errors.currentVisa?.message}
+                />
+              )}
             />
             <div className="space-y-2">
               <Label className="text-b2">Visa expiry date</Label>
@@ -292,28 +306,14 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
               control={control}
               name="status"
               label="Status"
-              options={[
-                { label: SkillAssessmentStatusTypes.New, value: SkillAssessmentStatusTypes.New },
-                { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
-                { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
-                { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
-                { label: SkillAssessmentStatusTypes.InfoRequested, value: SkillAssessmentStatusTypes.InfoRequested },
-                { label: SkillAssessmentStatusTypes.Approved, value: SkillAssessmentStatusTypes.Approved },
-                { label: SkillAssessmentStatusTypes.Withdrawn, value: SkillAssessmentStatusTypes.Withdrawn },
-                { label: SkillAssessmentStatusTypes.Refused, value: SkillAssessmentStatusTypes.Refused },
-                { label: SkillAssessmentStatusTypes.Discontinued, value: SkillAssessmentStatusTypes.Discontinued },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
             <SelectField
               control={control}
               name="csaStatus"
               label="SBS/TAS status"
-              options={[
-                { label: 'Approved', value: 'Approved' },
-                { label: 'Pending', value: 'Pending' },
-                { label: 'Rejected', value: 'Rejected' },
-              ]}
+              options={statusOptions}
               placeholder="Select a status"
             />
           </div>
@@ -327,8 +327,8 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
           <InfoField title="Assessment authority" value={assessmentBodyDisplay || '-'} />
           <InfoField title="Date submitted" value={formatDateDisplay(skillAssessment.submittedDate)} />
           <InfoField title="Decision date" value={formatDateDisplay(skillAssessment.decisionDate)} />
-          <InfoField title="SBS/TAS status" value={skillAssessment.csaStatus || '-'} />
-          <InfoField title="Status" value={skillAssessment.status || '-'} />
+          <StatusInfoField title="SBS/TAS status" status={skillAssessment.csaStatus} />
+          <StatusInfoField title="Status" status={skillAssessment.status} />
         </div>
       )}
     </EditableTitleBox>

@@ -38,10 +38,11 @@ export const tribunalReviewFormSchema = z.object({
 
   // Sponsor Information
   sponsorName: nullableString(),
-  sponsorEmail: z.string().email('Invalid sponsor email').optional().or(z.literal('')),
+  sponsorEmail: z.string().email('Invalid sponsor email').optional().or(z.literal('')).nullable(),
   sponsorPhone: z
     .string()
     .regex(/^[0-9+\-() ]*$/, 'Invalid sponsor phone')
+    .nullable()
     .optional(),
 
   // SBS/TAS Tracking
@@ -103,7 +104,7 @@ export const tribunalReviewFormSchema = z.object({
     .optional()
     .nullable(),
 
-  remarks: z.string().optional(),
+  remarks: z.string().nullable().optional(),
 
   // ========== SYSTEM FIELDS ==========
   id: z.number().int().positive().optional(),

@@ -6,6 +6,7 @@ import Container from '@/components/atoms/container';
 import { VisaStages } from './visa-stages';
 import PersonalDetails from './personal-details';
 import VisaInformation from './visa-information';
+import TribunalDetails from './tribunal-details';
 import MiscSection from './misc-section';
 import NoteSection from './note-section';
 import VisaHistoryContent from './visa-history-content';
@@ -92,6 +93,7 @@ const TribunalPageContent: React.FC<TribunalPageContentProps> = ({ studentId }) 
               <VisaStages visa={visa} />
               <PersonalDetails visa={visa} />
               <VisaInformation visa={visa} />
+              <TribunalDetails visa={visa} />
               <Accounts accounts={visa.accounts} id={visa.id} />
               <MiscSection visa={visa} />
               <NoteSection initialNote={visa?.remarks} />

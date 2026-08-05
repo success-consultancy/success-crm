@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { SkillAssessmentSchemaType } from '@/schema/skill-assessment-schema';
 import { toast } from 'sonner';
 
@@ -52,11 +53,7 @@ export const useUpdateSkillStatus = () => {
   return useMutation({
     mutationFn: updateServiceStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_SKILL_ASSESSMENTS
-          || query.queryKey[0] === QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID,
-      });
+      invalidateServiceQueries(queryClient, 'skillAssessment');
       toast("Success!", {
         description: "Skill assessment has been updated",
       })

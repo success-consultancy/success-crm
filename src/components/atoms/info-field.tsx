@@ -3,15 +3,16 @@ interface InfoFieldProps {
   value: string | number;
   type?: 'badge';
   badgeColor?: string;
+  badgeTextColor?: string;
 }
 
-export const InfoField = ({ title, value, type, badgeColor }: InfoFieldProps) => {
+export const InfoField = ({ title, value, type, badgeColor, badgeTextColor }: InfoFieldProps) => {
   if (type === 'badge' && value != "-") {
     return (
       <div className="flex flex-col">
         <span className="text-neutral-black text-b14-600">{title}</span>
         <div>
-          <span className={`text-neutral-dark-grey text-b14 px-2 py-1 rounded-[2px] inline-flex`} style={{ backgroundColor: badgeColor }}>{value}</span>
+          <span className={`text-neutral-dark-grey text-b14 px-2 py-1 rounded-[2px] inline-flex`} style={{ backgroundColor: badgeColor, color: badgeTextColor }}>{value}</span>
         </div>
       </div>
     );

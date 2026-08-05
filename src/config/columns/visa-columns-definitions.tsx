@@ -13,6 +13,7 @@ import { Minus, Plus } from 'lucide-react';
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { IVisa } from '@/types/response-types/visa-response';
+import { SERVICE_STATUS_COLORS } from '@/constants/status-colors';
 
 export const useVisaColumn = (
   handleDelete: (id: number) => void,
@@ -286,23 +287,21 @@ export const useVisaColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
-        const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case VisaStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case VisaStatusTypes.Approved:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Approved</Badge>;
-            case VisaStatusTypes.Discontinued:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            case VisaStatusTypes.FollowUp:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">Follow Up</Badge>;
-            default:
-              return <span>{status}</span>;
-          }
-        };
+        const status = row.original.status as VisaStatusTypes;
+        const colors = SERVICE_STATUS_COLORS[status];
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        if (!colors) return <span>{status}</span>;
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors.background, color: colors.text }}
+            >
+              {status === VisaStatusTypes.Discontinued ? 'Not Converted' : status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
 import { toast } from 'sonner';
 
@@ -51,12 +52,9 @@ export const useUpdateVisaStatus = () => {
   return useMutation({
     mutationFn: updateServiceStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_VISA_BY_ID
-      });
+      invalidateServiceQueries(queryClient, 'visa');
       toast("Success!", {
-        description: "Tribunal review has been updated",
+        description: "Visa applicant has been updated",
       })
     },
     onError: (error: any) => {

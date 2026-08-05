@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { EducationSchemaType } from '@/schema/education-schema';
 import { EducationServiceType } from '@/schema/education-service/new-student.schema';
 import { toast } from 'sonner';
@@ -70,10 +71,7 @@ export const useUpdateEducationStatus = () => {
   return useMutation({
     mutationFn: updateServiceStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_EDUCATIONS || query.queryKey[0] === QUERY_KEYS.GET_EDUCATION_BY_ID,
-      });
+      invalidateServiceQueries(queryClient, 'education');
       toast("Success!", {
         description: "Education has been updated",
       })

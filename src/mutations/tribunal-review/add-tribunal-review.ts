@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { TribunalReviewSchemaType } from '@/schema/tribunal-review';
 import { toast } from 'sonner';
 
@@ -41,10 +42,7 @@ export const useUpdateTribunalReview = () => {
   return useMutation({
     mutationFn: updateTribunalReview,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_LEADS || query.queryKey[0] === QUERY_KEYS.GET_LEAD_BY_ID,
-      });
+      invalidateServiceQueries(queryClient, 'tribunalReview');
     },
     onError: (error: any) => {
       toast("Error!", {
@@ -69,10 +67,7 @@ export const useUpdateTribunalStatus = () => {
   return useMutation({
     mutationFn: updateServiceStatus,
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        predicate: (query) =>
-          query.queryKey[0] === QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID
-      });
+      invalidateServiceQueries(queryClient, 'tribunalReview');
       toast("Success!", {
         description: "Tribunal review has been updated",
       })
