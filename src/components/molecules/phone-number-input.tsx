@@ -43,6 +43,9 @@ const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberInputProp
       countries: defaultCountries,
       onChange: (data: any) => {
         const newValue = data?.phone?.trim() === `+${data?.country?.dialCode}`.trim() ? '' : data.phone;
+        // Skip the sync-on-mount call react-international-phone fires with no real edit —
+        // forwarding it marks the field dirty/invalid before the user has typed anything.
+        if (newValue === (value || '')) return;
         onValueChange?.(newValue);
         onChange?.(newValue);
       },
