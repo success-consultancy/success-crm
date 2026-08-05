@@ -56,31 +56,29 @@ const PhoneNumberInput = React.forwardRef<HTMLInputElement, PhoneNumberInputProp
     };
 
     return (
-      <div>
-        <Input
-          value={inputValue || ''}
-          onChange={handlePhoneValueChange}
-          type="tel"
-          className={cn(['', className])}
-          classNames={{
-            className,
-            ...classNames,
-            input: classNames?.input,
-            wrapper: 'relative ' + classNames?.wrapper,
-            container: 'relative',
-          }}
-          leftSection={
-            <CountrySelector
-              value={country.iso2}
-              onCountryChange={handleCustomCountryChange}
-              selectedDialCode={country.dialCode}
-              countries={defaultCountries}
-            />
-          }
-          {...inputProps}
-          optionalText={optionalText}
-        />
-      </div>
+      <Input
+        value={inputValue || ''}
+        onChange={handlePhoneValueChange}
+        type="tel"
+        className={cn(['', className])}
+        classNames={{
+          className,
+          ...classNames,
+          input: classNames?.input,
+          wrapper: 'relative ' + classNames?.wrapper,
+          container: 'relative',
+        }}
+        leftSection={
+          <CountrySelector
+            value={country.iso2}
+            onCountryChange={handleCustomCountryChange}
+            selectedDialCode={country.dialCode}
+            countries={defaultCountries}
+          />
+        }
+        {...inputProps}
+        optionalText={optionalText}
+      />
     );
   },
 );
