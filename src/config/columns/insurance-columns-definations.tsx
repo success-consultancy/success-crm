@@ -12,7 +12,8 @@ import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { Minus, Plus } from 'lucide-react';
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
-import { IInsurance, InsuranceStatusTypes } from '@/types/response-types/insurance-response';
+import { IInsurance } from '@/types/response-types/insurance-response';
+import { SERVICE_STATUS_COLORS } from '@/constants/status-colors';
 
 export const useInsuranceColumn = (
   handleDelete: (id: number) => void,
@@ -263,25 +264,20 @@ export const useInsuranceColumn = (
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case InsuranceStatusTypes.Completed:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">Completed</Badge>;
-            case InsuranceStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case InsuranceStatusTypes.CollectingDocs:
-            case InsuranceStatusTypes.InProgress:
-              return <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">{status}</Badge>;
-            case InsuranceStatusTypes.Discontinued:
-            case InsuranceStatusTypes.RefundInProgress:
-            case InsuranceStatusTypes.Refunded:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">{status}</Badge>;
-            default:
-              return <span>{status}</span>;
-          }
-        };
+        const colors = SERVICE_STATUS_COLORS[status];
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        if (!colors) return <span>{status}</span>;
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors.background, color: colors.text }}
+            >
+              {status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

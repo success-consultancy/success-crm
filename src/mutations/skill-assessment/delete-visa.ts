@@ -16,6 +16,9 @@ export const useDeleteSkillAssessment = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
+      toast('Success!', {
+        description: 'Skill assessment has been deleted',
+      });
     },
     onError: (error: any) => {
       toast('Error!', {
@@ -34,9 +37,12 @@ export const useDeleteSkillAssessmentBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteSkillAssessmentBulk,
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
+      });
+      toast('Success!', {
+        description: `${ids.length} skill assessment${ids.length > 1 ? 's have' : ' has'} been deleted`,
       });
     },
     onError: (error: any) => {

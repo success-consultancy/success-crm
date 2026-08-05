@@ -2,7 +2,7 @@
 
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Calendar, CalendarIcon, Clock, Pencil, Trash2, X } from 'lucide-react';
+import { Calendar, Clock, Pencil, Trash2 } from 'lucide-react';
 import CardContainer from '@/components/atoms/card-container';
 import { CardContent } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
@@ -261,30 +261,24 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                 <DialogTitle className="text-lg font-semibold">Schedule follow-up</DialogTitle>
               </DialogHeader>
 
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="date">
-                    Follow-up date <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <DatePicker
-                      mode="single"
-                      selected={formData.date ?? undefined}
-                      disabled={{ before: today }}
-                      onSelect={(date) => {
-                        setFormData({ ...formData, date: date ?? null });
-                        if (date) setFormErrors((prev) => ({ ...prev, date: undefined }));
-                      }}
-                    />
-                    <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-                  </div>
+              <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="space-y-1.5">
+                  <Label htmlFor="date">Follow-up date</Label>
+                  <DatePicker
+                    mode="single"
+                    placeholder="Select follow-up date"
+                        selected={formData.date ?? undefined}
+                    disabled={{ before: today }}
+                    onSelect={(date) => {
+                      setFormData({ ...formData, date: date ?? null });
+                      if (date) setFormErrors((prev) => ({ ...prev, date: undefined }));
+                    }}
+                  />
                   {formErrors.date && <p className="text-sm text-red-500">{formErrors.date}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="time">
-                    Time <span className="text-red-500">*</span>
-                  </Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="time">Time</Label>
                   <Select
                     value={formData.time}
                     onValueChange={(value) => {
@@ -292,7 +286,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                       setFormErrors((prev) => ({ ...prev, time: undefined }));
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className="w-full border-neutral-border data-[size=default]:h-10">
                       <SelectValue placeholder="Select follow-up time" />
                     </SelectTrigger>
                     <SelectContent>
@@ -306,10 +300,8 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                   {formErrors.time && <p className="text-sm text-red-500">{formErrors.time}</p>}
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="note">
-                    Note <span className="text-red-500">*</span>
-                  </Label>
+                <div className="space-y-1.5">
+                  <Label htmlFor="note">Note</Label>
                   <Textarea
                     id="note"
                     value={formData.note}
@@ -317,8 +309,8 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                       setFormData({ ...formData, note: e.target.value });
                       if (e.target.value.trim()) setFormErrors((prev) => ({ ...prev, note: undefined }));
                     }}
-                    placeholder="Type something..."
-                    className="min-h-[100px] resize-none"
+                    placeholder="Type something.."
+                    className="min-h-[120px] resize-none border-neutral-border"
                   />
                   {formErrors.note && <p className="text-sm text-red-500">{formErrors.note}</p>}
                 </div>
@@ -348,7 +340,13 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">
-                  <Button type="button" variant="outline" onClick={handleCancel} disabled={addFollowUp.isPending}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="border-neutral-border"
+                    onClick={handleCancel}
+                    disabled={addFollowUp.isPending}
+                  >
                     Cancel
                   </Button>
                   <Button type="submit" disabled={addFollowUp.isPending}>
@@ -485,23 +483,21 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
             <DialogTitle className="text-lg font-semibold">Edit follow-up</DialogTitle>
           </DialogHeader>
 
-          <form onSubmit={handleEditSubmit} className="space-y-6">
-            <div className="space-y-2">
+          <form onSubmit={handleEditSubmit} className="space-y-4">
+            <div className="space-y-1.5">
               <Label htmlFor="edit-date">Follow-up date</Label>
-              <div className="relative">
-                <DatePicker
-                  mode="single"
-                  selected={editData.date ?? undefined}
-                  onSelect={(date) => setEditData((s) => ({ ...s, date: date ?? null }))}
-                />
-                <CalendarIcon className="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
-              </div>
+              <DatePicker
+                mode="single"
+                placeholder="Select follow-up date"
+                selected={editData.date ?? undefined}
+                onSelect={(date) => setEditData((s) => ({ ...s, date: date ?? null }))}
+              />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-1.5">
               <Label htmlFor="edit-time">Time</Label>
               <Select value={editData.time} onValueChange={(value) => setEditData((s) => ({ ...s, time: value }))}>
-                <SelectTrigger>
+                <SelectTrigger className="w-full border-neutral-border data-[size=default]:h-10">
                   <SelectValue placeholder="Select follow-up time" />
                 </SelectTrigger>
                 <SelectContent>
@@ -525,8 +521,8 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                   setEditData((s) => ({ ...s, note: e.target.value }));
                   if (e.target.value.trim()) setEditErrors((prev) => ({ ...prev, note: undefined }));
                 }}
-                placeholder="Type something..."
-                className="min-h-[100px] resize-none"
+                placeholder="Type something.."
+                className="min-h-[120px] resize-none border-neutral-border"
               />
               {editErrors.note && <p className="text-sm text-red-500">{editErrors.note}</p>}
             </div>
@@ -535,6 +531,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
               <Button
                 type="button"
                 variant="outline"
+                className="border-neutral-border"
                 onClick={() => setEditDialogOpen(false)}
                 disabled={updateFollowUp.isPending}
               >

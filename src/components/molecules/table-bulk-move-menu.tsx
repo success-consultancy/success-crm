@@ -5,7 +5,7 @@ import type { Table } from '@tanstack/react-table';
 import { FolderInput } from 'lucide-react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { BulkActionIconButton } from './table-bulk-action-button';
-import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import MoveLeadDialog from '@/components/organisms/move-lead-dialog';
 import type { RowActionMoveOption } from '@/components/organisms/table-row-actions-menu';
 
 export interface TableBulkMoveProps<TData> {
@@ -38,12 +38,18 @@ export function TableBulkMoveMenu<TData>({
 
   const selectedRows = table.getSelectedRowModel().rows.map((row) => row.original);
 
+  // The dialog stays open for the whole move so its button can show progress; it closes
+  // once the move resolves, whether that ended in success or failure.
   const handleConfirm = async () => {
     if (!confirmOption) return;
-    const option = confirmOption;
-    setConfirmOption(null);
-    await onMove(option, selectedRows);
-    table.toggleAllRowsSelected(false);
+    try {
+      await onMove(confirmOption, selectedRows);
+      table.toggleAllRowsSelected(false);
+    } catch {
+      // The move reports its own failure toast.
+    } finally {
+      setConfirmOption(null);
+    }
   };
 
   return (
@@ -75,17 +81,14 @@ export function TableBulkMoveMenu<TData>({
         </PopoverContent>
       </Popover>
 
-      <ConfirmationDialog
+      <MoveLeadDialog
         isOpen={!!confirmOption}
         setIsOpen={(isOpen) => {
           if (!isOpen) setConfirmOption(null);
         }}
-        title="Confirm move"
-        message={`Are you sure you want to move ${selectedRows.length} selected ${itemLabel}${
-          selectedRows.length === 1 ? '' : 's'
-        } to ${confirmOption?.title}?`}
-        confirmText="Move"
-        cancelText="Cancel"
+        serviceTitle={confirmOption?.title}
+        count={selectedRows.length}
+        itemLabel={itemLabel}
         loading={isMoving}
         onConfirm={handleConfirm}
         onCancel={() => setConfirmOption(null)}

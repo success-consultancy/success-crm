@@ -513,7 +513,7 @@ export function AddEducationService({ userId }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <FormActions>
+      <FormActions sticky>
         <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
           Add Student
         </Button>

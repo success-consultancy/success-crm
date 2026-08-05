@@ -18,6 +18,7 @@ import SelectField from '@/components/organisms/select-field';
 import { Editor } from '@tinymce/tinymce-react';
 import Button from '@/components/atoms/button';
 import { FormAccordion } from '@/components/organisms/form-accordion';
+import { FormActions } from '@/components/organisms/form-actions';
 
 import { useGetSource } from '@/query/get-source';
 import { useGetUniversity } from '@/query/get-university';
@@ -357,8 +358,8 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <div className="flex justify-end mt-6">
-        <Button loadingText="Updating..." type="submit" variant="primary">
+      <FormActions sticky>
+        <Button loading={editEducation.isPending} loadingText="Updating..." type="submit" variant="primary">
           Update Data
         </Button>
         <Button
@@ -368,11 +369,10 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
           }}
           type="button"
           variant="outline"
-          className="ml-3"
         >
           Cancel
         </Button>
-      </div>
+      </FormActions>
     </form>
   );
 }

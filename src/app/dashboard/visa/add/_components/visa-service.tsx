@@ -692,7 +692,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         </FormAccordion>
       </Accordion>
 
-      <FormActions>
+      <FormActions sticky>
         <Button loading={isPending} loadingText={isAdd ? 'Processing' : 'Updating'} type="submit" variant="primary">
           {isAdd ? 'Add Visa Applicant' : 'Update Visa Applicant'}
         </Button>

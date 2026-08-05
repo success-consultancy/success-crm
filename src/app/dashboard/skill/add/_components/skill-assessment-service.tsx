@@ -701,7 +701,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           </FormAccordion>
         </Accordion>
 
-        <FormActions>
+        <FormActions sticky>
           <Button
             loading={isPending}
             loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'}

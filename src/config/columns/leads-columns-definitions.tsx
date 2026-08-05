@@ -1,5 +1,5 @@
 import ColumnHeader from '@/components/molecules/column-header';
-import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import MoveLeadDialog from '@/components/organisms/move-lead-dialog';
 import { useMoveLead, MoveService } from '@/hooks/use-move-lead';
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { useTableContext } from '@/components/molecules/table-context-provider';
@@ -392,7 +392,7 @@ export const useLeadColumn = (
       header: () => <Plus className="h-5 w-5 mx-auto" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
-        const { services, moveLead } = useMoveLead();
+        const { services, moveLead, pendingServiceId } = useMoveLead();
         const [confirmService, setConfirmService] = useState<MoveService | null>(null);
 
         if (tableCtx?.isLoading) return <Skeleton className="w-8 h-6" />;
@@ -422,20 +422,24 @@ export const useLeadColumn = (
               animated
             />
 
-            <ConfirmationDialog
+            <MoveLeadDialog
               isOpen={!!confirmService}
               setIsOpen={(open) => {
                 if (!open) setConfirmService(null);
               }}
-              title="Confirm move"
-              message={`Are you sure you want to move this lead to ${confirmService?.title}?`}
-              confirmText="Move"
-              cancelText="Cancel"
-              onConfirm={() => {
-                if (confirmService) moveLead(row.original, confirmService.id);
-                setConfirmService(null);
+              serviceTitle={confirmService?.title}
+              onConfirm={async () => {
+                if (!confirmService) return;
+                try {
+                  await moveLead(row.original, confirmService.id);
+                } catch {
+                  // Reported by moveLead's own toast.
+                } finally {
+                  setConfirmService(null);
+                }
               }}
               onCancel={() => setConfirmService(null)}
+              loading={pendingServiceId !== null}
             />
           </>
         );

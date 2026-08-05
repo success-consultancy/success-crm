@@ -1,14 +1,17 @@
 import { EducationStatusTypes } from '@/types/response-types/education-response';
 import { VisaStatusTypes } from '@/types/response-types/visa-response';
+import { TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
+import { InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 
 type StatusColor = { background: string; text: string };
 
 /** Payment status shown on the accounts / fee-structure tables. */
 export const PAYMENT_STATUS_COLORS: Record<string, StatusColor> = {
-  Pending: { background: '#FCE0C4', text: '#B26A1A' },
+  Pending: { background: '#FCE3A8', text: '#A87A12' },
   Paid: { background: '#C9F2DC', text: '#17804B' },
-  Overdue: { background: '#FBD5DC', text: '#C93B4E' },
-  Other: { background: '#D6E4FA', text: '#3A6FD8' },
+  Overdue: { background: '#FBD9C4', text: '#C2691C' },
+  Unpaid: { background: '#FBD5D5', text: '#C93B3B' },
+  Other: { background: '#DDE4FB', text: '#3A5BB8' },
 };
 
 export const EDUCATION_STATUS_COLORS: Record<EducationStatusTypes, StatusColor> = {
@@ -40,4 +43,17 @@ export const SERVICE_STATUS_COLORS: Record<string, StatusColor> = {
   [VisaStatusTypes.Refused]: { background: '#D6E4FA', text: '#2C6FA8' },
   [VisaStatusTypes.Discontinued]: { background: '#FBD5DC', text: '#C93B4E' },
   [VisaStatusTypes.FollowUp]: { background: '#FDE2EC', text: '#C2407A' },
+
+  // Tribunal review adds these outcomes on top of the shared pipeline statuses.
+  [TribunalStatusTypes.Remitted]: { background: '#DFF3B8', text: '#5C8A22' },
+  [TribunalStatusTypes.MinisterialApproved]: { background: '#C9F2DC', text: '#17804B' },
+  [TribunalStatusTypes.MinisterialRefused]: { background: '#FBD5D5', text: '#C93B3B' },
+  [TribunalStatusTypes.MinisterialIntervention]: { background: '#EAF5A8', text: '#6E8A16' },
+  [TribunalStatusTypes.Other]: { background: '#F0F0F0', text: '#5C5C5C' },
+
+  // Insurance adds these on top of the shared pipeline statuses.
+  [InsuranceStatusTypes.InProgress]: { background: '#DDE4FB', text: '#3A5BB8' },
+  [InsuranceStatusTypes.Completed]: { background: '#C9F2DC', text: '#17804B' },
+  [InsuranceStatusTypes.RefundInProgress]: { background: '#FAF0A8', text: '#8A7A16' },
+  [InsuranceStatusTypes.Refunded]: { background: '#EAF5A8', text: '#6E8A16' },
 };

@@ -16,6 +16,9 @@ export const useDeleteEducation = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_EDUCATIONS],
       });
+      toast('Success!', {
+        description: 'Student has been deleted',
+      });
     },
     onError: (error: any) => {
       toast("Error!", {
@@ -34,9 +37,12 @@ export const useDeleteEducationBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteEducationBulk,
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_EDUCATIONS],
+      });
+      toast('Success!', {
+        description: `${ids.length} student${ids.length > 1 ? 's have' : ' has'} been deleted`,
       });
     },
     onError: (error: any) => {

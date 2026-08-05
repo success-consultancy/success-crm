@@ -16,6 +16,9 @@ export const useDeleteTribunal = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
       });
+      toast('Success!', {
+        description: 'Tribunal review has been deleted',
+      });
     },
     onError: (error: any) => {
       toast("Error!", {
@@ -34,9 +37,12 @@ export const useDeleteTribunalBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteTribunalBulk,
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
+      });
+      toast('Success!', {
+        description: `${ids.length} tribunal review${ids.length > 1 ? 's have' : ' has'} been deleted`,
       });
     },
     onError: (error: any) => {

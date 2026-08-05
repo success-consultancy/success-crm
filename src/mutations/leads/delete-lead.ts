@@ -17,6 +17,9 @@ export const useDeleteLead = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_LEADS],
       });
+      toast('Success!', {
+        description: 'Lead has been deleted',
+      });
     },
     onError: (error: any) => {
       toast("Error!", {
@@ -35,9 +38,12 @@ export const useDeleteLeadBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteLeadBulk,
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_LEADS],
+      });
+      toast('Success!', {
+        description: `${ids.length} lead${ids.length > 1 ? 's have' : ' has'} been deleted`,
       });
     },
     onError: (error: any) => {

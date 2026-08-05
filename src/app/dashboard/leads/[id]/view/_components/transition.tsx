@@ -1,5 +1,5 @@
 import CardContainer from '@/components/atoms/card-container';
-import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
+import MoveLeadDialog from '@/components/organisms/move-lead-dialog';
 import { useMoveLead, MoveServiceId } from '@/hooks/use-move-lead';
 import { ILead } from '@/types/response-types/leads-response';
 import { FolderSymlink, Loader2 } from 'lucide-react';
@@ -16,9 +16,15 @@ const Transition = ({ lead }: { lead: ILead }) => {
   const getClientCount = (clientKey: keyof ILead['clientIds']) => lead?.clientIds[clientKey]?.length || 0;
   const getClient = (clientKey: keyof ILead['clientIds']) => lead?.clientIds[clientKey] || [];
 
-  const handleConfirmMove = () => {
-    if (selectedServiceId) {
-      moveLead(lead, selectedServiceId);
+  // Held open until the move resolves so the dialog can show progress; `moveLead` rejects
+  // on a rejected move (missing fields, already moved) and reports it with its own toast.
+  const handleConfirmMove = async () => {
+    if (!selectedServiceId) return;
+    try {
+      await moveLead(lead, selectedServiceId);
+    } catch {
+      // Reported by moveLead.
+    } finally {
       setSelectedServiceId(null);
       setIsConfirmationOpen(false);
     }
@@ -43,7 +49,10 @@ const Transition = ({ lead }: { lead: ILead }) => {
             {getClient(service.clientKey).map((client) => {
               return (
                 <div key={client?.id} className="bg-[#F2F4F7] mb-4 flex flex-col gap-2 p-3 rounded-md">
-                  <p className="cursor-pointer" onClick={() => router.push(`/dashboard/${service.path}/${client.id}/view`)}>
+                  <p
+                    className="cursor-pointer text-b14-500"
+                    onClick={() => router.push(`/dashboard/${service.path}/${client.id}/view`)}
+                  >
                     ID:{client?.id}
                   </p>
                   <p className="text-c1 text-neutral-dark-grey">
@@ -75,15 +84,10 @@ const Transition = ({ lead }: { lead: ILead }) => {
         ))}
       </div>
 
-      <ConfirmationDialog
+      <MoveLeadDialog
         isOpen={isConfirmationOpen}
         setIsOpen={setIsConfirmationOpen}
-        title="Confirm Move"
-        message={`Are you sure you want to move this lead to ${
-          services.find((s) => s.id === selectedServiceId)?.title
-        }?`}
-        confirmText="Move"
-        cancelText="Cancel"
+        serviceTitle={services.find((s) => s.id === selectedServiceId)?.title}
         onConfirm={handleConfirmMove}
         onCancel={handleCancelMove}
         loading={pendingServiceId !== null}

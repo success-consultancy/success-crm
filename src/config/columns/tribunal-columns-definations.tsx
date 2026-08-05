@@ -14,6 +14,7 @@ import { TribunalStatusTypes } from '@/types/response-types/tribunal-review-resp
 import { DateWithIndicator } from '@/components/molecules/date-with-indicator';
 import { IVisa } from '@/types/response-types/visa-response';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
+import { SERVICE_STATUS_COLORS } from '@/constants/status-colors';
 
 export const useTribunalReviewColumn = (
   handleDelete: (id: number) => void,
@@ -288,22 +289,23 @@ export const useTribunalReviewColumn = (
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
 
         const status = row.original.status;
-        const getStatusBadge = () => {
-          switch (status) {
-            case TribunalStatusTypes.New:
-              return <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100">New</Badge>;
-            case TribunalStatusTypes.Remitted:
-            case TribunalStatusTypes.MinisterialApproved:
-              return <Badge className="bg-green-100 text-green-800 hover:bg-green-100">{status}</Badge>;
-            case TribunalStatusTypes.Discontinued:
-            case TribunalStatusTypes.Other:
-              return <Badge className="bg-red-100 text-red-800 hover:bg-red-100">Not Converted</Badge>;
-            default:
-              return <span>{status}</span>;
-          }
-        };
+        const colors = SERVICE_STATUS_COLORS[status];
 
-        return <div className="w-full">{getStatusBadge()}</div>;
+        if (!colors) return <span>{status}</span>;
+
+        const isNotConverted =
+          status === TribunalStatusTypes.Discontinued || status === TribunalStatusTypes.Other;
+
+        return (
+          <div className="w-full">
+            <Badge
+              className="border-transparent"
+              style={{ backgroundColor: colors.background, color: colors.text }}
+            >
+              {isNotConverted ? 'Not Converted' : status}
+            </Badge>
+          </div>
+        );
       },
       size: 152,
       meta: { isVisible: false },

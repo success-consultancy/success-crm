@@ -16,6 +16,9 @@ export const useDeleteInsurance = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_INSURANCE],
       });
+      toast('Success!', {
+        description: 'Insurance applicant has been deleted',
+      });
     },
     onError: (error: any) => {
       toast('Error!', {
@@ -34,9 +37,12 @@ export const useDeleteInsuranceBulk = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteInsuranceApplicantBulk,
-    onSuccess: () => {
+    onSuccess: (_data, ids) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_INSURANCE],
+      });
+      toast('Success!', {
+        description: `${ids.length} insurance applicant${ids.length > 1 ? 's have' : ' has'} been deleted`,
       });
     },
     onError: (error: any) => {

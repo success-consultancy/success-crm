@@ -76,18 +76,21 @@ const DatePicker: React.FC<DatePickerProps> = ({
       <div className={cn(['', className])}>
         <Popover modal={true} open={show} onOpenChange={setShow}>
           <PopoverAnchor>
-            <Input
-              label={label}
-              value={FORMATTED_DATE}
-              placeholder={placeholder || 'Pick a Date'}
-              RightIcon={CalendarIcon}
-              readOnly
-              errorBorder={!!error}
-              onClick={() => !show && setShow(true)}
-              optionalText={optionalText}
-              classNames={inputClassName}
-              disabled={disabledInput}
-            />
+            {/* The click handler lives on the wrapper: Input drops the icon's own
+                onClick while readOnly, so the calendar icon would otherwise be dead. */}
+            <div onClick={() => !disabledInput && !show && setShow(true)}>
+              <Input
+                label={label}
+                value={FORMATTED_DATE}
+                placeholder={placeholder || 'Pick a Date'}
+                RightIcon={CalendarIcon}
+                readOnly
+                errorBorder={!!error}
+                optionalText={optionalText}
+                classNames={{ ...inputClassName, container: cn('cursor-pointer', inputClassName?.container) }}
+                disabled={disabledInput}
+              />
+            </div>
           </PopoverAnchor>
 
           <PopoverContent className="p-4 bg-neutral-white w-[21.875rem]" align="start">

@@ -52,6 +52,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
 
   const addLead = useAddLead();
   const editLead = useEditLead();
+  const isSubmitting = addLead.isPending || editLead.isPending;
 
   const onSubmit: SubmitHandler<LeadSchemaType> = (data) => {
     const serviceType = JSON.stringify(data.serviceType);
@@ -146,8 +147,15 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
         </Accordion>
       </div>
       <FormActions className="shrink-0">
-        <Button onClick={handleSubmit(onSubmit)}>{mode === 'edit' ? 'Update Lead' : 'Add Lead'}</Button>
-        <Button variant="outline" onClick={() => router.back()}>
+        <Button
+          type="button"
+          loading={isSubmitting}
+          loadingText={mode === 'edit' ? 'Updating' : 'Adding'}
+          onClick={handleSubmit(onSubmit)}
+        >
+          {mode === 'edit' ? 'Update Lead' : 'Add Lead'}
+        </Button>
+        <Button type="button" variant="outline" disabled={isSubmitting} onClick={() => router.back()}>
           Cancel
         </Button>
       </FormActions>

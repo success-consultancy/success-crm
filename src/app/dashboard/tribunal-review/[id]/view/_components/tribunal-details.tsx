@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 import { InfoField } from '@/components/atoms/info-field';
+import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
@@ -165,7 +166,7 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
         </form>
       ) : (
         <div className="grid grid-cols-3 gap-6">
-          <InfoField title="Tribunal status" value={visa.tribunalStatus || '-'} type="badge" badgeColor="#CCE0FF" />
+          <StatusInfoField title="Tribunal status" status={visa.tribunalStatus} />
           <InfoField title="Tribunal date submitted" value={fmtDate(visa.tribunalSubmittedDate)} />
           <InfoField title="Hearing date" value={fmtDate(visa.hearingDate)} />
           <InfoField title="Tribunal decision date" value={fmtDate(visa.tribunalDecisionDate)} />

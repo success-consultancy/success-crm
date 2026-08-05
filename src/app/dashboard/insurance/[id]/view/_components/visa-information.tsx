@@ -8,6 +8,7 @@ import { format } from 'date-fns';
 import toast from 'react-hot-toast';
 
 import { InfoField } from '@/components/atoms/info-field';
+import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { Label } from '@/components/ui/label';
 import TextInput from '@/components/molecules/text-input';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -272,7 +273,7 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
           <InfoField title="Policy type" value={insurance.insuranceType || '-'} />
           <InfoField title="Policy start date" value={fmtDate(insurance.startDate)} />
           <InfoField title="Policy end date" value={fmtDate(insurance.expiryDate)} />
-          <InfoField title="Status" value={insurance.status || '-'} type="badge" badgeColor="#CCE0FF" />
+          <StatusInfoField title="Status" status={insurance.status} />
         </div>
       )}
     </EditableTitleBox>

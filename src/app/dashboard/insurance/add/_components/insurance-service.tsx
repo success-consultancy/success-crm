@@ -567,7 +567,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         </FormAccordion>
       </Accordion>
 
-      <FormActions>
+      <FormActions sticky>
         <Button
           loading={addTribunalReviewPending || updateTribunalReviewPending}
           loadingText="Processing"
