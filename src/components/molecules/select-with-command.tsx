@@ -77,7 +77,7 @@ const SelectWithCommand = ({ options: initialOptions, label, value, onSelect, pl
   };
 
   return (
-    <div className="flex flex-col gap-2 flex-1">
+    <div className="relative flex flex-col gap-2 flex-1">
       <Label className="text-b3-b font-semibold">{label}</Label>
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
