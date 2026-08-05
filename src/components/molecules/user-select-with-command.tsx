@@ -78,7 +78,7 @@ const UserSelectWithCommand = ({ label, value, onSelect, placeholder, error, cla
   };
 
   return (
-    <div className="flex flex-col gap-2 flex-1">
+    <div className="relative flex flex-col gap-2 flex-1">
       {label && <Label className="text-b3-b font-semibold">{label}</Label>}
 
       <Select value={value} onValueChange={onSelect} onOpenChange={handleOpenChange}>
