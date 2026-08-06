@@ -567,39 +567,39 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
               <TextInput
                 label="Fee payment plan"
                 {...register('accounts.planname')}
-                error={errors.payment?.message}
+                error={errors.accounts?.planname?.message}
                 placeholder="Select/enter payment plan"
               />
               <TextInput
                 label="Service fee"
                 {...register('accounts.amount')}
-                error={errors.payment?.message}
+                error={errors.accounts?.amount?.message}
                 type="number"
               />
               <TextInput
                 disabled
                 label="GST"
                 {...register('accounts.gst')}
-                error={errors.payment?.message}
+                error={errors.accounts?.gst?.message}
                 type="number"
               />
               <TextInput
                 label="Discount"
                 {...register('accounts.discount')}
-                error={errors.payment?.message}
+                error={errors.accounts?.discount?.message}
                 type="number"
               />
               <TextInput
                 disabled
                 label="Net amount"
                 {...register('accounts.netamount')}
-                error={errors.payment?.message}
+                error={errors.accounts?.netamount?.message}
                 type="number"
               />
               <TextInput
                 label="Invoice number"
                 {...register('accounts.invoicenumber')}
-                error={errors.invoiceNumber?.message}
+                error={errors.accounts?.invoicenumber?.message}
               />
               <div className="space-y-2">
                 <Controller
