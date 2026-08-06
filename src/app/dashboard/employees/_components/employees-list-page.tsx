@@ -14,7 +14,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
+import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Badge } from '@/components/ui/badge';
@@ -142,14 +142,13 @@ const EmployeesListPage = () => {
       <div className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 h-full min-h-0 overflow-hidden">
         <div className="flex w-full items-center justify-between pb-3 gap-5 flex-wrap">
           <div className="flex items-center gap-3 flex-wrap">
-            <Input
+            <SearchInput
               placeholder="Search by name, email or phone"
               value={search}
               onChange={(e) => {
                 setSearch(e.target.value);
                 setPage(1);
               }}
-              className="w-72"
             />
             <Select
               value={roleFilter}

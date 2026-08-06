@@ -23,7 +23,7 @@ import Button from '@/components/atoms/button';
 import { ButtonLink } from '@/components/atoms/button-link';
 import { ROUTES } from '@/config/routes';
 import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
+import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -208,14 +208,14 @@ const UniversityListPage = () => {
       <div className="flex flex-col px-4 bg-white-100 rounded-xl h-full overflow-hidden">
         {/* Header */}
         <div className="flex w-full items-center justify-between py-4 gap-5">
-          <Input
+          <SearchInput
             placeholder="Search by university, group or location"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="w-80 h-9 border-neutral-border rounded-md text-b14 placeholder:text-neutral-light-grey"
+            classNames={{ input: 'text-b14 placeholder:text-neutral-light-grey' }}
           />
           <div className="flex items-center gap-[14px]">
             <div className="w-[12rem]">

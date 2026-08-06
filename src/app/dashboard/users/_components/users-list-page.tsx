@@ -11,7 +11,6 @@ import {
   Clock,
   Shield,
   Trash2,
-  Download,
 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Container from '@/components/atoms/container';
@@ -19,7 +18,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
-import { Input } from '@/components/ui/input';
+import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -138,14 +137,13 @@ const UsersListPage = () => {
       <div className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 h-full overflow-hidden">
         {/* Header */}
         <div className="flex w-full items-center justify-between pb-5 gap-5">
-          <Input
+          <SearchInput
             placeholder="Search by user name or role"
             value={search}
             onChange={(e) => {
               setSearch(e.target.value);
               setPage(1);
             }}
-            className="max-w-[18rem]"
           />
           <div className="flex items-center gap-2">
             {isAdmin && (
@@ -156,12 +154,7 @@ const UsersListPage = () => {
                 Manage roles
               </Button>
             )}
-            <Button
-              variant="outline"
-              LeftIcon={Download}
-              onClick={() => exportUsers()}
-              disabled={isExporting}
-            >
+            <Button variant="outline" onClick={() => exportUsers()} loading={isExporting}>
               Export
             </Button>
             <Separator orientation="vertical" className="h-6" />

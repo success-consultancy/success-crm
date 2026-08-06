@@ -65,11 +65,6 @@ export const VisaStages = ({ insurance }: InsuranceStagesProps) => {
             <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
           ))}
         </div>
-
-        <div className="flex gap-2 ml-4 shrink-0">
-          <button className="px-4 py-2 rounded-md bg-green-100 text-green-700 font-medium">Won</button>
-          <button className="px-4 py-2 rounded-md bg-red-100 text-red-700 font-medium">Lost</button>
-        </div>
       </div>
     </div>
   );

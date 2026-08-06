@@ -5,8 +5,8 @@ import React from 'react';
 import useDebounceCallback from '@/hooks/use-debounce-callback';
 import { PAGE_PARAM, SEARCH_PARAM } from '@/hooks/use-pagination';
 import useSearchParams from '@/hooks/use-search-params';
-import { Search } from 'lucide-react';
-import Input, { InputProps } from './input';
+import { InputProps } from './input';
+import SearchInput from './search-input';
 
 /** info: This component is used to render a search query input  with debounce functionality
  *  custom query key can be passed as a prop to the component as `searchParamKey`
@@ -82,7 +82,7 @@ const TableSearchInput = React.forwardRef<
   const debouncedHandleQueryChange = useDebounceCallback(handleQueryChange, 500);
 
   return (
-    <Input
+    <SearchInput
       ref={ref}
       {...inputProps}
       value={visibleValue}
@@ -90,7 +90,7 @@ const TableSearchInput = React.forwardRef<
         debouncedHandleQueryChange(e);
         setVisibleValue(e.target.value);
       }}
-      LeftIcon={LeftIcon || Search}
+      LeftIcon={LeftIcon}
     />
   );
 });

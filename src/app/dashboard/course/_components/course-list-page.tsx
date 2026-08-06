@@ -9,6 +9,7 @@ import { PortalIds } from '@/config/portal';
 import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
+import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -176,11 +177,10 @@ const CourseListPage = () => {
       <div className="flex flex-col p-4 bg-white rounded-xl border border-gray-100 h-full overflow-hidden">
         {/* Header */}
         <div className="flex w-full items-center justify-between pb-5 gap-5">
-          <Input
+          <SearchInput
             placeholder="Search by university or course name"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
-            className="max-w-[18rem]"
           />
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />

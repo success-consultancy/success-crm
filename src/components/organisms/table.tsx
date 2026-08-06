@@ -344,13 +344,7 @@ const TableComponent = <TData, TValue>({
         {showHeaderSection && (
           <div className="flex w-full items-center justify-between pb-5 gap-5">
             <div className="flex gap-2">
-              <TableSearchInput
-                searchParamField={searchKey as string}
-                className="max-w-[18rem]"
-                // 36px to match the Date range filter beside it (both are 36px in Figma).
-                classNames={{ input: 'h-9' }}
-                placeholder={`Search data here`}
-              />
+              <TableSearchInput searchParamField={searchKey as string} placeholder={`Search data here`} />
               <DateRangePicker onApply={handleDateRangeApply || (() => { })} />
               {extraFilters}
             </div>
