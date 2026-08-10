@@ -13,7 +13,9 @@ import TaskList from './task-list';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import TaskIcon from '@/assets/icons/task-icon';
+import HeaderIconButton from '@/components/templates/header-icon-button';
 import EmptyTaskIcon from '@/assets/icons/empty-task-icon';
+import { EmptyState } from '@/components/common/empty-state';
 import { CheckCircle2, ChevronDown, Plus } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -122,9 +124,13 @@ export function TasksDrawer() {
 
   return (
     <>
-      <span className="cursor-pointer w-fit" onClick={() => setIsOpen(true)}>
+      <HeaderIconButton
+        count={activeTasks.length}
+        onClick={() => setIsOpen(true)}
+        aria-label={activeTasks.length > 0 ? `Tasks (${activeTasks.length} outstanding)` : 'Tasks'}
+      >
         <TaskIcon />
-      </span>
+      </HeaderIconButton>
 
       <Sheet open={isOpen} onOpenChange={setIsOpen}>
         <SheetContent side="right" className="w-[420px] sm:w-[440px] p-0 flex flex-col bg-white border-l">
@@ -182,18 +188,20 @@ export function TasksDrawer() {
               ) : !isAddFormVisible ? (
                 allCompleted ? (
                   /* All tasks completed state */
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <CheckCircle2 className="w-16 h-16 text-blue-500 mb-4" strokeWidth={1.5} />
-                    <h3 className="text-base font-semibold text-gray-800 mb-1">All tasks completed</h3>
-                    <p className="text-sm text-gray-500">Great job! There are no remaining tasks</p>
-                  </div>
+                  <EmptyState
+                    size="sm"
+                    icon={<CheckCircle2 className="w-16 h-16 text-blue-500" strokeWidth={1.5} />}
+                    title="All tasks completed"
+                    description="Great job! There are no remaining tasks"
+                  />
                 ) : (
                   /* Empty state */
-                  <div className="flex flex-col items-center justify-center py-12 text-center">
-                    <EmptyTaskIcon />
-                    <h3 className="text-base font-semibold text-gray-800 mb-1 mt-4">No tasks yet</h3>
-                    <p className="text-sm text-gray-500">Add a task to start tracking your work</p>
-                  </div>
+                  <EmptyState
+                    size="sm"
+                    icon={<EmptyTaskIcon />}
+                    title="No tasks yet"
+                    description="Add a task to start tracking your work"
+                  />
                 )
               ) : null}
 

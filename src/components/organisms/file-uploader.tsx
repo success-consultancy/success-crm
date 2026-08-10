@@ -6,6 +6,7 @@ import { CloudUpload, File, X, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
 import { UploadedFileMeta } from '@/types/common';
+import { Spinner } from '@/components/common/spinner';
 
 type Props = {
   type: string;
@@ -59,15 +60,18 @@ const FileUploader = (props: Props) => {
     '.docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
   };
 
-  const acceptMap = props.acceptedFiles.reduce((acc, type) => {
-    const mimeTypes = EXT_TO_MIME[type.toUpperCase()] || EXT_TO_MIME[type.toLowerCase()];
-    if (mimeTypes) {
-      mimeTypes.forEach((mime) => {
-        if (!acc[mime]) acc[mime] = [];
-      });
-    }
-    return acc;
-  }, {} as Record<string, string[]>);
+  const acceptMap = props.acceptedFiles.reduce(
+    (acc, type) => {
+      const mimeTypes = EXT_TO_MIME[type.toUpperCase()] || EXT_TO_MIME[type.toLowerCase()];
+      if (mimeTypes) {
+        mimeTypes.forEach((mime) => {
+          if (!acc[mime]) acc[mime] = [];
+        });
+      }
+      return acc;
+    },
+    {} as Record<string, string[]>,
+  );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
@@ -189,7 +193,7 @@ const FileUploader = (props: Props) => {
   const getStatusIcon = (status: FileWithStatus['status']) => {
     switch (status) {
       case 'uploading':
-        return <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary-blue border-t-transparent" />;
+        return <Spinner className="h-5 w-5" />;
       case 'success':
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case 'error':
@@ -221,7 +225,10 @@ const FileUploader = (props: Props) => {
             isDragActive ? 'border-primary-blue bg-blue-50' : 'border-neutral-border'
           }`}
         >
-          <div {...getRootProps()} className="relative flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4">
+          <div
+            {...getRootProps()}
+            className="relative flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4"
+          >
             <input {...getInputProps()} />
             <CloudUpload className="text-primary-blue h-7 w-7" />
             <div className="flex flex-col items-center gap-0.5">

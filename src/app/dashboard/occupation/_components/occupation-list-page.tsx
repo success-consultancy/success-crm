@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DeleteDialog from '@/components/organisms/delete.dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { useGetOccupations, IOccupation } from '@/query/get-occupations';
 import { useAddOccupation } from '@/mutations/occupation/add-occupation';
 import { useEditOccupation } from '@/mutations/occupation/edit-occupation';
@@ -51,8 +52,8 @@ const OccupationListPage = () => {
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     if (!q) return occupations;
-    return occupations.filter((o) =>
-      String(o.code).toLowerCase().includes(q) || (o.title ?? '').toLowerCase().includes(q),
+    return occupations.filter(
+      (o) => String(o.code).toLowerCase().includes(q) || (o.title ?? '').toLowerCase().includes(q),
     );
   }, [occupations, search]);
 
@@ -207,30 +208,7 @@ const OccupationListPage = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array(8)
-                  .fill(null)
-                  .map((_, i) => (
-                    <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                      <td>
-                        <Skeleton className="h-5 w-6" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-16" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-56" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-32" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-32" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-12" />
-                      </td>
-                    </tr>
-                  ))
+                <TableSkeleton columns={6} rows={pageSize} />
               ) : (
                 pageItems.map((occ, idx) => {
                   const isEditingRow = editingId === occ.id;
@@ -339,11 +317,7 @@ const OccupationListPage = () => {
                   <td colSpan={2} />
                   <td>
                     <div className="flex items-center gap-2 justify-end">
-                      <Button
-                        size="sm"
-                        onClick={handleSubmit}
-                        disabled={!form.title.trim() || !form.code || isAdding}
-                      >
+                      <Button size="sm" onClick={handleSubmit} disabled={!form.title.trim() || !form.code || isAdding}>
                         Add
                       </Button>
                       <Button size="sm" variant="outline" onClick={cancelForm}>
@@ -355,11 +329,11 @@ const OccupationListPage = () => {
               )}
 
               {!isLoading && pageItems.length === 0 && !showAddForm && editingId === null && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
-                    No occupations found
-                  </td>
-                </tr>
+                <TableEmptyRow
+                  colSpan={6}
+                  title="No occupations found"
+                  description="Occupations you add will appear here."
+                />
               )}
             </tbody>
           </table>

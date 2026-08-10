@@ -13,12 +13,7 @@ interface VisaExpiryPopoverProps {
   onSendSms?: (event: VisaExpiryEvent) => void;
 }
 
-const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({
-  event,
-  onClose,
-  onSendEmail,
-  onSendSms,
-}) => {
+const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({ event, onClose, onSendEmail, onSendSms }) => {
   const color = getCategoryColor(event.category);
 
   let expiryDate = event.visaExpiry;
@@ -42,10 +37,7 @@ const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({
     <div className="min-w-[360px]">
       <div className="flex items-start justify-between gap-3 pb-3 border-b">
         <div className="flex items-start gap-2 min-w-0">
-          <span
-            className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-            style={{ backgroundColor: color }}
-          />
+          <span className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: color }} />
           <h4 className="text-b14-600 text-neutral-black truncate">
             {event.firstName}'s Visa Expires ({event.category})
           </h4>

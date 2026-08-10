@@ -1,12 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import {
-  Clock,
-  ChevronUp,
-  ChevronDown,
-  ChevronsUpDown,
-} from 'lucide-react';
+import { Clock, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { format } from 'date-fns';
 import Container from '@/components/atoms/container';
@@ -16,7 +11,8 @@ import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { Badge } from '@/components/ui/badge';
 import { useGetUsers } from '@/query/get-user';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
@@ -217,30 +213,7 @@ const EmployeesListPage = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array(8)
-                  .fill(null)
-                  .map((_, i) => (
-                    <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                      <td>
-                        <Skeleton className="h-5 w-6" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-44" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-56" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-32" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-24" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-16" />
-                      </td>
-                    </tr>
-                  ))
+                <TableSkeleton columns={6} rows={pageSize} />
               ) : (
                 pageItems.map((user, idx) => (
                   <tr
@@ -292,11 +265,11 @@ const EmployeesListPage = () => {
               )}
 
               {!isLoading && pageItems.length === 0 && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
-                    No employees found
-                  </td>
-                </tr>
+                <TableEmptyRow
+                  colSpan={6}
+                  title="No employees found"
+                  description="Employees you add will appear here."
+                />
               )}
             </tbody>
           </table>

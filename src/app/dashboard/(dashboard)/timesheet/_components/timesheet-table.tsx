@@ -2,6 +2,8 @@
 
 import { format } from 'date-fns';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Pagination from '@/components/molecules/pagination-component';
@@ -73,19 +75,14 @@ const TimesheetTable = ({
             </TableRow>
           </TableHeader>
           <TableBody>
-            {isLoading && (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-b14 text-neutral-light-grey">
-                  Loading time records…
-                </TableCell>
-              </TableRow>
-            )}
+            {isLoading && <TableSkeleton columns={9} rows={8} />}
             {!isLoading && rows.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-b14 text-neutral-light-grey">
-                  No records in this date range.
-                </TableCell>
-              </TableRow>
+              <TableEmptyRow
+                colSpan={9}
+                size="sm"
+                title="No time records found"
+                description="Time records in this date range will appear here."
+              />
             )}
             {!isLoading &&
               rows.map((row) => (

@@ -57,7 +57,11 @@ const ProfileHeader = ({ user, todayRecord, onRequestLeave, onClockAction }: Pro
           <span className="text-b14-600 text-neutral-dark-grey">Clock out</span>
           <span className="text-b14-500 text-neutral-dark-grey">{clockedOutTime ?? '—'}</span>
         </div>
-        <Button size="sm" onClick={onRequestLeave} className="h-9 px-4 text-b14-600 text-white">
+        <Button
+          size="sm"
+          onClick={onRequestLeave}
+          className="h-9 px-4 text-b14-600 text-white transition-all duration-150 active:bg-primary/80 motion-safe:active:scale-95"
+        >
           Leave request
         </Button>
       </div>

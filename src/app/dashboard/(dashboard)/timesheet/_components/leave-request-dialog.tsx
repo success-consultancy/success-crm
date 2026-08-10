@@ -165,7 +165,7 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               size="sm"
               onClick={() => onOpenChange(false)}
               disabled={addLeave.isPending}
-              className="h-10 px-4 text-b14-600 text-neutral-black border-neutral-border"
+              className="h-10 px-4 text-b14-600 text-neutral-black border-neutral-border transition-all duration-150 active:bg-accent-100 motion-safe:active:scale-95"
             >
               Cancel
             </Button>
@@ -173,7 +173,7 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               type="submit"
               size="sm"
               disabled={addLeave.isPending}
-              className="h-10 px-4 text-b14-600 text-white"
+              className="h-10 px-4 text-b14-600 text-white transition-all duration-150 active:bg-primary/80 motion-safe:active:scale-95"
             >
               {addLeave.isPending ? 'Sending…' : 'Send request'}
             </Button>
@@ -205,7 +205,11 @@ const DateField = ({ label, error, control, name }: DateFieldProps) => {
                 type="button"
                 className={cn(
                   'h-11 w-full px-3 flex items-center justify-between rounded-md border border-neutral-border bg-white text-left',
-                  'text-b16 text-neutral-black',
+                  'text-b16 text-neutral-black cursor-pointer transition-all duration-150',
+                  'hover:border-primary hover:bg-accent-50',
+                  'active:bg-accent-100',
+                  'focus-visible:outline-none focus-visible:border-primary focus-visible:ring-2 focus-visible:ring-primary/40',
+                  'data-[state=open]:border-primary data-[state=open]:ring-2 data-[state=open]:ring-primary/40',
                   !field.value && 'text-neutral-light-grey',
                 )}
               >

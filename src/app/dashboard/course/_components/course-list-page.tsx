@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DeleteDialog from '@/components/organisms/delete.dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { useGetAllCourses, Course } from '@/query/get-course';
 import { useGetUniversity } from '@/query/get-university';
 import { useAddCourse } from '@/mutations/course/add-course';
@@ -53,10 +54,7 @@ const CourseListPage = () => {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<FormState>(EMPTY_FORM);
 
-  const universityMap = useMemo(
-    () => new Map(universities.map((u) => [u.id, u.name])),
-    [universities],
-  );
+  const universityMap = useMemo(() => new Map(universities.map((u) => [u.id, u.name])), [universities]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
@@ -107,9 +105,11 @@ const CourseListPage = () => {
 
   const SortIcon = ({ field }: { field: SortField }) => {
     if (sortField !== field) return <ChevronsUpDown className="h-3.5 w-3.5 ml-1 inline" />;
-    return sortDir === 'asc'
-      ? <ChevronUp className="h-3.5 w-3.5 ml-1 inline" />
-      : <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />;
+    return sortDir === 'asc' ? (
+      <ChevronUp className="h-3.5 w-3.5 ml-1 inline" />
+    ) : (
+      <ChevronDown className="h-3.5 w-3.5 ml-1 inline" />
+    );
   };
 
   const openAdd = () => {
@@ -180,7 +180,10 @@ const CourseListPage = () => {
           <SearchInput
             placeholder="Search by university or course name"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setPage(1); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
           <div className="flex items-center">
             <Separator orientation="vertical" className="h-6 mr-[14px]" />
@@ -201,160 +204,129 @@ const CourseListPage = () => {
             <thead className="sticky top-0 z-10 bg-component-hovered-light">
               <tr className="*:px-3 *:py-2 *:text-neutral-dark-grey *:text-left *:align-middle *:text-[.875rem] border-b border-neutral-border-light">
                 <th className="w-12">S.N</th>
-                <th
-                  className="min-w-[160px] cursor-pointer select-none"
-                  onClick={() => handleSort('universityName')}
-                >
+                <th className="min-w-[160px] cursor-pointer select-none" onClick={() => handleSort('universityName')}>
                   University name <SortIcon field="universityName" />
                 </th>
-                <th
-                  className="min-w-[200px] cursor-pointer select-none"
-                  onClick={() => handleSort('name')}
-                >
+                <th className="min-w-[200px] cursor-pointer select-none" onClick={() => handleSort('name')}>
                   Course name <SortIcon field="name" />
                 </th>
                 <th className="min-w-[140px]">Description</th>
-                <th
-                  className="min-w-[160px] cursor-pointer select-none"
-                  onClick={() => handleSort('createdAt')}
-                >
+                <th className="min-w-[160px] cursor-pointer select-none" onClick={() => handleSort('createdAt')}>
                   Created at <SortIcon field="createdAt" />
                 </th>
-                <th
-                  className="min-w-[160px] cursor-pointer select-none"
-                  onClick={() => handleSort('updatedAt')}
-                >
+                <th className="min-w-[160px] cursor-pointer select-none" onClick={() => handleSort('updatedAt')}>
                   Updated at <SortIcon field="updatedAt" />
                 </th>
                 <th className="w-20 text-right" />
               </tr>
             </thead>
             <tbody>
-              {isLoading
-                ? Array(pageSize)
-                    .fill(null)
-                    .map((_, i) => (
-                      <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                        <td><Skeleton className="h-5 w-6" /></td>
-                        <td><Skeleton className="h-5 w-36" /></td>
-                        <td><Skeleton className="h-5 w-44" /></td>
-                        <td><Skeleton className="h-5 w-28" /></td>
-                        <td><Skeleton className="h-5 w-32" /></td>
-                        <td><Skeleton className="h-5 w-32" /></td>
-                        <td><Skeleton className="h-5 w-12" /></td>
-                      </tr>
-                    ))
-                : pageItems.map((course, idx) => {
-                    const isEditingRow = editingId === course.id;
-                    return isEditingRow ? (
-                      <tr key={course.id} className="border-b border-gray-50 bg-muted/40 *:px-2 *:py-2">
-                        <td className="px-3 text-sm">{(page - 1) * pageSize + idx + 1}</td>
-                        <td>
-                          <Select
-                            value={form.universityId}
-                            onValueChange={(val) => setForm((f) => ({ ...f, universityId: val }))}
-                          >
-                            <SelectTrigger className="h-9 text-sm">
-                              <SelectValue placeholder="University name" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              {universities.map((u) => (
-                                <SelectItem key={u.id} value={String(u.id)}>
-                                  {u.name}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </td>
-                        <td>
-                          <Input
-                            placeholder="Course name"
-                            value={form.name}
-                            onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-                            className="h-9 text-sm"
-                            autoFocus
-                          />
-                        </td>
-                        <td colSpan={2}>
-                          <Input
-                            placeholder="Description"
-                            value={form.description}
-                            onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                            className="h-9 text-sm"
-                          />
-                        </td>
-                        <td colSpan={2}>
-                          <div className="flex items-center gap-2 justify-end">
-                            <Button
-                              size="sm"
-                              onClick={handleSubmit}
-                              disabled={!form.name.trim() || isEditing}
+              {isLoading ? (
+                <TableSkeleton columns={7} rows={pageSize} />
+              ) : (
+                pageItems.map((course, idx) => {
+                  const isEditingRow = editingId === course.id;
+                  return isEditingRow ? (
+                    <tr key={course.id} className="border-b border-gray-50 bg-muted/40 *:px-2 *:py-2">
+                      <td className="px-3 text-sm">{(page - 1) * pageSize + idx + 1}</td>
+                      <td>
+                        <Select
+                          value={form.universityId}
+                          onValueChange={(val) => setForm((f) => ({ ...f, universityId: val }))}
+                        >
+                          <SelectTrigger className="h-9 text-sm">
+                            <SelectValue placeholder="University name" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {universities.map((u) => (
+                              <SelectItem key={u.id} value={String(u.id)}>
+                                {u.name}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </td>
+                      <td>
+                        <Input
+                          placeholder="Course name"
+                          value={form.name}
+                          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+                          className="h-9 text-sm"
+                          autoFocus
+                        />
+                      </td>
+                      <td colSpan={2}>
+                        <Input
+                          placeholder="Description"
+                          value={form.description}
+                          onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
+                          className="h-9 text-sm"
+                        />
+                      </td>
+                      <td colSpan={2}>
+                        <div className="flex items-center gap-2 justify-end">
+                          <Button size="sm" onClick={handleSubmit} disabled={!form.name.trim() || isEditing}>
+                            Save
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={cancelForm}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr
+                      key={course.id}
+                      className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-dark-grey last:border-none"
+                    >
+                      <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
+                      <td className="font-medium truncate max-w-[200px]">
+                        {universityMap.get(course.universityId) ?? '-'}
+                      </td>
+                      <td className="truncate max-w-[240px]">{course.name}</td>
+                      <td className="truncate max-w-[160px]">{course.description ?? '-'}</td>
+                      <td className="whitespace-nowrap">{format(new Date(course.createdAt), 'dd/MM/yyyy HH:mm')}</td>
+                      <td className="whitespace-nowrap">{format(new Date(course.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
+                      <td className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {canUpdate && (
+                            <button
+                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                              onClick={() => openEdit(course)}
+                              aria-label="Edit course"
                             >
-                              Save
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={cancelForm}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr
-                        key={course.id}
-                        className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-dark-grey last:border-none"
-                      >
-                        <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
-                        <td className="font-medium truncate max-w-[200px]">
-                          {universityMap.get(course.universityId) ?? '-'}
-                        </td>
-                        <td className="truncate max-w-[240px]">{course.name}</td>
-                        <td className="truncate max-w-[160px]">
-                          {course.description ?? '-'}
-                        </td>
-                        <td className="whitespace-nowrap">
-                          {format(new Date(course.createdAt), 'dd/MM/yyyy HH:mm')}
-                        </td>
-                        <td className="whitespace-nowrap">
-                          {format(new Date(course.updatedAt), 'dd/MM/yyyy HH:mm')}
-                        </td>
-                        <td className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {canUpdate && (
-                              <button
-                                className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                                onClick={() => openEdit(course)}
-                                aria-label="Edit course"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                            )}
-                            {canDelete && (
-                              <DeleteDialog
-                                trigger={
-                                  <button
-                                    className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
-                                    aria-label="Delete course"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                }
-                                title="Delete course"
-                                description={
-                                  <span>
-                                    Are you sure you want to delete this course?
-                                    <br />
-                                    Deleting this course will remove all associated data, including details and interactions.
-                                  </span>
-                                }
-                                confirmText="Yes, delete"
-                                onConfirm={() => deleteCourse(course.id)}
-                              />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <DeleteDialog
+                              trigger={
+                                <button
+                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                  aria-label="Delete course"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              }
+                              title="Delete course"
+                              description={
+                                <span>
+                                  Are you sure you want to delete this course?
+                                  <br />
+                                  Deleting this course will remove all associated data, including details and
+                                  interactions.
+                                </span>
+                              }
+                              confirmText="Yes, delete"
+                              onConfirm={() => deleteCourse(course.id)}
+                            />
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
 
               {/* Inline Add Form Row (appended at bottom for new entries) */}
               {showAddForm && (
@@ -396,11 +368,7 @@ const CourseListPage = () => {
                   </td>
                   <td colSpan={2}>
                     <div className="flex items-center gap-2 justify-end">
-                      <Button
-                        size="sm"
-                        onClick={handleSubmit}
-                        disabled={!form.name.trim() || isAdding}
-                      >
+                      <Button size="sm" onClick={handleSubmit} disabled={!form.name.trim() || isAdding}>
                         Add
                       </Button>
                       <Button size="sm" variant="outline" onClick={cancelForm}>
@@ -412,11 +380,7 @@ const CourseListPage = () => {
               )}
 
               {!isLoading && pageItems.length === 0 && !showAddForm && editingId === null && (
-                <tr>
-                  <td colSpan={7} className="py-12 text-center text-gray-400 text-sm">
-                    No courses found
-                  </td>
-                </tr>
+                <TableEmptyRow colSpan={7} title="No courses found" description="Courses you add will appear here." />
               )}
             </tbody>
           </table>
@@ -427,21 +391,28 @@ const CourseListPage = () => {
           <div className="text-sm flex items-center gap-2 text-neutral-dark-grey">
             <Select
               value={String(pageSize)}
-              onValueChange={(val) => { setPageSize(Number(val)); setPage(1); }}
+              onValueChange={(val) => {
+                setPageSize(Number(val));
+                setPage(1);
+              }}
             >
               <SelectTrigger className="w-fit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
                 {PAGE_SIZE_OPTIONS.map((n) => (
-                  <SelectItem key={n} value={String(n)}>{n}</SelectItem>
+                  <SelectItem key={n} value={String(n)}>
+                    {n}
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
             <span>Items per page</span>
           </div>
           <div className="flex items-center gap-2 text-sm text-neutral-dark-grey">
-            <span>{rangeStart} - {rangeEnd} of {totalItems}</span>
+            <span>
+              {rangeStart} - {rangeEnd} of {totalItems}
+            </span>
             <button
               className="p-1 rounded hover:bg-gray-100 disabled:opacity-40 disabled:cursor-not-allowed"
               onClick={() => setPage((p) => Math.max(1, p - 1))}

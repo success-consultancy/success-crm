@@ -11,7 +11,8 @@ import { Separator } from '@/components/ui/separator';
 import { Input } from '@/components/ui/input';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { useGetSource, ISource } from '@/query/get-source';
 import { useAddSource } from '@/mutations/source/add-source';
 import { useEditSource } from '@/mutations/source/edit-source';
@@ -196,30 +197,7 @@ const SourceListPage = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array(6)
-                  .fill(null)
-                  .map((_, i) => (
-                    <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                      <td>
-                        <Skeleton className="h-5 w-6" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-36" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-56" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-32" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-32" />
-                      </td>
-                      <td>
-                        <Skeleton className="h-5 w-12" />
-                      </td>
-                    </tr>
-                  ))
+                <TableSkeleton columns={6} rows={pageSize} />
               ) : (
                 pageItems.map((source, idx) => {
                   const isEditingRow = editingId === source.id;
@@ -314,11 +292,7 @@ const SourceListPage = () => {
               )}
 
               {!isLoading && pageItems.length === 0 && !showAddForm && editingId === null && (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-gray-400 text-sm">
-                    No sources found
-                  </td>
-                </tr>
+                <TableEmptyRow colSpan={6} title="No sources found" description="Sources you add will appear here." />
               )}
             </tbody>
           </table>

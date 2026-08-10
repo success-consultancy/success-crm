@@ -14,6 +14,7 @@ import { ChevronDown, ChevronUp, ChevronsUpDown, Download, Pencil, Plus, Search 
 import Button from '@/components/atoms/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import useScrollShadows from '@/hooks/use-scroll-shadows';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MONTHS_INITIAL = ['jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const;
 const MONTHS_FINAL = ['jan', 'feb', 'mar', 'apr', 'may', 'jun'] as const;
@@ -414,21 +415,21 @@ export default function PerformanceTable({
                       style={{ minWidth: 48, width: 48 }}
                       className="sticky left-0 z-10 px-3 border-b border-r bg-white border-stroke-divider"
                     >
-                      <div className="h-3 w-4 bg-gray-100 rounded animate-pulse" />
+                      <Skeleton className="h-3 w-4" />
                     </td>
                     <td
                       style={{ minWidth: 260, width: 260, ...(showLeftShadow ? LEFT_SHADOW_STYLE : LEFT_BORDER_ONLY) }}
                       className="sticky left-[48px] z-10 px-3 border-b bg-white border-stroke-divider"
                     >
-                      <div className="h-3 w-32 bg-gray-100 rounded animate-pulse" />
+                      <Skeleton className="h-3 w-32" />
                     </td>
                     {allMonths.map((m) => (
                       <React.Fragment key={`skel-${i}-${m.key}`}>
                         <td className="border-b px-2 border-stroke-divider">
-                          <div className="h-3 w-8 mx-auto bg-gray-100 rounded animate-pulse" />
+                          <Skeleton className="h-3 w-8 mx-auto" />
                         </td>
                         <td className="border-b border-r px-2 border-stroke-divider">
-                          <div className="h-3 w-8 mx-auto bg-gray-100 rounded animate-pulse" />
+                          <Skeleton className="h-3 w-8 mx-auto" />
                         </td>
                       </React.Fragment>
                     ))}
@@ -440,19 +441,19 @@ export default function PerformanceTable({
                         ...(showRightShadow ? RIGHT_SHADOW_STYLE : RIGHT_BORDER_ONLY),
                       }}
                     >
-                      <div className="h-3 w-8 mx-auto bg-gray-100 rounded animate-pulse" />
+                      <Skeleton className="h-3 w-8 mx-auto" />
                     </td>
                     <td
                       className="sticky z-10 border-b px-2 bg-white border-stroke-divider"
                       style={{ right: `${S_ACTUAL_R}px`, minWidth: '62px' }}
                     >
-                      <div className="h-3 w-8 mx-auto bg-gray-100 rounded animate-pulse" />
+                      <Skeleton className="h-3 w-8 mx-auto" />
                     </td>
                     <td
                       className="sticky z-10 border-b px-2 bg-white border-stroke-divider"
                       style={{ right: S_PROGRESS_R, minWidth: '89px' }}
                     >
-                      <div className="h-3 w-16 bg-gray-100 rounded animate-pulse" />
+                      <Skeleton className="h-3 w-16" />
                     </td>
                   </tr>
                 ))}
@@ -623,7 +624,10 @@ export default function PerformanceTable({
                   >
                     {totals.totalActual}
                   </td>
-                  <td className={cn('sticky bottom-0 z-30 border-b px-2', BD, TOTAL_BG)} style={{ right: S_PROGRESS_R }}>
+                  <td
+                    className={cn('sticky bottom-0 z-30 border-b px-2', BD, TOTAL_BG)}
+                    style={{ right: S_PROGRESS_R }}
+                  >
                     <ProgressBar actual={totals.totalActual} target={totals.totalTarget} />
                   </td>
                 </tr>

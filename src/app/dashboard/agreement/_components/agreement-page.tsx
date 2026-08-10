@@ -20,7 +20,7 @@ import { IAgreement } from '@/types/response-types/agreement-response';
 import { useAgreementColumn } from '@/config/columns/agreement-columns-definitions';
 import { usePermissions } from '@/hooks/use-permissions';
 import { useExportAgreements } from '@/mutations/agreement/export-agreements';
-import EmptyAgreementIcon from '@/assets/icons/empty-agreement-icon';
+import { EmptyState } from '@/components/common/empty-state';
 import ClearFilters from '@/components/molecules/clear-filters';
 import {
   DropdownMenu,
@@ -107,10 +107,11 @@ const AgreementPage = () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <button
-          className={`flex items-center gap-1.5 px-3 h-9 rounded-md border text-sm transition-colors ${currentType
+          className={`flex items-center gap-1.5 px-3 h-9 rounded-md border text-sm transition-colors ${
+            currentType
               ? 'border-primary bg-primary/5 text-primary font-medium'
               : 'border-input bg-background text-muted-foreground hover:bg-accent'
-            }`}
+          }`}
         >
           {currentType ? `Type: ${currentType}` : 'Type'}
           {currentType ? (
@@ -141,13 +142,10 @@ const AgreementPage = () => {
   );
 
   const emptyState = (
-    <div className="flex flex-col items-center justify-center py-16 text-center">
-      <EmptyAgreementIcon />
-      <h3 className="mt-4 text-base font-semibold text-gray-800">No agency agreements yet</h3>
-      <p className="mt-1 text-sm text-gray-500 max-w-xs">
-        Universities with agency agreements will appear here once an agreement is added.
-      </p>
-    </div>
+    <EmptyState
+      title="No agency agreements yet"
+      description="Universities with agency agreements will appear here once an agreement is added."
+    />
   );
 
   return (
@@ -177,7 +175,13 @@ const AgreementPage = () => {
             <Button
               variant="outline"
               className="mr-2"
-              onClick={() => exportAgreements({ ...filterParams, type: currentType || undefined, tab: currentTab !== 'all' ? currentTab : undefined })}
+              onClick={() =>
+                exportAgreements({
+                  ...filterParams,
+                  type: currentType || undefined,
+                  tab: currentTab !== 'all' ? currentTab : undefined,
+                })
+              }
               loading={isExporting}
             >
               Export

@@ -1,8 +1,8 @@
 ﻿import { format } from 'date-fns';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { toast } from 'sonner';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
+import { useToastContext } from '@/context/toast-context';
 import { LeaveRequestSchemaType } from '@/schema/leave-schema';
 
 // Backend stores leave dates as DD/MM/YYYY strings (see timesheet-helpers parseLegacyDate).
@@ -22,17 +22,17 @@ const addLeave = async (payload: LeaveRequestSchemaType) => {
 };
 
 export const useAddLeave = () => {
+  const { success, error } = useToastContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addLeave,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_LEAVES] });
-      toast('Success!', { description: 'Leave request submitted' });
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_ALL_LEAVES] });
+      success('Leave request submitted.');
     },
-    onError: (error: any) => {
-      const message =
-        error?.response?.data?.message || error?.response?.data?.error || 'Failed to submit leave request';
-      toast('Error!', { description: message });
+    onError: (err) => {
+      error(getApiErrorMessage(err, 'Failed to submit leave request'));
     },
   });
 };

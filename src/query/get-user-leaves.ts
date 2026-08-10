@@ -13,6 +13,8 @@ export interface LeaveRecord {
   note?: string | null;
   managerNote?: string | null;
   attachmentURL?: string | null;
+  /** User who last approved/rejected — stamped from the JWT by the backend. */
+  updatedBy?: number | null;
   createdAt?: string;
   updatedAt?: string;
 }

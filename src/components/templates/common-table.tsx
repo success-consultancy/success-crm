@@ -1,7 +1,8 @@
 import React from 'react';
 import { ColumnDef, flexRender, getCoreRowModel, getFilteredRowModel, useReactTable } from '@tanstack/react-table';
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Props<T> = {
@@ -22,11 +23,6 @@ const CommonTable = <T,>({ columns, data, isLoading }: Props<T>) => {
     <div className="w-full">
       <ScrollArea className="w-full whitespace-nowrap">
         <Table className="w-full min-w-max overflow-x-auto">
-          {!isLoading && data && data.length === 0 && (
-            <TableCaption>
-              <div className="mt-10">No items found</div>
-            </TableCaption>
-          )}
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="h-14">
@@ -41,17 +37,16 @@ const CommonTable = <T,>({ columns, data, isLoading }: Props<T>) => {
             ))}
           </TableHeader>
           <TableBody>
-            {isLoading ? (
-              <TableSkeleton count={columns.length} />
-            ) : (
+            {isLoading && <TableSkeleton columns={columns.length} />}
+            {!isLoading &&
               table.getRowModel().rows.map((row) => (
                 <TableRow className="h-14" key={row.id} data-state={row.getIsSelected() && 'selected'}>
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>
-              ))
-            )}
+              ))}
+            {!isLoading && data.length === 0 && <TableEmptyRow colSpan={columns.length} title="No items found" />}
           </TableBody>
         </Table>
         <ScrollBar orientation="horizontal" />

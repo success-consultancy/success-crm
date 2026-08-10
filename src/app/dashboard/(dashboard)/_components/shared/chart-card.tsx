@@ -2,6 +2,7 @@
 
 import React from 'react';
 import CardContainer from '@/components/atoms/card-container';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
 
 interface ChartCardProps {
@@ -13,9 +14,9 @@ interface ChartCardProps {
 }
 
 const ChartCardSkeleton = () => (
-  <div className="animate-pulse space-y-4">
-    <div className="h-4 w-32 bg-gray-200 rounded" />
-    <div className="h-[300px] bg-gray-100 rounded" />
+  <div className="space-y-4">
+    <Skeleton className="h-4 w-32" />
+    <Skeleton className="h-[300px] w-full" />
   </div>
 );
 

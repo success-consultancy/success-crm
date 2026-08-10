@@ -17,7 +17,6 @@ import usePagination from '@/hooks/use-pagination';
 import useScrollShadows from '@/hooks/use-scroll-shadows';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../ui/select';
 import useSearchParams from '@/hooks/use-search-params';
-import { TableCell, TableRow } from '../ui/table';
 import TableSearchInput from '../molecules/table-search';
 import { Separator } from '../ui/separator';
 import { TableContextProvider, ColumnIdProvider } from '../molecules/table-context-provider';
@@ -32,8 +31,9 @@ import { Mail, Trash2 } from 'lucide-react';
 import { DateRangePicker } from '../molecules/date-range.picker';
 import { SendEmailSchemaType } from '@/schema/send-email-schema';
 import { EmptyState } from '@/components/common/empty-state';
+import TableSkeleton from './table-skeleton';
 
-const DEFAULT_EMPTY_STATE = <EmptyState />;
+const DEFAULT_EMPTY_STATE = <EmptyState description="There are no records to display." />;
 
 const ITEMS_PER_PAGE_OPTIONS = [
   {
@@ -250,7 +250,12 @@ const TableComponent = <TData, TValue>({
     [table, storageKey],
   );
 
-  const { ref: scrollContainerRef, hasScrolledLeft, hasScrolledRight, updateShadows } = useScrollShadows<HTMLDivElement>();
+  const {
+    ref: scrollContainerRef,
+    hasScrolledLeft,
+    hasScrolledRight,
+    updateShadows,
+  } = useScrollShadows<HTMLDivElement>();
 
   // Re-check scroll shadows whenever the row data changes (widths can shift)
   React.useEffect(() => {
@@ -345,7 +350,7 @@ const TableComponent = <TData, TValue>({
           <div className="flex w-full items-center justify-between pb-5 gap-5">
             <div className="flex gap-2">
               <TableSearchInput searchParamField={searchKey as string} placeholder={`Search data here`} />
-              <DateRangePicker onApply={handleDateRangeApply || (() => { })} />
+              <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
               {extraFilters}
             </div>
             <div className="flex items-center gap-[14px]">
@@ -504,17 +509,11 @@ const TableComponent = <TData, TValue>({
               ))}
               {!isLoading && table.getRowModel().rows.length === 0 && emptyState && (
                 <tr>
-                  <td colSpan={columns.length}>
-                    {emptyState}
-                  </td>
+                  <td colSpan={columns.length}>{emptyState}</td>
                 </tr>
               )}
               {!skeletonColumns && isLoading && (
-                <TableRow>
-                  <TableCell colSpan={columns.length} className="h-24 text-center">
-                    Loading...
-                  </TableCell>
-                </TableRow>
+                <TableSkeleton columns={columns.length} rows={Math.min(Number(_loadingSkeletonCount), 10)} />
               )}
             </tbody>
           </table>
@@ -554,7 +553,7 @@ const TableComponent = <TData, TValue>({
           </div>
         )}
       </div>
-    </TableContextProvider >
+    </TableContextProvider>
   );
 };
 

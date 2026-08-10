@@ -6,6 +6,7 @@ import { IAppointment } from '@/types/response-types/appointment-response';
 import { Avatar } from '@/components/ui/avatar';
 import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/common/empty-state';
 
 interface AppointmentListProps {
   appointments: IAppointment[];
@@ -37,9 +38,11 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
 
   if (appointments.length === 0) {
     return (
-      <div className="text-center py-8 text-gray-500">
-        <p>No appointments for this date</p>
-      </div>
+      <EmptyState
+        size="sm"
+        title="No appointments for this date"
+        description="Appointments booked for this date will be listed here."
+      />
     );
   }
 
@@ -88,7 +91,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
           </div>
         );
       })}
-    </div >
+    </div>
   );
 };
 

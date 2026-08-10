@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import { GraduationHat02, Lightbulb05, ShieldPlus, Scales02, ChevronLeft, ChevronRight, Eye } from '@untitledui/icons';
 import FileGlobeIcon from '@/assets/icons/file-globe-icon';
 import CardContainer from '@/components/atoms/card-container';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { cn } from '@/lib/utils';
 import useAuthStore from '@/store/auth-store';
@@ -44,7 +46,12 @@ const enumTabs = (source: Record<string, string>, labels: Partial<Record<string,
 
 const SERVICE_CONFIG: Record<
   ServiceKey,
-  { label: string; Icon: React.ElementType; statuses: { value: string; label: string }[]; viewPath: (id: number) => string }
+  {
+    label: string;
+    Icon: React.ElementType;
+    statuses: { value: string; label: string }[];
+    viewPath: (id: number) => string;
+  }
 > = {
   education: {
     label: 'Education',
@@ -213,19 +220,14 @@ const ServicePipelineTable = () => {
             </thead>
             <tbody>
               {isLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <tr key={i} className="border-t border-neutral-border-light">
-                    <td colSpan={7} className="px-4 py-3">
-                      <div className="h-4 bg-gray-100 rounded animate-pulse" />
-                    </td>
-                  </tr>
-                ))
+                <TableSkeleton columns={7} rows={5} />
               ) : pageRows.length === 0 ? (
-                <tr>
-                  <td colSpan={7} className="px-4 py-10 text-center text-c1 text-neutral-light-grey">
-                    No clients in this stage
-                  </td>
-                </tr>
+                <TableEmptyRow
+                  colSpan={7}
+                  size="sm"
+                  title="No clients in this stage"
+                  description="Clients that reach this stage will appear here."
+                />
               ) : (
                 pageRows.map((row, idx) => (
                   <tr key={row.id} className="border-t border-neutral-border-light text-b14 text-neutral-dark-grey">

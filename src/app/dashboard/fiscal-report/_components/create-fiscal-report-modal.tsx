@@ -46,10 +46,7 @@ export default function CreateFiscalReportModal({ isOpen, onClose, type }: Props
     onClose();
   };
 
-  const title =
-    type === 'visa_application'
-      ? 'Create visa application report'
-      : 'Create student enrollment report';
+  const title = type === 'visa_application' ? 'Create visa application report' : 'Create student enrollment report';
 
   return (
     <DialogWrapper title={title} isOpen={isOpen} setIsOpen={(open) => !open && handleClose()}>
@@ -63,12 +60,7 @@ export default function CreateFiscalReportModal({ isOpen, onClose, type }: Props
           error={startYear.length === 4 && !valid ? 'Enter a valid year between 2019 and 2049' : undefined}
         />
 
-        <Input
-          label="Report name"
-          value={name}
-          disabled
-          placeholder="Auto-generated from year"
-        />
+        <Input label="Report name" value={name} disabled placeholder="Auto-generated from year" />
 
         <div className="flex justify-end gap-2 pt-1">
           <Button variant="outline" size="sm" onClick={handleClose} disabled={isPending} className="h-9">

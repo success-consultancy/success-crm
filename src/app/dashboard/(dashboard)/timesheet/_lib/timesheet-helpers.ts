@@ -30,7 +30,7 @@ export const enumerateDates = (from: Date, to: Date): Date[] => {
 };
 
 // Backend stores Leave dates as DD/MM/YYYY strings.
-const parseLegacyDate = (s: string): Date | null => {
+export const parseLegacyDate = (s: string): Date | null => {
   if (!s) return null;
   const [d, m, y] = s.split('/').map(Number);
   if (!d || !m || !y) return null;

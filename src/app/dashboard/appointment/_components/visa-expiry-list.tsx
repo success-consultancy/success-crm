@@ -4,6 +4,7 @@ import React from 'react';
 import { Mail, Phone } from 'lucide-react';
 import { VisaExpiryEvent, getCategoryColor } from './use-visa-expiries';
 import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/common/empty-state';
 
 interface VisaExpiryListProps {
   events: VisaExpiryEvent[];
@@ -31,12 +32,12 @@ const VisaExpiryList: React.FC<VisaExpiryListProps> = ({ events, onEventClick, i
 
   if (events.length === 0) {
     return (
-      <div className="flex-1 text-center py-8 px-4">
-        <p className="text-b14-600 text-neutral-black mb-1">No visa expiries today</p>
-        <p className="text-b12 text-neutral-dark-grey">
-          Clients with visa expiries on this date will be listed here.
-        </p>
-      </div>
+      <EmptyState
+        size="sm"
+        className="flex-1"
+        title="No visa expiries today"
+        description="Clients with visa expiries on this date will be listed here."
+      />
     );
   }
 
@@ -51,10 +52,7 @@ const VisaExpiryList: React.FC<VisaExpiryListProps> = ({ events, onEventClick, i
             onClick={() => onEventClick(event)}
           >
             <div className="flex items-start gap-2">
-              <span
-                className="w-2 h-2 rounded-full mt-2 flex-shrink-0"
-                style={{ backgroundColor: color }}
-              />
+              <span className="w-2 h-2 rounded-full mt-2 flex-shrink-0" style={{ backgroundColor: color }} />
               <div className="flex-1 min-w-0">
                 <h5 className="text-b13-500 text-neutral-black mb-1 truncate">
                   {event.firstName}'s Visa Expires ({event.category})

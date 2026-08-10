@@ -162,7 +162,11 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
               control={form.control}
               name="date"
               render={({ field }) => {
-                const dateValue = field.value ? (typeof field.value === 'string' ? parseISO(field.value) : field.value) : selectedDate || new Date();
+                const dateValue = field.value
+                  ? typeof field.value === 'string'
+                    ? parseISO(field.value)
+                    : field.value
+                  : selectedDate || new Date();
                 return (
                   <FormItem>
                     <FormLabel>Date</FormLabel>
@@ -306,7 +310,7 @@ const AppointmentFormModal: React.FC<AppointmentFormModalProps> = ({
           </div>
         </form>
       </Form>
-    </DialogWrapper >
+    </DialogWrapper>
   );
 };
 

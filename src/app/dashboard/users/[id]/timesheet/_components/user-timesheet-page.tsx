@@ -25,6 +25,9 @@ import { resolveQuickRange } from '@/app/dashboard/(dashboard)/timesheet/_lib/qu
 import KpiCard from '@/app/dashboard/(dashboard)/timesheet/_components/kpi-card';
 import TimesheetRangePicker from '@/app/dashboard/(dashboard)/timesheet/_components/timesheet-range-picker';
 import TimesheetTable from '@/app/dashboard/(dashboard)/timesheet/_components/timesheet-table';
+import LeaveRequestsCard from '@/app/dashboard/(dashboard)/timesheet/_components/leave-requests-card';
+import useAuthStore from '@/store/auth-store';
+import { ROLES as USER_ROLES } from '@/constants/roles-constants';
 import { downloadFile } from '@/utils/download';
 
 const ROLES: Record<number, string> = {
@@ -45,6 +48,10 @@ const UserTimesheetPage = ({ userId }: Props) => {
   const { data: user, isLoading: userLoading } = useGetUserById(String(userId));
   const { data: clockRecords = [], isLoading: clockLoading } = useGetClockRecords(userId);
   const { data: leaves = [], isLoading: leavesLoading } = useGetUserLeaves(userId);
+
+  // Approving/rejecting is super-admin only, matching the legacy CRM.
+  const profile = useAuthStore((s) => s.profile);
+  const canApprove = profile?.roleId === USER_ROLES.SUPER_ADMIN;
 
   const [range, setRange] = useState(() => resolveQuickRange('this_week'));
 
@@ -236,6 +243,8 @@ const UserTimesheetPage = ({ userId }: Props) => {
             />
           </div>
         </div>
+
+        <LeaveRequestsCard leaves={leaves} isLoading={leavesLoading} canApprove={canApprove} />
       </div>
     </Container>
   );

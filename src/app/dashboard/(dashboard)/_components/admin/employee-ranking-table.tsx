@@ -7,6 +7,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import TabSelector from '@/components/atoms/tab-selector';
 import Pagination from '@/components/molecules/pagination-component';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 
 const MONTH_OPTIONS = [
   { value: 'all', label: 'All Time' },
@@ -121,19 +123,14 @@ const EmployeeRankingTable = () => {
           </thead>
           <tbody>
             {isLoading ? (
-              Array.from({ length: 5 }).map((_, i) => (
-                <tr key={i} className="border-b last:border-0">
-                  <td colSpan={8} className="py-3">
-                    <div className="animate-pulse h-4 bg-gray-100 rounded w-full" />
-                  </td>
-                </tr>
-              ))
+              <TableSkeleton columns={8} rows={5} />
             ) : paged.length === 0 ? (
-              <tr>
-                <td colSpan={8} className="py-8 text-center text-neutral-light-grey text-b14">
-                  No employee data available
-                </td>
-              </tr>
+              <TableEmptyRow
+                colSpan={8}
+                size="sm"
+                title="No employee data yet"
+                description="Employee performance will appear here once activity is recorded."
+              />
             ) : (
               paged.map((emp, idx) => (
                 <tr key={emp.id} className="border-b last:border-0 hover:bg-gray-50 transition-colors p-4">
@@ -172,12 +169,13 @@ const EmployeeRankingTable = () => {
                       <td className="py-3 pr-4 text-right text-b14 text-utility-red font-medium">{emp.lostCount}</td>
                       <td className="py-3 text-right">
                         <span
-                          className={`text-b14-600 ${emp.conversionRate >= 50
-                            ? 'text-utility-green'
-                            : emp.conversionRate >= 25
-                              ? 'text-[#fd7e14]'
-                              : 'text-utility-red'
-                            }`}
+                          className={`text-b14-600 ${
+                            emp.conversionRate >= 50
+                              ? 'text-utility-green'
+                              : emp.conversionRate >= 25
+                                ? 'text-[#fd7e14]'
+                                : 'text-utility-red'
+                          }`}
                         >
                           {emp.conversionRate.toFixed(1)}%
                         </span>

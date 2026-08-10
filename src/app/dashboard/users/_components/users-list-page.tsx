@@ -20,7 +20,8 @@ import Button from '@/components/atoms/button';
 import { Separator } from '@/components/ui/separator';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import { useGetUsers } from '@/query/get-user';
@@ -147,10 +148,7 @@ const UsersListPage = () => {
           />
           <div className="flex items-center gap-2">
             {isAdmin && (
-              <Button
-                variant="outline"
-                onClick={() => router.push('/dashboard/roles')}
-              >
+              <Button variant="outline" onClick={() => router.push('/dashboard/roles')}>
                 Manage roles
               </Button>
             )}
@@ -196,118 +194,97 @@ const UsersListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading
-                ? Array(8)
-                    .fill(null)
-                    .map((_, i) => (
-                      <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                        <td><Skeleton className="h-5 w-6" /></td>
-                        <td><Skeleton className="h-5 w-24" /></td>
-                        <td><Skeleton className="h-5 w-28" /></td>
-                        <td><Skeleton className="h-5 w-44" /></td>
-                        <td><Skeleton className="h-5 w-28" /></td>
-                        <td><Skeleton className="h-5 w-20" /></td>
-                        <td><Skeleton className="h-5 w-16" /></td>
-                        <td><Skeleton className="h-5 w-8" /></td>
-                      </tr>
-                    ))
-                : pageItems.map((user) => (
-                    <tr
-                      key={user.id}
-                      className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-darkGrey last:border-none"
-                    >
-                      <td className="text-sm">{user.id}</td>
-                      <td className="font-medium">{user.firstName}</td>
-                      <td>{user.lastName}</td>
-                      <td className="truncate max-w-[220px]">{user.email}</td>
-                      <td>{user.phone}</td>
-                      <td>
-                        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
-                          {ROLE_LABELS[user.roleId] ?? `Role ${user.roleId}`}
-                        </span>
-                      </td>
-                      <td>
-                        <span
-                          className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium ${
-                            user.isActive
-                              ? 'bg-green-100 text-green-700'
-                              : 'bg-red-100 text-red-600'
-                          }`}
-                        >
-                          <span
-                            className={`w-1.5 h-1.5 rounded-full ${
-                              user.isActive ? 'bg-green-500' : 'bg-red-500'
-                            }`}
-                          />
-                          {user.isActive ? 'Active' : 'Inactive'}
-                        </span>
-                      </td>
-                      <td onClick={(e) => e.stopPropagation()}>
-                        <Popover>
-                          <PopoverTrigger asChild>
-                            <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open actions menu">
-                              <EllipsisVertical className="h-4 w-4" />
-                            </Button>
-                          </PopoverTrigger>
-                          <PopoverContent className="w-48 p-1" align="end">
-                            <div className="flex flex-col">
-                              {canUpdate && (
-                                <Button
-                                  variant="ghost"
-                                  className="justify-start gap-2"
-                                  onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
-                                >
-                                  <Pencil className="h-4 w-4" />
-                                  Edit user
-                                </Button>
-                              )}
+              {isLoading ? (
+                <TableSkeleton columns={8} rows={pageSize} />
+              ) : (
+                pageItems.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-darkGrey last:border-none"
+                  >
+                    <td className="text-sm">{user.id}</td>
+                    <td className="font-medium">{user.firstName}</td>
+                    <td>{user.lastName}</td>
+                    <td className="truncate max-w-[220px]">{user.email}</td>
+                    <td>{user.phone}</td>
+                    <td>
+                      <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-gray-100 text-gray-700">
+                        {ROLE_LABELS[user.roleId] ?? `Role ${user.roleId}`}
+                      </span>
+                    </td>
+                    <td>
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-xs font-medium ${
+                          user.isActive ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-600'
+                        }`}
+                      >
+                        <span className={`w-1.5 h-1.5 rounded-full ${user.isActive ? 'bg-green-500' : 'bg-red-500'}`} />
+                        {user.isActive ? 'Active' : 'Inactive'}
+                      </span>
+                    </td>
+                    <td onClick={(e) => e.stopPropagation()}>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open actions menu">
+                            <EllipsisVertical className="h-4 w-4" />
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-48 p-1" align="end">
+                          <div className="flex flex-col">
+                            {canUpdate && (
                               <Button
                                 variant="ghost"
                                 className="justify-start gap-2"
-                                onClick={() => router.push(`/dashboard/users/${user.id}/timesheet`)}
+                                onClick={() => router.push(`/dashboard/users/${user.id}/edit`)}
                               >
-                                <Clock className="h-4 w-4" />
-                                View time sheet
+                                <Pencil className="h-4 w-4" />
+                                Edit user
                               </Button>
-                              {isAdmin && (
-                                <Button
-                                  variant="ghost"
-                                  className="justify-start gap-2"
-                                  onClick={() => router.push('/dashboard/roles')}
-                                >
-                                  <Shield className="h-4 w-4" />
-                                  Manage permissions
-                                </Button>
-                              )}
-                              {canDelete && (
-                                <DeleteDialog
-                                  trigger={
-                                    <Button
-                                      variant="ghost"
-                                      className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
-                                    >
-                                      <Trash2 className="h-4 w-4" />
-                                      Delete user
-                                    </Button>
-                                  }
-                                  title="Delete User"
-                                  description="Are you sure you want to delete this user? This action cannot be undone."
-                                  onConfirm={() => deleteUser(user.id)}
-                                />
-                              )}
-                            </div>
-                          </PopoverContent>
-                        </Popover>
-                      </td>
-                    </tr>
-                  ))}
+                            )}
+                            <Button
+                              variant="ghost"
+                              className="justify-start gap-2"
+                              onClick={() => router.push(`/dashboard/users/${user.id}/timesheet`)}
+                            >
+                              <Clock className="h-4 w-4" />
+                              View time sheet
+                            </Button>
+                            {isAdmin && (
+                              <Button
+                                variant="ghost"
+                                className="justify-start gap-2"
+                                onClick={() => router.push('/dashboard/roles')}
+                              >
+                                <Shield className="h-4 w-4" />
+                                Manage permissions
+                              </Button>
+                            )}
+                            {canDelete && (
+                              <DeleteDialog
+                                trigger={
+                                  <Button
+                                    variant="ghost"
+                                    className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete user
+                                  </Button>
+                                }
+                                title="Delete User"
+                                description="Are you sure you want to delete this user? This action cannot be undone."
+                                onConfirm={() => deleteUser(user.id)}
+                              />
+                            )}
+                          </div>
+                        </PopoverContent>
+                      </Popover>
+                    </td>
+                  </tr>
+                ))
+              )}
 
               {!isLoading && pageItems.length === 0 && (
-                <tr>
-                  <td colSpan={8} className="py-12 text-center text-gray-400 text-sm">
-                    No users found
-                  </td>
-                </tr>
+                <TableEmptyRow colSpan={8} title="No users found" description="Users you add will appear here." />
               )}
             </tbody>
           </table>

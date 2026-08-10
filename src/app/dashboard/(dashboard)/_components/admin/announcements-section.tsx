@@ -6,6 +6,8 @@ import { useGetAnnouncements } from '@/query/get-announcements';
 import { Megaphone, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import { ROUTES } from '@/config/routes';
+import { Skeleton } from '@/components/ui/skeleton';
+import { EmptyState } from '@/components/common/empty-state';
 
 const AnnouncementsSection = () => {
   const { data, isLoading } = useGetAnnouncements({ page: '1', limit: '3' });
@@ -25,17 +27,17 @@ const AnnouncementsSection = () => {
       {isLoading ? (
         <div className="space-y-3">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="animate-pulse flex gap-3">
-              <div className="h-12 w-12 bg-gray-200 rounded-lg shrink-0" />
+            <div key={i} className="flex gap-3">
+              <Skeleton className="h-12 w-12 rounded-lg shrink-0" />
               <div className="flex-1 space-y-1.5">
-                <div className="h-3.5 w-3/4 bg-gray-200 rounded" />
-                <div className="h-3 w-1/2 bg-gray-100 rounded" />
+                <Skeleton className="h-3.5 w-3/4" />
+                <Skeleton className="h-3 w-1/2" />
               </div>
             </div>
           ))}
         </div>
       ) : !data?.rows?.length ? (
-        <p className="text-b14 text-neutral-light-grey py-4 text-center">No announcements yet</p>
+        <EmptyState size="sm" title="No announcements yet" description="New announcements will appear here." />
       ) : (
         <div className="space-y-[22px]">
           {data.rows.map((announcement) => {

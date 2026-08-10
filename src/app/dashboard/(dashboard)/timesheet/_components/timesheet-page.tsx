@@ -24,6 +24,7 @@ import KpiCard from './kpi-card';
 import TimesheetRangePicker from './timesheet-range-picker';
 import TimesheetTable from './timesheet-table';
 import LeaveRequestDialog from './leave-request-dialog';
+import LeaveRequestsCard from './leave-requests-card';
 
 const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -184,6 +185,9 @@ const TimesheetPage = () => {
             />
           </div>
         </div>
+
+        {/* Own request history — status and the manager's note land here. */}
+        <LeaveRequestsCard leaves={leaves} isLoading={leavesLoading} />
       </div>
 
       <LeaveRequestDialog open={leaveDialogOpen} onOpenChange={setLeaveDialogOpen} />

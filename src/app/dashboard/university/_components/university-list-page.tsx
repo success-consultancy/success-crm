@@ -25,7 +25,8 @@ import { ROUTES } from '@/config/routes';
 import { Separator } from '@/components/ui/separator';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ColumnSelector } from '@/components/molecules/table-column-selector';
 import DeleteDialog from '@/components/organisms/delete.dialog';
@@ -263,192 +264,148 @@ const UniversityListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading
-                ? Array(pageSize)
-                    .fill(null)
-                    .map((_, i) => (
-                      <tr key={i} className="border-b border-neutral-border-light *:px-3 *:py-3">
-                        {isColVisible('university-sn') && (
-                          <td>
-                            <Skeleton className="h-5 w-6" />
-                          </td>
-                        )}
-                        {isColVisible('university-name') && (
-                          <td>
-                            <Skeleton className="h-5 w-44" />
-                          </td>
-                        )}
-                        {isColVisible('university-education-level') && (
-                          <td>
-                            <Skeleton className="h-5 w-28" />
-                          </td>
-                        )}
-                        {isColVisible('university-location') && (
-                          <td>
-                            <Skeleton className="h-5 w-36" />
-                          </td>
-                        )}
-                        {isColVisible('university-description') && (
-                          <td>
-                            <Skeleton className="h-5 w-36" />
-                          </td>
-                        )}
-                        {isColVisible('university-track-in-report') && (
-                          <td>
-                            <Skeleton className="h-5 w-16" />
-                          </td>
-                        )}
-                        {isColVisible('university-documents') && (
-                          <td>
-                            <Skeleton className="h-5 w-8" />
-                          </td>
-                        )}
-                        <td>
-                          <Skeleton className="h-5 w-8" />
-                        </td>
-                      </tr>
-                    ))
-                : pageItems.flatMap((university, idx) => {
-                    const isExpanded = expandedIds.has(university.id);
-                    const courses = coursesByUniversity.get(university.id) ?? [];
-                    const files = Array.isArray(university.files) ? university.files : [];
-                    const desc = university.description ? university.description.replace(/<[^>]*>/g, '') : null;
+              {isLoading ? (
+                <TableSkeleton columns={visibleColCount} rows={pageSize} />
+              ) : (
+                pageItems.flatMap((university, idx) => {
+                  const isExpanded = expandedIds.has(university.id);
+                  const courses = coursesByUniversity.get(university.id) ?? [];
+                  const files = Array.isArray(university.files) ? university.files : [];
+                  const desc = university.description ? university.description.replace(/<[^>]*>/g, '') : null;
 
-                    return [
-                      <tr
-                        key={university.id}
-                        className={`border-b border-neutral-border-light hover:bg-[#F4F7FA] transition-colors *:px-3 *:py-3 *:text-neutral-dark-grey *:text-b14 cursor-pointer ${
-                          isExpanded ? 'bg-[#F4F7FA]' : ''
-                        }`}
-                        onClick={() => router.push(`/dashboard/university/${university.id}/view`)}
-                      >
-                        {isColVisible('university-sn') && <td>{(page - 1) * pageSize + idx + 1}</td>}
-                        {isColVisible('university-name') && (
-                          <td className="text-b14-500 !text-neutral-black">
-                            <div className="flex items-center gap-2">
-                              <button
-                                className="p-0.5 rounded hover:bg-neutral-border-light text-neutral-in-active-grey flex-shrink-0"
-                                onClick={(e) => toggleExpand(university.id, e)}
-                                aria-label={isExpanded ? 'Collapse courses' : 'Expand courses'}
-                              >
-                                {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                              </button>
-                              <span className="truncate max-w-[200px]">{university.name}</span>
+                  return [
+                    <tr
+                      key={university.id}
+                      className={`border-b border-neutral-border-light hover:bg-[#F4F7FA] transition-colors *:px-3 *:py-3 *:text-neutral-dark-grey *:text-b14 cursor-pointer ${
+                        isExpanded ? 'bg-[#F4F7FA]' : ''
+                      }`}
+                      onClick={() => router.push(`/dashboard/university/${university.id}/view`)}
+                    >
+                      {isColVisible('university-sn') && <td>{(page - 1) * pageSize + idx + 1}</td>}
+                      {isColVisible('university-name') && (
+                        <td className="text-b14-500 !text-neutral-black">
+                          <div className="flex items-center gap-2">
+                            <button
+                              className="p-0.5 rounded hover:bg-neutral-border-light text-neutral-in-active-grey flex-shrink-0"
+                              onClick={(e) => toggleExpand(university.id, e)}
+                              aria-label={isExpanded ? 'Collapse courses' : 'Expand courses'}
+                            >
+                              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                            </button>
+                            <span className="truncate max-w-[200px]">{university.name}</span>
+                          </div>
+                        </td>
+                      )}
+                      {isColVisible('university-education-level') && <td>{university.educationLevel || '-'}</td>}
+                      {isColVisible('university-location') && (
+                        <td className="truncate max-w-[200px]">{university.location || '-'}</td>
+                      )}
+                      {isColVisible('university-description') && (
+                        <td className="truncate max-w-[200px]">{desc || '-'}</td>
+                      )}
+                      {isColVisible('university-track-in-report') && (
+                        <td>{university.trackInReport === null ? '-' : university.trackInReport ? 'TRUE' : 'FALSE'}</td>
+                      )}
+                      {isColVisible('university-documents') && (
+                        <td>
+                          {files.length > 0 ? (
+                            <div className="flex items-center gap-1.5 text-neutral-dark-grey">
+                              <FileText className="h-4 w-4" />
+                              <span className="text-b14">{files.length}</span>
                             </div>
-                          </td>
-                        )}
-                        {isColVisible('university-education-level') && <td>{university.educationLevel || '-'}</td>}
-                        {isColVisible('university-location') && (
-                          <td className="truncate max-w-[200px]">{university.location || '-'}</td>
-                        )}
-                        {isColVisible('university-description') && (
-                          <td className="truncate max-w-[200px]">{desc || '-'}</td>
-                        )}
-                        {isColVisible('university-track-in-report') && (
-                          <td>
-                            {university.trackInReport === null ? '-' : university.trackInReport ? 'TRUE' : 'FALSE'}
-                          </td>
-                        )}
-                        {isColVisible('university-documents') && (
-                          <td>
-                            {files.length > 0 ? (
-                              <div className="flex items-center gap-1.5 text-neutral-dark-grey">
-                                <FileText className="h-4 w-4" />
-                                <span className="text-b14">{files.length}</span>
-                              </div>
-                            ) : (
-                              <span className="text-neutral-in-active-grey">-</span>
-                            )}
-                          </td>
-                        )}
-                        <td onClick={(e) => e.stopPropagation()}>
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open actions menu">
-                                <EllipsisVertical className="h-4 w-4" />
+                          ) : (
+                            <span className="text-neutral-in-active-grey">-</span>
+                          )}
+                        </td>
+                      )}
+                      <td onClick={(e) => e.stopPropagation()}>
+                        <Popover>
+                          <PopoverTrigger asChild>
+                            <Button variant="ghost" size="icon" className="h-8 w-8" aria-label="Open actions menu">
+                              <EllipsisVertical className="h-4 w-4" />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className="w-40 p-1" align="end">
+                            <div className="flex flex-col">
+                              <Button
+                                variant="ghost"
+                                className="justify-start gap-2"
+                                onClick={() => router.push(`/dashboard/university/${university.id}/view`)}
+                              >
+                                <Eye className="h-4 w-4" />
+                                View
                               </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-40 p-1" align="end">
-                              <div className="flex flex-col">
+                              {canUpdate && (
                                 <Button
                                   variant="ghost"
                                   className="justify-start gap-2"
-                                  onClick={() => router.push(`/dashboard/university/${university.id}/view`)}
+                                  onClick={() => router.push(`/dashboard/university/${university.id}/edit`)}
                                 >
-                                  <Eye className="h-4 w-4" />
-                                  View
+                                  <Edit className="h-4 w-4" />
+                                  Edit
                                 </Button>
-                                {canUpdate && (
-                                  <Button
-                                    variant="ghost"
-                                    className="justify-start gap-2"
-                                    onClick={() => router.push(`/dashboard/university/${university.id}/edit`)}
-                                  >
-                                    <Edit className="h-4 w-4" />
-                                    Edit
-                                  </Button>
-                                )}
-                                {canDelete && (
-                                  <DeleteDialog
-                                    trigger={
-                                      <Button
-                                        variant="ghost"
-                                        className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
-                                      >
-                                        <Trash2 className="h-4 w-4" />
-                                        Delete
-                                      </Button>
-                                    }
-                                    title="Delete University"
-                                    description="Are you sure you want to delete this university? This action cannot be undone."
-                                    onConfirm={() => deleteUniversity(university.id)}
-                                  />
-                                )}
-                              </div>
-                            </PopoverContent>
-                          </Popover>
-                        </td>
-                      </tr>,
+                              )}
+                              {canDelete && (
+                                <DeleteDialog
+                                  trigger={
+                                    <Button
+                                      variant="ghost"
+                                      className="justify-start gap-2 text-red-600 hover:text-red-700 w-full"
+                                    >
+                                      <Trash2 className="h-4 w-4" />
+                                      Delete
+                                    </Button>
+                                  }
+                                  title="Delete University"
+                                  description="Are you sure you want to delete this university? This action cannot be undone."
+                                  onConfirm={() => deleteUniversity(university.id)}
+                                />
+                              )}
+                            </div>
+                          </PopoverContent>
+                        </Popover>
+                      </td>
+                    </tr>,
 
-                      ...(isExpanded && courses.length > 0
-                        ? [
-                            <tr key={`${university.id}-courses`} className="border-b border-neutral-border-light">
-                              <td colSpan={visibleColCount} className="px-4 py-3">
-                                <div className="ml-10 bg-white-100 border border-neutral-border-light rounded-xl overflow-hidden">
-                                  <table className="w-full text-sm">
-                                    <thead>
-                                      <tr className="*:py-3 *:px-5 *:text-left *:text-b14-600 text-neutral-dark-grey border-b border-neutral-border-light">
-                                        <th className="w-12">S.N</th>
-                                        <th>Available courses</th>
-                                        <th>Description</th>
+                    ...(isExpanded && courses.length > 0
+                      ? [
+                          <tr key={`${university.id}-courses`} className="border-b border-neutral-border-light">
+                            <td colSpan={visibleColCount} className="px-4 py-3">
+                              <div className="ml-10 bg-white-100 border border-neutral-border-light rounded-xl overflow-hidden">
+                                <table className="w-full text-sm">
+                                  <thead>
+                                    <tr className="*:py-3 *:px-5 *:text-left *:text-b14-600 text-neutral-dark-grey border-b border-neutral-border-light">
+                                      <th className="w-12">S.N</th>
+                                      <th>Available courses</th>
+                                      <th>Description</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {courses.map((course, courseIdx) => (
+                                      <tr key={course.id} className="*:py-3 *:px-5">
+                                        <td className="text-b14 text-neutral-black">{courseIdx + 1}</td>
+                                        <td className="text-b14 text-neutral-black">{course.name}</td>
+                                        <td className="text-b14 text-neutral-dark-grey">{course.description || '-'}</td>
                                       </tr>
-                                    </thead>
-                                    <tbody>
-                                      {courses.map((course, courseIdx) => (
-                                        <tr key={course.id} className="*:py-3 *:px-5">
-                                          <td className="text-b14 text-neutral-black">{courseIdx + 1}</td>
-                                          <td className="text-b14 text-neutral-black">{course.name}</td>
-                                          <td className="text-b14 text-neutral-dark-grey">
-                                            {course.description || '-'}
-                                          </td>
-                                        </tr>
-                                      ))}
-                                    </tbody>
-                                  </table>
-                                </div>
-                              </td>
-                            </tr>,
-                          ]
-                        : []),
-                    ];
-                  })}
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                            </td>
+                          </tr>,
+                        ]
+                      : []),
+                  ];
+                })
+              )}
 
               {!isLoading && pageItems.length === 0 && (
-                <tr>
-                  <td colSpan={visibleColCount} className="py-12 text-center">
-                    <EmptyUniversityIcon />
-                  </td>
-                </tr>
+                <TableEmptyRow
+                  colSpan={visibleColCount}
+                  icon={<EmptyUniversityIcon />}
+                  title="No universities yet"
+                  description="Universities you add will appear here."
+                />
               )}
             </tbody>
           </table>

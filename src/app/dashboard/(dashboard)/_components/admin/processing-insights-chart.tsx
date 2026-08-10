@@ -4,6 +4,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useGetProcessingInsights } from '@/query/get-analytics';
 import ChartCard from '../shared/chart-card';
+import { EmptyState } from '@/components/common/empty-state';
 
 const ProcessingInsightsChart = () => {
   const { data, isLoading } = useGetProcessingInsights();
@@ -42,9 +43,12 @@ const ProcessingInsightsChart = () => {
   return (
     <ChartCard title="Processing Time (Days)" isLoading={isLoading}>
       {chartData.length === 0 ? (
-        <div className="h-[300px] flex items-center justify-center text-sm text-content-subtitle">
-          No insight data available
-        </div>
+        <EmptyState
+          size="sm"
+          className="h-[300px]"
+          title="No insight data yet"
+          description="Processing times will appear here once applications are completed."
+        />
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>

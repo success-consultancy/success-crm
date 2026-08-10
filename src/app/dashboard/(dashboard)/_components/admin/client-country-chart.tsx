@@ -4,6 +4,7 @@ import React from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useGetClientCountry } from '@/query/get-analytics';
 import ChartCard from '../shared/chart-card';
+import { EmptyState } from '@/components/common/empty-state';
 
 const COLORS = {
   lead: '#007bff',
@@ -58,9 +59,12 @@ const ClientCountryChart = () => {
   return (
     <ChartCard title="Clients by Country" isLoading={isLoading}>
       {chartData.length === 0 ? (
-        <div className="h-[300px] flex items-center justify-center text-sm text-content-subtitle">
-          No data available
-        </div>
+        <EmptyState
+          size="sm"
+          className="h-[300px]"
+          title="No client data yet"
+          description="Clients will appear here once they are added."
+        />
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} layout="vertical" margin={{ left: 20, right: 12, top: 4, bottom: 4 }}>

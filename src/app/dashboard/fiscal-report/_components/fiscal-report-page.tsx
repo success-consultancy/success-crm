@@ -11,6 +11,7 @@ import { useGetFiscalReport } from '@/query/get-fiscal-report';
 import { useUpdateFiscalReport } from '@/mutations/fiscal-report/update-fiscal-report';
 import { FiscalReportRow } from '@/types/response-types/fiscal-report-response';
 import { usePermissions } from '@/hooks/use-permissions';
+import { Skeleton } from '@/components/ui/skeleton';
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -40,12 +41,6 @@ function computeKpi(data: ReportRow[]) {
   const totalActual = data.reduce((sum, r) => sum + (r.actual.total ?? 0), 0);
   const achievementRate = totalTarget > 0 ? Number(((totalActual / totalTarget) * 100).toFixed(1)) : 0;
   return { totalTarget, totalActual, achievementRate };
-}
-
-// ─── Skeleton ─────────────────────────────────────────────────────────────────
-
-function Skeleton({ className }: { className?: string }) {
-  return <div className={`animate-pulse bg-gray-100 rounded ${className ?? ''}`} />;
 }
 
 function KpiSkeleton() {
@@ -110,15 +105,9 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
     [allReports, prevFiscalYear],
   );
 
-  const serverRows: ReportRow[] = React.useMemo(
-    () => (report?.data ?? []).map(toReportRow),
-    [report],
-  );
+  const serverRows: ReportRow[] = React.useMemo(() => (report?.data ?? []).map(toReportRow), [report]);
 
-  const prevServerRows: ReportRow[] = React.useMemo(
-    () => (prevReport?.data ?? []).map(toReportRow),
-    [prevReport],
-  );
+  const prevServerRows: ReportRow[] = React.useMemo(() => (prevReport?.data ?? []).map(toReportRow), [prevReport]);
 
   React.useEffect(() => {
     if (!isEdit) {
@@ -133,7 +122,11 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   }, [search, isEdit, editData, serverRows]);
 
   const { totalTarget, totalActual, achievementRate } = computeKpi(serverRows);
-  const { totalTarget: prevTotalTarget, totalActual: prevTotalActual, achievementRate: prevAchievementRate } = computeKpi(prevServerRows);
+  const {
+    totalTarget: prevTotalTarget,
+    totalActual: prevTotalActual,
+    achievementRate: prevAchievementRate,
+  } = computeKpi(prevServerRows);
 
   const targetChange = prevTotalTarget > 0 ? Math.round(((totalTarget - prevTotalTarget) / prevTotalTarget) * 100) : 0;
   const actualChange = prevTotalActual > 0 ? Math.round(((totalActual - prevTotalActual) / prevTotalActual) * 100) : 0;
@@ -151,15 +144,15 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
       prev.map((row) =>
         row.name === name
           ? {
-            ...row,
-            target: {
-              ...row.target,
-              [monthKey]: value,
-              total: Object.entries({ ...row.target, [monthKey]: value })
-                .filter(([k]) => k !== 'total')
-                .reduce((s, [, v]) => s + (Number(v) || 0), 0),
-            },
-          }
+              ...row,
+              target: {
+                ...row.target,
+                [monthKey]: value,
+                total: Object.entries({ ...row.target, [monthKey]: value })
+                  .filter(([k]) => k !== 'total')
+                  .reduce((s, [, v]) => s + (Number(v) || 0), 0),
+              },
+            }
           : row,
       ),
     );
@@ -179,13 +172,16 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
         };
       })
       .sort((a, b) => a.id - b.id);
-    updateReport({ id: report.id, data: payload }, {
-      onSuccess: () => {
-        // Query refetch is awaited inside the mutation's onSuccess,
-        // so by the time this callback runs, serverRows is already up-to-date.
-        setIsEdit(false);
+    updateReport(
+      { id: report.id, data: payload },
+      {
+        onSuccess: () => {
+          // Query refetch is awaited inside the mutation's onSuccess,
+          // so by the time this callback runs, serverRows is already up-to-date.
+          setIsEdit(false);
+        },
       },
-    });
+    );
   };
 
   const handleCancel = () => {
@@ -196,10 +192,21 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   const handleExport = () => {
     if (!serverRows.length) return;
     const months = [
-      ...['jul', 'aug', 'sep', 'oct', 'nov', 'dec'].map((k) => ({ key: `${k}${initialYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${initialYear}` })),
-      ...['jan', 'feb', 'mar', 'apr', 'may', 'jun'].map((k) => ({ key: `${k}${finalYear}`, label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${finalYear}` })),
+      ...['jul', 'aug', 'sep', 'oct', 'nov', 'dec'].map((k) => ({
+        key: `${k}${initialYear}`,
+        label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${initialYear}`,
+      })),
+      ...['jan', 'feb', 'mar', 'apr', 'may', 'jun'].map((k) => ({
+        key: `${k}${finalYear}`,
+        label: `${k.charAt(0).toUpperCase()}${k.slice(1)}-${finalYear}`,
+      })),
     ];
-    const header = ['Name', ...months.flatMap((m) => [`${m.label} Target`, `${m.label} Actual`]), 'Total Target', 'Total Actual'];
+    const header = [
+      'Name',
+      ...months.flatMap((m) => [`${m.label} Target`, `${m.label} Actual`]),
+      'Total Target',
+      'Total Actual',
+    ];
     const rows = serverRows.map((row) => [
       row.name,
       ...months.flatMap((m) => [row.target[m.key] ?? 0, row.actual[m.key] ?? 0]),

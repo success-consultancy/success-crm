@@ -12,7 +12,8 @@ import { Input } from '@/components/ui/input';
 import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import DeleteDialog from '@/components/organisms/delete.dialog';
-import { Skeleton } from '@/components/ui/skeleton';
+import TableSkeleton from '@/components/organisms/table-skeleton';
+import TableEmptyRow from '@/components/common/table-empty-row';
 import { useGetVisaConst, IVisaConst } from '@/query/get-visa';
 import { useAddVisaConst } from '@/mutations/visa-const/add-visa-const';
 import { useEditVisaConst } from '@/mutations/visa-const/edit-visa-const';
@@ -179,95 +180,77 @@ const VisaListPage = () => {
               </tr>
             </thead>
             <tbody>
-              {isLoading
-                ? Array(8)
-                    .fill(null)
-                    .map((_, i) => (
-                      <tr key={i} className="border-b border-gray-50 *:px-3 *:py-2.5">
-                        <td>
-                          <Skeleton className="h-5 w-6" />
-                        </td>
-                        <td>
-                          <Skeleton className="h-5 w-56" />
-                        </td>
-                        <td>
-                          <Skeleton className="h-5 w-32" />
-                        </td>
-                        <td>
-                          <Skeleton className="h-5 w-32" />
-                        </td>
-                        <td>
-                          <Skeleton className="h-5 w-12" />
-                        </td>
-                      </tr>
-                    ))
-                : pageItems.map((visa, idx) => {
-                    const isEditingRow = editingId === visa.id;
-                    return isEditingRow ? (
-                      <tr key={visa.id} className="border-b border-gray-50 bg-muted/40 *:px-2 *:py-2">
-                        <td className="px-3 text-sm">{(page - 1) * pageSize + idx + 1}</td>
-                        <td>
-                          <Input
-                            placeholder="Visa type"
-                            value={form.visaType}
-                            onChange={(e) => setForm({ visaType: e.target.value })}
-                            className="h-9 text-sm"
-                            autoFocus
-                          />
-                        </td>
-                        <td colSpan={2} />
-                        <td>
-                          <div className="flex items-center gap-2 justify-end">
-                            <Button size="sm" onClick={handleSubmit} disabled={!form.visaType.trim() || isEditing}>
-                              Save
-                            </Button>
-                            <Button size="sm" variant="outline" onClick={cancelForm}>
-                              Cancel
-                            </Button>
-                          </div>
-                        </td>
-                      </tr>
-                    ) : (
-                      <tr
-                        key={visa.id}
-                        className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-dark-grey last:border-none"
-                      >
-                        <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
-                        <td className="font-medium truncate max-w-[400px]">{visa.visaType}</td>
-                        <td className="whitespace-nowrap">{format(new Date(visa.createdAt), 'dd/MM/yyyy HH:mm')}</td>
-                        <td className="whitespace-nowrap">{format(new Date(visa.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
-                        <td className="text-right">
-                          <div className="flex items-center justify-end gap-1">
-                            {canUpdate && (
-                              <button
-                                className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                                onClick={() => openEdit(visa)}
-                                aria-label="Edit visa type"
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </button>
-                            )}
-                            {canDelete && (
-                              <DeleteDialog
-                                trigger={
-                                  <button
-                                    className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
-                                    aria-label="Delete visa type"
-                                  >
-                                    <Trash2 className="h-4 w-4" />
-                                  </button>
-                                }
-                                title="Delete visa type"
-                                description="Are you sure you want to delete this visa type?"
-                                confirmText="Yes, delete"
-                                onConfirm={() => deleteVisa(visa.id)}
-                              />
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    );
-                  })}
+              {isLoading ? (
+                <TableSkeleton columns={5} rows={pageSize} />
+              ) : (
+                pageItems.map((visa, idx) => {
+                  const isEditingRow = editingId === visa.id;
+                  return isEditingRow ? (
+                    <tr key={visa.id} className="border-b border-gray-50 bg-muted/40 *:px-2 *:py-2">
+                      <td className="px-3 text-sm">{(page - 1) * pageSize + idx + 1}</td>
+                      <td>
+                        <Input
+                          placeholder="Visa type"
+                          value={form.visaType}
+                          onChange={(e) => setForm({ visaType: e.target.value })}
+                          className="h-9 text-sm"
+                          autoFocus
+                        />
+                      </td>
+                      <td colSpan={2} />
+                      <td>
+                        <div className="flex items-center gap-2 justify-end">
+                          <Button size="sm" onClick={handleSubmit} disabled={!form.visaType.trim() || isEditing}>
+                            Save
+                          </Button>
+                          <Button size="sm" variant="outline" onClick={cancelForm}>
+                            Cancel
+                          </Button>
+                        </div>
+                      </td>
+                    </tr>
+                  ) : (
+                    <tr
+                      key={visa.id}
+                      className="border-b border-gray-50 hover:bg-muted transition-colors *:px-3 *:py-2.5 *:text-neutral-dark-grey last:border-none"
+                    >
+                      <td className="text-sm">{(page - 1) * pageSize + idx + 1}</td>
+                      <td className="font-medium truncate max-w-[400px]">{visa.visaType}</td>
+                      <td className="whitespace-nowrap">{format(new Date(visa.createdAt), 'dd/MM/yyyy HH:mm')}</td>
+                      <td className="whitespace-nowrap">{format(new Date(visa.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
+                      <td className="text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {canUpdate && (
+                            <button
+                              className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                              onClick={() => openEdit(visa)}
+                              aria-label="Edit visa type"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </button>
+                          )}
+                          {canDelete && (
+                            <DeleteDialog
+                              trigger={
+                                <button
+                                  className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                  aria-label="Delete visa type"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </button>
+                              }
+                              title="Delete visa type"
+                              description="Are you sure you want to delete this visa type?"
+                              confirmText="Yes, delete"
+                              onConfirm={() => deleteVisa(visa.id)}
+                            />
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
 
               {showAddForm && (
                 <tr className="border-t border-gray-100 *:px-2 *:py-2">
@@ -296,11 +279,11 @@ const VisaListPage = () => {
               )}
 
               {!isLoading && pageItems.length === 0 && !showAddForm && editingId === null && (
-                <tr>
-                  <td colSpan={5} className="py-12 text-center text-gray-400 text-sm">
-                    No visa types found
-                  </td>
-                </tr>
+                <TableEmptyRow
+                  colSpan={5}
+                  title="No visa types found"
+                  description="Visa types you add will appear here."
+                />
               )}
             </tbody>
           </table>

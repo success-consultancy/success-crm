@@ -1,18 +1,27 @@
 import { cn } from '@/lib/utils';
 import * as React from 'react';
-import { Loader2 } from 'lucide-react';
+import { Spinner } from '@/components/common/spinner';
 
 interface ILoadingProps {
   className?: string;
   children?: React.ReactNode;
   isLoading?: boolean;
+  /** Fills the viewport instead of the surrounding section. */
+  fullScreen?: boolean;
 }
 const loader = (props: ILoadingProps) => {
   return (
-    <div className={cn(['w-full h-screen grid place-items-center', props.className])} suppressHydrationWarning>
-      <div>
-        <Loader2 className="w-20 h-20" />
-        <p className="animate-pulse text-b2 mt-6 text-center"> Loading...</p>
+    <div
+      className={cn([
+        'w-full grid place-items-center',
+        props.fullScreen ? 'h-screen' : 'min-h-[300px]',
+        props.className,
+      ])}
+      suppressHydrationWarning
+    >
+      <div className="flex flex-col items-center">
+        <Spinner size="lg" />
+        <p className="mt-6 text-center text-b14 text-neutral-light-grey">Loading...</p>
       </div>
     </div>
   );
