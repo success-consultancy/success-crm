@@ -12,38 +12,32 @@ interface Segment extends OutcomeSegment {
   color: string;
 }
 
-const FALLBACK_COLOR = '#9CA3AF';
-
-// VisaApplicant.status → color, so a status keeps its color regardless of which other statuses appear
-const VISA_COLORS: Record<string, string> = {
-  New: '#9CA3AF',
-  'Collecting Docs': '#5A98FE',
-  'Ready To Submit': '#7491ED',
-  Submitted: '#0FDFAE',
-  'Info Requested': '#FFDE39',
-  Approved: '#22C55E',
-  Withdrawn: '#F97316',
-  Refused: '#FF5B77',
-  Discontinued: '#EF4444',
-  'Follow Up': '#A855F7',
+// Visa outcomes only show these 3 statuses, renamed for display.
+const VISA_STATUS_MAP: Record<string, { label: string; color: string }> = {
+  Pending: { label: 'Inprogress', color: '#5A98FE' },
+  'visa granted': { label: 'Granted', color: '#22C55E' },
+  Rejected: { label: 'Refused', color: '#FF5B77' },
 };
 
-// Student.status → color, so a status keeps its color regardless of which other statuses appear
-const STUDENT_COLORS: Record<string, string> = {
-  New: '#9CA3AF',
-  Checklist: '#5A98FE',
-  'Application Ready': '#7491ED',
-  'Application Submitted': '#0FDFAE',
-  'Offer Received': '#7EDE7E',
-  'Waiting Payment': '#FFDE39',
-  'Fee Paid': '#22C55E',
-  'Coe Received': '#A855F7',
-  Withdrawn: '#F97316',
-  Discontinued: '#F75656',
+const visaSegments = (segments: OutcomeSegment[] | undefined): Segment[] =>
+  (segments ?? [])
+    .filter((s) => s.label in VISA_STATUS_MAP)
+    .map((s) => ({ ...s, label: VISA_STATUS_MAP[s.label].label, color: VISA_STATUS_MAP[s.label].color }));
+
+// Student outcomes only show these 4 statuses, renamed for display.
+const STUDENT_STATUS_MAP: Record<string, { label: string; color: string }> = {
+  'Application Submitted': { label: 'Application Submitted', color: '#7491ED' },
+  'Offer Received': { label: 'Offer Received', color: '#7EDE7E' },
+  'Fee Paid': { label: 'Fee Paid', color: '#FFDE39' },
+  'Canceled': { label: 'Withdrawn', color: '#F75656' },
 };
 
-const withColors = (segments: OutcomeSegment[] | undefined, colors: Record<string, string>): Segment[] =>
-  (segments ?? []).map((s) => ({ ...s, color: colors[s.label] ?? FALLBACK_COLOR }));
+const studentSegments = (segments: OutcomeSegment[] | undefined): Segment[] =>
+  Object.entries(STUDENT_STATUS_MAP).map(([apiLabel, { label, color }]) => ({
+    label,
+    color,
+    value: segments?.find((s) => s.label === apiLabel)?.value ?? 0,
+  }));
 
 const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: string; segments: Segment[] }) => {
   const total = segments.reduce((sum, s) => sum + s.value, 0);
@@ -88,14 +82,14 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
 const OutcomeDonuts = () => {
   const { data: visaOutcomes } = useGetVisaOutcomes();
   const { data: studentOutcomes } = useGetStudentOutcomes();
-
+  
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-      <OutcomeDonutCard title="Visa outcomes" href={ROUTES.VISA} segments={withColors(visaOutcomes, VISA_COLORS)} />
+      <OutcomeDonutCard title="Visa outcomes" href={ROUTES.VISA} segments={visaSegments(visaOutcomes)} />
       <OutcomeDonutCard
         title="Students outcomes"
         href={ROUTES.EDUCATION}
-        segments={withColors(studentOutcomes, STUDENT_COLORS)}
+        segments={studentSegments(studentOutcomes)}
       />
     </div>
   );
