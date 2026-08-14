@@ -208,8 +208,14 @@ const AgreementPage = () => {
         onBulkDelete={canDelete ? handleDeleteBulk : undefined}
         handleDateRangeApply={handleDateRangeApply}
         onRowClick={handleRowClick}
-        bulkDeleteTitle="Delete Agreements"
-        bulkDeleteDescription="Are you sure you want to delete the selected agreements? This action cannot be undone."
+        bulkDeleteTitle="Delete these agreements"
+        bulkDeleteDescription={
+          <div className="flex flex-col gap-3">
+            <p>Are you sure you want to delete the selected agency agreements?</p>
+            <p>Deleting these agreements will remove all associated data, including details, interactions and notes.</p>
+          </div>
+        }
+        bulkDeleteConfirmText="Yes, delete"
       />
     </Container>
   );

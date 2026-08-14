@@ -251,8 +251,14 @@ export const useAgreementColumn = (
                         Delete
                       </Button>
                     }
-                    title="Delete Agreement"
-                    description="Are you sure you want to delete this agreement? This action cannot be undone."
+                    title="Delete this agreement"
+                    description={
+                      <div className="flex flex-col gap-3">
+                        <p>Are you sure you want to delete this agency agreement?</p>
+                        <p>Deleting this agreement will remove all associated data, including details, interactions and notes.</p>
+                      </div>
+                    }
+                    confirmText="Yes, delete"
                     onConfirm={() => handleDelete(row.original.id)}
                   />
                 )}

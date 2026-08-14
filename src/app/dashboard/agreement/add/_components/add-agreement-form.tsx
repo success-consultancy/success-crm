@@ -350,9 +350,12 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         </div>
 
         {/* Submit Button */}
-        <FormActions>
+        <FormActions sticky>
           <Button type="submit" loading={isPending}>
             {isEditMode ? 'Save Changes' : 'Add Agreement'}
+          </Button>
+          <Button type="button" variant="outline" onClick={() => router.back()}>
+            Cancel
           </Button>
         </FormActions>
       </form>
