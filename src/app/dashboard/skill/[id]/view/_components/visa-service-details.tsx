@@ -168,7 +168,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FormField
               control={control}
               name="currentVisa"
@@ -319,7 +319,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="Current visa" value={skillAssessment.currentVisa || '-'} />
           <InfoField title="Visa expiry date" value={formatDateDisplay(skillAssessment.visaExpiry)} />
           <InfoField title="Due date" value={formatDateDisplay(skillAssessment.dueDate)} />

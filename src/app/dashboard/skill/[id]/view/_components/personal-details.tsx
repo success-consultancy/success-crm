@@ -130,7 +130,7 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput
               label="Middle name (optional)"
@@ -236,7 +236,7 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="First name" value={skillAssessment.firstName} />
           <InfoField title="Middle name" value={skillAssessment.middleName || 'N/A'} />
           <InfoField title="Last name" value={skillAssessment.lastName} />

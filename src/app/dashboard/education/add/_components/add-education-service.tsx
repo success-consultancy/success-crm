@@ -166,7 +166,7 @@ export function AddEducationService({ userId }: Props) {
       <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <TextInput label="First Name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
@@ -299,7 +299,7 @@ export function AddEducationService({ userId }: Props) {
                 placeholder="Select course"
               />
             </div>
-            <div className="grid grid-cols-3 gap-5 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-6">
               <div className="space-y-2">
                 <Controller
                   name="startDate"
@@ -355,7 +355,7 @@ export function AddEducationService({ userId }: Props) {
         {/* Fee Structure */}
         <FormAccordion value="item-3" title="Fee Structure">
           <>
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <TextInput
                 label="Plan Name"
                 {...register('courseFee.planname')}
@@ -416,7 +416,7 @@ export function AddEducationService({ userId }: Props) {
         {/* Accounts */}
         <FormAccordion value="item-4" title="Accounts">
           <>
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <TextInput disabled label="Plan Name" {...register('courseFee.accounts.planname')} />
               <TextInput label="Amount" disabled {...register('courseFee.accounts.amount')} />
               <div className="space-y-2">

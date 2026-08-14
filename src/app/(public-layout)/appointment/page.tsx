@@ -62,10 +62,10 @@ const AppointmentPage = () => {
 
       {/* Content area below fixed nav */}
       <div
-        className={`flex justify-center algin-start items-start py-18`}
+        className={`flex justify-center algin-start items-start py-18 px-4`}
       >
         <div
-          className={`w-[916px] bg-white rounded-[16px] ${isShortStep ? 'my-4' : 'mt-4 mb-8'
+          className={`w-full max-w-[916px] bg-white rounded-[16px] ${isShortStep ? 'my-4' : 'mt-4 mb-8'
             }`}
         >
           {/* Stepper — hidden on success step */}

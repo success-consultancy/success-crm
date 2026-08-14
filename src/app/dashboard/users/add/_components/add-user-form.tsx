@@ -199,7 +199,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
 
       <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['basic']}>
         <FormAccordion value="basic" title="Basic Information">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <FormField
               control={control}
               name="firstName"

@@ -98,7 +98,7 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <SelectField
               control={control}
               name="tribunalStatus"
@@ -165,7 +165,7 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <StatusInfoField title="Tribunal status" status={visa.tribunalStatus} />
           <InfoField title="Tribunal date submitted" value={fmtDate(visa.tribunalSubmittedDate)} />
           <InfoField title="Hearing date" value={fmtDate(visa.hearingDate)} />

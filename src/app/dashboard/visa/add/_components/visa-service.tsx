@@ -211,7 +211,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
       <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1', 'item-2', 'item-4', 'item-6']}>
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal details">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
@@ -301,7 +301,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
 
         {/* Visa Information */}
         <FormAccordion value="item-2" title="Visa Information">
-          <div className="grid grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             <FormField
               control={control}
               name="currentVisa"
@@ -563,7 +563,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         {/* Accounts — inline form on add, existing accounts panel on edit */}
         {isAdd ? (
           <FormAccordion value="item-4" title="Accounts">
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <TextInput
                 label="Fee payment plan"
                 {...register('accounts.planname')}

@@ -338,7 +338,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['item-1']}>
           {/* Personal Details */}
           <FormAccordion value="item-1" title="Personal details">
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <TextInput label="First name" required {...register('firstName')} error={errors.firstName?.message} />
               <TextInput
                 label="Middle name (optional)"
@@ -453,7 +453,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
 
           {/* Visa & Service Details */}
           <FormAccordion value="item-2" title="Visa & service details">
-            <div className="grid grid-cols-3 gap-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <FormField
                 control={control}
                 name="currentVisa"
@@ -612,7 +612,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           {/* Accounts */}
           {formState === FORM_STATE.ADD && (
             <FormAccordion value="item-3" title="Accounts">
-              <div className="grid grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                 <TextInput
                   label="Fee payment plan"
                   {...register('payment')}

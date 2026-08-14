@@ -14,7 +14,7 @@ const TaskSheet = (props: Props) => {
       <div>
         <DocumentText onClick={() => setIsOpen(true)} className="w-5 h-5 cursor-pointer" />
       </div>
-      <SheetWrapper isOpen={isOpen} setIsOpen={setIsOpen} title="Tasks" className="!w-[800px]">
+      <SheetWrapper isOpen={isOpen} setIsOpen={setIsOpen} title="Tasks" className="!w-full sm:!w-[85vw] lg:!w-[800px]">
         <div>
           <div></div>
           <div></div>

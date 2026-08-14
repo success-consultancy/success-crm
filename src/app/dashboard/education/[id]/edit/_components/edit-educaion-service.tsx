@@ -131,7 +131,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
       >
         {/* Personal Details */}
         <FormAccordion value="item-1" title="Personal Details">
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First Name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput label="Middle Name" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last Name" {...register('lastName')} error={errors.lastName?.message} />
@@ -264,7 +264,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                 placeholder="Select course"
               />
             </div>
-            <div className="grid grid-cols-3 gap-6 mt-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-6">
               <div className="space-y-2">
                 <Controller
                   name="startDate"

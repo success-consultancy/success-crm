@@ -347,13 +347,13 @@ const TableComponent = <TData, TValue>({
     <TableContextProvider state={{ rowSelectionState, isLoading: isLoading, hideColumn }}>
       <div className={cn(['flex flex-col p-4 bg-white-100 rounded-xl border border-gray-50 h-full', className])}>
         {showHeaderSection && (
-          <div className="flex w-full items-center justify-between pb-5 gap-5">
-            <div className="flex gap-2">
+          <div className="flex w-full flex-wrap items-center justify-between pb-5 gap-5">
+            <div className="flex flex-wrap gap-2">
               <TableSearchInput searchParamField={searchKey as string} placeholder={`Search data here`} />
               <DateRangePicker onApply={handleDateRangeApply || (() => {})} />
               {extraFilters}
             </div>
-            <div className="flex items-center gap-[14px]">
+            <div className="flex flex-wrap items-center gap-[14px]">
               <ColumnSelector table={table} storageKey={storageKey} />
               {topRightSection}
             </div>

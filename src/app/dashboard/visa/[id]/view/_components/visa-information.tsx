@@ -149,7 +149,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FormField
               control={control}
               name="currentVisa"
@@ -368,7 +368,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="Current visa" value={visa.currentVisa || '-'} />
           <InfoField title="Proposed visa" value={visa.proposedVisa || '-'} />
           <InfoField title="Sponsor name" value={visa.sponsorName || '-'} />

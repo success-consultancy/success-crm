@@ -19,7 +19,7 @@ type Props = {
 const ProtectedLayout = ({ children }: Props) => {
   const router = useRouter();
   const { data: user, isLoading, isError } = useGetMe();
-  const { isCollapsed } = useSidebarStore();
+  const { isCollapsed, toggleSidebar } = useSidebarStore();
 
   useEffect(() => {
     if (!isLoading && (isError || !user)) {
@@ -45,14 +45,29 @@ const ProtectedLayout = ({ children }: Props) => {
     return null;
   }
 
-  // Dynamic margin-left based on sidebar collapsed state
-  const contentMargin = isCollapsed ? 'ml-16' : 'ml-64';
+  // Dynamic margin-left based on sidebar collapsed state. Below the `lg`
+  // breakpoint (tablet and under) the sidebar becomes an overlay instead of
+  // pushing content — a full 256px rail permanently eating the viewport is
+  // fine on desktop but leaves too little room for tables/forms on a tablet,
+  // so content always sits at the collapsed-rail offset there and an expanded
+  // sidebar floats on top of it instead.
+  const contentMargin = isCollapsed ? 'ml-16' : 'ml-16 lg:ml-64';
 
   return (
     // Lock the shell to the viewport so only the inner content area scrolls —
     // otherwise the window/body scrolls too, giving a double scrollbar (CRM-178).
     <div className="flex h-screen overflow-hidden">
       <AdminSidebar />
+
+      {/* Backdrop: only present when the sidebar is expanded as a tablet
+          overlay (below `lg`); tapping it collapses the sidebar again. */}
+      {!isCollapsed && (
+        <div
+          className="lg:hidden fixed inset-0 z-40 bg-black/30"
+          onClick={toggleSidebar}
+          aria-hidden="true"
+        />
+      )}
 
       <div className="flex flex-col grow overflow-hidden h-screen">
         <div className="w-full sticky top-0 z-10">

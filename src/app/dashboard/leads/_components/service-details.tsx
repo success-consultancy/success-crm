@@ -22,7 +22,7 @@ const serviceDetails = {
 const ServiceDetails = (props: Props) => {
   return (
     <SectionWrapper title="Service details">
-      <div className="w-full grid grid-cols-3 gap-5">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {Object.entries(serviceDetails).map(([key, value]) => {
           const label = ServiceDetailsKeys[key as keyof typeof ServiceDetailsKeys] ?? key;
 

@@ -132,7 +132,7 @@ const ViewUniversityPage = ({ id }: Props) => {
             />
           </div>
         </div>
-        <div className="px-6 py-5 grid grid-cols-3 gap-x-6 gap-y-5">
+        <div className="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-5">
           <InfoField title="University name" value={university.name} />
           <InfoField title="Group" value={university.educationLevel || '-'} />
           <InfoField title="Location" value={university.location || '-'} />

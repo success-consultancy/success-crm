@@ -114,7 +114,7 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
             <TextInput
               label="Middle name (optional)"
@@ -206,7 +206,7 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="First name" value={visa.firstName} />
           <InfoField title="Middle name" value={visa.middleName || 'N/A'} />
           <InfoField title="Last name" value={visa.lastName} />

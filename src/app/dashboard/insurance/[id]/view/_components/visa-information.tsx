@@ -127,7 +127,7 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
     >
       {isEditing ? (
         <form onSubmit={handleSave}>
-          <div className="grid grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <FormField
               control={control}
               name="currentVisa"
@@ -263,7 +263,7 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
           </div>
         </form>
       ) : (
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="Current visa" value={insurance.currentVisa || '-'} />
           <InfoField title="Visa expiry date" value={fmtDate(insurance.visaExpiry)} />
           <InfoField title="Due date" value={fmtDate(insurance.dueDate)} />

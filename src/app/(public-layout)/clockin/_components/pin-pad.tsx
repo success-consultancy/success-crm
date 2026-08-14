@@ -44,7 +44,7 @@ const PinPad = ({ pin, setPin, length = 4, error }: Props) => {
       </div>
 
       {/* Keypad */}
-      <div className="grid grid-cols-3 gap-3 w-full max-w-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full max-w-xs">
         {['1', '2', '3', '4', '5', '6', '7', '8', '9'].map((d) => (
           <KeyButton key={d} onClick={() => handleDigit(d)}>
             {d}

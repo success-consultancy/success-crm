@@ -135,7 +135,7 @@ const ViewAgreementPage = ({ id }: Props) => {
             />
           </div>
         </div>
-        <div className="p-6 grid grid-cols-3 gap-6">
+        <div className="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           <InfoField title="ID" value={String(agreement.id)} />
           <InfoField title="University name" value={agreement.university?.name || '-'} />
           <InfoField title="Type" value={agreement.type || '-'} />

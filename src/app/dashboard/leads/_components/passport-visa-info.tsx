@@ -24,7 +24,7 @@ const passportVisaInfo = {
 const PassportVisaInfo = (props: Props) => {
   return (
     <SectionWrapper title="Passport & visa info">
-      <div className="w-full grid grid-cols-3 gap-5">
+      <div className="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
         {Object.entries(passportVisaInfo).map(([key, value]) => {
           const label = PassportVisaKeys[key as keyof typeof PassportVisaKeys] ?? key;
 

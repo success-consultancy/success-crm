@@ -15,8 +15,7 @@ const AdminHeader = () => {
       <div className="flex items-center justify-between w-full">
         <div
           id="dashboard-header"
-          className="flex items-center transition-all duration-300"
-          style={{ paddingLeft: isCollapsed ? '64px' : '256px' }}
+          className={`flex items-center transition-all duration-300 ${isCollapsed ? 'pl-16' : 'pl-16 lg:pl-64'}`}
         />
 
         <div className="flex items-center gap-4">
