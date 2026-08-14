@@ -25,7 +25,7 @@ import { Separator } from '@/components/ui/separator';
 import { useMoveLead, MoveServiceId } from '@/hooks/use-move-lead';
 
 // Tab Config
-const TAB_CONFIG = [
+let TAB_CONFIG = [
   { key: 'all_leads', label: 'All Leads' },
   { key: 'new_leads', label: 'New Leads' },
   { key: 'qualified_leads', label: 'Qualified leads' },
@@ -83,6 +83,15 @@ const Leads = () => {
   const { searchParams, setParams } = useSearchParams();
 
   const currentTab = searchParams.get('tab') || 'all_leads';
+
+  if (data?.count) {
+    TAB_CONFIG = TAB_CONFIG.map((tab) => {
+      if (tab.key === currentTab) {
+        return { ...tab, count: data.count };
+      }
+      return tab;
+    });
+  }
 
   const handleTabChange = (tabKey: string) => {
     setParams([{ name: 'tab', value: tabKey }]);

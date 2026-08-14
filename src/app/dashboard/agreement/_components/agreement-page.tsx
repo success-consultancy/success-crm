@@ -90,7 +90,7 @@ const AgreementPage = () => {
   };
 
   const TAB_CONFIG = BASE_TAB_CONFIG.map((tab) => {
-    if (tab.key === 'all' && data?.count) {
+    if (tab.key === currentTab && data?.count) {
       return { ...tab, count: data.count };
     }
     return tab;

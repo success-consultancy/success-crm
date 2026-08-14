@@ -8,6 +8,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover
 import { Checkbox } from '@/components/ui/checkbox';
 import { Command, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command';
 import { useToastContext } from '@/context/toast-context';
+import { cn } from '@/lib/utils';
 
 const KNOWN_ID_PREFIXES = [
   'lead',
@@ -146,10 +147,16 @@ export function ColumnSelector<TData>({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger className="w-full h-9 px-3 border rounded-md" asChild>
-        <div className="flex items-center gap-2 w-full text-b14-500">
-          <span className="grow text-left">{`${title}: ${selected.size} selected`}</span>
-          <ChevronDown className="size-4 shrink-0" />
+      <PopoverTrigger
+        className={cn(
+          'h-9 px-3 border rounded-md shrink-0',
+          open ? 'border-primary ring-1 ring-primary' : 'border-neutral-border/60',
+        )}
+        asChild
+      >
+        <div className="flex items-center gap-2 text-b14-500 whitespace-nowrap">
+          <span className="text-left">{`${title}: ${selected.size} selected`}</span>
+          <ChevronDown className={cn('size-4 shrink-0 transition-transform', open && 'rotate-180')} />
         </div>
       </PopoverTrigger>
 

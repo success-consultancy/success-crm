@@ -224,7 +224,7 @@ const UniversityListPage = () => {
             </div>
             <Separator orientation="vertical" className="h-6 bg-neutral-border" />
             <div className="flex items-center gap-2">
-              <Button variant="outline" onClick={handleExport} className="h-9 text-b14-600  border-neutral-border">
+              <Button variant="outline" onClick={handleExport} className="h-9 text-b14-600">
                 Export
               </Button>
               {canCreate && (

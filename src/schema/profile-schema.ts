@@ -20,8 +20,8 @@ export const ProfileSchema = z.object({
 });
 
 export const PasswordChangeSchema = z.object({
-  newPassword: z.string().min(1, { message: 'New password is required' }),
-  confirmPassword: z.string().min(1, { message: 'Confirm password is required' }),
+  currentPassword: z.string().min(1, { message: 'Current password is required' }),
+  newPassword: z.string().min(8, { message: 'Minimum 8 characters' }),
 });
 
 export type ProfileSchemaType = z.infer<typeof ProfileSchema>;

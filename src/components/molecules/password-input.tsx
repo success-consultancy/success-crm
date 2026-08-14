@@ -39,7 +39,10 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
             required={required}
             type={showPassword ? 'text' : 'password'}
             {...rest}
-            className={cn('w-full mt-2 rounded-md border px-3 py-2 pr-10 focus:border-primary', className)}
+            className={cn(
+              'w-full mt-2 rounded-md border border-neutral-border/60 px-3 py-2 pr-10 focus:border-primary',
+              className,
+            )}
           />
           <button
             type="button"

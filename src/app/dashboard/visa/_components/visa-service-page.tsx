@@ -84,7 +84,7 @@ const VisaServicePage = () => {
 
   if (data?.count) {
     TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === 'all_students') {
+      if (tab.key === currentTab) {
         return { ...tab, count: data.count };
       }
       return tab;

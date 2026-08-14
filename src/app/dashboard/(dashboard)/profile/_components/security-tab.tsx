@@ -12,8 +12,8 @@ const SecurityTab = () => {
   const form = useForm<PasswordChangeSchemaType>({
     resolver: zodResolver(PasswordChangeSchema),
     defaultValues: {
+      currentPassword: '',
       newPassword: '',
-      confirmPassword: '',
     },
     mode: 'onChange',
   });
@@ -28,7 +28,6 @@ const SecurityTab = () => {
   } = form;
 
   const onSubmit = (data: PasswordChangeSchemaType) => {
-    console.log('Submitting password change:', data);
     mutate(data, {
       onSuccess: () => {
         reset();
@@ -38,36 +37,41 @@ const SecurityTab = () => {
 
   return (
     <>
-      <h3 className="text-b3-b text-content-heading font-bold mb-[2px]">Edit Password</h3>
+      <h3 className="text-b3-b text-content-heading font-bold mb-[2px]">Change password</h3>
       <p className="text-neutral-dark-grey text-b1 mb-6">
         Your new password must be different from your previous used passwords.
       </p>
 
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3">
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-3 max-w-[37.5rem]">
+        <FormField
+          control={control}
+          name="currentPassword"
+          render={({ field }) => (
+            <PasswordInput {...field} label="Current password" error={errors.currentPassword?.message} />
+          )}
+        />
+
         <FormField
           control={control}
           name="newPassword"
           render={({ field }) => (
-            <PasswordInput {...field} label="New Password" error={errors.newPassword?.message} />
+            <PasswordInput
+              {...field}
+              label="New password"
+              placeholder="Minimum 8 characters"
+              error={errors.newPassword?.message}
+            />
           )}
         />
 
-        <FormField
-          control={control}
-          name="confirmPassword"
-          render={({ field }) => (
-            <PasswordInput {...field} label="Confirm Password" error={errors.confirmPassword?.message} />
-          )}
-        />
-
-        <Button
-          type="submit"
-          className="w-[143px] ml-auto btn btn-primary mt-4"
-          disabled={!isValid || isPending}
-          loading={isPending}
-        >
-          Save Changes
-        </Button>
+        <div className="flex items-center gap-3 mt-4">
+          <Button type="submit" className="w-[143px]" disabled={!isValid || isPending} loading={isPending}>
+            Save password
+          </Button>
+          <Button type="button" variant="outline" className="w-[143px]" onClick={() => reset()} disabled={isPending}>
+            Cancel
+          </Button>
+        </div>
       </form>
     </>
   );

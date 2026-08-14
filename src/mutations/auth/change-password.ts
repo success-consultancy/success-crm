@@ -8,6 +8,7 @@ const changePassword = async (payload: PasswordChangeSchemaType) => {
   const url = '/user/me/change-password';
 
   const res = await api.patch(url, {
+    currentPassword: payload.currentPassword,
     password: payload.newPassword,
   });
   return res.data;

@@ -9,6 +9,7 @@ import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover
 import { Calendar } from '@/components/ui/calendar';
 import useSearchParams from '@/hooks/use-search-params';
 import { ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 export function DateRangePicker({
   onApply,
@@ -68,12 +69,15 @@ export function DateRangePicker({
         <Button
           variant="outline"
           size="sm"
-          className="gap-2 px-3 has-[>svg]:px-3 rounded-md border-neutral-border/60 text-b14-500 text-neutral-dark-grey"
+          className={cn(
+            'gap-2 px-3 has-[>svg]:px-3 rounded-md text-b14-500 text-neutral-dark-grey shrink-0',
+            open ? 'border-primary ring-1 ring-primary' : 'border-neutral-border/60',
+          )}
         >
           {dateRange?.from && dateRange?.to
             ? `${format(dateRange.from, 'dd/MM/yyyy')} - ${format(dateRange.to, 'dd/MM/yyyy')}`
             : 'Date range'}
-          <ChevronDown className="size-4" />
+          <ChevronDown className={cn('size-4 transition-transform', open && 'rotate-180')} />
         </Button>
       </PopoverTrigger>
 

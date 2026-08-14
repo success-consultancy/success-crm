@@ -63,17 +63,24 @@ const TableRowActionsMenu = ({
   animated = false,
 }: TableRowActionsMenuProps) => {
   const menuItemClassName = cn(itemClassName, animated && animatedItemClassName);
+  const [open, setOpen] = React.useState(false);
   const [showMove, setShowMove] = React.useState(false);
 
   return (
     <div className="flex justify-center">
-      <Popover onOpenChange={(o) => !o && setShowMove(false)}>
+      <Popover
+        open={open}
+        onOpenChange={(o) => {
+          setOpen(o);
+          if (!o) setShowMove(false);
+        }}
+      >
         <PopoverTrigger asChild>
           <Button
             variant="ghost"
             aria-label="Open actions menu"
-            className={cn('h-5 w-5 rounded-full', animated && animatedTriggerClassName)}
-            iconLeft={<EllipsisVertical className="h-5 w-5 text-muted-foreground mx-auto" />}
+            className={cn('h-5 w-5 rounded-full', open && 'bg-primary/10 text-primary', animated && animatedTriggerClassName)}
+            iconLeft={<EllipsisVertical className={cn('h-5 w-5 mx-auto', open ? 'text-primary' : 'text-muted-foreground')} />}
             iconLeftClassName="mr-0"
           />
         </PopoverTrigger>
@@ -92,31 +99,41 @@ const TableRowActionsMenu = ({
               </Button>
             )}
             {moveTo && moveTo.options.length > 0 && (
-              <>
-                <Button
-                  variant="ghost"
-                  className={cn(menuItemClassName, 'justify-between')}
-                  onClick={() => setShowMove((s) => !s)}
+              <Popover open={showMove} onOpenChange={setShowMove}>
+                <PopoverTrigger asChild>
+                  <Button variant="ghost" className={cn(menuItemClassName, 'justify-between', showMove && 'bg-accent-50')}>
+                    <span className="flex items-center gap-2">
+                      <FolderInput strokeWidth={1.5} className="h-5 w-5" />
+                      {moveTo.label ?? 'Move to'}
+                    </span>
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent
+                  side="left"
+                  align="start"
+                  sideOffset={4}
+                  collisionPadding={8}
+                  className="w-[12.5rem] bg-white-100 p-2"
                 >
-                  <span className="flex items-center gap-2">
-                    <FolderInput strokeWidth={1.5} className="h-5 w-5" />
-                    {moveTo.label ?? 'Move to'}
-                  </span>
-                  <ChevronRight className={cn('h-4 w-4 transition-transform', showMove && 'rotate-90')} />
-                </Button>
-                {showMove &&
-                  moveTo.options.map((option) => (
-                    <Button
-                      key={option.id}
-                      variant="ghost"
-                      className={cn(menuItemClassName, 'pl-9')}
-                      onClick={() => moveTo.onSelect(option)}
-                    >
-                      {option.Icon && <option.Icon className="h-5 w-5 shrink-0" />}
-                      {option.title}
-                    </Button>
-                  ))}
-              </>
+                  <div className="flex flex-col">
+                    {moveTo.options.map((option) => (
+                      <Button
+                        key={option.id}
+                        variant="ghost"
+                        className={menuItemClassName}
+                        onClick={() => {
+                          moveTo.onSelect(option);
+                          setShowMove(false);
+                        }}
+                      >
+                        {option.Icon && <option.Icon className="h-5 w-5 shrink-0" />}
+                        {option.title}
+                      </Button>
+                    ))}
+                  </div>
+                </PopoverContent>
+              </Popover>
             )}
             <Button variant="ghost" className={menuItemClassName} onClick={onSendSms}>
               <MessageCircle strokeWidth={1.5} className="h-5 w-5" />

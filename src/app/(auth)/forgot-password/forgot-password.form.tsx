@@ -28,6 +28,7 @@ const ForgotPasswordForm: React.FC = () => {
   } = useForm({
     defaultValues,
     resolver: zodResolver(forgotPasswordSchema),
+    mode: 'onChange',
   });
 
   const onForgotPasswordFormSubmit = (data: ForgotPasswordFormValues) => {

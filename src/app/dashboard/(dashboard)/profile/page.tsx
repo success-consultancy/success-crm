@@ -39,12 +39,14 @@ const Account = () => {
         <h3 className="text-h4 text-content-heading font-bold">Account Settings</h3>
       </Portal>
 
-      <div className="container bg-white rounded-xl py-2 px-4">
-        <TabSelector className="mb-4" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
+      <div className="container bg-white rounded-xl py-2 px-4 flex flex-col flex-1 min-h-0">
+        <TabSelector className="mb-4 shrink-0" tabs={TAB_CONFIG} activeTab={currentTab} onTabChange={handleTabChange} />
 
-        {currentTab === 'personal_details' && <PersonalDetailsTab user={user?.data as MeUser} />}
-        {currentTab === 'security' && <SecurityTab />}
-        {currentTab === 'face_login' && <FaceLoginTab user={user?.data as MeUser} />}
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          {currentTab === 'personal_details' && <PersonalDetailsTab user={user?.data as MeUser} />}
+          {currentTab === 'security' && <SecurityTab />}
+          {currentTab === 'face_login' && <FaceLoginTab user={user?.data as MeUser} />}
+        </div>
       </div>
     </Container>
   );

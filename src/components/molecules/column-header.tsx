@@ -136,7 +136,13 @@ const ColumnHeader = (props: Props) => {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <div className={cn(['flex items-center cursor-pointer gap-1.5 select-none justify-between', props.className])}>
+        <div
+          className={cn([
+            'flex items-center cursor-pointer gap-1.5 select-none justify-between -mx-3 -my-2 px-3 py-2',
+            open && 'bg-component-active',
+            props.className,
+          ])}
+        >
           <span className="font-medium">{props.title}</span>
           <div className="flex items-center">
             {hasActiveSearch && (
@@ -191,7 +197,7 @@ const ColumnHeader = (props: Props) => {
               onClick={() => handleSortChange('asc')}
               className={cn([
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left w-full',
-                sortingState === 'asc' && 'bg-muted',
+                sortingState === 'asc' && 'bg-component-active hover:bg-component-active',
               ])}
             >
               <ArrowDownAZ className="h-4 w-4" />
@@ -201,7 +207,7 @@ const ColumnHeader = (props: Props) => {
               onClick={() => handleSortChange('desc')}
               className={cn([
                 'flex items-center gap-2 px-3 py-2 text-sm rounded-md hover:bg-muted transition-colors text-left w-full',
-                sortingState === 'desc' && 'bg-muted',
+                sortingState === 'desc' && 'bg-component-active hover:bg-component-active',
               ])}
             >
               <ArrowDownZA className="h-4 w-4" />

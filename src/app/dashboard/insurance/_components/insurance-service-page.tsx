@@ -86,7 +86,7 @@ const ServicePage = () => {
 
   if (data?.count) {
     TAB_CONFIG = TAB_CONFIG.map((tab) => {
-      if (tab.key === currentTab && tab.key === DEFAULT_TAB) {
+      if (tab.key === currentTab) {
         return { ...tab, count: data.count };
       }
       return tab;
