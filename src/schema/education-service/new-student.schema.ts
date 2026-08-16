@@ -153,7 +153,7 @@ export const educationServiceSchema = z
     // Misc
     userId: z.string().max(50, 'User selection is invalid').optional(),
 
-    sourceId: z.string().max(50, 'Source selection is invalid').optional(),
+    sourceId: z.union([z.string(), z.number()]).nullable().optional(),
 
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 
