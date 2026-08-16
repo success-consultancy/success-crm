@@ -64,6 +64,7 @@ export function AddEducationService({ userId }: Props) {
   } = form;
 
   const remarks = watch('remarks');
+  const status = watch('status');
 
   useEffect(() => {
     form.setValue('courseFee.accounts.updatedBy', userId?.toString() || '', { shouldValidate: true });
@@ -348,6 +349,26 @@ export function AddEducationService({ userId }: Props) {
                 }))}
                 placeholder="Select status"
               />
+              {status === EducationStatusTypes.CoeReceived && (
+                <div className="space-y-2">
+                  <Controller
+                    name="statusDate"
+                    control={control}
+                    render={({ field }) => (
+                      <DatePicker
+                        label="COE Received Date"
+                        side="top"
+                        value={field.value}
+                        onChange={field.onChange}
+                        placeholder="Pick a date"
+                        className="w-full"
+                        error={!!errors.statusDate?.message}
+                      />
+                    )}
+                  />
+                  <FormErrorMessage message={errors.statusDate?.message} />
+                </div>
+              )}
             </div>
           </>
         </FormAccordion>
