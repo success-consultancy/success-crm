@@ -14,14 +14,16 @@ import {
 } from '@/components/ui/dialog';
 import { useFaceModels } from '@/hooks/use-face-models';
 import {
+  computeEyeAspectRatio,
   descriptorToArray,
+  detectBlinkInSamples,
   detectFaceWithLandmarks,
   extractDescriptor,
   extractDescriptorAveraged,
 } from '@/lib/face-recognition';
 
 type Mode = 'enroll' | 'auth';
-type Phase = 'loading' | 'align' | 'capturing' | 'error';
+type Phase = 'loading' | 'align' | 'liveness' | 'capturing' | 'error';
 
 interface Props {
   mode: Mode;
@@ -46,15 +48,22 @@ const STABILITY_FRAMES = 8;
 // small / far faces from passing the stability check with a noisy descriptor.
 const MIN_FACE_WIDTH_RATIO = 0.18;
 
+// A stably-framed face alone doesn't prove a live person is present — a
+// printed photo or a phone screen held in front of the camera passes that
+// check trivially. Once framing is stable we require a real blink
+// (detectBlinkInSamples, EAR-based) before capturing. A person blinks every
+// few seconds on their own; a static photo never will, so it just times out.
+const LIVENESS_TIMEOUT_MS = 8000;
+
 const COPY: Record<Mode, { title: string; sub: string; capturing: string }> = {
   enroll: {
     title: 'Enroll your face',
-    sub: 'Look at the camera and hold still — we capture automatically.',
+    sub: 'Look at the camera, hold still, then blink naturally — we capture automatically.',
     capturing: 'Capturing — hold still…',
   },
   auth: {
     title: 'Scan your face',
-    sub: 'Look at the camera — we sign you in automatically.',
+    sub: 'Look at the camera, hold still, then blink naturally — we sign you in automatically.',
     capturing: 'Identifying…',
   },
 };
@@ -72,6 +81,8 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
   phaseRef.current = phase;
   const stableFramesRef = useRef(0);
   const captureStartedRef = useRef(false);
+  const earSamplesRef = useRef<number[]>([]);
+  const livenessStartRef = useRef<number | null>(null);
 
   const resetCaptureState = useCallback(() => {
     setErrorMsg(null);
@@ -79,6 +90,8 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
     setHint('Looking for your face…');
     stableFramesRef.current = 0;
     captureStartedRef.current = false;
+    earSamplesRef.current = [];
+    livenessStartRef.current = null;
   }, []);
 
   // Kick off model load on open; transition to 'align' once they're ready.
@@ -102,7 +115,7 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
   }, [phase, modelStatus, modelError]);
 
   const triggerCapture = useCallback(async () => {
-    if (phaseRef.current !== 'align') return;
+    if (phaseRef.current !== 'liveness') return;
     const video = webcamRef.current?.video;
     if (!video || video.readyState < 2) return;
     setPhase('capturing');
@@ -122,10 +135,14 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
     }
   }, [mode, onCapture, onOpenChange]);
 
-  // Detection loop — runs while aligning. Auto-captures when the face has
-  // been continuously detected, frontal-ish, and large enough for ~1.2s.
+  // Detection loop — runs through two gates before we ever extract a
+  // descriptor: 'align' (face continuously detected, frontal-ish, and large
+  // enough for ~1.2s) then 'liveness' (a real blink observed within
+  // LIVENESS_TIMEOUT_MS). Losing the face during liveness drops back to
+  // align rather than resetting the whole modal, so a person who just moved
+  // isn't punished with a full restart.
   useEffect(() => {
-    if (!open || phase !== 'align') return;
+    if (!open || (phase !== 'align' && phase !== 'liveness')) return;
     let cancelled = false;
     const tick = async () => {
       const video = webcamRef.current?.video;
@@ -137,27 +154,54 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
         return;
       }
       if (cancelled) return;
-      if (!result) {
+
+      const backToAlign = () => {
         stableFramesRef.current = 0;
+        earSamplesRef.current = [];
         setProgress(0);
+        if (phaseRef.current === 'liveness') setPhase('align');
+      };
+
+      if (!result) {
+        backToAlign();
         setHint('Looking for your face…');
         return;
       }
       const faceWidth = result.detection.box.width;
       const videoWidth = video.videoWidth || video.clientWidth || 640;
       if (faceWidth / videoWidth < MIN_FACE_WIDTH_RATIO) {
-        stableFramesRef.current = 0;
-        setProgress(0);
+        backToAlign();
         setHint('Move closer to the camera.');
         return;
       }
-      stableFramesRef.current += 1;
-      const ratio = Math.min(1, stableFramesRef.current / STABILITY_FRAMES);
-      setProgress(ratio);
-      setHint(ratio < 1 ? 'Hold still…' : 'Capturing…');
-      if (stableFramesRef.current >= STABILITY_FRAMES && !captureStartedRef.current) {
+
+      if (phaseRef.current === 'align') {
+        stableFramesRef.current += 1;
+        const ratio = Math.min(1, stableFramesRef.current / STABILITY_FRAMES);
+        setProgress(ratio);
+        setHint(ratio < 1 ? 'Hold still…' : 'Now blink naturally…');
+        if (stableFramesRef.current >= STABILITY_FRAMES) {
+          earSamplesRef.current = [];
+          livenessStartRef.current = Date.now();
+          setPhase('liveness');
+        }
+        return;
+      }
+
+      // phase === 'liveness'
+      earSamplesRef.current = [...earSamplesRef.current, computeEyeAspectRatio(result.landmarks)].slice(-40);
+      const elapsed = Date.now() - (livenessStartRef.current ?? Date.now());
+      setProgress(Math.min(1, elapsed / LIVENESS_TIMEOUT_MS));
+      setHint('Blink naturally to confirm it’s really you…');
+
+      if (detectBlinkInSamples(earSamplesRef.current) && !captureStartedRef.current) {
         captureStartedRef.current = true;
         void triggerCapture();
+        return;
+      }
+      if (elapsed > LIVENESS_TIMEOUT_MS) {
+        setPhase('error');
+        setErrorMsg("We couldn't confirm you're really there. Blink naturally and try again.");
       }
     };
     const id = window.setInterval(() => void tick(), SAMPLE_INTERVAL_MS);
@@ -207,7 +251,7 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
               className="w-full h-full object-cover"
             />
           )}
-          {phase === 'align' && (
+          {(phase === 'align' || phase === 'liveness') && (
             <div className="absolute inset-x-0 bottom-0 h-1.5 bg-black/40">
               <div
                 className="h-full bg-green-400 transition-[width] duration-150"
@@ -219,7 +263,7 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
 
         <div className="text-xs text-gray-600 min-h-[1.25rem]">
           {phase === 'loading' && 'Loading face models (~7 MB)…'}
-          {phase === 'align' && hint}
+          {(phase === 'align' || phase === 'liveness') && hint}
           {phase === 'capturing' && copy.capturing}
           {phase === 'error' && (errorMsg ?? 'Something went wrong.')}
         </div>
