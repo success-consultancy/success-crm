@@ -407,7 +407,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         </div>
 
         {/* Submit */}
-        <FormActions>
+        <FormActions sticky>
           <ButtonLink href={ROUTES.UNIVERSITY} variant="outline">
             Cancel
           </ButtonLink>

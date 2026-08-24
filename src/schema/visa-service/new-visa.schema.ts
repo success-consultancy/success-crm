@@ -5,7 +5,7 @@ const nullableString = () => z.string().nullable().optional();
 const nullableNumber = () => z.number().int().nullable().optional();
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
-export const newVisaServiceSchema = z.object({
+const newVisaServiceBaseSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
   firstName: z.string().min(1, 'First name is required').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
@@ -127,6 +127,18 @@ export const newVisaServiceSchema = z.object({
     feeNote: z.string().optional(),
     updatedBy: z.number().nullable().optional(),
   }).nullable().optional(),
+});
+
+// Backend requires accounts.duedate — only enforce it once the fee section is actually in use
+export const newVisaServiceSchema = newVisaServiceBaseSchema.superRefine((data, ctx) => {
+  const acc = data.accounts;
+  if (acc && (acc.planname || acc.amount || acc.invoicenumber || acc.status) && !acc.duedate) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Account due date is required',
+      path: ['accounts', 'duedate'],
+    });
+  }
 });
 
 export type NewVisaServiceType = z.infer<typeof newVisaServiceSchema>;

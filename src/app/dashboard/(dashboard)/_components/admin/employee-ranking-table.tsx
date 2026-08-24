@@ -69,11 +69,11 @@ const EmployeeRankingTable = () => {
   const paged = useMemo(() => rows.slice((page - 1) * pageSize, page * pageSize), [rows, page, pageSize]);
 
   return (
-    <CardContainer className="p-5">
+    <CardContainer className="border-neutral-border-light rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-neutral-black">Employees clients and performance</h4>
+        <h4 className="text-b16-600 text-neutral-black">Employees clients and performance</h4>
         <Select value={month} onValueChange={setMonth}>
-          <SelectTrigger size="sm" className="w-[130px] text-xs">
+          <SelectTrigger size="sm" className="w-[130px] text-xs border-neutral-border/60">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -99,24 +99,24 @@ const EmployeeRankingTable = () => {
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b text-left text-c1 text-neutral-light-grey">
-              <th className="pb-3 p-4 font-medium">S.N</th>
-              <th className="pb-3 p-4 font-medium">Employee</th>
+            <tr className="border-b bg-[#F9FAFB] text-left text-b14-600 text-neutral-dark-grey">
+              <th className="pb-3 p-4">S.N</th>
+              <th className="pb-3 p-4">Employee</th>
               {tab === 'clients' ? (
                 <>
                   {SERVICE_COLUMNS.map(({ key, label }) => (
-                    <th key={key} className="pb-3 pr-4 font-medium text-right">
+                    <th key={key} className="pb-3 pr-4 text-right">
                       {label}
                     </th>
                   ))}
-                  <th className="pb-3 font-medium text-right">Total clients</th>
+                  <th className="pb-3 text-right">Total clients</th>
                 </>
               ) : (
                 <>
-                  <th className="pb-3 pr-4 font-medium text-right">Clients</th>
-                  <th className="pb-3 pr-4 font-medium text-right">Converted</th>
-                  <th className="pb-3 pr-4 font-medium text-right">Lost</th>
-                  <th className="pb-3 font-medium text-right">Rate</th>
+                  <th className="pb-3 pr-4 text-right">Clients</th>
+                  <th className="pb-3 pr-4 text-right">Converted</th>
+                  <th className="pb-3 pr-4 text-right">Lost</th>
+                  <th className="pb-3 text-right">Rate</th>
                 </>
               )}
             </tr>
@@ -190,7 +190,7 @@ const EmployeeRankingTable = () => {
       </div>
 
       {rows.length > 0 && (
-        <div className="flex items-center justify-between mt-4 text-c1 text-neutral-light-grey">
+        <div className="flex items-center justify-between mt-4 text-b14-500 text-neutral-light-grey">
           <div className="flex items-center gap-2">
             <Select
               value={String(pageSize)}
@@ -199,7 +199,7 @@ const EmployeeRankingTable = () => {
                 setPage(1);
               }}
             >
-              <SelectTrigger size="sm" className="w-[80px] text-xs">
+              <SelectTrigger size="sm" className="w-[80px] text-xs border-neutral-border/60">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>

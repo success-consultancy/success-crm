@@ -217,13 +217,15 @@ export default function PerformanceTable({
                 placeholder={`Search by ${nameColumnHeader.toLowerCase()}`}
                 value={search}
                 onChange={(e) => onSearchChange?.(e.target.value)}
-                className="pl-9 pr-3 h-9 w-52 border border-input rounded-md text-sm bg-transparent focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
+                className="pl-9 pr-3 h-9 w-52 border border-neutral-border/60 rounded-md text-sm bg-transparent focus:outline-none focus:ring-1 focus:ring-ring focus:border-ring transition-colors"
               />
             </div>
             {fiscalYears && fiscalYear && onFiscalYearChange && (
               <Select value={fiscalYear} onValueChange={onFiscalYearChange}>
-                <SelectTrigger className="w-[140px] h-9">
-                  <SelectValue placeholder="Fiscal year" />
+                <SelectTrigger className="w-[140px] h-9 border-neutral-border/60">
+                  <SelectValue placeholder="Fiscal year">
+                    {fiscalYears.find((y) => y.value === fiscalYear)?.label ?? 'Fiscal year'}
+                  </SelectValue>
                 </SelectTrigger>
                 <SelectContent>
                   {fiscalYears.map((y) => (

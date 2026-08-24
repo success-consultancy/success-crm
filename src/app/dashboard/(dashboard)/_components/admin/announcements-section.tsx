@@ -13,14 +13,14 @@ const AnnouncementsSection = () => {
   const { data, isLoading } = useGetAnnouncements({ page: '1', limit: '3' });
 
   return (
-    <CardContainer className="p-5">
+    <CardContainer className="border-neutral-border-light rounded-xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-content-heading">Recent announcement</h4>
+        <h4 className="text-b16-600 text-content-heading">Recent announcement</h4>
         <Link
           href={ROUTES.UPDATES_AND_ANNOUNCEMENTS}
-          className="text-c1 text-primary flex items-center gap-1 hover:underline"
+          className="text-b14-600 text-primary flex items-center gap-1 hover:underline"
         >
-          View <ArrowUpRight className="w-3 h-3" />
+          View <ArrowUpRight className="w-4 h-4" />
         </Link>
       </div>
 
@@ -63,7 +63,7 @@ const AnnouncementsSection = () => {
                   </div>
                 )}
                 <div className="min-w-0">
-                  <p className="text-b14-500 text-neutral-black truncate group-hover:text-primary transition-colors">
+                  <p className="text-b14-600 text-neutral-black truncate group-hover:text-primary transition-colors">
                     {announcement.title}
                   </p>
                   <p className="text-c1 text-neutral-light-grey mt-0.5">

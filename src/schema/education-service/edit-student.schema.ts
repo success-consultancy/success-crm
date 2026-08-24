@@ -179,6 +179,17 @@ export const editEducationServiceSchema = z
     if (data.expiryDate && !(data.expiryDate > new Date())) {
       ctx.addIssue({ code: "custom", message: 'Passport must not be expired', path: ['expiryDate'] });
     }
+    // Backend requires course_fee.duedate — only enforce it once the fee section is actually in use
+    if (data.courseFee) {
+      const { planname, amount, invoicenumber, status, note, duedate } = data.courseFee;
+      if ((planname || amount || invoicenumber || status || note) && !duedate) {
+        ctx.addIssue({
+          code: "custom",
+          message: 'Due date is required',
+          path: ['courseFee', 'duedate'],
+        });
+      }
+    }
   });
 
 export type EditEducationServiceType = z.infer<typeof editEducationServiceSchema>;

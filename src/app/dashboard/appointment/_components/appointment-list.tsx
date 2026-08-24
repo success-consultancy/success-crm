@@ -19,7 +19,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
     return (
       <div className="space-y-3 pr-2">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="border rounded-lg p-3">
+          <div key={i} className="border border-neutral-border/60 rounded-lg p-3">
             <div className="flex items-start gap-3">
               <Skeleton className="w-2 h-2 rounded-full mt-2 flex-shrink-0" />
               <div className="flex-1 min-w-0 space-y-2">
@@ -62,7 +62,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
         return (
           <div
             key={appointment.id}
-            className="border rounded-lg p-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors"
+            className="border border-neutral-border/60 rounded-lg p-3 cursor-pointer bg-white hover:bg-gray-50 transition-colors"
             onClick={() => onAppointmentClick(appointment)}
           >
             <div className="flex items-start gap-3">
@@ -73,7 +73,7 @@ const AppointmentList: React.FC<AppointmentListProps> = ({ appointments, onAppoi
                   <p className="text-neutral-dark-grey text-b12 mb-2 line-clamp-2">{appointment.description}</p>
                 )}
                 <div className="flex items-center gap-2">
-                  <span className="text-b12-500 border rounded-full px-2 py-1 !mb-0">
+                  <span className="text-b12-500 border border-neutral-border/60 rounded-full px-2 py-1 !mb-0">
                     {startTime} - {endTime}
                   </span>
                   {appointment.user && (

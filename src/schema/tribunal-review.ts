@@ -6,7 +6,7 @@ const nullableString = () => z.string().nullable().optional();
 const nullableDate = () => z.string().nullable().optional();
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
-export const tribunalReviewFormSchema = z.object({
+const tribunalReviewBaseSchema = z.object({
   // ========== FILE UPLOADS ==========
   files: z.array(z.any()).nullable().optional(),
 
@@ -114,8 +114,20 @@ export const tribunalReviewFormSchema = z.object({
   updatedBy: z.number().int().nullable().optional(),
 });
 
+// Backend requires accounts.duedate — only enforce it once the fee section is actually in use
+export const tribunalReviewFormSchema = tribunalReviewBaseSchema.superRefine((data, ctx) => {
+  const acc = data.accounts;
+  if (acc && (acc.planname || acc.amount || acc.invoicenumber || acc.status) && !acc.duedate) {
+    ctx.addIssue({
+      code: 'custom',
+      message: 'Account due date is required',
+      path: ['accounts', 'duedate'],
+    });
+  }
+});
+
 // update schema for update without accounts
-export const updateTribunalReviewFormSchema = tribunalReviewFormSchema.omit({ accounts: true });
+export const updateTribunalReviewFormSchema = tribunalReviewBaseSchema.omit({ accounts: true });
 
 export type TribunalReviewFormData = z.infer<typeof tribunalReviewFormSchema>;
 

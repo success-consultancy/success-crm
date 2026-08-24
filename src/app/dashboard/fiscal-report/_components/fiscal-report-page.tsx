@@ -234,7 +234,7 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
 
   const pageTitle = type === 'visa_application' ? 'Visa application' : 'Student enrollment';
   const tableTitle = type === 'visa_application' ? 'Visa application performance' : 'Student enrollment performance';
-  const nameColumnHeader = type === 'visa_application' ? 'Visa name' : 'Course name';
+  const nameColumnHeader = type === 'visa_application' ? 'Visa name' : 'University name';
 
   return (
     <Container className="flex flex-col flex-1 min-h-0 overflow-hidden p-0">

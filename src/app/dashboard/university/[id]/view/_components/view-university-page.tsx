@@ -141,7 +141,8 @@ const ViewUniversityPage = ({ id }: Props) => {
               <span className="text-neutral-black text-b14-600">Available courses</span>
               <div className="flex flex-wrap gap-x-10 gap-y-3">
                 {linkedCourses.map((course) => (
-                  <span key={course.id} className="text-b14 text-neutral-dark-grey">
+                  <span key={course.id} className="text-b14 text-neutral-dark-grey flex items-center gap-2">
+                    <span className="h-1 w-1 rounded-full bg-neutral-dark-grey" />
                     {course.name}
                   </span>
                 ))}

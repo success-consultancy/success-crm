@@ -611,7 +611,7 @@ const AppointmentCalendarPage = () => {
               <Button variant="outline" onClick={() => handleDateChange('today')}>
                 Today
               </Button>
-              <div className="flex items-center gap-2 border rounded-md">
+              <div className="flex items-center gap-2 border border-neutral-border/60 rounded-md">
                 <Button variant="ghost" size="icon" onClick={() => handleDateChange('prev')}>
                   <ChevronLeft className="h-4 w-4" />
                 </Button>
@@ -658,7 +658,7 @@ const AppointmentCalendarPage = () => {
                     onSelect={(val) => {
                       if (val) setParams([{ name: 'userId', value: val }]);
                     }}
-                    className="w-[240px]"
+                    className="w-[240px] border-neutral-border/60"
                   />
                   {userId && (
                     <Button
@@ -674,7 +674,7 @@ const AppointmentCalendarPage = () => {
                 </div>
               )}
             </div>
-            <div className="flex items-center rounded-3xl p-1 bg-[#F7F8FA] border border-light-grey">
+            <div className="flex items-center rounded-3xl p-1 bg-[#F7F8FA] border border-neutral-border/60">
               {VIEW_OPTIONS.map((view) => (
                 <Button
                   key={view.key}

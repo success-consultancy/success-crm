@@ -15,7 +15,7 @@ interface Segment extends OutcomeSegment {
 // Visa outcomes only show these 3 statuses, renamed for display.
 const VISA_STATUS_MAP: Record<string, { label: string; color: string }> = {
   Pending: { label: 'Inprogress', color: '#5A98FE' },
-  'visa granted': { label: 'Granted', color: '#22C55E' },
+  'visa granted': { label: 'Granted', color: '#0FDFAE' },
   Rejected: { label: 'Refused', color: '#FF5B77' },
 };
 
@@ -43,11 +43,11 @@ const OutcomeDonutCard = ({ title, href, segments }: { title: string; href: stri
   const total = segments.reduce((sum, s) => sum + s.value, 0);
 
   return (
-    <CardContainer className="p-5">
+    <CardContainer className="border-neutral-border-light rounded-2xl p-5">
       <div className="flex items-center justify-between mb-4">
-        <h4 className="text-b14-600 text-content-heading">{title}</h4>
-        <Link href={href} className="text-c1 text-primary flex items-center gap-1 hover:underline">
-          View <ArrowUpRight className="w-3 h-3" />
+        <h4 className="text-b16-600 text-content-heading">{title}</h4>
+        <Link href={href} className="text-b14-600 text-primary flex items-center gap-1 hover:underline">
+          View <ArrowUpRight className="w-4 h-4" />
         </Link>
       </div>
       <div className="flex items-center gap-6">
