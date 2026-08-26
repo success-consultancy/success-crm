@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 
 temp
+
+# MediaPipe WASM runtime, copied from node_modules by
+# scripts/copy-mediapipe-wasm.mjs on predev/prebuild.
+public/mediapipe/

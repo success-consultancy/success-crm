@@ -13,17 +13,21 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { useFaceModels } from '@/hooks/use-face-models';
+import { createYielder, MIN_TIMER_MS, TARGET_PASS_INTERVAL_MS } from '@/lib/scheduler';
 import {
   areFaceModelsLoaded,
   createFrameBuffer,
   descriptorToArray,
-  detectBlinkInSamples,
-  detectFaceForTracking,
   extractDescriptorFromFrames,
-  openEyeBaseline,
-  resetFaceTracking,
   type FrameBuffer,
 } from '@/lib/face-recognition';
+import {
+  detectBlinkInSamples,
+  detectLiveness,
+  eyesOpen,
+  isLivenessModelLoaded,
+  resetLivenessTracking,
+} from '@/lib/face-liveness';
 
 type Mode = 'enroll' | 'auth';
 type Phase = 'loading' | 'align' | 'liveness' | 'capturing' | 'error';
@@ -41,18 +45,23 @@ interface Props {
 }
 
 // The detection loop is self-scheduling: each pass starts only once the
-// previous one has resolved, with this much breathing room in between. A fixed
-// setInterval fired regardless of whether the previous detection had finished,
-// so passes piled up on the same TF.js backend and each got slower.
+// previous one has resolved. A fixed setInterval fired regardless of whether
+// the previous detection had finished, so passes piled up on the same TF.js
+// backend and each got slower.
 //
-// Keep this just large enough to yield to the browser. A pass now costs ~20ms
-// (landmark-only on the tracked box), so every extra millisecond here is lost
-// sample rate — at 30ms it was capping the loop near 20/sec.
-const TICK_GAP_MS = 10;
+// Target cycle time, not a gap. A pass costs ~10ms (landmark-only on the
+// tracked box), so this settles a fast device at ~60 passes/sec — six samples
+// inside a blink's ~100ms closed phase, with enough headroom left that the
+// browser can still paint the preview. On a slower device the pass alone
+// exceeds this and the loop simply runs as fast as it can.
+//
+// Asking setTimeout for a 10ms gap was really costing 29ms, so the loop ran at
+// 25 passes/sec instead of the ~90 the same detection path reaches in a tight
+// loop. That left 2.5 samples inside a closure: two land on the way down and
+// the way up, never the floor, so a full blink measured as a shallow dip and
+// the liveness gate was right to reject it. That was the whole "I had to blink
+// four times" bug — not the thresholds, and not the detector, but the clock.
 
-// Continuous good framing required before we start watching for a blink.
-// Time-based rather than frame-based: the loop now runs as fast as the device
-// allows, so a frame count would mean different things on different hardware.
 const ALIGN_STABLE_MS = 700;
 
 // Face must occupy at least this fraction of the video width — keeps very
@@ -66,14 +75,35 @@ const MIN_FACE_WIDTH_RATIO = 0.18;
 // the loop got faster, which would abandon an attempt on a momentary hiccup.
 const MISS_GRACE_MS = 500;
 
-// Rolling EAR window — must span a whole blink plus open frames either side,
-// and be long enough that a couple of blinks can't dominate the open-eye
-// baseline. ~3s at the measured ~35-50 passes/sec.
-const EAR_WINDOW = 160;
+// …and how long it must keep failing before the EAR window is thrown away.
+// Deliberately much longer than MISS_GRACE_MS. Those samples are readings of
+// the same face a fraction of a second ago, so discarding them the moment
+// framing wobbles is what made a user blink, lose the face for two frames, and
+// be asked to blink all over again. Dropping back to the align gate is enough
+// of a reset for a wobble; a clean slate is for someone actually walking away.
+const FACE_LOST_MS = 1800;
+
+// Rolling window of blink scores. Only needs to span an open frame plus the
+// closure that follows it, but a few seconds of slack costs nothing and lets a
+// blink made during the framing hold still count once liveness starts.
+const BLINK_WINDOW = 160;
 
 // Frames kept for descriptor extraction. Enroll averages over all of them to
 // tighten the stored vector; auth only needs the freshest.
 const KEPT_FRAMES = 3;
+
+// Minimum spacing between banked frames.
+//
+// Averaging only tightens the stored vector if the frames it averages differ:
+// the point is to cancel out sensor noise and a moment's pose and lighting.
+// A frame was previously banked on every open-eye pass, and once the loop
+// reached ~90 passes/sec that made the three frames in the ring ~32ms apart —
+// the same instant three times, averaged to no effect while paying for three
+// descriptor extractions. Enrollment is the one capture that has to last, and
+// every future clock-in is matched against it, so it's worth spreading.
+// Spacing also stops the buffer copying a full-resolution frame ~90 times a
+// second for the sake of keeping three.
+const KEEP_FRAME_GAP_MS = 150;
 
 // A stably-framed face alone doesn't prove a live person is present — a
 // printed photo or a phone screen held in front of the camera passes that
@@ -83,6 +113,12 @@ const KEPT_FRAMES = 3;
 // escalate the on-screen wording.
 const HINT_NUDGE_MS = 3500;
 const HINT_HELP_MS = 9000;
+
+// Passes/sec below which the loop can no longer land inside a blink. /face-test
+// draws the same line in red at 8; this is a little above it, because at the
+// shallow EAR dips real cameras produce, catching only the shoulders of a
+// closure is already a miss well before the sampling gets that bad.
+const MIN_USABLE_PASS_RATE = 15;
 
 const COPY: Record<Mode, { title: string; sub: string; capturing: string }> = {
   enroll: {
@@ -105,15 +141,30 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [progress, setProgress] = useState(0); // 0..1 stability progress for UI
   const [hint, setHint] = useState<string>('Looking for your face…');
+  const [passRate, setPassRate] = useState(0);
 
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
+  // Held in refs, not closed over, so `triggerCapture` — and through it the
+  // detection loop's effect — keeps a stable identity. Both callers define
+  // their `onCapture` inline, so it is a new function on every render of the
+  // parent, and the loop was being torn down and restarted each time. On the
+  // kiosk the parent almost never re-renders and this was invisible; on the
+  // profile page it sits under the dashboard shell and a refetch of `useGetMe`
+  // is enough to do it. Each restart drops the in-flight pass and the gap
+  // between passes, which is how a blink ends up sampled only on its
+  // shoulders.
+  const onCaptureRef = useRef(onCapture);
+  onCaptureRef.current = onCapture;
+  const onOpenChangeRef = useRef(onOpenChange);
+  onOpenChangeRef.current = onOpenChange;
   const hintRef = useRef(hint);
   const alignStartRef = useRef<number | null>(null);
   const captureStartedRef = useRef(false);
-  const earSamplesRef = useRef<number[]>([]);
+  const blinkSamplesRef = useRef<number[]>([]);
   const livenessStartRef = useRef<number | null>(null);
   const missSinceRef = useRef<number | null>(null);
+  const lastKeptAtRef = useRef(0);
   const framesRef = useRef<FrameBuffer | null>(null);
   if (!framesRef.current) framesRef.current = createFrameBuffer(KEPT_FRAMES);
 
@@ -132,18 +183,19 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
     setHint('Looking for your face…');
     alignStartRef.current = null;
     captureStartedRef.current = false;
-    earSamplesRef.current = [];
+    blinkSamplesRef.current = [];
     livenessStartRef.current = null;
     missSinceRef.current = null;
+    lastKeptAtRef.current = 0;
     framesRef.current?.clear();
-    resetFaceTracking();
+    resetLivenessTracking();
   }, []);
 
   // Kick off model load on open; transition to 'align' once they're ready.
   useEffect(() => {
     if (!open) return;
     resetCaptureState();
-    setPhase(areFaceModelsLoaded() ? 'align' : 'loading');
+    setPhase(areFaceModelsLoaded() && isLivenessModelLoaded() ? 'align' : 'loading');
     void loadModels();
   }, [open, loadModels, resetCaptureState]);
 
@@ -181,13 +233,13 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
       if (!desc) {
         throw new Error('Could not capture a clear face. Improve lighting and try again.');
       }
-      await onCapture(descriptorToArray(desc));
-      onOpenChange(false);
+      await onCaptureRef.current(descriptorToArray(desc));
+      onOpenChangeRef.current(false);
     } catch (e) {
       setPhase('error');
       setErrorMsg(e instanceof Error ? e.message : 'Something went wrong.');
     }
-  }, [mode, onCapture, onOpenChange]);
+  }, [mode]);
 
   // Detection loop — runs through two gates before we ever extract a
   // descriptor: 'align' (face continuously detected and large enough for
@@ -204,13 +256,17 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
     const onMiss = (message: string) => {
       showHint(message);
       if (missSinceRef.current === null) missSinceRef.current = Date.now();
-      if (Date.now() - missSinceRef.current < MISS_GRACE_MS) return;
+      const missedFor = Date.now() - missSinceRef.current;
+      if (missedFor < MISS_GRACE_MS) return;
       alignStartRef.current = null;
       setProgress(0);
-      if (phaseRef.current === 'liveness') {
-        earSamplesRef.current = [];
-        livenessStartRef.current = null;
+      if (missedFor >= FACE_LOST_MS) {
+        blinkSamplesRef.current = [];
+        lastKeptAtRef.current = 0;
         framesRef.current?.clear();
+      }
+      if (phaseRef.current === 'liveness') {
+        livenessStartRef.current = null;
         setPhase('align');
       }
     };
@@ -221,27 +277,38 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
       const video = webcamRef.current?.video;
       if (!video || video.readyState < 2) return;
 
-      const sample = await detectFaceForTracking(video);
+      const result = detectLiveness(video);
       if (cancelled) return;
 
-      if (!sample) return onMiss('Center your face in the circle');
+      // The loop deliberately runs faster than the camera, so most passes see
+      // a frame they have already read. That is not a lost face and must not
+      // touch the miss clock, or the grace period would expire while the user
+      // sits perfectly still in front of the lens.
+      if (result.status === 'stale') return;
+      if (result.status === 'noface') return onMiss('Center your face in the circle');
+
+      const { sample } = result;
       if (sample.faceWidthRatio < MIN_FACE_WIDTH_RATIO) return onMiss('Move closer to the camera');
       missSinceRef.current = null;
 
-      // One rolling EAR window spanning both gates. We used to clear it when
-      // entering 'liveness', which threw away any blink the user made while
-      // framing up — then asked them to blink again. Most people blink during
-      // that hold on their own, so carrying the window means liveness is
-      // usually already satisfied the moment framing is stable. Every sample
-      // in it was still taken with the face well framed, so nothing is
-      // conceded on the anti-spoof side.
-      const samples = [...earSamplesRef.current, sample.ear].slice(-EAR_WINDOW);
-      earSamplesRef.current = samples;
+      // One rolling window of blink scores spanning both gates. We used to
+      // clear it when entering 'liveness', which threw away any blink the user
+      // made while framing up — then asked them to blink again. Most people
+      // blink during that hold on their own, so carrying the window means
+      // liveness is usually already satisfied the moment framing is stable.
+      // Every sample in it was still taken with the face well framed, so
+      // nothing is conceded on the anti-spoof side.
+      const samples = [...blinkSamplesRef.current, sample.blink].slice(-BLINK_WINDOW);
+      blinkSamplesRef.current = samples;
 
       // Only bank a frame while the eyes are open, so the descriptor is never
-      // taken from the middle of the blink we're waiting for.
-      const baseline = openEyeBaseline(samples);
-      if (baseline <= 0 || sample.ear >= baseline * 0.95) framesRef.current?.keep(video);
+      // taken from the middle of the blink we're waiting for — and no more
+      // often than KEEP_FRAME_GAP_MS, so the three in the ring are three
+      // genuinely different moments rather than one moment three times.
+      if (eyesOpen(sample) && Date.now() - lastKeptAtRef.current >= KEEP_FRAME_GAP_MS) {
+        lastKeptAtRef.current = Date.now();
+        framesRef.current?.keep(video);
+      }
 
       if (phaseRef.current === 'align') {
         if (alignStartRef.current === null) alignStartRef.current = Date.now();
@@ -280,14 +347,40 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
 
     // Self-scheduling: the next pass is queued only after this one settles,
     // so detections can never overlap and starve each other.
+    let passes = 0;
+    let rateWindowStart = performance.now();
+    const yieldToEventLoop = createYielder();
+
     const loop = async () => {
-      try {
-        await tick();
-      } catch {
-        // Transient detector failure — just try again on the next pass.
+      while (!cancelled) {
+        const startedAt = performance.now();
+        try {
+          await tick();
+        } catch {
+          // Transient detector failure — just try again on the next pass.
+        }
+        if (cancelled) return;
+
+        passes += 1;
+        const elapsed = performance.now() - rateWindowStart;
+        if (elapsed >= 1000) {
+          setPassRate(Math.round((passes / elapsed) * 1000));
+          passes = 0;
+          rateWindowStart = performance.now();
+        }
+
+        // Sleep only when we're genuinely ahead of the target and the wait is
+        // long enough for a timer to be honest about it; otherwise hand back
+        // to the event loop and start the next pass immediately.
+        const remaining = TARGET_PASS_INTERVAL_MS - (performance.now() - startedAt);
+        if (remaining >= MIN_TIMER_MS) {
+          await new Promise<void>((resolve) => {
+            timer = window.setTimeout(resolve, remaining);
+          });
+        } else {
+          await yieldToEventLoop();
+        }
       }
-      if (cancelled) return;
-      timer = window.setTimeout(() => void loop(), TICK_GAP_MS);
     };
     void loop();
 
@@ -301,7 +394,7 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
     resetCaptureState();
     // If the weights are what failed, retrying the scan alone would sit there
     // doing nothing — the detection loop only runs once models are ready.
-    if (areFaceModelsLoaded()) {
+    if (areFaceModelsLoaded() && isLivenessModelLoaded()) {
       setPhase('align');
     } else {
       setPhase('loading');
@@ -322,6 +415,12 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
 
   const copy = COPY[mode];
   const scanning = phase === 'align' || phase === 'liveness';
+  // A blink's closed phase lasts ~100ms. Below this the loop samples it once
+  // or twice at most, on the way down and the way up rather than at the floor,
+  // and a real closure reads as a shallow dip the gate is right to reject.
+  // That is a starved main thread, not a user who blinked wrong, and saying so
+  // beats letting them blink a fourth time.
+  const tooSlow = scanning && passRate > 0 && passRate < MIN_USABLE_PASS_RATE;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -342,7 +441,16 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
               ref={webcamRef}
               audio={false}
               mirrored
-              videoConstraints={{ width: 640, height: 480, facingMode: 'user' }}
+              // 60fps where the camera offers it: liveness samples can only
+              // be as dense as the frames arriving, and a blink's closed phase
+              // is ~100ms — three frames at 30fps, six at 60. Falls back to
+              // whatever the device does.
+              videoConstraints={{
+                width: 640,
+                height: 480,
+                facingMode: 'user',
+                frameRate: { ideal: 60 },
+              }}
               onUserMediaError={handleCameraError}
               className="w-full h-full object-cover"
             />
@@ -397,8 +505,17 @@ const FaceCaptureModal = ({ mode, open, onOpenChange, onCapture }: Props) => {
         </div>
 
         <div className="text-xs text-gray-600 min-h-[1.25rem]">
-          {phase === 'loading' && 'Loading face models (~7 MB)…'}
-          {scanning && 'Face data is processed on your device.'}
+          {phase === 'loading' && 'Loading face models (~22 MB, cached after the first time)…'}
+          {scanning && (
+            <span className={tooSlow ? 'text-amber-700' : undefined}>
+              {tooSlow
+                ? `Camera loop is slow (${passRate}/sec) — close other tabs if this keeps missing.`
+                : 'Face data is processed on your device.'}
+              {passRate > 0 && !tooSlow && (
+                <span className="text-gray-400"> · {passRate}/sec</span>
+              )}
+            </span>
+          )}
           {phase === 'capturing' && copy.capturing}
           {phase === 'error' && (errorMsg ?? 'Something went wrong.')}
         </div>
