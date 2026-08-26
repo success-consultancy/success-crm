@@ -19,7 +19,7 @@ import { FormAccordion } from '@/components/organisms/form-accordion';
 import { useAddVisaService } from '@/mutations/visa/add-visa';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import { useEffect, useMemo } from 'react';
 import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
@@ -69,7 +69,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
+  const visaOptions = useGetVisaOptions();
   const discount = watch('accounts.discount');
   const amount = watch('accounts.amount');
 
@@ -83,10 +83,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
       };
     });
   }, [occupations]);
-
-  const visaOptions = useMemo(() => {
-    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
-  }, [visas]);
 
   useEffect(() => {
     if (userId) {

@@ -2,6 +2,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { api } from '@/lib/api';
 import { IPagination, PAGINATION_PARAMS, SortingState } from '@/types/pagination';
 import { useQuery } from '@tanstack/react-query';
+import { useMemo } from 'react';
 import QueryString from 'qs';
 import { IVisa, IVisaDetail, IVisaResponseType } from '@/types/response-types/visa-response';
 
@@ -108,11 +109,34 @@ const getVisaConst = async () => {
   return res.data as IVisaConst[];
 };
 
+// Visa types are unique on their trimmed, whitespace collapsed, case insensitive
+// value - the same rule the API enforces when a visa type is created or edited.
+export const visaTypeKey = (visaType?: string | null) => (visaType ?? '').trim().replace(/\s+/g, ' ').toLowerCase();
+
+// Guards against duplicates coming back from an environment that has not run the
+// clean up migration yet. The oldest record wins so the surviving entry stays the
+// one existing leads and services were created against.
+const dedupeVisaConst = (visas: IVisaConst[]) => {
+  const byType = new Map<string, IVisaConst>();
+  visas.forEach((visa) => {
+    const key = visaTypeKey(visa.visaType);
+    const existing = byType.get(key);
+    if (!existing || visa.id < existing.id) byType.set(key, visa);
+  });
+  return [...byType.values()];
+};
+
 export const useGetVisaConst = () => {
   return useQuery({
     queryKey: [GET_VISA_CONST],
     queryFn: getVisaConst,
     refetchOnWindowFocus: false,
-    select: (data) => [...data].sort((a, b) => (a.visaType ?? '').localeCompare(b.visaType ?? '')),
+    select: (data) => dedupeVisaConst(data).sort((a, b) => (a.visaType ?? '').localeCompare(b.visaType ?? '')),
   });
+};
+
+// Shared option list for every visa dropdown so they all stay unique and in sync.
+export const useGetVisaOptions = () => {
+  const { data: visas } = useGetVisaConst();
+  return useMemo(() => (visas ?? []).map((visa) => ({ label: visa.visaType, value: visa.visaType })), [visas]);
 };

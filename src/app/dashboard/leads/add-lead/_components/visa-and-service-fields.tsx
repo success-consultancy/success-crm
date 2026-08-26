@@ -6,7 +6,7 @@ import { useFormContext } from 'react-hook-form';
 import type { LeadSchemaType } from '@/schema/lead-schema';
 
 import countryList from 'react-select-country-list';
-import { useGetVisa, useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import { DatePicker } from '@/components/organisms/date-picker';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import MultiSelect from '@/components/molecules/multi-select';
@@ -43,18 +43,7 @@ const VisaAndServiceStep = () => {
     });
   }, [occupations]);
 
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(() => {
-    if (!!visas?.length) {
-      return visas.map((visa) => {
-        return {
-          label: visa.visaType,
-          value: visa.visaType,
-        };
-      });
-    }
-  }, [visas]);
+  const visaOptions = useGetVisaOptions();
 
   return (
     <div className="space-y-5">
@@ -64,7 +53,7 @@ const VisaAndServiceStep = () => {
           name="visa"
           render={({ field }) => (
             <SelectWithCommand
-              options={visaOptions || []}
+              options={visaOptions}
               value={field.value ?? undefined}
               label="Visa"
               onSelect={(val) => field.onChange(val)}

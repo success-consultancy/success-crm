@@ -26,7 +26,7 @@ import {
 } from '@/types/response-types/skill-assessment-response';
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import { useGetOccupations } from '@/query/get-occupations';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 
 const visaServiceSchema = skillAssessmentFormSchema.pick({
   currentVisa: true,
@@ -79,12 +79,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
   const [isEditing, setIsEditing] = useState(false);
   const editSkill = useEditSkillAssessment();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(
-    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
-    [visas],
-  );
+  const visaOptions = useGetVisaOptions();
 
   const statusOptions = Object.values(SkillAssessmentStatusTypes).map((value) => ({
     label: value,

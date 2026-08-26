@@ -22,7 +22,7 @@ import tribunalReviewFormSchema from '@/schema/tribunal-review';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetOccupations } from '@/query/get-occupations';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 
 const visaInfoSchema = tribunalReviewFormSchema.pick({
   currentVisa: true,
@@ -82,12 +82,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editTribunal = useUpdateTribunalReview();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(
-    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
-    [visas],
-  );
+  const visaOptions = useGetVisaOptions();
 
   const statusOptions = Object.values(TribunalStatusTypes).map((value) => ({ label: value, value }));
 

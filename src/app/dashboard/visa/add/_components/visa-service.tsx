@@ -31,7 +31,7 @@ import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { FORM_STATE } from '@/types/common';
@@ -71,7 +71,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
+  const visaOptions = useGetVisaOptions();
 
   const discount = watch('accounts.discount');
   const amount = watch('accounts.amount');
@@ -85,10 +85,6 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
       label: occupation.title + ' - ' + occupation.code,
     }));
   }, [occupations]);
-
-  const visaOptions = useMemo(() => {
-    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
-  }, [visas]);
 
   const statusOptions = Object.values(VisaStatusTypes).map((value) => ({ label: value, value }));
 

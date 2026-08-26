@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -19,7 +19,7 @@ import { buildLeadSectionPayload } from './lead-section-payload';
 import { passportDetailsSchema } from '@/schema/lead-schema';
 import { ILead } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 
 type FormValues = z.infer<typeof passportDetailsSchema>;
 
@@ -37,12 +37,7 @@ const toDefaults = (lead: ILead): FormValues => ({
 const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editLead = useEditLead();
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(
-    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
-    [visas],
-  );
+  const visaOptions = useGetVisaOptions();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(passportDetailsSchema) as any,

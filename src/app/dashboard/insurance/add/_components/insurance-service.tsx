@@ -19,7 +19,7 @@ import { FormAccordion } from '@/components/organisms/form-accordion';
 import { useAddVisaService } from '@/mutations/visa/add-visa';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import { useEffect, useMemo } from 'react';
 import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
@@ -71,7 +71,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
-  const { data: visas } = useGetVisaConst();
+  const visaOptions = useGetVisaOptions();
   const insuranceProviders = getInsuranceProviderMapping();
   const insuranceTypes = getInsuranceTypeMapping();
 
@@ -151,10 +151,6 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
     }
     return [];
   }, [users]);
-
-  const visaOptions = useMemo(() => {
-    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
-  }, [visas]);
 
   // Helper to handle date changes and convert to string (ISO format)
   const handleDateChange = (fieldName: keyof InsuranceSchemaType) => (date: Date | undefined) => {

@@ -14,12 +14,13 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import TableSkeleton from '@/components/organisms/table-skeleton';
 import TableEmptyRow from '@/components/common/table-empty-row';
-import { useGetVisaConst, IVisaConst } from '@/query/get-visa';
+import { useGetVisaConst, visaTypeKey, IVisaConst } from '@/query/get-visa';
 import { useAddVisaConst } from '@/mutations/visa-const/add-visa-const';
 import { useEditVisaConst } from '@/mutations/visa-const/edit-visa-const';
 import { useDeleteVisaConst } from '@/mutations/visa-const/delete-visa-const';
 import { downloadFile } from '@/utils/download';
 import { usePermissions } from '@/hooks/use-permissions';
+import toast from 'react-hot-toast';
 
 type SortField = 'visaType' | 'createdAt' | 'updatedAt';
 type SortDir = 'asc' | 'desc';
@@ -109,6 +110,12 @@ const VisaListPage = () => {
   const handleSubmit = () => {
     const visaType = form.visaType.trim();
     if (!visaType) return;
+    // The API rejects duplicates too, this just saves the round trip.
+    const duplicate = visas.find((v) => v.id !== editingId && visaTypeKey(v.visaType) === visaTypeKey(visaType));
+    if (duplicate) {
+      toast.error(`Visa type "${duplicate.visaType}" already exists`);
+      return;
+    }
     if (editingId !== null) {
       editVisa({ id: editingId, visaType }, { onSuccess: cancelForm });
     } else {

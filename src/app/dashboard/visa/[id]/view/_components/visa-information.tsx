@@ -24,7 +24,7 @@ import { IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-respon
 import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 
 const visaInfoSchema = newVisaServiceSchema.pick({
   currentVisa: true,
@@ -82,12 +82,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editVisa = useEditVisa();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(
-    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
-    [visas],
-  );
+  const visaOptions = useGetVisaOptions();
 
   const anzscoOptions = useMemo(
     () =>

@@ -22,7 +22,7 @@ import { buildInsuranceSectionPayload } from './insurance-section-payload';
 import insuranceFormSchema from '@/schema/insurance';
 import { IInsurance, InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
 
 const visaInfoSchema = insuranceFormSchema.pick({
@@ -68,12 +68,7 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
   const [isEditing, setIsEditing] = useState(false);
   const editInsurance = useEditInsurance();
 
-  const { data: visas } = useGetVisaConst();
-
-  const visaOptions = useMemo(
-    () => visas?.map((v) => ({ label: v.visaType, value: v.visaType })) ?? [],
-    [visas],
-  );
+  const visaOptions = useGetVisaOptions();
 
   const insuranceProviders = useMemo(() => getInsuranceProviderMapping(), []);
   const insuranceTypes = useMemo(() => getInsuranceTypeMapping(), []);

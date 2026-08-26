@@ -23,7 +23,7 @@ import { useAddSkillAssessment } from '@/mutations/skill-assessment/add-skill-as
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import toast from 'react-hot-toast';
 import { useGetSource } from '@/query/get-source';
-import { useGetVisaConst } from '@/query/get-visa';
+import { useGetVisaOptions } from '@/query/get-visa';
 import TinyEditor from '@/components/organisms/text-editor';
 import { FormField } from '@/components/ui/form';
 import SelectWithCommand from '@/components/molecules/select-with-command';
@@ -156,7 +156,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
   const { data: occupations } = useGetOccupations();
-  const { data: visas } = useGetVisaConst();
+  const visaOptions = useGetVisaOptions();
 
   const ANZSCOOccupationOptions = useMemo(() => {
     return occupations?.map((occupation) => {
@@ -168,10 +168,6 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
       };
     });
   }, [occupations]);
-
-  const visaOptions = useMemo(() => {
-    return visas?.map((visa) => ({ label: visa.visaType, value: visa.visaType })) ?? [];
-  }, [visas]);
 
   // Reset form when defaultValues change (when data loads for edit mode)
   useEffect(() => {
