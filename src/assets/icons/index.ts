@@ -9,6 +9,7 @@ import DashboardIcon from './dashboard-icon';
 import EducationIcon from './education-icon';
 import NewUpdatesIcon from './news-updates-icon';
 import CloudUploadIcon from './cloud-upload-icon';
+import ServicesIcon from './services-icon';
 import FiscalReportIcon from './fiscal-report-icon';
 import InsuranceIcon from './insurance-service-icon';
 import TribunalReviewIcon from './tribunal-review-icon';
@@ -30,6 +31,7 @@ const Icons = {
   LeadsIcon,
   LogoutIcon,
   NewUpdatesIcon,
+  ServicesIcon,
   SetupIcon,
   SkillAssessmentIcon,
   TribunalReviewIcon,

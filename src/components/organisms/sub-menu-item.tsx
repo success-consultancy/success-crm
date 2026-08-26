@@ -16,7 +16,7 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
     <Link
       href={subItem.href}
       className={cn(
-        'relative flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
+        'relative z-10 flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
         isSubActive
           ? 'bg-component-active text-primary font-semibold'
           : 'text-neutral-black hover:bg-component-active/60 hover:text-neutral-black font-medium',
