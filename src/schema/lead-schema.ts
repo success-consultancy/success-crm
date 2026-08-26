@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+
 export const personalDetailsSchema = z.object({
   email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email address' }),
   phone: z
@@ -15,7 +17,10 @@ export const personalDetailsSchema = z.object({
     .string({ message: 'Last name is required' })
     .min(1, { message: 'Last name is required' })
     .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
-  dob: z.string({ message: 'Date of birth is required' }).min(1, { message: 'Date of birth is required' }),
+  dob: z
+    .string({ message: 'Date of birth is required' })
+    .min(1, { message: 'Date of birth is required' })
+    .refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
   address: z.string().nullable().optional(),
   qualification: z.string().nullable().optional(),
   occupation: z.string().nullable().optional(),

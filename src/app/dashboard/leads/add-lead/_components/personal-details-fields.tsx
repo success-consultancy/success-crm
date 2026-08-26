@@ -66,6 +66,7 @@ const PersonalDetailsStep = () => {
               }}
               placeholder="DD/MM/YYYY"
               className="w-full"
+              disableFutureDates
               error={errors.dob?.message}
             />
           )}

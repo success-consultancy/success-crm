@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from '../date-validation';
+
 // Helper to allow null or empty string (matching Joi's .allow(null, ''))
 const nullableString = () => z.string().nullable().optional();
 const nullableNumber = () => z.number().int().nullable().optional();
@@ -27,7 +29,7 @@ const newVisaServiceBaseSchema = z.object({
     .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
     .min(10, { message: 'Phone number must be at least 10 digits' }),
 
-  dob: nullableString(),
+  dob: nullableString().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
   occupation: nullableString(),
 

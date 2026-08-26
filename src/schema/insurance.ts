@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 const nullableString = () => z.string().nullable().optional();
 const nullableDate = () => z.string().nullable().optional();
@@ -22,7 +24,7 @@ const insuranceFormSchema = z.object({
     .string()
     .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
     .min(10, { message: 'Phone number must be at least 10 digits' }),
-  dob: z.string().nullable().optional(),
+  dob: z.string().nullable().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
   currentVisa: z.string().nullable().optional(),
   currentInsurance: z.string().nullable().optional(),

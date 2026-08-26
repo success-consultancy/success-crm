@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+
 // Helper for nullable strings
 const nullableString = () => z.string().nullable().optional();
 const nullableDate = () => z.string().nullable().optional();
@@ -14,7 +16,7 @@ const tribunalReviewBaseSchema = z.object({
   firstName: z.string().min(1, 'First name is required').max(100, 'First name too long').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
   middleName: nullableString(),
   lastName: z.string().min(1, 'Last name is required').refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
-  dob: nullableDate(),
+  dob: nullableDate().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
   email: z.string().email('Please enter a valid email address'),
   phone: z
     .string()

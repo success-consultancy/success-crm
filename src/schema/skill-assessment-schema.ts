@@ -1,6 +1,8 @@
 import { z } from 'zod';
 import { format } from 'date-fns';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+
 const skillAssessmentFormSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
@@ -17,7 +19,7 @@ const skillAssessmentFormSchema = z.object({
     .string()
     .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
     .min(10, { message: 'Phone number must be at least 10 digits' }),
-  dob: z.string().nullable().optional(),
+  dob: z.string().nullable().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
   occupation: z.string().nullable().optional(),
   anzsco: z.string().nullable().optional(),
