@@ -8,6 +8,7 @@ export enum DashboardTitle {
   Administrative = 'Administrative',
   LegalAndAgreements = 'Legal & agreements',
   NewsAndUpdates = 'News and updates',
+  Services = 'Services',
   EducationService = 'Education service',
   VisaService = 'Visa service',
   SkillAssessmentService = 'Skill assessment service',

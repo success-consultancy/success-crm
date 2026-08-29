@@ -72,7 +72,7 @@ const AdminSidebarMenuItems = () => {
         }
 
         if (item.subItems && !isCollapsed) {
-          return <AccordionMenuItem key={index} item={item} index={index} isActive={isActive} pathName={pathName} />;
+          return <AccordionMenuItem key={index} item={item} index={index} pathName={pathName} />;
         }
 
         return null;

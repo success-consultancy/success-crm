@@ -20,10 +20,11 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
       aria-disabled={isDisabled}
       tabIndex={isDisabled ? -1 : undefined}
       className={cn(
-        menuItemVariants({ size: 'medium', state: getMenuItemState(isSubActive, isDisabled) }),
-        // Indent so sub-item labels line up with the parent item's label (px-2 + 20px icon + 12px gap)
-        'overflow-hidden pl-10',
-        collapsed && 'pointer-events-none opacity-0',
+        'relative z-10 flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
+        isSubActive
+          ? 'bg-component-active text-primary font-semibold'
+          : 'text-neutral-black hover:bg-component-active/60 hover:text-neutral-black font-medium',
+        collapsed && 'opacity-0 pointer-events-none',
       )}
     >
       <span className={cn(collapsed && 'w-0 opacity-0')}>{subItem.title}</span>

@@ -61,34 +61,15 @@ export const menuItems: MenuItem[] = [
     permissionKey: 'leads',
   },
   {
-    title: DashboardTitle.EducationService,
-    icon: Icons.EducationIcon,
-    href: '/dashboard/education',
-    permissionKey: 'education',
-  },
-  {
-    title: DashboardTitle.VisaService,
-    icon: Icons.VisaIcon,
-    href: '/dashboard/visa',
-    permissionKey: 'visa',
-  },
-  {
-    title: DashboardTitle.SkillAssessmentService,
-    icon: Icons.SkillAssessmentIcon,
-    href: '/dashboard/skill',
-    permissionKey: 'skill',
-  },
-  {
-    title: DashboardTitle.TribunalReview,
-    icon: Icons.TribunalReviewIcon,
-    href: '/dashboard/tribunal-review',
-    permissionKey: 'tribunalReview',
-  },
-  {
-    title: DashboardTitle.InsuranceService,
-    icon: Icons.InsuranceIcon,
-    href: '/dashboard/insurance',
-    permissionKey: 'insurance',
+    title: DashboardTitle.Services,
+    icon: Icons.ServicesIcon,
+    subItems: [
+      { title: DashboardTitle.EducationService, href: '/dashboard/education', permissionKey: 'education' },
+      { title: DashboardTitle.VisaService, href: '/dashboard/visa', permissionKey: 'visa' },
+      { title: DashboardTitle.SkillAssessmentService, href: '/dashboard/skill', permissionKey: 'skill' },
+      { title: DashboardTitle.TribunalReview, href: '/dashboard/tribunal-review', permissionKey: 'tribunalReview' },
+      { title: DashboardTitle.InsuranceService, href: '/dashboard/insurance', permissionKey: 'insurance' },
+    ],
   },
   {
     title: DashboardTitle.AgencyAgreement,

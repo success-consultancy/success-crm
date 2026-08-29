@@ -4,6 +4,7 @@ import React from 'react';
 import MyStatCards from './my-stat-cards';
 import ServicePipelineTable from './service-pipeline-table';
 import PerformanceReportChart from './performance-report-chart';
+import AnnouncementsSection from '../admin/announcements-section';
 
 const UserDashboard = () => {
   return (
@@ -13,6 +14,8 @@ const UserDashboard = () => {
       <ServicePipelineTable />
 
       <PerformanceReportChart />
+
+      <AnnouncementsSection />
     </div>
   );
 };
