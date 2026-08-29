@@ -3,6 +3,9 @@
 import { Accordion } from '@/components/ui/accordion';
 import { educationServiceDefaultValues } from '@/schema/education-service/new-student.schema';
 import { editEducationServiceSchema, EditEducationServiceType } from '@/schema/education-service/edit-student.schema';
+import { EDUCATION_DEPENDENT_FIELDS } from '@/schema/education-service/new-student.schema';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 
@@ -65,6 +68,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
     reset,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, EDUCATION_DEPENDENT_FIELDS);
+
+  // Passport and status dates stay locked until the record they describe exists.
+  const hasPassport = !isBlankValue(watch('passport'));
+  const hasStatus = !isBlankValue(watch('status'));
 
   const remarks = watch('remarks');
   const status = watch('status');
@@ -193,11 +202,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                   <DatePicker
                     label="Passport Issue Date"
                     side="top"
-                    value={field.value}
+                    value={field.value ?? undefined}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="w-full"
                     error={!!errors.issueDate?.message}
+                    disabled={!hasPassport}
                     disableFutureDates={true}
                   />
                 )}
@@ -212,11 +222,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                   <DatePicker
                     label="Passport Expiry Date"
                     side="top"
-                    value={field.value}
+                    value={field.value ?? undefined}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="w-full"
                     error={!!errors.expiryDate?.message}
+                    disabled={!hasPassport}
                     disablePastDates={true}
                   />
                 )}
@@ -323,11 +334,13 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                       <DatePicker
                         label="COE Received Date"
                         side="top"
-                        value={field.value}
+                        value={field.value ?? undefined}
                         onChange={field.onChange}
                         placeholder="Pick a date"
                         className="w-full"
                         error={!!errors.statusDate?.message}
+                        disabled={!hasStatus}
+                        disableFutureDates
                       />
                     )}
                   />
@@ -372,7 +385,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
             />
             <div className="col-span-2">
               <div className="mt-6">
-                <TinyEditor label="Note" value={remarks} onChange={handleMiscEditorChange} error={errors.remarks?.message} />
+                <TinyEditor
+                  label="Note"
+                  value={remarks}
+                  onChange={handleMiscEditorChange}
+                  error={errors.remarks?.message}
+                />
               </div>{' '}
             </div>
           </div>
@@ -386,7 +404,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         <Button
           onClick={() => {
             reset();
-            router.back()
+            router.back();
           }}
           type="button"
           variant="outline"

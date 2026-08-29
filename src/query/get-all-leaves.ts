@@ -12,8 +12,10 @@ const getAllLeaves = async (): Promise<LeaveRecord[]> => {
 };
 
 /**
- * All users' leave requests (GET /leave). The endpoint is not role-filtered
- * server-side, so callers gate this behind an approver role check via `enabled`.
+ * Leave requests visible to the caller (GET /leave). The API scopes this to the
+ * requests addressed to them plus their own history; super admins still get the
+ * org-wide list. Callers gate the fetch behind an approver role check via
+ * `enabled` so non-approvers never poll it.
  */
 export const useGetAllLeaves = ({ enabled = true, poll = false }: { enabled?: boolean; poll?: boolean } = {}) => {
   return useQuery({

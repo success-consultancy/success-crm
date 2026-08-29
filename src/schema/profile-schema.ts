@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+
 export const ProfileSchema = z.object({
   id: z.string().optional(),
   email: z.string({ message: 'Email is required.' }).email({ message: 'Invalid email address' }),
@@ -9,7 +11,7 @@ export const ProfileSchema = z.object({
   firstName: z.string({ message: 'First name is required.' }).min(1, { message: 'First name is required' }),
   middleName: z.string().optional(),
   lastName: z.string({ message: 'Last name is required.' }).min(1, { message: 'Last name is required' }),
-  dob: z.string().optional(),
+  dob: z.string().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
   role: z.string().optional(),
   detail: z.string().optional(),
   address: z.string().optional(),

@@ -16,13 +16,20 @@ function Textarea({
 }) {
   return (
     <div className="flex flex-col space-y-1">
-      <Label data-slot="label" className="text-base font-medium">
+      <Label
+        data-slot="label"
+        className={cn('text-b14-600 text-neutral-black', props.disabled && 'text-neutral-black/40')}
+      >
         {label}
       </Label>
       <textarea
         data-slot="textarea"
         className={cn(
-          'border-input focus:border-primary placeholder:text-muted-foreground aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base transition-all outline-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm',
+          'placeholder:text-neutral-light-grey flex field-sizing-content min-h-32 w-full rounded-[4px] border border-neutral-border bg-transparent px-3 py-2 text-base text-neutral-black transition-colors outline-none md:text-b14',
+          // States per the design file: hover, focus, error, disabled
+          'hover:border-neutral-black focus:border-primary-blue',
+          error && 'border-utility-red hover:border-utility-red focus:border-utility-red',
+          'disabled:cursor-not-allowed disabled:border-neutral-border disabled:bg-gray-50 disabled:text-neutral-black/50 disabled:placeholder:text-neutral-light-grey/50',
           className,
         )}
         {...props}

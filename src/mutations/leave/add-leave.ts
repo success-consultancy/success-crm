@@ -11,6 +11,7 @@ const toLegacyDate = (d: Date) => format(d, 'dd/MM/yyyy');
 const addLeave = async (payload: LeaveRequestSchemaType) => {
   const body = {
     type: payload.type,
+    approverId: payload.approverId,
     startDate: toLegacyDate(payload.startDate),
     endDate: toLegacyDate(payload.endDate),
     hoursPerDay: String(payload.hoursPerDay),

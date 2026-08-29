@@ -19,24 +19,29 @@ import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildVisaSectionPayload } from './visa-section-payload';
-import { newVisaServiceSchema } from '@/schema/visa-service/new-visa.schema';
+import { newVisaServiceSchema, VISA_DEPENDENT_FIELDS } from '@/schema/visa-service/new-visa.schema';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IVisaDetail } from '@/types/response-types/visa-response';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 
-const personalSchema = newVisaServiceSchema.pick({
-  firstName: true,
-  middleName: true,
-  lastName: true,
-  dob: true,
-  email: true,
-  phone: true,
-  country: true,
-  state: true,
-  passport: true,
-  issueDate: true,
-  expiryDate: true,
-  location: true,
-});
+const personalSchema = withDependentFields(
+  newVisaServiceSchema.pick({
+    firstName: true,
+    middleName: true,
+    lastName: true,
+    dob: true,
+    email: true,
+    phone: true,
+    country: true,
+    state: true,
+    passport: true,
+    issueDate: true,
+    expiryDate: true,
+    location: true,
+  }),
+  VISA_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof personalSchema>;
 
@@ -75,8 +80,13 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, VISA_DEPENDENT_FIELDS);
+
+  const hasPassport = !isBlankValue(watch('passport'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(visa));
@@ -116,11 +126,7 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
-            <TextInput
-              label="Middle name (optional)"
-              {...register('middleName')}
-              error={errors.middleName?.message}
-            />
+            <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
               <Label className="text-b2">Date of birth</Label>
@@ -170,6 +176,8 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.issueDate?.message}
+                    disabled={!hasPassport}
+                    disableFutureDates
                   />
                 )}
               />
@@ -188,6 +196,7 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.expiryDate?.message}
+                    disabled={!hasPassport}
                   />
                 )}
               />

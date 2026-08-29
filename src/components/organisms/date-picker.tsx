@@ -63,6 +63,16 @@ export function DatePicker({
   };
   const defaultMonth = value || new Date();
 
+  // Cap navigation as well as selection, so a future month is never reachable.
+  // The far-back start keeps the year dropdown usable for dates of birth.
+  const today = new Date();
+  const startMonth = disablePastDates
+    ? defaultMonth
+    : disableFutureDates
+      ? new Date(today.getFullYear() - 100, 0)
+      : undefined;
+  const endMonth = disablePastDates ? new Date(2050, 11, 31) : disableFutureDates ? today : undefined;
+
   return (
     <div>
       {label && (
@@ -110,8 +120,8 @@ export function DatePicker({
                     }
                   }}
                   disabled={getDisabledDates}
-                  startMonth={disablePastDates ? defaultMonth : undefined}
-                  endMonth={disablePastDates ? new Date(2050, 12, 31) : undefined}
+                  startMonth={startMonth}
+                  endMonth={endMonth}
                 />
               </PopoverContent>
             )}

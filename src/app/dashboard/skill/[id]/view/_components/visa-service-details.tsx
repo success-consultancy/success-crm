@@ -19,28 +19,30 @@ import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildSkillSectionPayload } from './skill-section-payload';
-import skillAssessmentFormSchema from '@/schema/skill-assessment-schema';
-import {
-  ISkillAssessment,
-  SkillAssessmentStatusTypes,
-} from '@/types/response-types/skill-assessment-response';
+import skillAssessmentFormSchema, { SKILL_DEPENDENT_FIELDS } from '@/schema/skill-assessment-schema';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
+import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
 
-const visaServiceSchema = skillAssessmentFormSchema.pick({
-  currentVisa: true,
-  visaExpiry: true,
-  dueDate: true,
-  anzsco: true,
-  occupation: true,
-  skillAssessmentBody: true,
-  otherSkillAssessmentBody: true,
-  submittedDate: true,
-  decisionDate: true,
-  status: true,
-  csaStatus: true,
-});
+const visaServiceSchema = withDependentFields(
+  skillAssessmentFormSchema.pick({
+    currentVisa: true,
+    visaExpiry: true,
+    dueDate: true,
+    anzsco: true,
+    occupation: true,
+    skillAssessmentBody: true,
+    otherSkillAssessmentBody: true,
+    submittedDate: true,
+    decisionDate: true,
+    status: true,
+    csaStatus: true,
+  }),
+  SKILL_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof visaServiceSchema>;
 
@@ -108,6 +110,10 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
     watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, SKILL_DEPENDENT_FIELDS);
+
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
 
   const selectedBody = watch('skillAssessmentBody');
 
@@ -191,6 +197,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
                     placeholder="DD / MM / YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     disablePastDates
                   />
                 )}
@@ -273,6 +280,7 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
                     placeholder="DD / MM / YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.submittedDate?.message}
+                    disableFutureDates
                   />
                 )}
               />

@@ -16,16 +16,21 @@ import SelectField from '@/components/organisms/select-field';
 
 import EditableTitleBox from './editable-title-box';
 import { buildTribunalSectionPayload } from './tribunal-section-payload';
-import tribunalReviewFormSchema from '@/schema/tribunal-review';
+import tribunalReviewFormSchema, { TRIBUNAL_DEPENDENT_FIELDS } from '@/schema/tribunal-review';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 
-const tribunalDetailsSchema = tribunalReviewFormSchema.pick({
-  tribunalStatus: true,
-  tribunalSubmittedDate: true,
-  hearingDate: true,
-  tribunalDecisionDate: true,
-});
+const tribunalDetailsSchema = withDependentFields(
+  tribunalReviewFormSchema.pick({
+    tribunalStatus: true,
+    tribunalSubmittedDate: true,
+    hearingDate: true,
+    tribunalDecisionDate: true,
+  }),
+  TRIBUNAL_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof tribunalDetailsSchema>;
 
@@ -59,8 +64,13 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, TRIBUNAL_DEPENDENT_FIELDS);
+
+  const hasTribunalStatus = !isBlankValue(watch('tribunalStatus'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(visa));
@@ -119,6 +129,8 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.tribunalSubmittedDate?.message}
+                    disabled={!hasTribunalStatus}
+                    disableFutureDates
                   />
                 )}
               />
@@ -137,6 +149,7 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.hearingDate?.message}
+                    disabled={!hasTribunalStatus}
                     disablePastDates
                   />
                 )}
@@ -156,6 +169,7 @@ const TribunalDetails = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.tribunalDecisionDate?.message}
+                    disabled={!hasTribunalStatus}
                     disablePastDates
                   />
                 )}

@@ -1,17 +1,28 @@
 import { z } from 'zod';
 import { format } from 'date-fns';
 
-import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from './date-validation';
+import { withDependentFields, type DependentFieldRule } from './dependent-fields';
 
-const skillAssessmentFormSchema = z.object({
+const skillAssessmentBaseSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string().min(1, 'First name is required').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
-  lastName: z.string().min(1, 'Last name is required').refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   middleName: z.string().nullable().optional(),
 
   passport: z.union([z.number(), z.string()]).nullable().optional(),
-  issueDate: z.string().nullable().optional(),
+  issueDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Issue date') }),
   expiryDate: z.string().nullable().optional(),
 
   email: z.string({ message: 'Email is required' }).email({ message: 'Please enter a valid email address' }),
@@ -30,11 +41,23 @@ const skillAssessmentFormSchema = z.object({
   currentVisa: z.string().nullable().optional(),
   visaExpiry: z.string().nullable().optional(),
 
-  requestedDate: z.string().nullable().optional(),
+  requestedDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Requested date') }),
   dueDate: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
-  statusDate: z.string().nullable().optional(),
-  submittedDate: z.string().nullable().optional(),
+  statusDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Status date') }),
+  submittedDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Date submitted') }),
   decisionDate: z.string().nullable().optional(),
 
   country: z.string().nullable().optional(),
@@ -52,12 +75,30 @@ const skillAssessmentFormSchema = z.object({
   updatedBy: z.number().int().nullable().optional(),
 });
 
+export const SKILL_DEPENDENT_FIELDS: DependentFieldRule[] = [
+  {
+    parent: 'currentVisa',
+    dependents: ['visaExpiry'],
+    message: 'Select a current visa before setting the visa expiry date',
+  },
+  {
+    parent: 'passport',
+    dependents: ['issueDate', 'expiryDate'],
+    message: 'Enter a passport number before setting the passport dates',
+  },
+];
+
+const skillAssessmentFormSchema = withDependentFields(skillAssessmentBaseSchema, SKILL_DEPENDENT_FIELDS);
+
 export type SkillAssessmentSchemaType = z.infer<typeof skillAssessmentFormSchema>;
 
 // Update schema - sourceId is optional when editing
-export const updateSkillAssessmentFormSchema = skillAssessmentFormSchema.extend({
-  sourceId: z.string().max(50, 'Source selection is invalid').nullable().optional(),
-});
+export const updateSkillAssessmentFormSchema = withDependentFields(
+  skillAssessmentBaseSchema.extend({
+    sourceId: z.string().max(50, 'Source selection is invalid').nullable().optional(),
+  }),
+  SKILL_DEPENDENT_FIELDS,
+);
 
 // Helper function to convert API response to form default values
 export const getSkillAssessmentDefaultValues = (data: any): Partial<SkillAssessmentSchemaType> => {

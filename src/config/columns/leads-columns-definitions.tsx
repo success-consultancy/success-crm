@@ -306,6 +306,12 @@ export const useLeadColumn = (
                   {type}
                 </Badge>
               );
+            case 'Tribunal':
+              return (
+                <Badge key={type} className="bg-purple-100 text-purple-800 hover:bg-purple-100">
+                  {type}
+                </Badge>
+              );
             default:
               return <span key={type}>{type}</span>;
           }

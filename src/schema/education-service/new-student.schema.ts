@@ -1,10 +1,26 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from '../date-validation';
+import { withDependentFields, type DependentFieldRule } from '../dependent-fields';
+
 // Common validation patterns
 const phoneRegex = /^\+?[\d\s\-().]+$/;
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
-export const educationServiceSchema = z
+export const EDUCATION_DEPENDENT_FIELDS: DependentFieldRule[] = [
+  {
+    parent: 'passport',
+    dependents: ['issueDate', 'expiryDate'],
+    message: 'Enter a passport number before setting the passport dates',
+  },
+  {
+    parent: 'status',
+    dependents: ['statusDate'],
+    message: 'Select a status before setting the COE received date',
+  },
+];
+
+const educationServiceBaseSchema = z
   .object({
     // Personal Details
     firstName: z
@@ -13,10 +29,7 @@ export const educationServiceSchema = z
       .max(50, 'First name cannot exceed 50 characters')
       .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
 
-    middleName: z
-      .string()
-      .max(50, 'Middle name cannot exceed 50 characters')
-      .optional(),
+    middleName: z.string().max(50, 'Middle name cannot exceed 50 characters').optional(),
 
     lastName: z
       .string()
@@ -24,12 +37,13 @@ export const educationServiceSchema = z
       .max(50, 'Last name cannot exceed 50 characters')
       .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
 
-    dob: z.date().optional(),
+    dob: z.date().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
     email: z
       .string()
       .min(1, 'Email address is required')
-      .max(100, 'Email address cannot exceed 100 characters'),
+      .max(100, 'Email address cannot exceed 100 characters')
+      .email('Please enter a valid email address'),
 
     phone: z
       .string()
@@ -39,14 +53,15 @@ export const educationServiceSchema = z
 
     country: z.string().max(50, 'Country name cannot exceed 50 characters').optional(),
 
-    passport: z
-      .string()
-      .max(20, 'Passport number cannot exceed 20 characters')
-      .optional(),
+    passport: z.string().max(20, 'Passport number cannot exceed 20 characters').optional(),
 
-    issueDate: z.date().optional(),
+    issueDate: z
+      .date()
+      .nullable()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Issue date') }),
 
-    expiryDate: z.date().optional(),
+    expiryDate: z.date().nullable().optional(),
 
     location: z.string().max(100, 'Location cannot exceed 100 characters').optional(),
 
@@ -64,10 +79,7 @@ export const educationServiceSchema = z
     // Fee Structure
     courseFee: z
       .object({
-        planname: z
-          .string()
-          .max(50, 'Payment plan name cannot exceed 50 characters')
-          .optional(),
+        planname: z.string().max(50, 'Payment plan name cannot exceed 50 characters').optional(),
 
         amount: z
           .number()
@@ -79,7 +91,9 @@ export const educationServiceSchema = z
 
         invoicenumber: z
           .union([
-            z.string().max(50, 'Invoice number cannot exceed 50 characters')
+            z
+              .string()
+              .max(50, 'Invoice number cannot exceed 50 characters')
               .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
             z.literal(''),
           ])
@@ -93,14 +107,13 @@ export const educationServiceSchema = z
 
         accounts: z
           .object({
-            planname: z
-              .string()
-              .max(50, 'Account payment plan cannot exceed 50 characters')
-              .optional(),
+            planname: z.string().max(50, 'Account payment plan cannot exceed 50 characters').optional(),
 
             amount: z
               .union([
-                z.string().max(50, 'Account amount cannot exceed 50 characters')
+                z
+                  .string()
+                  .max(50, 'Account amount cannot exceed 50 characters')
                   .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid amount (e.g., 1200 or 1200.50)'),
                 z.literal(''),
               ])
@@ -110,7 +123,9 @@ export const educationServiceSchema = z
 
             invoicenumber: z
               .union([
-                z.string().max(50, 'Account invoice number cannot exceed 50 characters')
+                z
+                  .string()
+                  .max(50, 'Account invoice number cannot exceed 50 characters')
                   .regex(invoiceRegex, 'Invoice number can only contain letters, numbers, hyphens, and underscores'),
                 z.literal(''),
               ])
@@ -120,7 +135,9 @@ export const educationServiceSchema = z
 
             comission: z
               .union([
-                z.string().max(50, 'Commission amount cannot exceed 50 characters')
+                z
+                  .string()
+                  .max(50, 'Commission amount cannot exceed 50 characters')
                   .regex(/^\d+(\.\d{1,2})?$/, 'Please enter a valid commission amount'),
                 z.literal(''),
               ])
@@ -128,7 +145,9 @@ export const educationServiceSchema = z
 
             discount: z
               .union([
-                z.string().max(50, 'Discount amount cannot exceed 50 characters')
+                z
+                  .string()
+                  .max(50, 'Discount amount cannot exceed 50 characters')
                   .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid discount amount'),
                 z.literal(''),
               ])
@@ -136,7 +155,9 @@ export const educationServiceSchema = z
 
             bonus: z
               .union([
-                z.string().max(50, 'Bonus amount cannot exceed 50 characters')
+                z
+                  .string()
+                  .max(50, 'Bonus amount cannot exceed 50 characters')
                   .regex(/^\d*(\.\d{1,2})?$/, 'Please enter a valid bonus amount'),
                 z.literal(''),
               ])
@@ -157,33 +178,37 @@ export const educationServiceSchema = z
 
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
 
-    statusDate: z.date().optional(),
+    statusDate: z
+      .date()
+      .nullable()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Status date') }),
   })
   .superRefine((data, ctx) => {
     if (data.issueDate && data.expiryDate && !(data.expiryDate > data.issueDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Passport expiry date must be after the issue date',
         path: ['expiryDate'],
       });
     }
     if (data.startDate && data.endDate && !(data.endDate > data.startDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Course end date must be after the start date',
         path: ['endDate'],
       });
     }
     if (data.dob && !(data.dob < new Date())) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Date of birth cannot be in the future',
         path: ['dob'],
       });
     }
     if (data.expiryDate && !(data.expiryDate > new Date())) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Passport must not be expired',
         path: ['expiryDate'],
       });
@@ -193,13 +218,15 @@ export const educationServiceSchema = z
       const { planname, amount, invoicenumber, status, note, duedate } = data.courseFee;
       if ((planname || amount || invoicenumber || status || note) && !duedate) {
         ctx.addIssue({
-          code: "custom",
+          code: 'custom',
           message: 'Due date is required',
           path: ['courseFee', 'duedate'],
         });
       }
     }
   });
+
+export const educationServiceSchema = withDependentFields(educationServiceBaseSchema, EDUCATION_DEPENDENT_FIELDS);
 
 export type EducationServiceType = z.infer<typeof educationServiceSchema>;
 

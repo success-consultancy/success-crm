@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
 import { SubMenuItem } from '@/constants/sidebar-menu-items';
+import { getMenuItemState, menuItemVariants } from '@/components/atoms/menu-item-variants';
 
 interface SubMenuItemProps {
   subItem: SubMenuItem;
@@ -11,28 +12,21 @@ interface SubMenuItemProps {
 
 export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: SubMenuItemProps) => {
   const isSubActive = pathName === subItem.href;
+  const isDisabled = !!subItem.disabled;
 
   return (
     <Link
       href={subItem.href}
+      aria-disabled={isDisabled}
+      tabIndex={isDisabled ? -1 : undefined}
       className={cn(
-        'relative flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
-        isSubActive
-          ? 'bg-component-active text-primary font-semibold'
-          : 'text-neutral-black hover:bg-component-active/60 hover:text-neutral-black font-medium',
-        collapsed && 'opacity-0 pointer-events-none',
+        menuItemVariants({ size: 'medium', state: getMenuItemState(isSubActive, isDisabled) }),
+        // Indent so sub-item labels line up with the parent item's label (px-2 + 20px icon + 12px gap)
+        'overflow-hidden pl-10',
+        collapsed && 'pointer-events-none opacity-0',
       )}
     >
-      <div
-        className={cn(
-          'flex items-center justify-center w-10 h-10 transition-colors duration-300',
-        )}
-      >
-      </div>
-      {/* Left accent bar — visible only when active */}
-      <span className={cn('pl-3 pr-3 text-[13.5px] whitespace-nowrap leading-none', collapsed && 'opacity-0 w-0')}>
-        {subItem.title}
-      </span>
+      <span className={cn(collapsed && 'w-0 opacity-0')}>{subItem.title}</span>
     </Link>
   );
 };

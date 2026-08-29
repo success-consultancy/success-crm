@@ -25,6 +25,7 @@ const CheckInKioskPage = () => {
       <ReturningClientForm
         onBack={() => setView('initial')}
         onNewClient={() => setView('new-client')}
+        onSuccess={() => setView('success')}
       />
     );
   }

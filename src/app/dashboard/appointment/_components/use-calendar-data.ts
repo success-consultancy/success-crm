@@ -43,12 +43,12 @@ export function useCalendarData(
   }, [selectedDate, currentView, timeZone]);
 
   // 2. Fetch Data
-  const { data: appointmentData, isLoading: isAptLoading } = useGetAppointments({
+  const { data: appointmentData, isLoading: isAptLoading, isError: isAptError } = useGetAppointments({
     ...getSearchParamsObject(APPOINTMENT_FILTER_PARAMS), ...dateRange, userId, view: currentView as any,
   });
 
   // Calendar tab pulls visa expiries from existing entities (no /calendar backend route)
-  const { events: visaEvents, isLoading: isCalLoading } = useVisaExpiries(currentTab === 'calendar');
+  const { events: visaEvents, isLoading: isCalLoading, isError: isCalError } = useVisaExpiries(currentTab === 'calendar');
 
   // Filter visa events to the visible window so we don't render thousands across views
   const visibleVisaEvents = useMemo(() => {
@@ -70,6 +70,7 @@ export function useCalendarData(
     [currentTab, appointmentData?.rows, visibleVisaEvents]
   );
   const isLoading = currentTab === 'appointment' ? isAptLoading : isCalLoading;
+  const isError = currentTab === 'appointment' ? isAptError : isCalError;
 
   // 3. Calendar Grid metadata
   const timeSlots = useMemo(() => [
@@ -114,5 +115,5 @@ export function useCalendarData(
     }));
   }, [itemsByDate]);
 
-  return { isLoading, timeSlots, weekDays, calendarDays, itemsByDate, agendaGroups, timeZone, activeItems };
+  return { isLoading, isError, timeSlots, weekDays, calendarDays, itemsByDate, agendaGroups, timeZone, activeItems };
 }

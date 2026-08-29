@@ -19,24 +19,29 @@ import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildInsuranceSectionPayload } from './insurance-section-payload';
-import insuranceFormSchema from '@/schema/insurance';
+import insuranceFormSchema, { INSURANCE_DEPENDENT_FIELDS } from '@/schema/insurance';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IInsurance, InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { useGetVisaOptions } from '@/query/get-visa';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
 
-const visaInfoSchema = insuranceFormSchema.pick({
-  currentVisa: true,
-  visaExpiry: true,
-  dueDate: true,
-  visaStream: true,
-  insuranceProviderId: true,
-  policyNumber: true,
-  insuranceTypeId: true,
-  startDate: true,
-  expiryDate: true,
-  status: true,
-});
+const visaInfoSchema = withDependentFields(
+  insuranceFormSchema.pick({
+    currentVisa: true,
+    visaExpiry: true,
+    dueDate: true,
+    visaStream: true,
+    insuranceProviderId: true,
+    policyNumber: true,
+    insuranceTypeId: true,
+    startDate: true,
+    expiryDate: true,
+    status: true,
+  }),
+  INSURANCE_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof visaInfoSchema>;
 
@@ -83,8 +88,13 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, INSURANCE_DEPENDENT_FIELDS);
+
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(insurance));
@@ -150,6 +160,7 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     disablePastDates
                   />
                 )}

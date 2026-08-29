@@ -4,8 +4,11 @@ import { Accordion } from '@/components/ui/accordion';
 import {
   newVisaServiceDefaultValues,
   newVisaServiceSchema,
+  VISA_DEPENDENT_FIELDS,
   NewVisaServiceType,
 } from '@/schema/visa-service/new-visa.schema';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format } from 'date-fns';
@@ -54,6 +57,12 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
   const router = useRouter();
   const isAdd = formState === FORM_STATE.ADD;
 
+  const form = useForm<NewVisaServiceType>({
+    resolver: zodResolver(newVisaServiceSchema) as any,
+    defaultValues: isAdd ? newVisaServiceDefaultValues : defaultValues,
+    mode: 'onChange',
+  });
+
   const {
     register,
     control,
@@ -62,11 +71,14 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm<NewVisaServiceType>({
-    resolver: zodResolver(newVisaServiceSchema) as any,
-    defaultValues: isAdd ? newVisaServiceDefaultValues : defaultValues,
-    mode: 'onChange',
-  });
+  } = form;
+
+  useDependentFields(form, VISA_DEPENDENT_FIELDS);
+
+  // Passport, visa and nomination dates stay locked until their parent is set.
+  const hasPassport = !isBlankValue(watch('passport'));
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
+  const hasNominationStatus = !isBlankValue(watch('nominationStatus'));
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
@@ -135,6 +147,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
           onSuccess: () => {
             toast.success('Visa applicant added successfully');
             reset();
+            router.push(ROUTES.VISA);
           },
           onError: (error: any) => {
             toast.error(error?.response?.data?.message || 'Failed to add visa applicant');
@@ -196,7 +209,12 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
     <form className="w-full" onSubmit={handleSubmit(submitHandler)}>
       <Portal rootId={PortalIds.DashboardHeader}>
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" type="button" onClick={() => isAdd ? router.push(ROUTES.VISA) : router.back()}>
+          <Button
+            variant="ghost"
+            size="icon"
+            type="button"
+            onClick={() => (isAdd ? router.push(ROUTES.VISA) : router.back())}
+          >
             <ArrowLeft className="h-4 w-4" />
           </Button>
           <h3 className="text-h4 text-content-heading font-bold">
@@ -259,6 +277,8 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.issueDate?.message}
+                    disabled={!hasPassport}
+                    disableFutureDates
                   />
                 )}
               />
@@ -277,6 +297,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.expiryDate?.message}
+                    disabled={!hasPassport}
                   />
                 )}
               />
@@ -325,6 +346,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     disablePastDates={true}
                   />
                 )}
@@ -476,6 +498,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationLodged?.message}
+                    disabled={!hasNominationStatus}
                   />
                 )}
               />
@@ -494,6 +517,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationDecision?.message}
+                    disabled={!hasNominationStatus}
                     disablePastDates={true}
                   />
                 )}

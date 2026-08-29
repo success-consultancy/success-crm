@@ -18,33 +18,38 @@ import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildTribunalSectionPayload } from './tribunal-section-payload';
-import tribunalReviewFormSchema from '@/schema/tribunal-review';
+import tribunalReviewFormSchema, { TRIBUNAL_DEPENDENT_FIELDS } from '@/schema/tribunal-review';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
 
-const visaInfoSchema = tribunalReviewFormSchema.pick({
-  currentVisa: true,
-  visaExpiry: true,
-  dueDate: true,
-  proposedVisa: true,
-  visaStream: true,
-  anzsco: true,
-  occupation: true,
-  sponsorName: true,
-  sponsorEmail: true,
-  sponsorPhone: true,
-  sbsStatus: true,
-  sbsSubmissionDate: true,
-  sbsDecisionDate: true,
-  nominationStatus: true,
-  nominationSubmittedDate: true,
-  nominationDecisionDate: true,
-  visaStatus: true,
-  visaSubmittedDate: true,
-  visaDecisionDate: true,
-});
+const visaInfoSchema = withDependentFields(
+  tribunalReviewFormSchema.pick({
+    currentVisa: true,
+    visaExpiry: true,
+    dueDate: true,
+    proposedVisa: true,
+    visaStream: true,
+    anzsco: true,
+    occupation: true,
+    sponsorName: true,
+    sponsorEmail: true,
+    sponsorPhone: true,
+    sbsStatus: true,
+    sbsSubmissionDate: true,
+    sbsDecisionDate: true,
+    nominationStatus: true,
+    nominationSubmittedDate: true,
+    nominationDecisionDate: true,
+    visaStatus: true,
+    visaSubmittedDate: true,
+    visaDecisionDate: true,
+  }),
+  TRIBUNAL_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof visaInfoSchema>;
 
@@ -108,6 +113,13 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
     watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, TRIBUNAL_DEPENDENT_FIELDS);
+
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
+  const hasSbsStatus = !isBlankValue(watch('sbsStatus'));
+  const hasNominationStatus = !isBlankValue(watch('nominationStatus'));
+  const hasVisaStatus = !isBlankValue(watch('visaStatus'));
 
   const occupationValue = watch('occupation');
 
@@ -175,6 +187,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     disablePastDates
                   />
                 )}
@@ -277,6 +290,8 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.sbsSubmissionDate?.message}
+                    disabled={!hasSbsStatus}
+                    disableFutureDates
                   />
                 )}
               />
@@ -295,6 +310,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.sbsDecisionDate?.message}
+                    disabled={!hasSbsStatus}
                     disablePastDates
                   />
                 )}
@@ -321,6 +337,8 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationSubmittedDate?.message}
+                    disabled={!hasNominationStatus}
+                    disableFutureDates
                   />
                 )}
               />
@@ -339,6 +357,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationDecisionDate?.message}
+                    disabled={!hasNominationStatus}
                     disablePastDates
                   />
                 )}
@@ -365,6 +384,8 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaSubmittedDate?.message}
+                    disabled={!hasVisaStatus}
+                    disableFutureDates
                   />
                 )}
               />
@@ -383,6 +404,7 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaDecisionDate?.message}
+                    disabled={!hasVisaStatus}
                     disablePastDates
                   />
                 )}

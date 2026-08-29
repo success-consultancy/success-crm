@@ -6,6 +6,7 @@ import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { FormField } from '@/components/ui/form';
 import type { LeadSchemaType } from '@/schema/lead-schema';
 import { useFormContext } from 'react-hook-form';
+import { isBlankValue } from '@/schema/dependent-fields';
 
 import { format } from 'date-fns';
 import { DatePicker } from '@/components/organisms/date-picker';
@@ -18,7 +19,11 @@ const PersonalDetailsStep = () => {
     control,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext<LeadSchemaType>();
+
+  // Passport dates describe a passport, so they stay locked until there is one.
+  const hasPassport = !isBlankValue(watch('passport'));
 
   const locationOptions = Object.values(Location).map((location) => {
     return {
@@ -80,7 +85,12 @@ const PersonalDetailsStep = () => {
           control={control}
           name="phone"
           render={({ field }) => (
-            <PhoneNumberInput label="Phone number" value={field.value} onChange={field.onChange} error={errors.phone?.message} />
+            <PhoneNumberInput
+              label="Phone number"
+              value={field.value}
+              onChange={field.onChange}
+              error={errors.phone?.message}
+            />
           )}
         />
         <FormField
@@ -136,7 +146,8 @@ const PersonalDetailsStep = () => {
               label="Passport issue date"
               placeholder="DD/MM/YYYY"
               className="w-full"
-              error={!!errors.issueDate?.message}
+              error={errors.issueDate?.message}
+              disabled={!hasPassport}
               disableFutureDates={true}
             />
           )}
@@ -152,7 +163,8 @@ const PersonalDetailsStep = () => {
               onChange={(date) => setValue('expiryDate', date)}
               placeholder="DD/MM/YYYY"
               className="w-full"
-              error={!!errors.expiryDate?.message}
+              error={errors.expiryDate?.message}
+              disabled={!hasPassport}
               disablePastDates={true}
             />
           )}

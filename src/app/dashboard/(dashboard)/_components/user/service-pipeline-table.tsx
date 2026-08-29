@@ -184,7 +184,7 @@ const ServicePipelineTable = () => {
         })}
       </div>
 
-      <div className="flex items-center gap-1 overflow-x-auto border-b border-neutral-border-light">
+      <div className="hide-scrollbar flex items-center gap-1 overflow-x-auto overflow-y-hidden border-b border-neutral-border-light">
         {config.statuses.map(({ value, label }) => (
           <button
             key={value}

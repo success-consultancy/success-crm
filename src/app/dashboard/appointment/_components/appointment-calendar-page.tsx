@@ -35,6 +35,8 @@ import { useCalendarData, type CalendarItem } from './use-calendar-data';
 import { VisaExpiryEvent, getCategoryColor } from './use-visa-expiries';
 import { useDeleteAppointment } from '@/mutations/appointments/delete-appointment';
 import { useEditAppointment } from '@/mutations/appointments/edit-appointment';
+import { getAppointmentErrorMessage } from '@/mutations/appointments/appointment-error-message';
+import { useToastContext } from '@/context/toast-context';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -372,6 +374,7 @@ const AgendaView = ({ isLoading, agendaGroups, onAppointmentClick, onVisaExpiryC
 // ==========================================
 const AppointmentCalendarPage = () => {
   const { getSearchParamsObject, searchParams, setParams } = useSearchParams();
+  const { success, error: showError, loading } = useToastContext();
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const isDayNavigating = React.useRef(false);
 
@@ -391,13 +394,24 @@ const AppointmentCalendarPage = () => {
   const currentTab = searchParams.get('tab') || 'appointment';
   const userId = searchParams.get('userId') || undefined;
 
-  const { isLoading, weekDays, itemsByDate, agendaGroups } = useCalendarData(
+  const { isLoading, isError, weekDays, itemsByDate, agendaGroups } = useCalendarData(
     selectedDate,
     currentView,
     currentTab,
     userId,
     getSearchParamsObject,
   );
+
+  // Fixed toast id so a retrying query can't stack duplicate failures.
+  useEffect(() => {
+    if (!isError) return;
+    showError(
+      currentTab === 'calendar'
+        ? 'Could not load calendar events. Please try again.'
+        : 'Could not load appointments. Please try again.',
+      { id: 'appointment-load-error' },
+    );
+  }, [isError, currentTab, showError]);
 
   const selectedDateItems = itemsByDate[format(selectedDate, 'yyyy-MM-dd')] || [];
 
@@ -455,24 +469,37 @@ const AppointmentCalendarPage = () => {
     [currentTab],
   );
 
-  const { mutateAsync: editAppointment } = useEditAppointment();
+  // Drag/resize reports the new slot itself, so the mutation's generic
+  // "updated" toast is suppressed here.
+  const { mutateAsync: editAppointment } = useEditAppointment({ showToast: false });
 
   const handleReschedule = useCallback(
     async (item: IAppointment, newStart: Date, newEnd: Date) => {
-      await editAppointment({
-        id: item.id,
-        title: item.title,
-        description: item.description,
-        date: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
-        startTime: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
-        endTime: format(newEnd, "yyyy-MM-dd'T'HH:mm:ss"),
-        clientId: item.clientId ?? item.lead?.id ?? null,
-        ownerId: item.userId,
-        type: item.type,
-        status: item.status,
-      });
+      const toastId = loading('Rescheduling appointment...');
+      try {
+        await editAppointment({
+          id: item.id,
+          title: item.title,
+          description: item.description,
+          date: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
+          startTime: format(newStart, "yyyy-MM-dd'T'HH:mm:ss"),
+          endTime: format(newEnd, "yyyy-MM-dd'T'HH:mm:ss"),
+          clientId: item.clientId ?? item.lead?.id ?? null,
+          ownerId: item.userId,
+          type: item.type,
+          status: item.status,
+        });
+        success(
+          `"${item.title}" moved to ${format(newStart, 'EEE, d MMM')} at ${format(newStart, 'h:mm a')}.`,
+          { id: toastId },
+        );
+      } catch (err) {
+        showError(getAppointmentErrorMessage(err, 'Failed to reschedule appointment'), { id: toastId });
+        // Rethrow so the caller can roll back its optimistic override.
+        throw err;
+      }
     },
-    [editAppointment],
+    [editAppointment, loading, success, showError],
   );
 
   const handleEventDrop = useCallback(

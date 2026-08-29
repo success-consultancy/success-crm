@@ -190,6 +190,19 @@ const TableComponent = <TData, TValue>({
     pageSize: Number.parseInt(_offset.toString()),
   });
 
+  // Keep the row "Actions" column visible while the table scrolls sideways. Modules that
+  // declare their own right pin win; everyone else gets the actions column inferred from
+  // its id, so a table never has to opt in to keep its actions reachable.
+  const resolvedColumnPinning = React.useMemo(() => {
+    const right = columnPinning?.right?.length
+      ? columnPinning.right
+      : (columns || [])
+          .map((column) => (column as any).id as string | undefined)
+          .filter((id): id is string => !!id && /actions$/i.test(id));
+
+    return { left: columnPinning?.left || [], right };
+  }, [columnPinning, columns]);
+
   const table = useReactTable<TData>({
     data: memoizedData as TData[],
     columns: memoizedColumns as ColumnDef<TData, any>[],
@@ -205,7 +218,7 @@ const TableComponent = <TData, TValue>({
       rowSelection,
       columnSizing,
       columnVisibility,
-      columnPinning: columnPinning || {},
+      columnPinning: resolvedColumnPinning,
     },
     onColumnSizingChange: setColumnSizing,
     onColumnVisibilityChange: setColumnVisibility,
@@ -275,24 +288,16 @@ const TableComponent = <TData, TValue>({
     return () => ro.disconnect();
   }, [scrollContainerRef]);
 
-  // Calculate total table width based on column sizes
-  const totalTableWidth = React.useMemo(() => {
-    return table.getAllColumns().reduce((acc, column) => {
-      const meta = column.columnDef?.meta as any;
-      if (!meta?.isVisible) {
-        return acc;
-      }
-
-      return acc + column.getSize();
-    }, 0);
-  }, [table]);
-
   // When the visible columns don't fill the container (some columns hidden),
   // spread the leftover width evenly across the unpinned "data" columns so the
   // table fills the width instead of leaving a trailing gap (CRM-181). Pinned
   // columns keep their fixed size — sticky offsets depend only on those.
   const visibleLeafColumns = table.getVisibleLeafColumns();
   const renderedColumnsWidth = visibleLeafColumns.reduce((acc, c) => acc + c.getSize(), 0);
+
+  // The table's min width has to match the columns actually rendered, otherwise a table
+  // with extra columns toggled on squeezes them instead of scrolling horizontally.
+  const totalTableWidth = renderedColumnsWidth;
   const unpinnedVisibleCount = visibleLeafColumns.filter((c) => !c.getIsPinned()).length;
   const flexExtraPerColumn =
     containerWidth > renderedColumnsWidth && unpinnedVisibleCount > 0

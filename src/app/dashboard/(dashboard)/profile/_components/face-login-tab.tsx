@@ -6,6 +6,7 @@ import toast from 'react-hot-toast';
 import axios from 'axios';
 import Button from '@/components/atoms/button';
 import FaceCaptureModal from '@/components/face-capture-modal';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 import { MeUser } from '@/query/get-me';
 import { useUpdateClockInFace } from '@/mutations/clock-in/update-clockin-face';
 
@@ -16,6 +17,7 @@ interface Props {
 const FaceLoginTab = ({ user }: Props) => {
   const enrolled = !!user?.clockInFaceDescriptor;
   const [modalOpen, setModalOpen] = useState(false);
+  const [removeOpen, setRemoveOpen] = useState(false);
 
   const { mutateAsync: saveFace, isPending: saving } = useUpdateClockInFace();
 
@@ -36,10 +38,13 @@ const FaceLoginTab = ({ user }: Props) => {
     }
   };
 
+  // The dialog is controlled so it stays open (with the confirm button in its
+  // loading state) while the request runs, and only closes once it succeeds.
   const handleRemove = async () => {
     if (!user) return;
     try {
       await saveFace({ descriptor: null });
+      setRemoveOpen(false);
       toast.success('Face login removed.');
     } catch {
       toast.error('Could not remove face login. Please try again.');
@@ -87,16 +92,28 @@ const FaceLoginTab = ({ user }: Props) => {
             Enroll My Face
           </Button>
         ) : (
-          <Button
-            type="button"
-            variant="outline"
-            onClick={handleRemove}
-            disabled={saving}
+          <DeleteDialog
+            open={removeOpen}
+            onOpenChange={(open) => {
+              if (!saving) setRemoveOpen(open);
+            }}
+            trigger={
+              <Button type="button" variant="outline" disabled={saving} LeftIcon={ShieldOff}>
+                Remove Face Login
+              </Button>
+            }
+            title="Remove face login"
+            description={
+              <span>
+                Are you sure you want to remove your enrolled face?
+                <br />
+                You will need to use your PIN at the kiosk until you enroll again.
+              </span>
+            }
+            confirmText="Yes, remove"
+            onConfirm={handleRemove}
             loading={saving}
-            LeftIcon={ShieldOff}
-          >
-            Remove Face Login
-          </Button>
+          />
         )}
       </div>
 

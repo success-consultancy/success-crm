@@ -35,6 +35,11 @@ export const useAddEducation = () => {
         });
       }
     },
+    // The list page is reached immediately after adding; without this the global
+    // 25s staleTime would serve a cached list that is missing the new record.
+    onSuccess: () => {
+      invalidateServiceQueries(queryClient, 'education');
+    },
   });
 };
 
@@ -53,6 +58,11 @@ export const useAddEducationService = () => {
           queryKey: [QUERY_KEYS.GET_LEAD_BY_ID],
         });
       }
+    },
+    // The list page is reached immediately after adding; without this the global
+    // 25s staleTime would serve a cached list that is missing the new record.
+    onSuccess: () => {
+      invalidateServiceQueries(queryClient, 'education');
     },
   });
 };

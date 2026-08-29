@@ -13,6 +13,8 @@ import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip
 import { cn } from '@/lib/utils';
 import { LeaveRecord } from '@/query/get-user-leaves';
 import { useGetUsers } from '@/query/get-user';
+import useAuthStore from '@/store/auth-store';
+import { ROLES } from '@/constants/roles-constants';
 import { LeaveDecision } from '@/mutations/leave/update-leave';
 import { formatLeaveDate, LEAVE_STATUS_STYLES, sortLeavesByNewest, stripHtml } from '../_lib/leave-helpers';
 import LeaveDecisionDialog from './leave-decision-dialog';
@@ -20,7 +22,11 @@ import LeaveDecisionDialog from './leave-decision-dialog';
 interface Props {
   leaves: LeaveRecord[];
   isLoading?: boolean;
-  /** Show approve/reject actions on pending rows. Super admin only. */
+  /**
+   * Render the approver-facing columns ("Actioned by" / "Action"). Whether the
+   * viewer may action any given row is decided per row by `canAction` — a
+   * request belongs to the one manager it was addressed to.
+   */
   canApprove?: boolean;
 }
 
@@ -29,8 +35,11 @@ const LeaveRequestsCard = ({ leaves, isLoading, canApprove = false }: Props) => 
   const [decision, setDecision] = useState<LeaveDecision>('approved');
   const [dialogOpen, setDialogOpen] = useState(false);
 
-  // Only approvers see the "Actioned by" column, so only they need the user list.
-  const { data: users = [] } = useGetUsers(canApprove ? { includeInactive: true } : undefined);
+  const profile = useAuthStore((s) => s.profile);
+  const isSuperAdmin = profile?.roleId === ROLES.SUPER_ADMIN;
+
+  // Names are needed for "Requested to" in every view, not just the approver one.
+  const { data: users = [] } = useGetUsers({ includeInactive: true });
 
   const rows = useMemo(() => sortLeavesByNewest(leaves), [leaves]);
   const pendingCount = useMemo(() => rows.filter((l) => l.status === 'pending').length, [rows]);
@@ -41,13 +50,21 @@ const LeaveRequestsCard = ({ leaves, isLoading, canApprove = false }: Props) => 
     return match ? `${match.firstName ?? ''} ${match.lastName ?? ''}`.trim() || '-' : '-';
   };
 
+  /**
+   * A request is the assigned manager's to decide. Rows with no approver are
+   * legacy (created before per-branch routing) and stay with the super admins,
+   * who also keep an override on anything — mirroring the API's own check.
+   */
+  const canAction = (leave: LeaveRecord) =>
+    leave.approverId ? leave.approverId === profile?.id || isSuperAdmin : isSuperAdmin;
+
   const openDecision = (leave: LeaveRecord, next: LeaveDecision) => {
     setActiveLeave(leave);
     setDecision(next);
     setDialogOpen(true);
   };
 
-  const colSpan = canApprove ? 9 : 7;
+  const colSpan = canApprove ? 10 : 8;
 
   return (
     <div className="rounded-xl border border-neutral-border-light bg-white-100 px-4">
@@ -69,6 +86,7 @@ const LeaveRequestsCard = ({ leaves, isLoading, canApprove = false }: Props) => 
                   <Th>Type</Th>
                   <Th>Dates</Th>
                   <Th>Hrs/day</Th>
+                  <Th>Requested to</Th>
                   <Th>Requested</Th>
                   <Th>Status</Th>
                   <Th>Reason</Th>
@@ -98,6 +116,13 @@ const LeaveRequestsCard = ({ leaves, isLoading, canApprove = false }: Props) => 
                         {formatLeaveDate(leave.startDate)} — {formatLeaveDate(leave.endDate)}
                       </Td>
                       <Td>{leave.hoursPerDay}</Td>
+                      <Td>
+                        {leave.approverId ? (
+                          resolveName(leave.approverId)
+                        ) : (
+                          <span className="text-neutral-light-grey">Administrators</span>
+                        )}
+                      </Td>
                       <Td>{leave.createdAt ? format(new Date(leave.createdAt), 'd MMM yyyy') : '-'}</Td>
                       <Td>
                         <Badge
@@ -114,7 +139,7 @@ const LeaveRequestsCard = ({ leaves, isLoading, canApprove = false }: Props) => 
                       {canApprove && <Td>{resolveName(leave.updatedBy)}</Td>}
                       {canApprove && (
                         <TableCell className="px-3 py-3 whitespace-nowrap">
-                          {leave.status === 'pending' ? (
+                          {leave.status === 'pending' && canAction(leave) ? (
                             <div className="flex items-center gap-1.5">
                               <Tooltip>
                                 <TooltipTrigger asChild>

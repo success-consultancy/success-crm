@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
+import { useDropzone, type FileRejection, type FileError } from 'react-dropzone';
 import { CloudUpload, File, X, CheckCircle, AlertCircle } from 'lucide-react';
 import axios from 'axios';
 import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
@@ -22,14 +22,87 @@ type FileWithStatus = {
   errorMessage?: string;
 };
 
+// Extension -> MIME. Keys are bare, lowercase extensions.
+const EXT_TO_MIME: Record<string, string[]> = {
+  pdf: ['application/pdf'],
+  jpg: ['image/jpeg'],
+  jpeg: ['image/jpeg'],
+  png: ['image/png'],
+  webp: ['image/webp'],
+  gif: ['image/gif'],
+  tif: ['image/tiff'],
+  tiff: ['image/tiff'],
+  doc: ['application/msword'],
+  docx: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+  xls: ['application/vnd.ms-excel'],
+  xlsx: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+  csv: ['text/csv'],
+};
+
+const MIME_TO_EXT = Object.entries(EXT_TO_MIME).reduce((acc, [ext, mimes]) => {
+  mimes.forEach((mime) => {
+    acc[mime] = acc[mime] || [];
+    if (!acc[mime].includes(`.${ext}`)) acc[mime].push(`.${ext}`);
+  });
+  return acc;
+}, {} as Record<string, string[]>);
+
+/**
+ * Build react-dropzone's `accept` map. Callers pass either bare/dotted extensions
+ * ('PDF', '.docx') or raw MIME types ('application/pdf'), so both are normalised here.
+ *
+ * Every MIME key also carries its extensions: files dragged in from the OS file
+ * explorer often arrive with an empty `file.type`, and extension matching is the
+ * only thing that lets those through.
+ */
+const buildAcceptMap = (acceptedFiles: string[]): Record<string, string[]> => {
+  const map: Record<string, string[]> = {};
+
+  const add = (mime: string, ext?: string) => {
+    if (!map[mime]) map[mime] = [];
+    if (ext && !map[mime].includes(ext)) map[mime].push(ext);
+  };
+
+  acceptedFiles.forEach((raw) => {
+    const entry = raw.trim().toLowerCase();
+    if (!entry) return;
+
+    if (entry.includes('/')) {
+      add(entry);
+      (MIME_TO_EXT[entry] ?? []).forEach((ext) => add(entry, ext));
+      return;
+    }
+
+    const ext = entry.replace(/^\./, '');
+    (EXT_TO_MIME[ext] ?? []).forEach((mime) => add(mime, `.${ext}`));
+  });
+
+  return map;
+};
+
+const describeRejection = (error: FileError, props: Props): string => {
+  switch (error.code) {
+    case 'file-invalid-type':
+      return `Only ${props.acceptedFiles.join(', ')} files are allowed`;
+    case 'file-too-large':
+      return `File is larger than ${props.maxFileSize} MB`;
+    case 'too-many-files':
+      return `You can upload at most ${props.maxFiles} file${props.maxFiles === 1 ? '' : 's'}`;
+    default:
+      return error.message;
+  }
+};
+
 const FileUploader = (props: Props) => {
   const [files, setFiles] = useState<FileWithStatus[]>([]);
   const [isUploading, setIsUploading] = useState(false);
   // const [uploadedUrls, setUploadedUrls] = useState<string[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFileMeta[]>([]);
+  const [rejections, setRejections] = useState<{ name: string; message: string }[]>([]);
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
+      setRejections([]);
       const validFiles = acceptedFiles.filter((file) => file.size <= props.maxFileSize * 1024 * 1024);
       const dedupedFiles = validFiles.filter((newFile) => !files.some((f) => f.file.name === newFile.name));
       const remaining = props.maxFiles ? props.maxFiles - files.length : Infinity;
@@ -41,43 +114,23 @@ const FileUploader = (props: Props) => {
     [files, props.maxFileSize, props.maxFiles],
   );
 
-  const EXT_TO_MIME: Record<string, string[]> = {
-    PDF: ['application/pdf'],
-    JPG: ['image/jpeg'],
-    JPEG: ['image/jpeg'],
-    PNG: ['image/png'],
-    WEBP: ['image/webp'],
-    GIF: ['image/gif'],
-    DOC: ['application/msword'],
-    DOCX: ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    XLS: ['application/vnd.ms-excel'],
-    XLSX: ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    '.jpg': ['image/jpeg'],
-    '.jpeg': ['image/jpeg'],
-    '.png': ['image/png'],
-    '.webp': ['image/webp'],
-    '.pdf': ['application/pdf'],
-    '.docx': ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-  };
+  const acceptMap = buildAcceptMap(props.acceptedFiles);
 
-  const acceptMap = props.acceptedFiles.reduce(
-    (acc, type) => {
-      const mimeTypes = EXT_TO_MIME[type.toUpperCase()] || EXT_TO_MIME[type.toLowerCase()];
-      if (mimeTypes) {
-        mimeTypes.forEach((mime) => {
-          if (!acc[mime]) acc[mime] = [];
-        });
-      }
-      return acc;
-    },
-    {} as Record<string, string[]>,
-  );
+  const onDropRejected = (rejected: FileRejection[]) => {
+    setRejections(
+      rejected.map(({ file, errors }) => ({
+        name: file.name,
+        message: errors.map((error) => describeRejection(error, props)).join(', '),
+      })),
+    );
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
+    onDropRejected,
     accept: acceptMap,
     maxSize: props.maxFileSize * 1024 * 1024,
-    maxFiles: props.maxFiles,
+    maxFiles: props.maxFiles ?? 0,
   });
 
   const handleFileUpload = async (file: File) => {
@@ -179,6 +232,7 @@ const FileUploader = (props: Props) => {
 
   const clearAllFiles = () => {
     setFiles([]);
+    setRejections([]);
     setUploadedFiles([]);
     props.onUploadComplete?.([]);
   };
@@ -221,28 +275,37 @@ const FileUploader = (props: Props) => {
         }`}
       >
         <section
-          className={`flex items-center justify-center py-7 border border-dashed rounded-md transition-colors ${
+          {...getRootProps()}
+          className={`relative flex flex-col gap-2 items-center justify-center cursor-pointer py-7 px-4 border border-dashed rounded-md transition-colors ${
             isDragActive ? 'border-primary-blue bg-blue-50' : 'border-neutral-border'
           }`}
         >
-          <div
-            {...getRootProps()}
-            className="relative flex flex-col gap-2 items-center cursor-pointer w-full h-full p-4"
-          >
-            <input {...getInputProps()} />
-            <CloudUpload className="text-primary-blue h-7 w-7" />
-            <div className="flex flex-col items-center gap-0.5">
-              <p>
-                {isDragActive ? 'Drop the files here' : 'Drag and drop files here or '}
-                {!isDragActive && <span className="text-primary-blue font-semibold">Choose files</span>}
-              </p>
-              <p className="text-c1 text-neutral-lightGrey">
-                Maximum file size of {props.maxFileSize} MB | {props.acceptedFiles.join(', ')} files
-              </p>
-            </div>
+          <input {...getInputProps()} />
+          <CloudUpload className="text-primary-blue h-7 w-7" />
+          <div className="flex flex-col items-center gap-0.5">
+            <p>
+              {isDragActive ? 'Drop the files here' : 'Drag and drop files here or '}
+              {!isDragActive && <span className="text-primary-blue font-semibold">Choose files</span>}
+            </p>
+            <p className="text-c1 text-neutral-lightGrey">
+              Maximum file size of {props.maxFileSize} MB | {props.acceptedFiles.join(', ')} files
+            </p>
           </div>
         </section>
       </div>
+
+      {rejections.length > 0 && (
+        <div className="space-y-1">
+          {rejections.map((rejection) => (
+            <div key={rejection.name} className="flex items-start gap-2 text-c1 text-red-500">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+              <span>
+                <span className="font-semibold">{rejection.name}</span> — {rejection.message}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
 
       {files.length > 0 && (
         <div className="space-y-4">

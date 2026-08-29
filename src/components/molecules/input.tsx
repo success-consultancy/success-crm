@@ -79,13 +79,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         {label && (
           <label
             className={cn([
-              'text-sm font-medium text-neutral-black',
-              props.disabled && 'text-content-disabled',
+              'text-b14-600 text-neutral-black',
+              props.disabled && 'text-neutral-black/40',
               classNames?.label,
             ])}
           >
-            {label}{' '}
-            {optionalText && <span className="text-neutral-light-grey font-normal">(optional)</span>}
+            {label} {optionalText && <span className="text-neutral-light-grey font-normal">(optional)</span>}
           </label>
         )}
 
@@ -95,26 +94,30 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           trigger={
             <div
               className={cn([
-                'flex-between group rounded-md border border-neutral-border',
-                props.disabled && '',
-                // ? focused class
-                isInputFocused ? ['border-black-40'] : 'hover:border-black-20',
-                (error || errorBorder) && ['border-primary-red'],
+                'flex-between group rounded-[4px] border border-neutral-border transition-colors',
+                // ? states per the design file: hover, focus, error, disabled
+                !props.disabled && (isInputFocused ? 'border-primary-blue' : 'hover:border-neutral-black'),
+                (error || errorBorder) && 'border-utility-red',
+                props.disabled && 'border-neutral-border bg-gray-50 cursor-not-allowed',
                 // ? rest classes
                 classNames?.container,
               ])}
             >
               {LeftIcon && (
                 <LeftIcon
-                  className={cn(['mx-2 w-5 h-5 text-icon-default', classNames?.leftIcon])}
+                  className={cn([
+                    'mx-2 w-5 h-5 text-neutral-black',
+                    props.disabled && 'opacity-50',
+                    classNames?.leftIcon,
+                  ])}
                   onClick={
                     props.disabled || props.readOnly
                       ? undefined
                       : onIconClick
                         ? (onIconClick as unknown as React.MouseEventHandler<SVGSVGElement> &
-                          React.MouseEventHandler<HTMLButtonElement>)
+                            React.MouseEventHandler<HTMLButtonElement>)
                         : (props?.onClick as React.MouseEventHandler<SVGSVGElement> &
-                          React.MouseEventHandler<HTMLButtonElement>)
+                            React.MouseEventHandler<HTMLButtonElement>)
                   }
                 />
               )}
@@ -137,15 +140,19 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 
               {RightIcon && (
                 <RightIcon
-                  className={cn(['mx-2 w-5 h-5  text-icon-default', classNames?.rightIcon])}
+                  className={cn([
+                    'mx-2 w-5 h-5 text-neutral-black',
+                    props.disabled && 'opacity-50',
+                    classNames?.rightIcon,
+                  ])}
                   onClick={
                     props.disabled || props.readOnly
                       ? undefined
                       : onIconClick
                         ? (onIconClick as unknown as React.MouseEventHandler<SVGSVGElement> &
-                          React.MouseEventHandler<HTMLButtonElement>)
+                            React.MouseEventHandler<HTMLButtonElement>)
                         : (props?.onClick as React.MouseEventHandler<SVGSVGElement> &
-                          React.MouseEventHandler<HTMLButtonElement>)
+                            React.MouseEventHandler<HTMLButtonElement>)
                   }
                 />
               )}
@@ -156,9 +163,17 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
         </Tooltip>
 
         {info && !error && (
-          <div className={cn(['text-b2 text-content-placeholder mt-1', classNames?.info])}>{info}</div>
+          <div
+            className={cn([
+              'text-b14 text-neutral-light-grey mt-1',
+              props.disabled && 'text-neutral-light-grey/50',
+              classNames?.info,
+            ])}
+          >
+            {info}
+          </div>
         )}
-        {error && <div className={cn(['text-sm text-primary-red mt-1', classNames?.error])}>{error}</div>}
+        {error && <div className={cn(['text-b14 text-utility-red mt-1', classNames?.error])}>{error}</div>}
         {children}
       </div>
     );

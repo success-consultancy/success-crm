@@ -19,32 +19,37 @@ import { FormField } from '@/components/ui/form';
 
 import EditableTitleBox from './editable-title-box';
 import { buildVisaSectionPayload } from './visa-section-payload';
-import { newVisaServiceSchema } from '@/schema/visa-service/new-visa.schema';
+import { newVisaServiceSchema, VISA_DEPENDENT_FIELDS } from '@/schema/visa-service/new-visa.schema';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
 
-const visaInfoSchema = newVisaServiceSchema.pick({
-  currentVisa: true,
-  visaExpiry: true,
-  dueDate: true,
-  proposedVisa: true,
-  visaStream: true,
-  anzsco: true,
-  occupation: true,
-  sponsorName: true,
-  sponsorEmail: true,
-  sponsorPhone: true,
-  csaStatus: true,
-  visaSubmitted: true,
-  visaGranted: true,
-  nominationStatus: true,
-  nominationLodged: true,
-  nominationDecision: true,
-  status: true,
-});
+const visaInfoSchema = withDependentFields(
+  newVisaServiceSchema.pick({
+    currentVisa: true,
+    visaExpiry: true,
+    dueDate: true,
+    proposedVisa: true,
+    visaStream: true,
+    anzsco: true,
+    occupation: true,
+    sponsorName: true,
+    sponsorEmail: true,
+    sponsorPhone: true,
+    csaStatus: true,
+    visaSubmitted: true,
+    visaGranted: true,
+    nominationStatus: true,
+    nominationLodged: true,
+    nominationDecision: true,
+    status: true,
+  }),
+  VISA_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof visaInfoSchema>;
 
@@ -105,6 +110,11 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
     watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, VISA_DEPENDENT_FIELDS);
+
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
+  const hasNominationStatus = !isBlankValue(watch('nominationStatus'));
 
   const occupationValue = watch('occupation');
 
@@ -172,6 +182,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                   />
                 )}
               />
@@ -244,11 +255,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
                 {occupationValue || 'Auto-filled from ANZSCO'}
               </div>
             </div>
-            <TextInput
-              label="Sponsor name"
-              {...form.register('sponsorName')}
-              error={errors.sponsorName?.message}
-            />
+            <TextInput label="Sponsor name" {...form.register('sponsorName')} error={errors.sponsorName?.message} />
             <TextInput
               type="email"
               label="Sponsor email"
@@ -330,6 +337,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationLodged?.message}
+                    disabled={!hasNominationStatus}
                   />
                 )}
               />
@@ -348,6 +356,7 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.nominationDecision?.message}
+                    disabled={!hasNominationStatus}
                   />
                 )}
               />

@@ -49,9 +49,11 @@ const EmployeeTimesheetPage = ({ userId }: Props) => {
   const { data: clockRecords = [], isLoading: clockLoading } = useGetClockRecords(userId);
   const { data: leaves = [], isLoading: leavesLoading } = useGetUserLeaves(userId);
 
-  // Approving/rejecting is super-admin only, matching the legacy CRM.
+  // Managers and super admins get the approver-facing columns; the card then
+  // decides per row whether this viewer is the manager the request was sent to.
   const profile = useAuthStore((s) => s.profile);
-  const canApprove = profile?.roleId === USER_ROLES.SUPER_ADMIN;
+  const canApprove =
+    profile?.roleId === USER_ROLES.SUPER_ADMIN || profile?.roleId === USER_ROLES.MANAGER;
 
   const [range, setRange] = useState(() => resolveQuickRange('this_week'));
 

@@ -20,24 +20,29 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 
 import EditableTitleBox from './editable-title-box';
 import { buildTribunalSectionPayload } from './tribunal-section-payload';
-import tribunalReviewFormSchema from '@/schema/tribunal-review';
+import tribunalReviewFormSchema, { TRIBUNAL_DEPENDENT_FIELDS } from '@/schema/tribunal-review';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 
-const personalSchema = tribunalReviewFormSchema.pick({
-  firstName: true,
-  middleName: true,
-  lastName: true,
-  dob: true,
-  email: true,
-  phone: true,
-  country: true,
-  address: true,
-  passport: true,
-  passportIssueDate: true,
-  passportExpiryDate: true,
-  location: true,
-});
+const personalSchema = withDependentFields(
+  tribunalReviewFormSchema.pick({
+    firstName: true,
+    middleName: true,
+    lastName: true,
+    dob: true,
+    email: true,
+    phone: true,
+    country: true,
+    address: true,
+    passport: true,
+    passportIssueDate: true,
+    passportExpiryDate: true,
+    location: true,
+  }),
+  TRIBUNAL_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof personalSchema>;
 
@@ -76,8 +81,13 @@ const PersonalDetails = ({ visa }: { visa: ITribunalReview }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, TRIBUNAL_DEPENDENT_FIELDS);
+
+  const hasPassport = !isBlankValue(watch('passport'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(visa));
@@ -117,11 +127,7 @@ const PersonalDetails = ({ visa }: { visa: ITribunalReview }) => {
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
-            <TextInput
-              label="Middle name (optional)"
-              {...register('middleName')}
-              error={errors.middleName?.message}
-            />
+            <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
               <Label className="text-b2">Date of birth</Label>
@@ -185,6 +191,8 @@ const PersonalDetails = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.passportIssueDate?.message}
+                    disabled={!hasPassport}
+                    disableFutureDates
                   />
                 )}
               />
@@ -203,6 +211,7 @@ const PersonalDetails = ({ visa }: { visa: ITribunalReview }) => {
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.passportExpiryDate?.message}
+                    disabled={!hasPassport}
                     disablePastDates
                   />
                 )}

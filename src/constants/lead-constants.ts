@@ -5,6 +5,7 @@ export enum Services {
   SkillAssessment = 'Skill Assessment',
   Education = 'Education',
   HealthInsurance = 'Health Insurance',
+  Tribunal = 'Tribunal',
   Other = 'Other',
 }
 

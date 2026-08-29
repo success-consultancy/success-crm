@@ -20,8 +20,10 @@ import { formatLeaveDate } from '@/app/dashboard/(dashboard)/timesheet/_lib/leav
  * user is allowed to see:
  *
  * - Check-ins  — clients waiting at reception; all roles except accounting (4)
- * - Leave      — pending requests; super admin only, since that is the only
- *   role that can action one and `GET /leave` is not role-filtered server-side
+ * - Leave      — pending requests addressed to the current user. Requests name
+ *   the branch manager they were sent to, so only that manager is notified;
+ *   super admins additionally pick up unassigned (legacy) rows so none are
+ *   left unactioned. `GET /leave` is scoped to the same set server-side.
  *
  * Each source is gated by its own role check, so a feed the user cannot see is
  * never fetched. Adding a source means appending to `items`.
@@ -32,7 +34,8 @@ const NotificationBell = () => {
 
   const profile = useAuthStore((s) => s.profile);
   const canSeeCheckIns = !!profile?.roleId && profile.roleId !== ROLES.ACCOUNTING;
-  const canApproveLeave = profile?.roleId === ROLES.SUPER_ADMIN;
+  const isSuperAdmin = profile?.roleId === ROLES.SUPER_ADMIN;
+  const canApproveLeave = isSuperAdmin || profile?.roleId === ROLES.MANAGER;
 
   const readKeys = useNotificationReadStore((s) => s.readKeys);
   const markRead = useNotificationReadStore((s) => s.markRead);
@@ -60,7 +63,12 @@ const NotificationBell = () => {
     });
 
     const pendingLeave: NotificationItem[] = leaves
-      .filter((leave) => leave.status === 'pending')
+      .filter((leave) => {
+        if (leave.status !== 'pending') return false;
+        // Never nag someone about their own request.
+        if (leave.userId === profile?.id) return false;
+        return leave.approverId ? leave.approverId === profile?.id : isSuperAdmin;
+      })
       .map((leave) => {
         const match = users.find((u) => u.id === leave.userId);
         const name = match ? `${match.firstName ?? ''} ${match.lastName ?? ''}`.trim() : '';
@@ -78,7 +86,7 @@ const NotificationBell = () => {
       });
 
     return [...checkIns, ...pendingLeave];
-  }, [checkInData, leaves, users, router]);
+  }, [checkInData, leaves, users, router, profile?.id, isSuperAdmin]);
 
   return (
     <NotificationPopover

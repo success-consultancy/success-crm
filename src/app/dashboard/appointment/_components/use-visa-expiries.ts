@@ -82,13 +82,13 @@ const buildEvent = (
 const HIGH_LIMIT = '1000';
 
 export function useVisaExpiries(enabled: boolean) {
-  const { data: visaData, isLoading: isVisaLoading } = useGetVisa(
+  const { data: visaData, isLoading: isVisaLoading, isError: isVisaError } = useGetVisa(
     enabled ? { page: '1', limit: HIGH_LIMIT } : undefined,
   );
-  const { data: leadData, isLoading: isLeadLoading } = useGetLeads(
+  const { data: leadData, isLoading: isLeadLoading, isError: isLeadError } = useGetLeads(
     enabled ? { page: '1', limit: HIGH_LIMIT } : ({} as any),
   );
-  const { data: insuranceData, isLoading: isInsuranceLoading } = useGetInsurance(
+  const { data: insuranceData, isLoading: isInsuranceLoading, isError: isInsuranceError } = useGetInsurance(
     enabled ? { page: '1', limit: HIGH_LIMIT } : undefined,
   );
 
@@ -115,6 +115,7 @@ export function useVisaExpiries(enabled: boolean) {
   }, [enabled, visaData?.rows, leadData?.rows, insuranceData?.rows]);
 
   const isLoading = enabled && (isVisaLoading || isLeadLoading || isInsuranceLoading);
+  const isError = enabled && (isVisaError || isLeadError || isInsuranceError);
 
-  return { events, isLoading };
+  return { events, isLoading, isError };
 }

@@ -1,22 +1,33 @@
 import { z } from 'zod';
 
-import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from './date-validation';
+import { withDependentFields, type DependentFieldRule } from './dependent-fields';
 
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 const nullableString = () => z.string().nullable().optional();
 const nullableDate = () => z.string().nullable().optional();
 
-const insuranceFormSchema = z.object({
+const insuranceBaseSchema = z.object({
   id: z.number().int().positive().optional(),
 
   files: z.array(z.any()).nullable().optional(),
 
-  firstName: z.string().min(1, 'First name is required').refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
-  lastName: z.string().min(1, 'Last name is required').refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
+  firstName: z
+    .string()
+    .min(1, 'First name is required')
+    .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
+  lastName: z
+    .string()
+    .min(1, 'Last name is required')
+    .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   middleName: z.string().nullable().optional(),
 
   passport: z.union([z.number(), z.string()]).nullable().optional(),
-  passportIssueDate: z.string().nullable().optional(),
+  passportIssueDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Passport issue date') }),
   passportExpiryDate: z.string().nullable().optional(),
 
   email: z.string().email('Please enter a valid email address'),
@@ -43,7 +54,11 @@ const insuranceFormSchema = z.object({
   remarks: z.string().nullable().optional(),
   country: z.string().nullable().optional(),
   status: z.string().nullable().optional(),
-  statusDate: z.string().nullable().optional(),
+  statusDate: z
+    .string()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Status date') }),
 
   sourceId: z.union([z.string(), z.number()]).nullable().optional(),
   userId: z.number().int().nullable().optional(),
@@ -107,14 +122,30 @@ const insuranceFormSchema = z.object({
   ),
 });
 
+export const INSURANCE_DEPENDENT_FIELDS: DependentFieldRule[] = [
+  {
+    parent: 'currentVisa',
+    dependents: ['visaExpiry'],
+    message: 'Select a current visa before setting the visa expiry date',
+  },
+  {
+    parent: 'passport',
+    dependents: ['passportIssueDate', 'passportExpiryDate'],
+    message: 'Enter a passport number before setting the passport dates',
+  },
+];
+
+const insuranceFormSchema = withDependentFields(insuranceBaseSchema, INSURANCE_DEPENDENT_FIELDS);
+
 export type InsuranceSchemaType = z.infer<typeof insuranceFormSchema>;
 
 // update schema for update without accounts
-export const updateInsuranceFormSchema = insuranceFormSchema.omit({ accounts: true });
+export const updateInsuranceFormSchema = withDependentFields(
+  insuranceBaseSchema.omit({ accounts: true }),
+  INSURANCE_DEPENDENT_FIELDS,
+);
 
-export const getInsuranceDefaultValues = (
-  data?: { [key: string]: any },
-): InsuranceSchemaType => {
+export const getInsuranceDefaultValues = (data?: { [key: string]: any }): InsuranceSchemaType => {
   return {
     id: data?.id,
     files: data?.files ?? null,

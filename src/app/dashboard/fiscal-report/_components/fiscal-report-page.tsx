@@ -5,7 +5,7 @@ import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import KpiCard from './kpi-card';
-import PerformanceTable, { ReportRow } from './performance-table';
+import PerformanceTable, { isPastMonthKey, ReportRow } from './performance-table';
 import CreateFiscalReportModal from './create-fiscal-report-modal';
 import { useGetFiscalReport } from '@/query/get-fiscal-report';
 import { useUpdateFiscalReport } from '@/mutations/fiscal-report/update-fiscal-report';
@@ -139,7 +139,9 @@ export default function FiscalReportPage({ type }: FiscalReportPageProps) {
   };
 
   const handleCellChange = (name: string, monthKey: string, value: number) => {
-    if (value < 0) return;
+    // Months that have already ended are read-only; the table hides their inputs,
+    // this guards the state itself so an elapsed month can never be written.
+    if (value < 0 || isPastMonthKey(monthKey)) return;
     setEditData((prev) =>
       prev.map((row) =>
         row.name === name

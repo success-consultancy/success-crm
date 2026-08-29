@@ -35,7 +35,13 @@ import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
 import { useRouter } from 'next/navigation';
 import { isAxiosError } from 'axios';
-import insuranceFormSchema, { InsuranceSchemaType, updateInsuranceFormSchema } from '@/schema/insurance';
+import insuranceFormSchema, {
+  INSURANCE_DEPENDENT_FIELDS,
+  InsuranceSchemaType,
+  updateInsuranceFormSchema,
+} from '@/schema/insurance';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { useAddInsurance } from '@/mutations/insurance/add-insurance';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
@@ -52,6 +58,12 @@ interface Props {
 }
 
 export function InsuranceService({ userId, formState, defaultValues }: Props) {
+  const form = useForm<InsuranceSchemaType>({
+    resolver: zodResolver(formState === FORM_STATE.ADD ? insuranceFormSchema : updateInsuranceFormSchema),
+    defaultValues: defaultValues,
+    mode: 'onChange',
+  });
+
   const {
     register,
     control,
@@ -61,11 +73,13 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
     setError,
     handleSubmit,
     reset,
-  } = useForm<InsuranceSchemaType>({
-    resolver: zodResolver(formState === FORM_STATE.ADD ? insuranceFormSchema : updateInsuranceFormSchema),
-    defaultValues: defaultValues,
-    mode: 'onChange',
-  });
+  } = form;
+
+  useDependentFields(form, INSURANCE_DEPENDENT_FIELDS);
+
+  // Passport and visa dates stay locked until the document they belong to is set.
+  const hasPassport = !isBlankValue(watch('passport'));
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
 
   const router = useRouter();
 
@@ -100,6 +114,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
           onSuccess: () => {
             toast.success('Insurance added successfully');
             reset();
+            router.push(ROUTES.INSURANCE);
           },
           onError: (error: any) => {
             if (error?.response?.data?.errors) {
@@ -113,7 +128,6 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
           },
         },
       );
-      router.push(ROUTES.INSURANCE);
     } else {
       updateInsurance(
         { ...data, sourceId: data.sourceId },
@@ -180,7 +194,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
             variant="ghost"
             size="icon"
             type="button"
-            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.INSURANCE) : router.back()}
+            onClick={() => (formState === FORM_STATE.ADD ? router.push(ROUTES.INSURANCE) : router.back())}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -243,7 +257,9 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.passportIssueDate?.message}
+                    disabled={!hasPassport}
                     label="Passport issue date"
+                    disableFutureDates
                   />
                 )}
               />
@@ -261,6 +277,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.passportExpiryDate?.message}
+                    disabled={!hasPassport}
                     label="Passport expiry date"
                     disablePastDates={true}
                   />
@@ -310,6 +327,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     label="Visa expiry date"
                     disablePastDates={true}
                   />

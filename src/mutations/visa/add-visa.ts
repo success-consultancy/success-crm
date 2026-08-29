@@ -28,12 +28,12 @@ export const useAddVisaService = () => {
         });
       }
 
-      // Invalidate visa list
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.GET_VISAS],
-      });
-
       return visa;
+    },
+    // The list page is reached immediately after adding; without this the global
+    // 25s staleTime would serve a cached list that is missing the new record.
+    onSuccess: () => {
+      invalidateServiceQueries(queryClient, 'visa');
     },
   });
 };

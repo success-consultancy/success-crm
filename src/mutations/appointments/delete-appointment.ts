@@ -1,5 +1,5 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import { useToastContext } from '@/context/toast-context';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
@@ -9,21 +9,19 @@ const deleteAppointment = async (id: number) => {
 };
 
 export const useDeleteAppointment = () => {
+  const { success, error: errorToast, loading } = useToastContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: deleteAppointment,
-    onSuccess: () => {
+    onMutate: () => ({ toastId: loading('Deleting appointment...') }),
+    onSuccess: (_data, _variables, context) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_APPOINTMENTS],
       });
-      toast('Success!', {
-        description: 'Appointment has been deleted',
-      });
+      success('Appointment has been deleted.', { id: context?.toastId });
     },
-    onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+    onError: (err, _variables, context) => {
+      errorToast(getApiErrorMessage(err, 'Failed to delete appointment'), { id: context?.toastId });
     },
   });
 };

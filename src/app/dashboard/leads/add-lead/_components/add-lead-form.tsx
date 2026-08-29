@@ -15,7 +15,8 @@ import { useEditLead } from '@/mutations/leads/edit-lead';
 import Portal from '@/components/atoms/portal';
 import Button from '@/components/atoms/button';
 import { PortalIds } from '@/config/portal';
-import leadFormSchema, { type LeadSchemaType } from '@/schema/lead-schema';
+import leadFormSchema, { LEAD_DEPENDENT_FIELDS, type LeadSchemaType } from '@/schema/lead-schema';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import toast from 'react-hot-toast';
 import { FormAccordion } from '@/components/organisms/form-accordion';
 import { Accordion } from '@/components/ui/accordion';
@@ -39,6 +40,8 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
     reValidateMode: 'onSubmit',
   });
 
+  useDependentFields(form, LEAD_DEPENDENT_FIELDS);
+
   const { searchParams, setParam } = useSearchParams();
 
   const {
@@ -55,7 +58,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
   const isSubmitting = addLead.isPending || editLead.isPending;
 
   const onSubmit: SubmitHandler<LeadSchemaType> = (data) => {
-    const serviceType = JSON.stringify(data.serviceType);
+    const serviceType = JSON.stringify(data.serviceType ?? []);
 
     const payload = {
       ...data,
@@ -125,7 +128,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
             variant="ghost"
             size="icon"
             type="button"
-            onClick={() => mode === 'add' ? router.push(ROUTES.LEADS) : router.back()}
+            onClick={() => (mode === 'add' ? router.push(ROUTES.LEADS) : router.back())}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>

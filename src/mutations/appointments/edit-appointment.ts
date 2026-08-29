@@ -1,8 +1,9 @@
-﻿import { api, getApiErrorMessage } from '@/lib/api';
+﻿import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { UpdateAppointmentSchemaType } from '@/schema/appointment-schema';
-import { toast } from 'sonner';
+import { useToastContext } from '@/context/toast-context';
+import { getAppointmentErrorMessage } from './appointment-error-message';
 
 // Helper function to format date with timezone
 const formatDateWithTimezone = (dateTimeString: string): string => {
@@ -61,34 +62,31 @@ const editAppointment = async (payload: UpdateAppointmentSchemaType) => {
   return res.data;
 };
 
-export const useEditAppointment = () => {
+interface EditAppointmentToastOptions {
+  /**
+   * Set to false when the caller shows its own toast for the update
+   * (e.g. the calendar's drag-to-reschedule, which reports the new time).
+   */
+  showToast?: boolean;
+}
+
+export const useEditAppointment = ({ showToast = true }: EditAppointmentToastOptions = {}) => {
+  const { success, error: errorToast, loading } = useToastContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editAppointment,
-    onSuccess: async () => {
+    onMutate: () => ({ toastId: showToast ? loading('Saving changes...') : undefined }),
+    onSuccess: async (_data, variables, context) => {
       await queryClient.invalidateQueries({
         predicate: (query) =>
           query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENTS || query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENT_BY_ID,
       });
-      toast('Success!', {
-        description: 'Appointment has been updated',
-      });
+      if (!showToast) return;
+      success(`"${variables.title}" has been updated.`, { id: context?.toastId });
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || error?.response?.data?.error || getApiErrorMessage(error);
-      const errors = error?.response?.data?.errors;
-      
-      if (errors) {
-        // Show validation errors if available
-        const errorMessages = Object.values(errors).flat().join(', ');
-        toast('Error!', {
-          description: errorMessages || message,
-        });
-      } else {
-        toast('Error!', {
-          description: message,
-        });
-      }
+    onError: (err: any, _variables, context) => {
+      if (!showToast) return;
+      errorToast(getAppointmentErrorMessage(err, 'Failed to update appointment'), { id: context?.toastId });
     },
   });
 };

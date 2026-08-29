@@ -5,6 +5,8 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 export interface LeaveRecord {
   id: number;
   userId: number;
+  /** Manager the request was addressed to. Null on legacy pre-routing rows. */
+  approverId?: number | null;
   type: string;
   startDate: string; // DD/MM/YYYY in legacy backend
   endDate: string;

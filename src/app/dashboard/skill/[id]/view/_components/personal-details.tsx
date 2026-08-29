@@ -20,23 +20,28 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 
 import EditableTitleBox from './editable-title-box';
 import { buildSkillSectionPayload } from './skill-section-payload';
-import skillAssessmentFormSchema from '@/schema/skill-assessment-schema';
+import skillAssessmentFormSchema, { SKILL_DEPENDENT_FIELDS } from '@/schema/skill-assessment-schema';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ISkillAssessment } from '@/types/response-types/skill-assessment-response';
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 
-const personalSchema = skillAssessmentFormSchema.pick({
-  firstName: true,
-  middleName: true,
-  lastName: true,
-  dob: true,
-  email: true,
-  phone: true,
-  country: true,
-  passport: true,
-  issueDate: true,
-  expiryDate: true,
-  location: true,
-});
+const personalSchema = withDependentFields(
+  skillAssessmentFormSchema.pick({
+    firstName: true,
+    middleName: true,
+    lastName: true,
+    dob: true,
+    email: true,
+    phone: true,
+    country: true,
+    passport: true,
+    issueDate: true,
+    expiryDate: true,
+    location: true,
+  }),
+  SKILL_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof personalSchema>;
 
@@ -85,8 +90,13 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, SKILL_DEPENDENT_FIELDS);
+
+  const hasPassport = !isBlankValue(watch('passport'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(skillAssessment));
@@ -132,11 +142,7 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
         <form onSubmit={handleSave}>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
-            <TextInput
-              label="Middle name (optional)"
-              {...register('middleName')}
-              error={errors.middleName?.message}
-            />
+            <TextInput label="Middle name (optional)" {...register('middleName')} error={errors.middleName?.message} />
             <TextInput label="Last name" {...register('lastName')} error={errors.lastName?.message} />
             <div className="space-y-2">
               <Label className="text-b2">Date of birth</Label>
@@ -199,6 +205,8 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
                     placeholder="DD / MM / YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.issueDate?.message}
+                    disabled={!hasPassport}
+                    disableFutureDates
                   />
                 )}
               />
@@ -217,6 +225,7 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
                     placeholder="DD / MM / YYYY"
                     className="h-12 text-b2 w-full"
                     error={!!errors.expiryDate?.message}
+                    disabled={!hasPassport}
                     disablePastDates
                   />
                 )}

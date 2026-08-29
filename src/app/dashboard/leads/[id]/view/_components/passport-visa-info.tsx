@@ -16,7 +16,9 @@ import SelectWithCommand from '@/components/molecules/select-with-command';
 
 import EditableTitleBox from './editable-title-box';
 import { buildLeadSectionPayload } from './lead-section-payload';
-import { passportDetailsSchema } from '@/schema/lead-schema';
+import { LEAD_DEPENDENT_FIELDS, passportDetailsSchema } from '@/schema/lead-schema';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ILead } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { useGetVisaOptions } from '@/query/get-visa';
@@ -48,8 +50,14 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, LEAD_DEPENDENT_FIELDS);
+
+  const hasVisa = !isBlankValue(watch('visa'));
+  const hasPassport = !isBlankValue(watch('passport'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(lead));
@@ -122,7 +130,8 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
                     onChange={(date) => setValue('visaExpiry', date ?? null)}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.visaExpiry?.message}
+                    error={errors.visaExpiry?.message}
+                    disabled={!hasVisa}
                     disablePastDates
                   />
                 </div>
@@ -154,7 +163,8 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
                     onChange={(date) => setValue('issueDate', date ?? null)}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.issueDate?.message}
+                    error={errors.issueDate?.message}
+                    disabled={!hasPassport}
                     disableFutureDates
                   />
                 </div>
@@ -172,7 +182,8 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
                     onChange={(date) => setValue('expiryDate', date ?? null)}
                     placeholder="DD/MM/YYYY"
                     className="h-12 text-b2 w-full"
-                    error={!!errors.expiryDate?.message}
+                    error={errors.expiryDate?.message}
+                    disabled={!hasPassport}
                     disablePastDates
                   />
                 </div>
@@ -189,10 +200,7 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
             value={lead.visaExpiry ? new Date(lead.visaExpiry).toLocaleDateString() : '-'}
           />
           <InfoField title="Passport number" value={lead.passport || 'N/A'} />
-          <InfoField
-            title="Issue date"
-            value={lead.issueDate ? new Date(lead.issueDate).toLocaleDateString() : '-'}
-          />
+          <InfoField title="Issue date" value={lead.issueDate ? new Date(lead.issueDate).toLocaleDateString() : '-'} />
           <InfoField
             title="Expiry date"
             value={lead.expiryDate ? new Date(lead.expiryDate).toLocaleDateString() : '-'}

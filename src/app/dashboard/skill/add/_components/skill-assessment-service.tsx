@@ -2,9 +2,12 @@
 
 import { Accordion } from '@/components/ui/accordion';
 import skillAssessmentFormSchema, {
+  SKILL_DEPENDENT_FIELDS,
   SkillAssessmentSchemaType,
   updateSkillAssessmentFormSchema,
 } from '@/schema/skill-assessment-schema';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm, Controller } from 'react-hook-form';
 import { format, parse } from 'date-fns';
@@ -138,6 +141,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     return {};
   }, [defaultValues, userId, formState]);
 
+  const form = useForm<SkillAssessmentSchemaType>({
+    resolver: zodResolver(formState === FORM_STATE.ADD ? skillAssessmentFormSchema : updateSkillAssessmentFormSchema),
+    mode: 'onChange',
+    defaultValues: formDefaultValues,
+  });
+
   const {
     register,
     control,
@@ -147,11 +156,13 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
     formState: { errors },
     handleSubmit,
     reset,
-  } = useForm<SkillAssessmentSchemaType>({
-    resolver: zodResolver(formState === FORM_STATE.ADD ? skillAssessmentFormSchema : updateSkillAssessmentFormSchema),
-    mode: 'onChange',
-    defaultValues: formDefaultValues,
-  });
+  } = form;
+
+  useDependentFields(form, SKILL_DEPENDENT_FIELDS);
+
+  // Passport and visa dates stay locked until the document they belong to is set.
+  const hasPassport = !isBlankValue(watch('passport'));
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
 
   const { data: sourceData } = useGetSource();
   const { data: users } = useGetUsers();
@@ -321,7 +332,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             variant="ghost"
             size="icon"
             type="button"
-            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.SKILL_ASSESSMENT) : router.back()}
+            onClick={() => (formState === FORM_STATE.ADD ? router.push(ROUTES.SKILL_ASSESSMENT) : router.back())}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -410,6 +421,8 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="w-full"
                       error={!!errors.issueDate?.message}
+                      disabled={!hasPassport}
+                      disableFutureDates
                     />
                   )}
                 />
@@ -428,6 +441,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="w-full"
                       error={!!errors.expiryDate?.message}
+                      disabled={!hasPassport}
                       disablePastDates={true}
                     />
                   )}
@@ -476,6 +490,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       onChange={handleDateChange('visaExpiry')}
                       placeholder="DD / MM / YYYY"
                       error={!!errors.visaExpiry?.message}
+                      disabled={!hasCurrentVisa}
                       disablePastDates={true}
                     />
                   )}
@@ -557,6 +572,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                       placeholder="DD / MM / YYYY"
                       className="w-full"
                       error={!!errors.submittedDate?.message}
+                      disableFutureDates
                     />
                   )}
                 />
@@ -585,10 +601,12 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 control={control}
                 name="status"
                 label="Status"
-                required
                 options={[
                   { label: SkillAssessmentStatusTypes.New, value: SkillAssessmentStatusTypes.New },
-                  { label: SkillAssessmentStatusTypes.CollectingDocs, value: SkillAssessmentStatusTypes.CollectingDocs },
+                  {
+                    label: SkillAssessmentStatusTypes.CollectingDocs,
+                    value: SkillAssessmentStatusTypes.CollectingDocs,
+                  },
                   { label: SkillAssessmentStatusTypes.ReadyToSubmit, value: SkillAssessmentStatusTypes.ReadyToSubmit },
                   { label: SkillAssessmentStatusTypes.Submitted, value: SkillAssessmentStatusTypes.Submitted },
                   { label: SkillAssessmentStatusTypes.InfoRequested, value: SkillAssessmentStatusTypes.InfoRequested },

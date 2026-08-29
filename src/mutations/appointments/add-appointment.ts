@@ -1,8 +1,9 @@
-﻿import { api, getApiErrorMessage } from '@/lib/api';
+﻿import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { AppointmentSchemaType } from '@/schema/appointment-schema';
-import { toast } from 'sonner';
+import { useToastContext } from '@/context/toast-context';
+import { getAppointmentErrorMessage } from './appointment-error-message';
 
 // Helper function to format date with timezone
 const formatDateWithTimezone = (dateTimeString: string): string => {
@@ -62,32 +63,20 @@ const addAppointment = async (payload: AppointmentSchemaType) => {
 };
 
 export const useAddAppointment = () => {
+  const { success, error: errorToast, loading } = useToastContext();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: addAppointment,
-    onSuccess: () => {
+    // Keep one toast per save: the pending toast is upgraded in place to success/error.
+    onMutate: () => ({ toastId: loading('Creating appointment...') }),
+    onSuccess: (_data, variables, context) => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_APPOINTMENTS],
       });
-      toast('Success!', {
-        description: 'Appointment has been created',
-      });
+      success(`"${variables.title}" has been scheduled.`, { id: context?.toastId });
     },
-    onError: (error: any) => {
-      const message = error?.response?.data?.message || error?.response?.data?.error || getApiErrorMessage(error);
-      const errors = error?.response?.data?.errors;
-      
-      if (errors) {
-        // Show validation errors if available
-        const errorMessages = Object.values(errors).flat().join(', ');
-        toast('Error!', {
-          description: errorMessages || message,
-        });
-      } else {
-        toast('Error!', {
-          description: message,
-        });
-      }
+    onError: (err: any, _variables, context) => {
+      errorToast(getAppointmentErrorMessage(err, 'Failed to create appointment'), { id: context?.toastId });
     },
   });
 };

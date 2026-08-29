@@ -5,6 +5,7 @@ import { format, parseISO } from 'date-fns';
 import { Mail, MessageSquare, X } from 'lucide-react';
 import Button from '@/components/atoms/button';
 import { VisaExpiryEvent, getCategoryColor } from './use-visa-expiries';
+import { useToastContext } from '@/context/toast-context';
 
 interface VisaExpiryPopoverProps {
   event: VisaExpiryEvent;
@@ -15,6 +16,7 @@ interface VisaExpiryPopoverProps {
 
 const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({ event, onClose, onSendEmail, onSendSms }) => {
   const color = getCategoryColor(event.category);
+  const { info, warning } = useToastContext();
 
   let expiryDate = event.visaExpiry;
   try {
@@ -24,13 +26,29 @@ const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({ event, onClose, o
   }
 
   const handleEmail = () => {
-    if (onSendEmail) onSendEmail(event);
-    else window.location.href = `mailto:${event.email}`;
+    if (onSendEmail) {
+      onSendEmail(event);
+      return;
+    }
+    if (!event.email) {
+      warning(`No email address on file for ${event.firstName} ${event.lastName}.`);
+      return;
+    }
+    info(`Opening your email app for ${event.email}...`);
+    window.location.href = `mailto:${event.email}`;
   };
 
   const handleSms = () => {
-    if (onSendSms) onSendSms(event);
-    else window.location.href = `sms:${event.phone}`;
+    if (onSendSms) {
+      onSendSms(event);
+      return;
+    }
+    if (!event.phone) {
+      warning(`No phone number on file for ${event.firstName} ${event.lastName}.`);
+      return;
+    }
+    info(`Opening your messaging app for ${event.phone}...`);
+    window.location.href = `sms:${event.phone}`;
   };
 
   return (

@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from '../date-validation';
+
 // Common validation patterns (same as create schema)
 const phoneRegex = /^\+?[\d\s\-().]+$/;
 const passportRegex = /^[A-Z0-9]{5,20}$/;
@@ -26,7 +28,7 @@ export const editVisaServiceSchema = z
       .regex(/^[A-Za-z\s\-']+$/, 'Last name can only contain letters, spaces, hyphens, and apostrophes')
       .optional(),
 
-    dob: z.date().optional(),
+    dob: z.date().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
     email: z
       .union([
@@ -57,7 +59,10 @@ export const editVisaServiceSchema = z
       ])
       .optional(),
 
-    issueDate: z.date().optional(),
+    issueDate: z
+      .date()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Issue date') }),
     expiryDate: z.date().optional(),
 
     location: z.string().max(100, 'Location cannot exceed 100 characters').optional(),
@@ -152,7 +157,10 @@ export const editVisaServiceSchema = z
     userId: z.union([z.string(), z.number()]).nullable().optional(),
     sourceId: z.union([z.string(), z.number()]).nullable().optional(),
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
-    statusDate: z.date().optional(),
+    statusDate: z
+      .date()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Status date') }),
     feeNote: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
     miscNote: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
   })
@@ -160,30 +168,30 @@ export const editVisaServiceSchema = z
   .superRefine((data, ctx) => {
     if (data.issueDate && data.expiryDate && !(data.expiryDate > data.issueDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Passport expiry date must be after the issue date',
         path: ['expiryDate'],
       });
     }
     if (data.startDate && data.endDate && !(data.endDate > data.startDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Course end date must be after the start date',
         path: ['endDate'],
       });
     }
     if (data.dob && !(data.dob < new Date())) {
-      ctx.addIssue({ code: "custom", message: 'Date of birth cannot be in the future', path: ['dob'] });
+      ctx.addIssue({ code: 'custom', message: 'Date of birth cannot be in the future', path: ['dob'] });
     }
     if (data.expiryDate && !(data.expiryDate > new Date())) {
-      ctx.addIssue({ code: "custom", message: 'Passport must not be expired', path: ['expiryDate'] });
+      ctx.addIssue({ code: 'custom', message: 'Passport must not be expired', path: ['expiryDate'] });
     }
     // Backend requires course_fee.duedate — only enforce it once the fee section is actually in use
     if (data.courseFee) {
       const { planname, amount, invoicenumber, status, note, duedate } = data.courseFee;
       if ((planname || amount || invoicenumber || status || note) && !duedate) {
         ctx.addIssue({
-          code: "custom",
+          code: 'custom',
           message: 'Due date is required',
           path: ['courseFee', 'duedate'],
         });

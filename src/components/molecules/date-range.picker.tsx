@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import { format } from 'date-fns';
+import { DateTime } from 'luxon';
 import { type DateRange } from 'react-day-picker';
 
 import { Button } from '@/components/ui/button';
@@ -18,6 +19,9 @@ export function DateRangePicker({
 }) {
   const [open, setOpen] = React.useState(false);
   const { setParams, searchParams } = useSearchParams();
+
+  // Future dates are not selectable
+  const today = React.useMemo(() => DateTime.now().endOf('day').toJSDate(), []);
 
   // Initialize dateRange from URL params
   const fromParam = searchParams.get('from');
@@ -88,6 +92,9 @@ export function DateRangePicker({
             selected={dateRange}
             onSelect={setDateRange}
             numberOfMonths={2}
+            disabled={{ after: today }}
+            endMonth={today}
+            defaultMonth={dateRange?.from}
             className="rounded-lg"
           />
         </div>

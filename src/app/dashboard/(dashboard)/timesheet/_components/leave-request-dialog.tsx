@@ -2,8 +2,8 @@
 
 import { useEffect } from 'react';
 import { format } from 'date-fns';
-import { Calendar as CalendarIcon } from 'lucide-react';
-import { useForm, Controller, Control } from 'react-hook-form';
+import { Calendar as CalendarIcon, Info } from 'lucide-react';
+import { useForm, Controller, Control, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { Button } from '@/components/ui/button';
@@ -15,9 +15,17 @@ import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import FileUploader from '@/components/organisms/file-uploader';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useAddLeave } from '@/mutations/leave/add-leave';
-import { leaveRequestSchema, LeaveRequestSchemaType, LEAVE_TYPES } from '@/schema/leave-schema';
+import { useGetLeaveApprovers } from '@/query/get-leave-approvers';
+import {
+  leaveRequestSchema,
+  LeaveRequestSchemaType,
+  LEAVE_TYPES,
+  FULL_DAY_HOURS,
+  isSingleDayLeave,
+} from '@/schema/leave-schema';
 
 interface Props {
   open: boolean;
@@ -26,13 +34,15 @@ interface Props {
 
 const DEFAULT_VALUES: Partial<LeaveRequestSchemaType> = {
   type: '',
-  hoursPerDay: 8,
+  approverId: undefined,
+  hoursPerDay: FULL_DAY_HOURS,
   note: '',
   attachmentURL: '',
 };
 
 const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
   const addLeave = useAddLeave();
+  const { approvers, isLoading: approversLoading } = useGetLeaveApprovers();
 
   const {
     control,
@@ -50,6 +60,18 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
   useEffect(() => {
     if (!open) reset(DEFAULT_VALUES as any);
   }, [open, reset]);
+
+  const [startDate, endDate] = useWatch({ control, name: ['startDate', 'endDate'] });
+  // Hours per day is only meaningful for a one-day request; multi-day leave is
+  // always booked as full days, so the field is hidden and reset rather than
+  // left showing a stale part-day figure.
+  const showHoursPerDay = isSingleDayLeave(startDate, endDate);
+
+  useEffect(() => {
+    if (!showHoursPerDay) setValue('hoursPerDay', FULL_DAY_HOURS, { shouldValidate: false });
+  }, [showHoursPerDay, setValue]);
+
+  const noApprovers = !approversLoading && approvers.length === 0;
 
   const onSubmit = async (values: LeaveRequestSchemaType) => {
     try {
@@ -97,6 +119,59 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               {errors.type && <p className="text-b14 text-red-600">{errors.type.message}</p>}
             </div>
 
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="leave-approver" className="text-b14-600 text-neutral-black">
+                Request to
+              </Label>
+              <Controller
+                control={control}
+                name="approverId"
+                render={({ field }) => (
+                  <Select
+                    value={field.value ? String(field.value) : undefined}
+                    onValueChange={(v) => field.onChange(Number(v))}
+                    disabled={approversLoading || noApprovers}
+                  >
+                    <SelectTrigger
+                      id="leave-approver"
+                      className="w-full h-11 px-3 text-b16 text-neutral-black border-neutral-border data-[placeholder]:text-neutral-light-grey"
+                    >
+                      <SelectValue
+                        placeholder={approversLoading ? 'Loading managers…' : 'Select a manager'}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {approvers.map((approver) => (
+                        <SelectItem key={approver.id} value={String(approver.id)}>
+                          <span className="flex items-center gap-2">
+                            <Avatar className="w-6 h-6">
+                              <AvatarImage src={approver.profileUrl ?? ''} alt={approver.name} />
+                              <AvatarFallback className="bg-accent-100 text-neutral-dark-grey text-c1 font-semibold">
+                                {initialsOf(approver.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            {approver.name}
+                          </span>
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {noApprovers ? (
+                <p className="flex items-start gap-1.5 text-b14 text-neutral-light-grey">
+                  <Info className="h-4 w-4 shrink-0 mt-0.5" />
+                  No manager is assigned to your branch yet, so there is nobody to send this to. Ask an
+                  administrator to assign one.
+                </p>
+              ) : (
+                <p className="text-b14 text-neutral-light-grey">
+                  Only this manager is notified and can approve or reject the request.
+                </p>
+              )}
+              {errors.approverId && <p className="text-b14 text-red-600">{errors.approverId.message}</p>}
+            </div>
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <DateField
                 label="Start date"
@@ -112,21 +187,26 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               />
             </div>
 
-            <div className="flex flex-col gap-1.5">
-              <Label htmlFor="hours-per-day" className="text-b14-600 text-neutral-black">
-                Hours per day
-              </Label>
-              <Input
-                id="hours-per-day"
-                type="number"
-                step="0.5"
-                min={0.5}
-                max={24}
-                className="h-11 px-3 text-b16 text-neutral-black border-neutral-border"
-                {...register('hoursPerDay', { valueAsNumber: true })}
-              />
-              {errors.hoursPerDay && <p className="text-b14 text-red-600">{errors.hoursPerDay.message}</p>}
-            </div>
+            {showHoursPerDay && (
+              <div className="flex flex-col gap-1.5">
+                <Label htmlFor="hours-per-day" className="text-b14-600 text-neutral-black">
+                  Hours
+                </Label>
+                <Input
+                  id="hours-per-day"
+                  type="number"
+                  step="0.5"
+                  min={0.5}
+                  max={24}
+                  className="h-11 px-3 text-b16 text-neutral-black border-neutral-border"
+                  {...register('hoursPerDay', { valueAsNumber: true })}
+                />
+                <p className="text-b14 text-neutral-light-grey">
+                  Defaults to a full day ({FULL_DAY_HOURS}h). Lower it to book a part day.
+                </p>
+                {errors.hoursPerDay && <p className="text-b14 text-red-600">{errors.hoursPerDay.message}</p>}
+              </div>
+            )}
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="leave-reason" className="text-b14-600 text-neutral-black">
@@ -172,7 +252,7 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
             <Button
               type="submit"
               size="sm"
-              disabled={addLeave.isPending}
+              disabled={addLeave.isPending || noApprovers}
               className="h-10 px-4 text-b14-600 text-white transition-all duration-150 active:bg-primary/80 motion-safe:active:scale-95"
             >
               {addLeave.isPending ? 'Sending…' : 'Send request'}
@@ -183,6 +263,13 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
     </Dialog>
   );
 };
+
+const initialsOf = (name: string) =>
+  name
+    .split(' ')
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('')
+    .slice(0, 2);
 
 interface DateFieldProps {
   label: string;

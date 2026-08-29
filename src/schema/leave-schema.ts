@@ -13,9 +13,23 @@ export const LEAVE_TYPES = [
 
 export type LeaveType = (typeof LEAVE_TYPES)[number];
 
+/**
+ * Hours booked against a leave day when the request spans more than one day.
+ * Multi-day leave is always taken as full days, so the requester is never asked
+ * for a per-day figure — see `hoursPerDay` below.
+ */
+export const FULL_DAY_HOURS = 8;
+
+const isSameDay = (a: Date, b: Date) =>
+  a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
 export const leaveRequestSchema = z
   .object({
     type: z.string().min(1, 'Please select a leave type'),
+    approverId: z.coerce
+      .number({ error: 'Please choose who to send this request to' })
+      .int()
+      .positive('Please choose who to send this request to'),
     startDate: z.date({ error: 'Start date is required' }),
     endDate: z.date({ error: 'End date is required' }),
     hoursPerDay: z.coerce
@@ -28,6 +42,17 @@ export const leaveRequestSchema = z
   .refine((data) => data.endDate.getTime() >= data.startDate.getTime(), {
     message: 'End date must be on or after start date',
     path: ['endDate'],
+  })
+  // Partial hours only make sense for a single-day request. The form hides the
+  // field on multi-day leave, so reject a stray value rather than silently
+  // booking, say, 3h against every day of a fortnight.
+  .refine((data) => isSameDay(data.startDate, data.endDate) || data.hoursPerDay === FULL_DAY_HOURS, {
+    message: 'Multi-day leave is booked as full days',
+    path: ['hoursPerDay'],
   });
 
 export type LeaveRequestSchemaType = z.infer<typeof leaveRequestSchema>;
+
+/** True when the request covers exactly one day, i.e. hours per day is editable. */
+export const isSingleDayLeave = (start?: Date | null, end?: Date | null) =>
+  !!start && !!end && isSameDay(start, end);

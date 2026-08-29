@@ -18,27 +18,33 @@ import { CountryDropdown } from '@/components/organisms/country-dropdown';
 import EditableTitleBox from './editable-title-box';
 import { buildEducationSectionPayload } from './education-section-payload';
 import { editEducationServiceSchema } from '@/schema/education-service/edit-student.schema';
+import { EDUCATION_DEPENDENT_FIELDS } from '@/schema/education-service/new-student.schema';
+import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IEducation } from '@/types/response-types/education-response';
 import { useEditEducation } from '@/mutations/education/edit-education';
 
-const personalSchema = z.object({
-  firstName: z.string().optional(),
-  middleName: z.string().optional(),
-  lastName: z.string().optional(),
-  dob: z.date().optional(),
-  email: z.union([z.string().email(), z.literal('')]).optional(),
-  phone: z.string().optional(),
-  country: z.string().optional(),
-  passport: z.string().optional(),
-  issueDate: z.date().optional(),
-  expiryDate: z.date().optional(),
-  location: z.string().optional(),
-});
+const personalSchema = withDependentFields(
+  z.object({
+    firstName: z.string().optional(),
+    middleName: z.string().optional(),
+    lastName: z.string().optional(),
+    dob: z.date().optional(),
+    email: z.union([z.string().email(), z.literal('')]).optional(),
+    phone: z.string().optional(),
+    country: z.string().optional(),
+    passport: z.string().optional(),
+    // Nullable so clearing the passport number can empty these back out.
+    issueDate: z.date().nullable().optional(),
+    expiryDate: z.date().nullable().optional(),
+    location: z.string().optional(),
+  }),
+  EDUCATION_DEPENDENT_FIELDS,
+);
 
 type FormValues = z.infer<typeof personalSchema>;
 
-const toDate = (value: string | null | undefined): Date | undefined =>
-  value ? new Date(value) : undefined;
+const toDate = (value: string | null | undefined): Date | undefined => (value ? new Date(value) : undefined);
 
 const toDefaults = (education: IEducation): FormValues => ({
   firstName: education.firstName ?? undefined,
@@ -67,8 +73,13 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
     control,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
   } = form;
+
+  useDependentFields(form, EDUCATION_DEPENDENT_FIELDS);
+
+  const hasPassport = !isBlankValue(watch('passport'));
 
   useEffect(() => {
     if (!isEditing) reset(toDefaults(education));
@@ -153,11 +164,7 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
                 </div>
               )}
             />
-            <TextInput
-              label="Passport Number"
-              {...register('passport')}
-              error={errors.passport?.message}
-            />
+            <TextInput label="Passport Number" {...register('passport')} error={errors.passport?.message} />
             <div className="space-y-2">
               <Controller
                 name="issueDate"
@@ -166,10 +173,11 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
                   <DatePicker
                     label="Passport Issue Date"
                     side="top"
-                    value={field.value}
+                    value={field.value ?? undefined}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
+                    disabled={!hasPassport}
                     disableFutureDates
                     error={!!errors.issueDate?.message}
                   />
@@ -185,10 +193,11 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
                   <DatePicker
                     label="Passport Expiry Date"
                     side="top"
-                    value={field.value}
+                    value={field.value ?? undefined}
                     onChange={field.onChange}
                     placeholder="Pick a date"
                     className="h-12 text-b2 w-full"
+                    disabled={!hasPassport}
                     disablePastDates
                     error={!!errors.expiryDate?.message}
                   />
@@ -215,10 +224,7 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
           <ReadField title="Last name" value={education.lastName} />
           <ReadField title="Email address" value={education.email} />
           <ReadField title="Phone number" value={education.phone || '-'} />
-          <ReadField
-            title="Birth date"
-            value={education.dob ? new Date(education.dob).toLocaleDateString() : '-'}
-          />
+          <ReadField title="Birth date" value={education.dob ? new Date(education.dob).toLocaleDateString() : '-'} />
           <ReadField title="Nationality" value={education.country || '-'} />
           <ReadField title="Address" value={education.address || '-'} />
           <ReadField title="Passport number" value={education.passport?.toString() || '-'} />

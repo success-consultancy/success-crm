@@ -6,6 +6,8 @@ import Icons from '@/assets/icons';
 export type SubMenuItem = {
   title: string;
   href: string;
+  /** Renders the item in the disabled state — visible but not interactive */
+  disabled?: boolean;
   roles?: number[];
   /** Service key from RoleCrudPermissions — item shown when the user's role has `read` access */
   permissionKey?: string;
@@ -16,6 +18,8 @@ export type MenuItem = {
   icon: React.ElementType;
   href?: string;
   exact?: boolean;
+  /** Renders the item in the disabled state — visible but not interactive */
+  disabled?: boolean;
   onClick?: () => void;
   subItems?: SubMenuItem[];
   roles?: number[];

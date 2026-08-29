@@ -33,8 +33,24 @@ const MONTH_LABEL: Record<string, string> = {
   jun: 'Jun',
 };
 
+const CALENDAR_MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
+
 const now = new Date();
-const CURRENT_MONTH_KEY = `${['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'][now.getMonth()]}${now.getFullYear()}`;
+const CURRENT_MONTH_KEY = `${CALENDAR_MONTHS[now.getMonth()]}${now.getFullYear()}`;
+const CURRENT_MONTH_ORDINAL = now.getFullYear() * 12 + now.getMonth();
+
+/**
+ * A month is locked once it has ended — only the current month and the ones ahead of it
+ * accept target edits. Unrecognised keys are treated as editable so a malformed key
+ * never silently swallows an edit.
+ */
+export function isPastMonthKey(monthKey: string) {
+  const match = /^([a-z]{3})(\d{4})$/.exec(monthKey);
+  if (!match) return false;
+  const index = CALENDAR_MONTHS.indexOf(match[1]);
+  if (index === -1) return false;
+  return Number(match[2]) * 12 + index < CURRENT_MONTH_ORDINAL;
+}
 
 export interface ReportRow {
   name: string;
@@ -143,12 +159,16 @@ export default function PerformanceTable({
   }, [data, updateShadows]);
 
   const allMonths = React.useMemo(
-    () => [
-      ...MONTHS_INITIAL.map((key) => ({ key, year: initialYear })),
-      ...MONTHS_FINAL.map((key) => ({ key, year: finalYear })),
-    ],
+    () =>
+      [
+        ...MONTHS_INITIAL.map((key) => ({ key, year: initialYear })),
+        ...MONTHS_FINAL.map((key) => ({ key, year: finalYear })),
+      ].map((m) => ({ ...m, isPast: isPastMonthKey(`${m.key}${m.year}`) })),
     [initialYear, finalYear],
   );
+
+  // A fiscal year that has fully elapsed has nothing left to edit.
+  const hasEditableMonth = React.useMemo(() => allMonths.some((m) => !m.isPast), [allMonths]);
 
   const tableData = React.useMemo<TableRow[]>(() => data.map((row, i) => ({ ...row, _index: i })), [data]);
 
@@ -241,7 +261,15 @@ export default function PerformanceTable({
             {!isEdit ? (
               <>
                 {onEditToggle && (
-                  <Button variant="outline" size="sm" onClick={onEditToggle} disabled={isLoading}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={onEditToggle}
+                    disabled={isLoading || !hasEditableMonth}
+                    title={
+                      !hasEditableMonth ? 'This fiscal year has ended — its targets can no longer be edited.' : undefined
+                    }
+                  >
                     <Pencil className="w-3.5 h-3.5" />
                     Edit targets
                   </Button>
@@ -495,13 +523,15 @@ export default function PerformanceTable({
                         return (
                           <React.Fragment key={key}>
                             <td
+                              title={isEdit && m.isPast ? 'This month has ended — its target is locked.' : undefined}
                               className={cn(
                                 'text-center text-[13px] text-content-subtitle border-b px-2',
                                 BD,
                                 isCurrent && 'bg-green-50/60',
+                                isEdit && m.isPast && 'bg-[#F9FAFB] text-content-subtitle/60',
                               )}
                             >
-                              {isEdit ? (
+                              {isEdit && !m.isPast ? (
                                 <input
                                   type="number"
                                   min={0}

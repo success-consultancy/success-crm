@@ -4,6 +4,7 @@ import { useMemo } from 'react';
 import { FormField } from '@/components/ui/form';
 import { useFormContext } from 'react-hook-form';
 import type { LeadSchemaType } from '@/schema/lead-schema';
+import { isBlankValue } from '@/schema/dependent-fields';
 
 import countryList from 'react-select-country-list';
 import { useGetVisaOptions } from '@/query/get-visa';
@@ -22,7 +23,11 @@ const VisaAndServiceStep = () => {
     control,
     formState: { errors },
     setValue,
+    watch,
   } = useFormContext<LeadSchemaType>();
+
+  // A visa expiry only means something once a visa has been picked.
+  const hasVisa = !isBlankValue(watch('visa'));
   const { data: occupations } = useGetOccupations();
 
   const servicesOptions = Object.values(Services).map((service) => {
@@ -72,7 +77,8 @@ const VisaAndServiceStep = () => {
               onChange={(date) => setValue('visaExpiry', date)}
               placeholder="DD/MM/YYYY"
               className="w-full"
-              error={!!errors.visaExpiry?.message}
+              error={errors.visaExpiry?.message}
+              disabled={!hasVisa}
               disablePastDates={true}
             />
           )}
@@ -83,7 +89,7 @@ const VisaAndServiceStep = () => {
           render={({ field }) => (
             <MultiSelect
               options={servicesOptions}
-              value={field.value}
+              value={field.value ?? []}
               label="Service type"
               onSelect={(val) => field.onChange(val)}
               error={errors.serviceType?.message}

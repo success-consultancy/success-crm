@@ -27,9 +27,12 @@ import SelectWithCommand from '@/components/molecules/select-with-command';
 import { useGetUsers } from '@/query/get-user';
 import { useGetOccupations } from '@/query/get-occupations';
 import tribunalReviewFormSchema, {
+  TRIBUNAL_DEPENDENT_FIELDS,
   TribunalReviewSchemaType,
   updateTribunalReviewFormSchema,
 } from '@/schema/tribunal-review';
+import { isBlankValue } from '@/schema/dependent-fields';
+import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { useAddTribunalReview, useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
@@ -49,6 +52,12 @@ interface Props {
 }
 
 export function TribunalService({ userId, formState, defaultValues }: Props) {
+  const form = useForm<TribunalReviewSchemaType>({
+    resolver: zodResolver(formState === FORM_STATE.ADD ? tribunalReviewFormSchema : updateTribunalReviewFormSchema),
+    defaultValues: defaultValues,
+    mode: 'onChange',
+  });
+
   const {
     register,
     control,
@@ -58,11 +67,18 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
     setError,
     handleSubmit,
     reset,
-  } = useForm<TribunalReviewSchemaType>({
-    resolver: zodResolver(formState === FORM_STATE.ADD ? tribunalReviewFormSchema : updateTribunalReviewFormSchema),
-    defaultValues: defaultValues,
-    mode: 'onChange',
-  });
+  } = form;
+
+  useDependentFields(form, TRIBUNAL_DEPENDENT_FIELDS);
+
+  // Every date below describes something recorded in another field, so it stays
+  // locked until that field is filled in.
+  const hasPassport = !isBlankValue(watch('passport'));
+  const hasCurrentVisa = !isBlankValue(watch('currentVisa'));
+  const hasSbsStatus = !isBlankValue(watch('sbsStatus'));
+  const hasNominationStatus = !isBlankValue(watch('nominationStatus'));
+  const hasVisaStatus = !isBlankValue(watch('visaStatus'));
+  const hasTribunalStatus = !isBlankValue(watch('tribunalStatus'));
 
   const router = useRouter();
 
@@ -108,6 +124,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           onSuccess: () => {
             toast.success('Tribunal review added successfully');
             reset();
+            router.push(ROUTES.TRIBUNAL_REVIEW);
           },
           onError: (error: any) => {
             if (error?.response?.data?.errors) {
@@ -121,7 +138,6 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
           },
         },
       );
-      router.push(ROUTES.TRIBUNAL_REVIEW);
     } else {
       updateTribunalReview(
         { ...data, sourceId: data.sourceId },
@@ -204,7 +220,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
             variant="ghost"
             size="icon"
             type="button"
-            onClick={() => formState === FORM_STATE.ADD ? router.push(ROUTES.TRIBUNAL_REVIEW) : router.back()}
+            onClick={() => (formState === FORM_STATE.ADD ? router.push(ROUTES.TRIBUNAL_REVIEW) : router.back())}
           >
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -281,7 +297,9 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.passportIssueDate?.message}
+                    disabled={!hasPassport}
                     label="Passport issue date"
+                    disableFutureDates
                   />
                 )}
               />
@@ -299,6 +317,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.passportExpiryDate?.message}
+                    disabled={!hasPassport}
                     label="Passport expiry date"
                     disablePastDates={true}
                   />
@@ -348,6 +367,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.visaExpiry?.message}
+                    disabled={!hasCurrentVisa}
                     label="Visa expiry date"
                     disablePastDates={true}
                   />
@@ -459,7 +479,9 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.sbsSubmissionDate?.message}
+                    disabled={!hasSbsStatus}
                     label="Date submitted"
+                    disableFutureDates
                   />
                 )}
               />
@@ -477,6 +499,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.sbsDecisionDate?.message}
+                    disabled={!hasSbsStatus}
                     label="Decision date"
                     disablePastDates={true}
                   />
@@ -506,7 +529,9 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.nominationSubmittedDate?.message}
+                    disabled={!hasNominationStatus}
                     label="Nomination date submitted"
+                    disableFutureDates
                   />
                 )}
               />
@@ -524,6 +549,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.nominationDecisionDate?.message}
+                    disabled={!hasNominationStatus}
                     label="Nomination decision date"
                     disablePastDates={true}
                   />
@@ -554,6 +580,8 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.visaSubmittedDate?.message}
+                    disabled={!hasVisaStatus}
+                    disableFutureDates
                   />
                 )}
               />
@@ -572,6 +600,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                     placeholder="DD/MM/YYYY"
                     className="w-full"
                     error={!!errors.visaDecisionDate?.message}
+                    disabled={!hasVisaStatus}
                     disablePastDates={true}
                   />
                 )}
@@ -607,7 +636,9 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   placeholder="DD/MM/YYYY"
                   className="w-full"
                   error={!!errors.tribunalSubmittedDate?.message}
+                  disabled={!hasTribunalStatus}
                   label="Date submitted"
+                  disableFutureDates
                 />
               )}
             />
@@ -624,6 +655,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   className="w-full"
                   label="Hearing date"
                   error={!!errors.hearingDate?.message}
+                  disabled={!hasTribunalStatus}
                   disablePastDates={true}
                 />
               )}
@@ -641,6 +673,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   className="w-full"
                   label="Tribunal decision date"
                   error={!!errors.tribunalDecisionDate?.message}
+                  disabled={!hasTribunalStatus}
                   disablePastDates={true}
                 />
               )}

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { MenuItem } from '@/constants/sidebar-menu-items';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
+import { getMenuItemState, menuItemIconSize, menuItemVariants } from '@/components/atoms/menu-item-variants';
 
 interface SimpleMenuItemProps {
   item: MenuItem;
@@ -14,27 +15,33 @@ interface SimpleMenuItemProps {
 }
 
 const SimpleMenuItem: React.FC<SimpleMenuItemProps> = ({ item, isActive, onClick, collapsed = false }) => {
+  const isDisabled = !!item.disabled;
+
   const className = cn(
-    'flex items-center rounded-lg h-11 w-11 text-[15px] font-medium transition-colors cursor-pointer whitespace-nowrap',
-    collapsed ? 'justify-center px-0' : 'gap-4 px-3 w-full',
-    isActive ? 'bg-component-active !text-primary' : 'text-neutral-black hover:bg-component-active/40',
+    menuItemVariants({ size: 'large', state: getMenuItemState(isActive, isDisabled) }),
+    collapsed && 'w-10 justify-center px-0',
   );
 
   const content = (
     <>
-      {item.icon && <item.icon size={22} className={cn('text-neutral-black', isActive && 'text-primary')} />}
+      {item.icon && <item.icon size={menuItemIconSize.large} className="text-neutral-black" />}
 
       {!collapsed && <span>{item.title}</span>}
     </>
   );
 
   const buttonOrLink =
-    item.href && item.href !== '#' ? (
+    item.href && item.href !== '#' && !isDisabled ? (
       <Link href={item.href} className={className} onClick={onClick}>
         {content}
       </Link>
     ) : (
-      <button className={cn(className, !collapsed && 'w-full text-left')} onClick={onClick}>
+      <button
+        className={cn(className, !collapsed && 'text-left')}
+        onClick={onClick}
+        disabled={isDisabled}
+        aria-disabled={isDisabled}
+      >
         {content}
       </button>
     );

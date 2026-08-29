@@ -1,6 +1,7 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { VisaSchemaType } from '@/schema/visa-schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { InsuranceSchemaType } from '@/schema/insurance';
@@ -26,6 +27,11 @@ export const useAddInsurance = () => {
           queryKey: [QUERY_KEYS.GET_LEAD_BY_ID],
         });
       }
+    },
+    // The list page is reached immediately after adding; without this the global
+    // 25s staleTime would serve a cached list that is missing the new record.
+    onSuccess: () => {
+      invalidateServiceQueries(queryClient, 'insurance');
     },
   });
 };

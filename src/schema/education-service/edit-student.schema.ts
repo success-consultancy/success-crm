@@ -1,11 +1,15 @@
 import { z } from 'zod';
 
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from '../date-validation';
+import { withDependentFields } from '../dependent-fields';
+import { EDUCATION_DEPENDENT_FIELDS } from './new-student.schema';
+
 // Common validation patterns (same as create schema)
 const phoneRegex = /^\+?[\d\s\-().]+$/;
 const passportRegex = /^[A-Z0-9]{5,20}$/;
 const invoiceRegex = /^[A-Z0-9\-_]+$/;
 
-export const editEducationServiceSchema = z
+const editEducationServiceBaseSchema = z
   .object({
     // Personal Details (all optional)
     firstName: z
@@ -28,7 +32,7 @@ export const editEducationServiceSchema = z
       .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' })
       .optional(),
 
-    dob: z.date().optional(),
+    dob: z.date().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
 
     email: z
       .union([
@@ -59,8 +63,12 @@ export const editEducationServiceSchema = z
       ])
       .optional(),
 
-    issueDate: z.date().optional(),
-    expiryDate: z.date().optional(),
+    issueDate: z
+      .date()
+      .nullable()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Issue date') }),
+    expiryDate: z.date().nullable().optional(),
 
     location: z.string().max(100, 'Location cannot exceed 100 characters').optional(),
 
@@ -155,41 +163,50 @@ export const editEducationServiceSchema = z
     sourceId: z.union([z.string(), z.number()]).nullable().optional(),
 
     remarks: z.string().max(1000, 'Remarks cannot exceed 1000 characters').optional(),
-    statusDate: z.date().optional(),
+    statusDate: z
+      .date()
+      .nullable()
+      .optional()
+      .refine(isNotFutureDate, { message: futureDateMessage('Status date') }),
   })
   // Conditional, only if both values exist
   .superRefine((data, ctx) => {
     if (data.issueDate && data.expiryDate && !(data.expiryDate > data.issueDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Passport expiry date must be after the issue date',
         path: ['expiryDate'],
       });
     }
     if (data.startDate && data.endDate && !(data.endDate > data.startDate)) {
       ctx.addIssue({
-        code: "custom",
+        code: 'custom',
         message: 'Course end date must be after the start date',
         path: ['endDate'],
       });
     }
     if (data.dob && !(data.dob < new Date())) {
-      ctx.addIssue({ code: "custom", message: 'Date of birth cannot be in the future', path: ['dob'] });
+      ctx.addIssue({ code: 'custom', message: 'Date of birth cannot be in the future', path: ['dob'] });
     }
     if (data.expiryDate && !(data.expiryDate > new Date())) {
-      ctx.addIssue({ code: "custom", message: 'Passport must not be expired', path: ['expiryDate'] });
+      ctx.addIssue({ code: 'custom', message: 'Passport must not be expired', path: ['expiryDate'] });
     }
     // Backend requires course_fee.duedate — only enforce it once the fee section is actually in use
     if (data.courseFee) {
       const { planname, amount, invoicenumber, status, note, duedate } = data.courseFee;
       if ((planname || amount || invoicenumber || status || note) && !duedate) {
         ctx.addIssue({
-          code: "custom",
+          code: 'custom',
           message: 'Due date is required',
           path: ['courseFee', 'duedate'],
         });
       }
     }
   });
+
+export const editEducationServiceSchema = withDependentFields(
+  editEducationServiceBaseSchema,
+  EDUCATION_DEPENDENT_FIELDS,
+);
 
 export type EditEducationServiceType = z.infer<typeof editEducationServiceSchema>;

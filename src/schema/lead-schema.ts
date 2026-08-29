@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
-import { DOB_FUTURE_MESSAGE, isNotFutureDate } from './date-validation';
+import { DOB_FUTURE_MESSAGE, futureDateMessage, isNotFutureDate } from './date-validation';
+import { withDependentFields, type DependentFieldRule } from './dependent-fields';
 
 export const personalDetailsSchema = z.object({
   email: z.string({ message: 'Email is required' }).email({ message: 'Invalid email address' }),
@@ -17,36 +18,48 @@ export const personalDetailsSchema = z.object({
     .string({ message: 'Last name is required' })
     .min(1, { message: 'Last name is required' })
     .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
-  dob: z
-    .string({ message: 'Date of birth is required' })
-    .min(1, { message: 'Date of birth is required' })
-    .refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
+  dob: z.string().nullable().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),
   address: z.string().nullable().optional(),
   qualification: z.string().nullable().optional(),
   occupation: z.string().nullable().optional(),
   anzsco: z.string().nullable().optional(),
 });
 
-export const passportDetailsSchema = z.object({
+const passportDetailsBaseSchema = z.object({
   country: z.string().nullable().optional(),
   passport: z.union([z.number(), z.string()]).nullable().optional(),
-  issueDate: z.date().nullable().optional(),
+  issueDate: z
+    .date()
+    .nullable()
+    .optional()
+    .refine(isNotFutureDate, { message: futureDateMessage('Issue date') }),
   expiryDate: z.date().nullable().optional(),
   visa: z.string().nullable().optional(),
   visaExpiry: z.date().nullable().optional(),
   hasVisitedStep: z.boolean().optional(),
 });
 
+export const LEAD_DEPENDENT_FIELDS: DependentFieldRule[] = [
+  {
+    parent: 'visa',
+    dependents: ['visaExpiry'],
+    message: 'Select a visa before setting the visa expiry date',
+  },
+  {
+    parent: 'passport',
+    dependents: ['issueDate', 'expiryDate'],
+    message: 'Enter a passport number before setting the passport dates',
+  },
+];
+
+export const passportDetailsSchema = withDependentFields(passportDetailsBaseSchema, LEAD_DEPENDENT_FIELDS);
+
 export const serviceDetailsSchema = z.object({
   location: z.string().nullable().optional(),
-  serviceType: z
-    .array(z.string(), { message: 'Service type is required' })
-    .min(1, { message: 'Service type is required' }),
+  serviceType: z.array(z.string()).nullable().optional(),
   sourceId: z.number().nullable().optional(),
   userId: z.number().nullable().optional(),
-  status: z
-    .string({ message: 'Status is required' })
-    .min(1, { message: 'Status is required' }),
+  status: z.string().nullable().optional(),
   remarks: z.string().nullable().optional(),
   files: z
     .array(

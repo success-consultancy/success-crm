@@ -9,6 +9,7 @@ import { useVerifyAndCheckIn } from '@/mutations/check-in/returning-check-in';
 interface Props {
   onBack: () => void;
   onNewClient: () => void;
+  onSuccess: () => void;
 }
 
 type FieldError = { phone?: string; email?: string; general?: string };
@@ -33,7 +34,7 @@ const LABEL_STYLE: React.CSSProperties = {
   display: 'block',
 };
 
-const ReturningClientForm = ({ onBack, onNewClient }: Props) => {
+const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [errors, setErrors] = useState<FieldError>({});
@@ -56,7 +57,7 @@ const ReturningClientForm = ({ onBack, onNewClient }: Props) => {
     verifyAndCheckIn(
       { phone: phone || undefined, email: email || undefined },
       {
-        onSuccess: () => onBack(),
+        onSuccess: () => onSuccess(),
         onError: (error: any) => {
           const status = error?.response?.status;
           const message = error?.response?.data?.message;
