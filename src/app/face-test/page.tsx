@@ -3,13 +3,11 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Webcam from 'react-webcam';
 import {
-  computeEyeAspectRatio,
-  detectBlinkInSamples,
-  detectFaceWithLandmarks,
   extractDescriptor,
   extractDescriptorAveraged,
   euclideanDistance,
 } from '@/lib/face-recognition';
+import { detectBlinkInSamples, detectLiveness } from '@/lib/face-liveness';
 import { useFaceModels } from '@/hooks/use-face-models';
 
 /**
@@ -23,7 +21,7 @@ const FaceTestPage = () => {
   const webcamRef = useRef<Webcam | null>(null);
   const { status, error, load } = useFaceModels();
   const [busy, setBusy] = useState(false);
-  const [ear, setEar] = useState<number | null>(null);
+  const [blink, setBlink] = useState<number | null>(null);
   const [log, setLog] = useState<string[]>([]);
   const [lastDescriptor, setLastDescriptor] = useState<Float32Array | null>(null);
 
@@ -31,20 +29,15 @@ const FaceTestPage = () => {
     setLog((prev) => [`${new Date().toLocaleTimeString()}  ${line}`, ...prev].slice(0, 30));
   }, []);
 
-  // Live EAR readout — samples every 250ms whenever models + video are ready.
+  // Live blink-score readout — samples every 250ms whenever models + video are ready.
   useEffect(() => {
     if (status !== 'ready') return;
     let cancelled = false;
-    const tick = async () => {
+    const tick = () => {
       const video = webcamRef.current?.video;
-      if (!cancelled && video && video.readyState >= 2) {
-        try {
-          const result = await detectFaceWithLandmarks(video);
-          if (!cancelled) setEar(result ? computeEyeAspectRatio(result.landmarks) : null);
-        } catch {
-          if (!cancelled) setEar(null);
-        }
-      }
+      if (cancelled || !video || video.readyState < 2) return;
+      const result = detectLiveness(video);
+      if (!cancelled) setBlink(result.status === 'sample' ? result.sample.blink : null);
     };
     const id = window.setInterval(tick, 250);
     return () => {
@@ -120,14 +113,14 @@ const FaceTestPage = () => {
       const samples: number[] = [];
       const deadline = performance.now() + 3000;
       while (performance.now() < deadline) {
-        const r = await detectFaceWithLandmarks(video);
-        if (r) samples.push(computeEyeAspectRatio(r.landmarks));
+        const r = detectLiveness(video);
+        if (r.status === 'sample') samples.push(r.sample.blink);
         await new Promise((r2) => setTimeout(r2, 100));
       }
       const ok = detectBlinkInSamples(samples);
       const min = samples.length ? Math.min(...samples).toFixed(3) : '—';
       const max = samples.length ? Math.max(...samples).toFixed(3) : '—';
-      appendLog(`Blink test ${ok ? 'PASSED' : 'failed'} — ${samples.length} samples, EAR range ${min}..${max}`);
+      appendLog(`Blink test ${ok ? 'PASSED' : 'failed'} — ${samples.length} samples, blink range ${min}..${max}`);
     } finally {
       setBusy(false);
     }
@@ -173,9 +166,9 @@ const FaceTestPage = () => {
         </div>
 
         <div className="text-sm">
-          Live EAR:&nbsp;
-          <span className="font-mono">{ear === null ? '—' : ear.toFixed(3)}</span>
-          <span className="text-gray-500"> &nbsp;(eyes closed ≈ 0.18, open ≈ 0.30+)</span>
+          Live blink score:&nbsp;
+          <span className="font-mono">{blink === null ? '—' : blink.toFixed(3)}</span>
+          <span className="text-gray-500"> &nbsp;(eyes open ≈ 0.02, closed ≈ 0.9)</span>
         </div>
 
         <div className="flex flex-wrap gap-2">
