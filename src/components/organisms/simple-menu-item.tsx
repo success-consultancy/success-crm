@@ -24,7 +24,7 @@ const SimpleMenuItem: React.FC<SimpleMenuItemProps> = ({ item, isActive, onClick
 
   const content = (
     <>
-      {item.icon && <item.icon size={menuItemIconSize.large} className="text-neutral-black" />}
+      {item.icon && <item.icon size={menuItemIconSize.large} className="shrink-0" />}
 
       {!collapsed && <span>{item.title}</span>}
     </>

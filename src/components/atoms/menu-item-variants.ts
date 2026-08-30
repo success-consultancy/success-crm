@@ -16,7 +16,7 @@ export const menuItemVariants = cva(
       },
       state: {
         default: 'bg-transparent hover:bg-component-hovered-light',
-        active: 'bg-component-active hover:bg-component-active',
+        active: 'bg-component-active text-primary hover:bg-component-active',
         disabled: 'pointer-events-none cursor-not-allowed opacity-50',
       },
     },

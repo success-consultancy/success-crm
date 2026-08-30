@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo, useCallback } from 'react';
-import { Plus, Pencil, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
+import { Plus, Pencil, Trash2, ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { format } from 'date-fns';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
@@ -13,9 +13,11 @@ import SearchInput from '@/components/molecules/search-input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import TableSkeleton from '@/components/organisms/table-skeleton';
 import TableEmptyRow from '@/components/common/table-empty-row';
+import DeleteDialog from '@/components/organisms/delete.dialog';
 import { useGetSource, ISource } from '@/query/get-source';
 import { useAddSource } from '@/mutations/source/add-source';
 import { useEditSource } from '@/mutations/source/edit-source';
+import { useDeleteSource } from '@/mutations/source/delete-source';
 import { downloadFile } from '@/utils/download';
 
 type SortField = 'name' | 'description' | 'createdAt' | 'updatedAt';
@@ -33,6 +35,7 @@ const SourceListPage = () => {
   const { data: sources = [], isLoading } = useGetSource();
   const { mutate: addSource, isPending: isAdding } = useAddSource();
   const { mutate: editSource, isPending: isEditing } = useEditSource();
+  const { mutate: deleteSource } = useDeleteSource();
 
   const [search, setSearch] = useState('');
   const [sortField, setSortField] = useState<SortField>('name');
@@ -118,6 +121,12 @@ const SourceListPage = () => {
     setForm(EMPTY_FORM);
   };
 
+  const handleDelete = (id: number) => {
+    // The row disappears on success, so drop the inline editor pointing at it.
+    if (editingId === id) cancelForm();
+    deleteSource(id);
+  };
+
   const handleSubmit = () => {
     const name = form.name.trim();
     const description = form.description.trim();
@@ -192,7 +201,7 @@ const SourceListPage = () => {
                 <th className="min-w-[160px] cursor-pointer select-none" onClick={() => handleSort('updatedAt')}>
                   Updated at <SortIcon field="updatedAt" />
                 </th>
-                <th className="w-20 text-right" />
+                <th className="w-24 text-right" />
               </tr>
             </thead>
             <tbody>
@@ -244,13 +253,29 @@ const SourceListPage = () => {
                       <td className="whitespace-nowrap">{format(new Date(source.createdAt), 'dd/MM/yyyy HH:mm')}</td>
                       <td className="whitespace-nowrap">{format(new Date(source.updatedAt), 'dd/MM/yyyy HH:mm')}</td>
                       <td className="text-right">
-                        <button
-                          className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
-                          onClick={() => openEdit(source)}
-                          aria-label="Edit source"
-                        >
-                          <Pencil className="h-4 w-4" />
-                        </button>
+                        <div className="flex items-center justify-end gap-1">
+                          <button
+                            className="p-1.5 rounded hover:bg-neutral-border-light text-neutral-dark-grey hover:text-neutral-black transition-colors"
+                            onClick={() => openEdit(source)}
+                            aria-label="Edit source"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </button>
+                          <DeleteDialog
+                            trigger={
+                              <button
+                                className="p-1.5 rounded hover:bg-red-50 text-neutral-dark-grey hover:text-utility-red transition-colors"
+                                aria-label="Delete source"
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </button>
+                            }
+                            title="Delete source"
+                            description="Are you sure you want to delete this source?"
+                            confirmText="Yes, delete"
+                            onConfirm={() => handleDelete(source.id)}
+                          />
+                        </div>
                       </td>
                     </tr>
                   );

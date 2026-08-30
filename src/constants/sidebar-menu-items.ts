@@ -6,6 +6,8 @@ import Icons from '@/assets/icons';
 export type SubMenuItem = {
   title: string;
   href: string;
+  /** Leading icon; omitted items keep the icon column reserved so labels stay aligned */
+  icon?: React.ElementType;
   /** Renders the item in the disabled state — visible but not interactive */
   disabled?: boolean;
   roles?: number[];
@@ -64,11 +66,31 @@ export const menuItems: MenuItem[] = [
     title: DashboardTitle.Services,
     icon: Icons.ServicesIcon,
     subItems: [
-      { title: DashboardTitle.EducationService, href: '/dashboard/education', permissionKey: 'education' },
-      { title: DashboardTitle.VisaService, href: '/dashboard/visa', permissionKey: 'visa' },
-      { title: DashboardTitle.SkillAssessmentService, href: '/dashboard/skill', permissionKey: 'skill' },
-      { title: DashboardTitle.TribunalReview, href: '/dashboard/tribunal-review', permissionKey: 'tribunalReview' },
-      { title: DashboardTitle.InsuranceService, href: '/dashboard/insurance', permissionKey: 'insurance' },
+      {
+        title: DashboardTitle.EducationService,
+        href: '/dashboard/education',
+        icon: Icons.EducationIcon,
+        permissionKey: 'education',
+      },
+      { title: DashboardTitle.VisaService, href: '/dashboard/visa', icon: Icons.VisaIcon, permissionKey: 'visa' },
+      {
+        title: DashboardTitle.SkillAssessmentService,
+        href: '/dashboard/skill',
+        icon: Icons.SkillAssessmentIcon,
+        permissionKey: 'skill',
+      },
+      {
+        title: DashboardTitle.TribunalReview,
+        href: '/dashboard/tribunal-review',
+        icon: Icons.TribunalReviewIcon,
+        permissionKey: 'tribunalReview',
+      },
+      {
+        title: DashboardTitle.InsuranceService,
+        href: '/dashboard/insurance',
+        icon: Icons.InsuranceIcon,
+        permissionKey: 'insurance',
+      },
     ],
   },
   {

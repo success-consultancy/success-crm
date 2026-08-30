@@ -1,8 +1,6 @@
-﻿import { api, getApiErrorMessage } from '@/lib/api';
+﻿import { api } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_USERS } from '@/query/get-user';
-import toast from 'react-hot-toast';
-import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface UpdateUserPayload {
   id: number;
@@ -35,10 +33,6 @@ export const useUpdateUser = () => {
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_USERS] });
-      toast.success(toastMsg.updateSuccess(ENTITY.user));
-    },
-    onError: (error: any) => {
-      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.user)));
     },
   });
 };

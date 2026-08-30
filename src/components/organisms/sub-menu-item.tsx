@@ -20,13 +20,13 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
       aria-disabled={isDisabled}
       tabIndex={isDisabled ? -1 : undefined}
       className={cn(
-        'relative z-10 flex items-center h-[40px] w-full rounded-lg overflow-hidden transition-all duration-200 select-none',
-        isSubActive
-          ? 'bg-component-active text-primary font-semibold'
-          : 'text-neutral-black hover:bg-component-active/60 hover:text-neutral-black font-medium',
-        collapsed && 'opacity-0 pointer-events-none',
+        menuItemVariants({ size: 'large', state: getMenuItemState(isSubActive, isDisabled) }),
+        'relative z-10 overflow-hidden pl-8',
+        collapsed && 'pointer-events-none opacity-0',
       )}
     >
+      {subItem.icon ? <subItem.icon className="shrink-0" /> : <span aria-hidden className="w-5 shrink-0" />}
+
       <span className={cn(collapsed && 'w-0 opacity-0')}>{subItem.title}</span>
     </Link>
   );

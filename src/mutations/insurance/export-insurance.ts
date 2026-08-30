@@ -20,6 +20,10 @@ export const useExportInsurance = (options: useExportInsurance = {}) => {
 
   return useMutation({
     mutationFn: exportInsurance,
-    onError,
+    onSuccess,
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, toastMsg.exportError(ENTITY.insuranceApplicants)));
+      onError?.(error);
+    },
   });
 };

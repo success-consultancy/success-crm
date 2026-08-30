@@ -67,6 +67,7 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
   const activeRole = roles.find((r) => r.id === activeRoleId)!;
   // Super admin permissions are always locked — no editing regardless of viewer role.
   const isActiveRoleLocked = activeRole?.id === SUPER_ADMIN_ID;
+  const canEdit = !readonly && !isActiveRoleLocked;
 
   const [permissions, setPermissions] = useState<RoleCrudPermissions>(() => buildPermissions(activeRole));
 
@@ -110,45 +111,59 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
 
   return (
     <div className="bg-white rounded-xl border border-[#EBEBEB]">
-      {/* Role tabs */}
-      <div className="flex border-b border-[#EBEBEB] gap-1 px-2">
-        {roles.map((role) => (
-          <button
-            key={role.id}
-            onClick={() => handleRoleChange(role.id)}
-            className={`relative flex items-center px-3 h-11 text-sm transition-colors ${
-              activeRoleId === role.id
-                ? 'font-semibold text-[#1C1C1C]'
-                : 'font-medium text-[#484848] hover:text-[#1C1C1C]'
-            }`}
-          >
-            {ROLE_LABEL[role.id] ?? role.role}
-            {activeRoleId === role.id && (
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#007ACC] rounded-full" />
-            )}
-          </button>
-        ))}
-      </div>
-
-      {/* Body */}
-      <div className="p-4 flex flex-col gap-4">
-        {/* Save / Reset — admin only, shown when dirty (hidden for super admin — always locked) */}
-        {!readonly && !isActiveRoleLocked && isDirty && (
-          <div className="flex items-center justify-end gap-2">
-            <button type="button" onClick={handleReset} className="text-xs text-gray-400 hover:text-gray-600 underline">
-              Reset
+      <div className="sticky top-0 z-20 flex items-center gap-2 rounded-t-xl bg-white border-b border-[#EBEBEB] px-2">
+        {/* Tabs scroll on narrow screens instead of squeezing the actions off the row */}
+        <div role="tablist" className="flex gap-1 overflow-x-auto">
+          {roles.map((role) => (
+            <button
+              key={role.id}
+              id={`role-tab-${role.id}`}
+              type="button"
+              role="tab"
+              aria-selected={activeRoleId === role.id}
+              onClick={() => handleRoleChange(role.id)}
+              className={`relative flex shrink-0 items-center px-3 h-11 text-sm transition-colors ${
+                activeRoleId === role.id
+                  ? 'font-semibold text-[#1C1C1C]'
+                  : 'font-medium text-[#484848] hover:text-[#1C1C1C]'
+              }`}
+            >
+              {ROLE_LABEL[role.id] ?? role.role}
+              {activeRoleId === role.id && (
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#007ACC] rounded-full" />
+              )}
             </button>
+          ))}
+        </div>
+
+        {/* Save / Reset — admin only (hidden for super admin, whose permissions are locked).
+            They stay mounted and disabled until there are edits, so ticking the first
+            checkbox no longer inserts a row and pushes the table down. */}
+        {canEdit && (
+          <div className="ml-auto flex shrink-0 items-center gap-2 pl-2">
+            <Button
+              variant="outline"
+              onClick={handleReset}
+              disabled={!isDirty || isPending}
+              className="h-8 text-xs px-3"
+            >
+              Reset
+            </Button>
             <Button
               onClick={handleSave}
               loading={isPending}
               loadingText={LOADING_LABEL.save}
+              disabled={!isDirty || isPending}
               className="h-8 text-xs px-3"
             >
               Save
             </Button>
           </div>
         )}
+      </div>
 
+      {/* Body */}
+      <div className="p-4" role="tabpanel" aria-labelledby={`role-tab-${activeRoleId}`}>
         {/* Permissions table */}
         <div className="border border-[#EBEBEB] rounded-[10px] overflow-hidden">
           <div className="overflow-x-auto">

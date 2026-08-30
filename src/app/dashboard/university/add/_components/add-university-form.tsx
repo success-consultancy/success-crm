@@ -121,7 +121,9 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
     if (!trimmed) return;
     const alreadyLinked = availableCourses.some((c) => c.name.toLowerCase() === trimmed.toLowerCase());
     const alreadyAdded = newCourses.some((c) => c.toLowerCase() === trimmed.toLowerCase());
-    if (!alreadyLinked && !alreadyAdded) {
+    if (alreadyLinked || alreadyAdded) {
+      toast.error(`Course "${trimmed}" is already added`);
+    } else {
       setNewCourses((prev) => [...prev, trimmed]);
     }
     setCourseSearch('');

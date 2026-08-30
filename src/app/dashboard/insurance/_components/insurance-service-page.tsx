@@ -126,7 +126,7 @@ const ServicePage = () => {
             <Button
               variant="outline"
               className="mr-2"
-              onClick={() => exportDateToCSV(filterParams)}
+              onClick={() => exportDateToCSV(filterParams).catch(() => {})}
               loading={isExporting}
             >
               Export

@@ -36,6 +36,8 @@ import { useDeleteUniversity } from '@/mutations/university/delete-university';
 import { downloadFile } from '@/utils/download';
 import { usePermissions } from '@/hooks/use-permissions';
 import EmptyUniversityIcon from '@/assets/icons/empty-university-icon';
+import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type SortField = 'name' | 'educationLevel' | 'location';
 type SortDir = 'asc' | 'desc';
@@ -181,7 +183,10 @@ const UniversityListPage = () => {
   };
 
   const handleExport = useCallback(() => {
-    if (!sorted.length) return;
+    if (!sorted.length) {
+      toast.error('No universities to export');
+      return;
+    }
     const headers = ['ID', 'University Name', 'Group', 'Location', 'Description', 'Track in Report'];
     const rows = sorted.map((u) => [
       u.id,
@@ -195,6 +200,7 @@ const UniversityListPage = () => {
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
     downloadFile(csv, 'universities.csv', 'text/csv;charset=utf-8;');
+    toast.success(toastMsg.exportSuccess(ENTITY.universities));
   }, [sorted]);
 
   const rangeStart = totalItems === 0 ? 0 : (page - 1) * pageSize + 1;

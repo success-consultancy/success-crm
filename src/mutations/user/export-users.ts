@@ -13,5 +13,8 @@ const exportUsers = async () => {
 export const useExportUsers = () => {
   return useMutation({
     mutationFn: exportUsers,
+    onError: (error) => {
+      toast.error(getApiErrorMessage(error, toastMsg.exportError(ENTITY.users)));
+    },
   });
 };

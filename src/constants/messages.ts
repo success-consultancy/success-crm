@@ -52,6 +52,7 @@ export const ENTITY = {
   leads: 'Leads',
   skillApplicants: 'Skill assessment applicants',
   tribunalApplicants: 'Tribunal review applicants',
+  universities: 'Universities',
   users: 'Users',
   visaApplicants: 'Visa applicants',
 

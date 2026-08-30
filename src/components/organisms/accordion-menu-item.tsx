@@ -5,7 +5,7 @@ import { SubMenuItemComponent } from './sub-menu-item';
 import { useSidebarStore } from '@/store/sidebar-store';
 import { MenuItem } from '@/constants/sidebar-menu-items';
 import { AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
-import { getMenuItemState, menuItemIconSize, menuItemVariants } from '@/components/atoms/menu-item-variants';
+import { menuItemIconSize, menuItemVariants } from '@/components/atoms/menu-item-variants';
 
 interface AccordionMenuItemProps {
   item: MenuItem;
@@ -24,30 +24,25 @@ export const AccordionMenuItem = ({ item, index, pathName }: AccordionMenuItemPr
       <AccordionTrigger
         disabled={isDisabled}
         className={cn(
-          'relative flex h-11 items-center rounded-lg transition-all duration-300 ease-in-out hover:no-underline',
-          isCollapsed ? 'justify-center px-0' : 'px-[3px] pr-2',
+          menuItemVariants({ size: 'large', state: isDisabled ? 'disabled' : 'default' }),
+          'items-center justify-between py-0 hover:no-underline',
+          isCollapsed && 'justify-center px-0',
         )}
       >
         <div
           className={cn(
-            'flex items-center gap-2 transition-all duration-300 ease-in-out',
-            isCollapsed ? 'justify-center w-10 h-10 rounded-lg' : 'flex-1 whitespace-nowrap overflow-hidden',
+            'flex items-center gap-3 transition-all duration-300 ease-in-out',
+            isCollapsed ? 'justify-center' : 'flex-1 overflow-hidden whitespace-nowrap',
           )}
         >
-          {item.icon && (
-            <div className="flex items-center justify-center w-10 h-10 transition-colors duration-300">
-              <item.icon className="text-neutral-black" size={22} />
-            </div>
-          )}
-          {!isCollapsed && (
-            <span className="transition-opacity duration-300 ease-in-out opacity-100 text-[15px]">{item.title}</span>
-          )}
+          {item.icon && <item.icon className="shrink-0" size={menuItemIconSize.large} />}
+          {!isCollapsed && <span className="transition-opacity duration-300 ease-in-out">{item.title}</span>}
         </div>
       </AccordionTrigger>
 
       <AccordionContent className={cn('pb-1 transition-all duration-300', isCollapsed && 'hidden')}>
-        <div className="relative flex flex-col mt-2">
-          <div className="absolute left-5 top-0 bottom-0 w-px bg-neutral-border-light" />
+        <div className="relative flex flex-col mt-1">
+          <div className="absolute left-[18px] top-0 bottom-0 w-px bg-neutral-border-light" />
           {item.subItems.map((subItem, subIndex: number) => (
             <SubMenuItemComponent key={subIndex} subItem={subItem} pathName={pathName} collapsed={isCollapsed} />
           ))}
