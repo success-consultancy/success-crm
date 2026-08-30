@@ -24,6 +24,7 @@ import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
 import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IInsurance } from '@/types/response-types/insurance-response';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const personalSchema = withDependentFields(
   insuranceFormSchema.pick({
@@ -104,11 +105,11 @@ const PersonalDetails = ({ visa }: { visa: IInsurance }) => {
   const handleSave = handleSubmit((data) => {
     editInsurance.mutate(buildInsuranceSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update insurance applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.insurance));
       },
     });
   });

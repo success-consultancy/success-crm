@@ -22,6 +22,7 @@ import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ILead } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { useGetVisaOptions } from '@/query/get-visa';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type FormValues = z.infer<typeof passportDetailsSchema>;
 
@@ -71,11 +72,11 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
   const handleSave = handleSubmit((data) => {
     editLead.mutate(buildLeadSectionPayload(lead, data), {
       onSuccess: () => {
-        toast.success('Passport & visa info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.passportVisaInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update lead');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.lead));
       },
     });
   });

@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_USERS } from '@/query/get-user';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const deleteUser = async (id: number) => {
   const res = await api.delete(`/user/${id}`);
@@ -15,10 +16,10 @@ export const useDeleteUser = () => {
     mutationFn: deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_USERS] });
-      toast.success('User deleted successfully!');
+      toast.success(toastMsg.deleteSuccess(ENTITY.user));
     },
     onError: (error: any) => {
-      toast.error('Failed to delete user.');
+      toast.error(toastMsg.deleteError(ENTITY.user));
     },
   });
 };

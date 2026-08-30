@@ -14,7 +14,7 @@ import { CircleFlag } from 'react-circle-flags';
 
 // data
 import { countries } from 'country-data-list';
-import { Label } from '@radix-ui/react-label';
+import { Label } from '@/components/ui/label';
 import FormErrorMessage from '../atoms/form-error-message';
 
 // Country interface
@@ -99,7 +99,7 @@ const CountryDropdownComponent = (
 
   return (
     <div className={`flex flex-col gap-2 w-full ${className || ''}`}>
-      {label && <label className={cn(['text-b3-b font-semibold'])}>{label}</label>}
+      {label && <Label className="text-b3-b font-semibold">{label}</Label>}
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger ref={ref} className={triggerClasses} disabled={disabled} {...props}>
           {selectedCountry ? (

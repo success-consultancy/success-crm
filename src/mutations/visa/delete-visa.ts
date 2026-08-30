@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, countOf, toastMsg } from '@/constants/messages';
 const deleteVisa = async (id: number) => {
   const res = await api.delete(`/visaApplicant/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteVisa = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_VISAS],
       });
-      toast('Success!', {
-        description: 'Visa applicant has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.visa));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.visa)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteVisaBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_VISAS],
       });
-      toast('Success!', {
-        description: `${ids.length} visa applicant${ids.length > 1 ? 's have' : ' has'} been deleted`,
-      });
+      toast.success(toastMsg.deleteSuccess(countOf(ids.length, ENTITY.visa, ENTITY.visaApplicants)));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.visa)));
     },
   });
 };

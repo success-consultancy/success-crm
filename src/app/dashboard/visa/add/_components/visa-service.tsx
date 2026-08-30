@@ -15,8 +15,6 @@ import { format } from 'date-fns';
 import { useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { cn } from '@/lib/utils';
-
 import TextInput from '@/components/molecules/text-input';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { Label } from '@/components/ui/label';
@@ -44,6 +42,7 @@ import { VisaStatusTypes } from '@/types/response-types/visa-response';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -145,12 +144,12 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         { payload: { ...data, sourceId: data.sourceId } },
         {
           onSuccess: () => {
-            toast.success('Visa applicant added successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.visa));
             reset();
             router.push(ROUTES.VISA);
           },
           onError: (error: any) => {
-            toast.error(error?.response?.data?.message || 'Failed to add visa applicant');
+            toast.error(error?.response?.data?.message || toastMsg.addError(ENTITY.visa));
           },
         },
       );
@@ -159,10 +158,10 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
         { id: id!, ...data, sourceId: data.sourceId },
         {
           onSuccess: () => {
-            toast.success('Visa applicant updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.visa));
           },
           onError: (error: any) => {
-            toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+            toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.visa));
           },
         },
       );
@@ -241,7 +240,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dob')}
                     placeholder="DD/MM/YYYY"
-                    className={cn('h-12 text-b2 w-full')}
+                    className="w-full"
                     disableFutureDates={true}
                   />
                 )}
@@ -275,7 +274,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('issueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.issueDate?.message}
                     disabled={!hasPassport}
                     disableFutureDates
@@ -295,7 +294,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('expiryDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.expiryDate?.message}
                     disabled={!hasPassport}
                   />
@@ -344,7 +343,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaExpiry')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaExpiry?.message}
                     disabled={!hasCurrentVisa}
                     disablePastDates={true}
@@ -364,7 +363,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('dueDate')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.dueDate?.message}
                     disablePastDates={true}
                   />
@@ -452,7 +451,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmitted')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaSubmitted?.message}
                   />
                 )}
@@ -470,7 +469,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaGranted')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaGranted?.message}
                     disablePastDates={true}
                   />
@@ -496,7 +495,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationLodged')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.nominationLodged?.message}
                     disabled={!hasNominationStatus}
                   />
@@ -515,7 +514,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('nominationDecision')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.nominationDecision?.message}
                     disabled={!hasNominationStatus}
                     disablePastDates={true}
@@ -542,7 +541,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaSubmitted')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaSubmitted?.message}
                   />
                 )}
@@ -560,7 +559,7 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
                     value={getDateValue(field.value)}
                     onChange={handleDateChange('visaGranted')}
                     placeholder="DD/MM/YYYY"
-                    className="h-12 text-b2 w-full"
+                    className="w-full"
                     error={!!errors.visaGranted?.message}
                     disablePastDates={true}
                   />
@@ -713,7 +712,12 @@ export function VisaService({ userId, formState, id, defaultValues, accounts = [
       </Accordion>
 
       <FormActions sticky>
-        <Button loading={isPending} loadingText={isAdd ? 'Processing' : 'Updating'} type="submit" variant="primary">
+        <Button
+          loading={isPending}
+          loadingText={isAdd ? LOADING_LABEL.add : LOADING_LABEL.update}
+          type="submit"
+          variant="primary"
+        >
           {isAdd ? 'Add Visa Applicant' : 'Update Visa Applicant'}
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>

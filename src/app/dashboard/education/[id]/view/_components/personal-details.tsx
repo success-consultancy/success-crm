@@ -23,6 +23,7 @@ import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
 import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IEducation } from '@/types/response-types/education-response';
 import { useEditEducation } from '@/mutations/education/edit-education';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const personalSchema = withDependentFields(
   z.object({
@@ -93,11 +94,11 @@ const PersonalDetails = ({ education }: { education: IEducation }) => {
   const handleSave = handleSubmit((data) => {
     editEducation.mutate(buildEducationSectionPayload(education, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update student');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.education));
       },
     });
   });

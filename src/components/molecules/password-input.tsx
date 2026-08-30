@@ -24,9 +24,9 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-      <div className="space-y-1">
+      <div className="grid w-full items-center gap-2">
         {label && (
-          <Label htmlFor={inputId} className="font-medium text-gray-700">
+          <Label htmlFor={inputId} className="text-b3-b font-semibold">
             {label}
             {required && <span className="text-red-500"> *</span>}
           </Label>
@@ -39,10 +39,7 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
             required={required}
             type={showPassword ? 'text' : 'password'}
             {...rest}
-            className={cn(
-              'w-full mt-2 rounded-md border border-neutral-border/60 px-3 py-2 pr-10 focus:border-primary',
-              className,
-            )}
+            className={cn('pr-10', className)}
           />
           <button
             type="button"

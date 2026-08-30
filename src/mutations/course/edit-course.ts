@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_COURSE } from '@/query/get-course';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface EditCoursePayload {
   id: number;
@@ -21,10 +22,10 @@ export const useEditCourse = () => {
     mutationFn: editCourse,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_COURSE] });
-      toast.success('Course updated successfully');
+      toast.success(toastMsg.updateSuccess(ENTITY.course));
     },
     onError: (error: any) => {
-      toast.error(getApiErrorMessage(error));
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.course)));
     },
   });
 };

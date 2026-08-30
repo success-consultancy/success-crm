@@ -26,6 +26,7 @@ import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-t
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const visaServiceSchema = withDependentFields(
   skillAssessmentFormSchema.pick({
@@ -133,11 +134,11 @@ const VisaServiceDetails = ({ skillAssessment }: { skillAssessment: ISkillAssess
   const handleSave = handleSubmit((data) => {
     editSkill.mutate(buildSkillSectionPayload(skillAssessment, data), {
       onSuccess: () => {
-        toast.success('Visa & service details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.visaServiceDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update skill assessment');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.skill));
       },
     });
   });

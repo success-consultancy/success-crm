@@ -2,11 +2,12 @@
 import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportTribunalReview = async (queryParams: any) => {
   const res = await api.get('/tribunalReview/export', { params: queryParams });
   downloadFile(res.data, 'tribunalReview.csv', 'text/csv;charset=utf-8;');
-  toast.success('Tribunal Review exported successfully!');
+  toast.success(toastMsg.exportSuccess(ENTITY.tribunalApplicants));
 };
 
 export interface useExportTribunalReviews {

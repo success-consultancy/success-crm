@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_SOURCE } from '@/query/get-source';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface EditSourcePayload {
   id: number;
@@ -20,10 +21,10 @@ export const useEditSource = () => {
     mutationFn: editSource,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_SOURCE] });
-      toast.success('Source updated successfully');
+      toast.success(toastMsg.updateSuccess(ENTITY.source));
     },
     onError: (error: any) => {
-      toast.error(getApiErrorMessage(error));
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.source)));
     },
   });
 };

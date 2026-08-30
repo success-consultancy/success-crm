@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const deleteAgreement = async (id: number) => {
   const res = await api.delete(`/agreement/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteAgreement = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_AGREEMENTS],
       });
-      toast('Success!', {
-        description: 'Agreement has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.agreement));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.agreement)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteAgreementBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_AGREEMENTS],
       });
-      toast('Success!', {
-        description: 'Agreements have been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.agreements));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.agreement)));
     },
   });
 };

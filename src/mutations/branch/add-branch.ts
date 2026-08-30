@@ -2,6 +2,7 @@
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface Branch {
   id?: string;
@@ -25,7 +26,7 @@ export const useAddBranch = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_BRANCHES],
       });
-      toast.success('Branch added successfully!');
+      toast.success(toastMsg.addSuccess(ENTITY.branch));
     },
   });
 };
@@ -49,7 +50,7 @@ export const useUpdateBranch = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_BRANCHES],
       });
-      toast.success('Branch updated successfully!');
+      toast.success(toastMsg.updateSuccess(ENTITY.branch));
     },
   });
 };

@@ -1,10 +1,11 @@
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import StageItem from '@/components/organisms/stage-item';
 import { useUpdateLeadStatus } from '@/mutations/leads/edit-lead';
 import { ISkillAssessment, SkillAssessmentStatusTypes } from '@/types/response-types/skill-assessment-response';
 import { useUpdateSkillStatus } from '@/mutations/skill-assessment/add-skill-assessment';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import { useState } from 'react';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type SkillAssessmentStagesProps = { skillAssessment: ISkillAssessment };
 
@@ -14,14 +15,35 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
 
   const stages = [
     { name: SkillAssessmentStatusTypes.New, active: skillAssessment.status === SkillAssessmentStatusTypes.New },
-    { name: SkillAssessmentStatusTypes.CollectingDocs, active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs },
-    { name: SkillAssessmentStatusTypes.ReadyToSubmit, active: skillAssessment.status === SkillAssessmentStatusTypes.ReadyToSubmit },
-    { name: SkillAssessmentStatusTypes.Submitted, active: skillAssessment.status === SkillAssessmentStatusTypes.Submitted },
-    { name: SkillAssessmentStatusTypes.InfoRequested, active: skillAssessment.status === SkillAssessmentStatusTypes.InfoRequested },
-    { name: SkillAssessmentStatusTypes.Approved, active: skillAssessment.status === SkillAssessmentStatusTypes.Approved },
-    { name: SkillAssessmentStatusTypes.Withdrawn, active: skillAssessment.status === SkillAssessmentStatusTypes.Withdrawn },
+    {
+      name: SkillAssessmentStatusTypes.CollectingDocs,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.CollectingDocs,
+    },
+    {
+      name: SkillAssessmentStatusTypes.ReadyToSubmit,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.ReadyToSubmit,
+    },
+    {
+      name: SkillAssessmentStatusTypes.Submitted,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.Submitted,
+    },
+    {
+      name: SkillAssessmentStatusTypes.InfoRequested,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.InfoRequested,
+    },
+    {
+      name: SkillAssessmentStatusTypes.Approved,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.Approved,
+    },
+    {
+      name: SkillAssessmentStatusTypes.Withdrawn,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.Withdrawn,
+    },
     { name: SkillAssessmentStatusTypes.Refused, active: skillAssessment.status === SkillAssessmentStatusTypes.Refused },
-    { name: SkillAssessmentStatusTypes.Discontinued, active: skillAssessment.status === SkillAssessmentStatusTypes.Discontinued },
+    {
+      name: SkillAssessmentStatusTypes.Discontinued,
+      active: skillAssessment.status === SkillAssessmentStatusTypes.Discontinued,
+    },
   ];
 
   const updateSkillStatus = useUpdateSkillStatus();
@@ -34,22 +56,18 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
   const confirmStageChange = () => {
     if (!pendingStage) return;
 
-    const payload = { id: skillAssessment.id.toString(), status: pendingStage }
-    updateSkillStatus.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          toast.success('Skill updated successfully');
-        },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message;
-
-          toast.error(message || 'Failed to update skill');
-        },
+    const payload = { id: skillAssessment.id.toString(), status: pendingStage };
+    updateSkillStatus.mutate(payload, {
+      onSuccess: () => {
+        toast.success(toastMsg.updateSuccess(ENTITY.skill));
       },
-    );
-  }
+      onError: (error: any) => {
+        const message = error?.response?.data?.message;
 
+        toast.error(message || toastMsg.updateError(ENTITY.skill));
+      },
+    });
+  };
 
   return (
     <div className="border rounded-lg">
@@ -75,7 +93,7 @@ export const SkillAssessmentStages = ({ skillAssessment }: SkillAssessmentStages
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
+        <div className="hide-scrollbar flex min-w-0 flex-1 overflow-x-auto">
           {(() => {
             const activeIndex = stages.findIndex((s) => s.active);
             return stages.map((stage, index) => (

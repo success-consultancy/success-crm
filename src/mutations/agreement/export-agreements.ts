@@ -2,11 +2,12 @@
 import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportAgreements = async (queryParams: any) => {
   const res = await api.get('/agreement/export', { params: queryParams });
   downloadFile(res.data, 'agreements.csv', 'text/csv;charset=utf-8;');
-  toast.success('Agreements exported successfully!');
+  toast.success(toastMsg.exportSuccess(ENTITY.agreements));
 };
 
 export interface UseExportAgreementsOptions {

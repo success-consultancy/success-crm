@@ -54,7 +54,7 @@ const ResetPasswordForm = () => {
       },
       {
         onSuccess: () => {
-          success('Your password has been updated successfully.');
+          success('Your password has been updated successfully');
         },
         onError: (error: any) => {
           const errorMessage =

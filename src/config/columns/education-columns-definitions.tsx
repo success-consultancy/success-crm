@@ -24,7 +24,7 @@ const STATUS_LABELS: Partial<Record<EducationStatusTypes, string>> = {
 
 export const useEducationColumn = (
   handleDelete: (id: number) => void,
-  handleSendEmail: (payload: SendEmailSchemaType) => void,
+  handleSendEmail: (payload: SendEmailSchemaType) => void | Promise<unknown>,
   { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
 ) => {
   const router = useRouter();
@@ -79,7 +79,10 @@ export const useEducationColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/dashboard/education/${row.original.id}/view`)}>
+          <span
+            className="max-w-10 cursor-pointer"
+            onClick={() => router.push(`/dashboard/education/${row.original.id}/view`)}
+          >
             {row.original.id}
           </span>
         );
@@ -266,10 +269,7 @@ export const useEducationColumn = (
 
         return (
           <div className="w-full">
-            <Badge
-              className="border-transparent"
-              style={{ backgroundColor: colors.background, color: colors.text }}
-            >
+            <Badge className="border-transparent" style={{ backgroundColor: colors.background, color: colors.text }}>
               {STATUS_LABELS[status] ?? status}
             </Badge>
           </div>

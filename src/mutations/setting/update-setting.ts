@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_SETTING, ISetting } from '@/query/get-setting';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export type UpdateSettingPayload = Partial<Omit<ISetting, 'id' | 'createdAt' | 'updatedAt' | 'deletedAt'>> & {
   id: number;
@@ -20,7 +21,7 @@ export const useUpdateSetting = () => {
       queryClient.invalidateQueries({ queryKey: [GET_SETTING] });
     },
     onError: (error: any) => {
-      toast.error('Failed to update setting');
+      toast.error(toastMsg.updateError(ENTITY.setting));
     },
   });
 };

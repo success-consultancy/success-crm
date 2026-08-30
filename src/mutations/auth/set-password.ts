@@ -19,7 +19,7 @@ const useSetPassword = () => {
   return useMutation({
     mutationFn: setPassword,
     onSuccess: (res: ISetPasswordResponse) => {
-      success('Password set successfully!');
+      success('Password set successfully');
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {

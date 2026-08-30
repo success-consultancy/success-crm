@@ -18,6 +18,7 @@ import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { useGetSource } from '@/query/get-source';
 import { LEAD_STATUS_COLORS, Location, Services } from '@/constants/lead-constants';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type FormValues = z.infer<typeof serviceDetailsSchema>;
 
@@ -48,20 +49,11 @@ const ServiceDetails = ({ lead }: { lead: ILead }) => {
   const editLead = useEditLead();
   const { data: sources } = useGetSource();
 
-  const sourceOptions = useMemo(
-    () => sources?.map((s) => ({ label: s.name, value: String(s.id) })) ?? [],
-    [sources],
-  );
+  const sourceOptions = useMemo(() => sources?.map((s) => ({ label: s.name, value: String(s.id) })) ?? [], [sources]);
 
-  const serviceOptions = useMemo(
-    () => Object.values(Services).map((s) => ({ label: s, value: s })),
-    [],
-  );
+  const serviceOptions = useMemo(() => Object.values(Services).map((s) => ({ label: s, value: s })), []);
 
-  const locationOptions = useMemo(
-    () => Object.values(Location).map((l) => ({ label: l, value: l })),
-    [],
-  );
+  const locationOptions = useMemo(() => Object.values(Location).map((l) => ({ label: l, value: l })), []);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(serviceDetailsSchema) as any,
@@ -86,11 +78,11 @@ const ServiceDetails = ({ lead }: { lead: ILead }) => {
   const handleSave = handleSubmit((data) => {
     editLead.mutate(buildLeadSectionPayload(lead, data), {
       onSuccess: () => {
-        toast.success('Service details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.serviceDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update lead');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.lead));
       },
     });
   });

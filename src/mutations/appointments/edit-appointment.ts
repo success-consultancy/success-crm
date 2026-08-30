@@ -4,6 +4,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { UpdateAppointmentSchemaType } from '@/schema/appointment-schema';
 import { useToastContext } from '@/context/toast-context';
 import { getAppointmentErrorMessage } from './appointment-error-message';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 // Helper function to format date with timezone
 const formatDateWithTimezone = (dateTimeString: string): string => {
@@ -11,7 +12,7 @@ const formatDateWithTimezone = (dateTimeString: string): string => {
   if (dateTimeString.includes('+') || dateTimeString.includes('Z') || dateTimeString.includes('-', 10)) {
     return dateTimeString;
   }
-  
+
   // Otherwise, create a Date object and format it with timezone
   const date = new Date(dateTimeString);
   const timezoneOffset = -date.getTimezoneOffset();
@@ -19,7 +20,7 @@ const formatDateWithTimezone = (dateTimeString: string): string => {
   const offsetMinutes = Math.abs(timezoneOffset) % 60;
   const offsetSign = timezoneOffset >= 0 ? '+' : '-';
   const offsetString = `${offsetSign}${String(offsetHours).padStart(2, '0')}:${String(offsetMinutes).padStart(2, '0')}`;
-  
+
   // Format: YYYY-MM-DDTHH:mm:ss+HH:mm
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -27,7 +28,7 @@ const formatDateWithTimezone = (dateTimeString: string): string => {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   const seconds = String(date.getSeconds()).padStart(2, '0');
-  
+
   return `${year}-${month}-${day}T${hours}:${minutes}:${seconds}${offsetString}`;
 };
 
@@ -42,11 +43,11 @@ const getTimezone = (): string => {
 
 const editAppointment = async (payload: UpdateAppointmentSchemaType) => {
   const { id, date, startTime, endTime, clientId, ownerId, ...rest } = payload;
-  
+
   // Format dates with timezone
   const start = formatDateWithTimezone(startTime);
   const end = formatDateWithTimezone(endTime);
-  
+
   // Transform payload to match API format
   const apiPayload = {
     ...rest,
@@ -57,7 +58,7 @@ const editAppointment = async (payload: UpdateAppointmentSchemaType) => {
     allDay: false, // Default to false, can be made configurable later
     timezone: getTimezone(), // Use browser timezone
   };
-  
+
   const res = await api.put(`/appointment/${id}`, apiPayload);
   return res.data;
 };
@@ -75,18 +76,18 @@ export const useEditAppointment = ({ showToast = true }: EditAppointmentToastOpt
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: editAppointment,
-    onMutate: () => ({ toastId: showToast ? loading('Saving changes...') : undefined }),
+    onMutate: () => ({ toastId: showToast ? loading(toastMsg.updateLoading(ENTITY.appointment)) : undefined }),
     onSuccess: async (_data, variables, context) => {
       await queryClient.invalidateQueries({
         predicate: (query) =>
           query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENTS || query.queryKey[0] === QUERY_KEYS.GET_APPOINTMENT_BY_ID,
       });
       if (!showToast) return;
-      success(`"${variables.title}" has been updated.`, { id: context?.toastId });
+      success(toastMsg.updateSuccess(ENTITY.appointment), { id: context?.toastId });
     },
     onError: (err: any, _variables, context) => {
       if (!showToast) return;
-      errorToast(getAppointmentErrorMessage(err, 'Failed to update appointment'), { id: context?.toastId });
+      errorToast(getAppointmentErrorMessage(err, toastMsg.updateError(ENTITY.appointment)), { id: context?.toastId });
     },
   });
 };

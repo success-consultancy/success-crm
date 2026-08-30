@@ -27,12 +27,10 @@ const FaceLoginTab = ({ user }: Props) => {
   const handleCapture = async (descriptor: number[]) => {
     try {
       await saveFace({ descriptor });
-      toast.success('Face login enabled.');
+      toast.success('Face login enabled');
     } catch (err) {
       if (axios.isAxiosError(err) && err.response?.status === 409) {
-        throw new Error(
-          err.response.data?.message ?? 'This face is already registered to another user.',
-        );
+        throw new Error(err.response.data?.message ?? 'This face is already registered to another user.');
       }
       throw new Error('Could not save face. Please try again.');
     }
@@ -45,7 +43,7 @@ const FaceLoginTab = ({ user }: Props) => {
     try {
       await saveFace({ descriptor: null });
       setRemoveOpen(false);
-      toast.success('Face login removed.');
+      toast.success('Face login removed');
     } catch {
       toast.error('Could not remove face login. Please try again.');
     }
@@ -121,12 +119,7 @@ const FaceLoginTab = ({ user }: Props) => {
         Face data is processed on your device. Only a numeric vector is sent to our servers.
       </p>
 
-      <FaceCaptureModal
-        mode="enroll"
-        open={modalOpen}
-        onOpenChange={setModalOpen}
-        onCapture={handleCapture}
-      />
+      <FaceCaptureModal mode="enroll" open={modalOpen} onOpenChange={setModalOpen} onCapture={handleCapture} />
     </div>
   );
 };

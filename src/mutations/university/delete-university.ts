@@ -1,8 +1,9 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_UNIVERSITY } from '@/query/get-university';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const deleteUniversity = async (id: number) => {
   const res = await api.delete(`/university/${id}`);
   return res.data;
@@ -14,10 +15,10 @@ export const useDeleteUniversity = () => {
     mutationFn: deleteUniversity,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_UNIVERSITY] });
-      toast('Success!', { description: 'University has been deleted' });
+      toast.success(toastMsg.deleteSuccess(ENTITY.university));
     },
     onError: (error: any) => {
-      toast('Error!', { description: getApiErrorMessage(error) });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.university)));
     },
   });
 };

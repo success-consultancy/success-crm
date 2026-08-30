@@ -4,8 +4,9 @@ import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const addVisaService = async (payload: NewVisaServiceType) => {
   const { ...filteredPayload } = payload;
   const res = await api.post('/visaApplicant', filteredPayload);
@@ -53,14 +54,10 @@ export const useUpdateVisaStatus = () => {
     mutationFn: updateServiceStatus,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'visa');
-      toast("Success!", {
-        description: "Visa applicant has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.visa));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.visa)));
     },
   });
 };

@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { AgreementStatus } from '@/types/response-types/agreement-response';
+import {
+  AgreementStatus,
+  normalizeAgreementFiles,
+  normalizeAgreementStatus,
+} from '@/types/response-types/agreement-response';
 import { format, parseISO, isValid } from 'date-fns';
 
 export const agreementFormSchema = z.object({
@@ -51,8 +55,8 @@ export const getAgreementDefaultValues = (agreement?: any): AgreementSchemaType 
     endDate: convertDate(agreement?.endDate),
     commission: agreement?.commission || null,
     location: agreement?.location || null,
-    status: agreement?.status || AgreementStatus.InProcess,
+    status: normalizeAgreementStatus(agreement?.status) ?? AgreementStatus.InProcess,
     note: agreement?.note || null,
-    files: agreement?.files || null,
+    files: normalizeAgreementFiles(agreement?.files),
   };
 };

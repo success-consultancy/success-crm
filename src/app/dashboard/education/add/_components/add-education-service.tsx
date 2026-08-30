@@ -42,6 +42,7 @@ import { PortalIds } from '@/config/portal';
 import { EducationStatusTypes } from '@/types/response-types/education-response';
 import { ArrowLeft } from 'lucide-react';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -101,9 +102,12 @@ export function AddEducationService({ userId }: Props) {
       { payload: data },
       {
         onSuccess: () => {
-          toast.success('Student added successfully');
+          toast.success(toastMsg.addSuccess(ENTITY.education));
           form.reset();
           router.push(ROUTES.EDUCATION);
+        },
+        onError: (error: any) => {
+          toast.error(error?.response?.data?.message || toastMsg.addError(ENTITY.education));
         },
       },
     );
@@ -297,6 +301,8 @@ export function AddEducationService({ userId }: Props) {
                   })) || []
                 }
                 placeholder="Select university"
+                // A course belongs to one university, so drop a stale course on switch.
+                onValueChange={() => setValue('courseId', '', { shouldValidate: true })}
               />
               <ComboboxField
                 control={control}
@@ -553,7 +559,7 @@ export function AddEducationService({ userId }: Props) {
       </Accordion>
 
       <FormActions sticky>
-        <Button loading={isPending} loadingText="Processing" type="submit" variant="primary">
+        <Button loading={isPending} loadingText={LOADING_LABEL.add} type="submit" variant="primary">
           Add Student
         </Button>
         <Button type="button" variant="outline" onClick={() => router.back()}>

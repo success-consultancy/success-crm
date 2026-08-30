@@ -17,6 +17,7 @@ import { IEducation } from '@/types/response-types/education-response';
 import { useEditEducation } from '@/mutations/education/edit-education';
 import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const miscSchema = z.object({
   userId: z.string().optional(),
@@ -74,11 +75,11 @@ const MiscSection = ({ education }: { education: IEducation }) => {
   const handleSave = handleSubmit((data) => {
     editEducation.mutate(buildEducationSectionPayload(education, data), {
       onSuccess: () => {
-        toast.success('Misc info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.miscInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update student');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.education));
       },
     });
   });
@@ -131,9 +132,7 @@ const MiscSection = ({ education }: { education: IEducation }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
               <span className="text-b3-b">Source</span>
-              <span className="text-neutral-dark-grey text-base font-medium">
-                {education?.source?.name || '-'}
-              </span>
+              <span className="text-neutral-dark-grey text-base font-medium">{education?.source?.name || '-'}</span>
             </div>
             <div className="flex flex-col">
               <span className="text-b3-b">Assigned To</span>

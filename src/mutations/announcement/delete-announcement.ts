@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const deleteAnnouncement = async (id: number) => {
   const res = await api.delete(`/announcement/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteAnnouncement = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_ANNOUNCEMENTS],
       });
-      toast('Success!', {
-        description: 'Announcement has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.announcement));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.announcement)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteAnnouncementBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_ANNOUNCEMENTS],
       });
-      toast('Success!', {
-        description: 'Announcements have been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.announcements));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.announcement)));
     },
   });
 };

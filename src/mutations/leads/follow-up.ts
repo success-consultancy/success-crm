@@ -3,6 +3,7 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { FollowUpSchemaType } from '@/schema/follow-up-schema';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const addFollowUp = async (payload: FollowUpSchemaType) => {
   const res = await api.post('/follow-up', payload);
@@ -27,12 +28,12 @@ export const useUpdateFollowUp = () => {
   return useMutation({
     mutationFn: editFollowUp,
     onSuccess: (_data, variables) => {
-      success('Follow-up updated successfully.');
+      success(toastMsg.updateSuccess(ENTITY.followUp));
       // Invalidate follow-up list for this lead
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
     onError: (error: any) => {
-      error('Failed to update follow-up');
+      error(toastMsg.updateError(ENTITY.followUp));
     },
   });
 };
@@ -44,11 +45,11 @@ export const useAddFollowUp = () => {
   return useMutation({
     mutationFn: addFollowUp,
     onSuccess: (_data, variables) => {
-      success('Follow-up added successfully.');
+      success(toastMsg.addSuccess(ENTITY.followUp));
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(variables.followableId)] });
     },
     onError: (error: any) => {
-      error('Failed to add follow-up');
+      error(toastMsg.addError(ENTITY.followUp));
     },
   });
 };
@@ -60,11 +61,11 @@ export const useDeleteFollowUp = (leadId: number | string) => {
   return useMutation({
     mutationFn: deleteFollowUp,
     onSuccess: () => {
-      success('Follow-up deleted successfully.');
+      success(toastMsg.deleteSuccess(ENTITY.followUp));
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FOLLOW_UP, String(leadId)] });
     },
     onError: (error: any) => {
-      error('Failed to delete follow-up');
+      error(toastMsg.deleteError(ENTITY.followUp));
     },
   });
 };

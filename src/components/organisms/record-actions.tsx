@@ -27,7 +27,7 @@ interface RecordActionsProps {
     onSelect: (option: RecordActionMoveOption) => void;
     label?: string;
   };
-  onSendEmail?: (payload: SendEmailSchemaType) => void;
+  onSendEmail?: (payload: SendEmailSchemaType) => void | Promise<unknown>;
   recipientEmail?: string;
   deleteTitle: string;
   deleteDescription: React.ReactNode;
@@ -59,7 +59,14 @@ const RecordActions = ({
   return (
     <div className={cn('flex items-center gap-1', className)}>
       {canUpdate && onEdit && (
-        <Button variant="ghost" size="icon" aria-label="Edit" title="Edit" className={iconButtonClassName} onClick={onEdit}>
+        <Button
+          variant="ghost"
+          size="icon"
+          aria-label="Edit"
+          title="Edit"
+          className={iconButtonClassName}
+          onClick={onEdit}
+        >
           <SquarePen strokeWidth={1.5} className="size-5" />
         </Button>
       )}
@@ -77,7 +84,11 @@ const RecordActions = ({
               <FolderInput strokeWidth={1.5} className="size-5" />
             </Button>
           </PopoverTrigger>
-          <PopoverContent align="end" className="w-[12.5rem] bg-white-100 p-2">
+          {/* Sized to its widest option so long service names don't spill past the panel. */}
+          <PopoverContent
+            align="end"
+            className="w-max min-w-[12.5rem] max-w-[min(20rem,calc(100vw-2rem))] bg-white-100 p-2"
+          >
             <div className="flex flex-col">
               {moveTo.options.map((option) => (
                 <Button
@@ -87,7 +98,7 @@ const RecordActions = ({
                   onClick={() => moveTo.onSelect(option)}
                 >
                   {option.Icon && <option.Icon className="h-5 w-5 shrink-0" />}
-                  {option.title}
+                  <span className="min-w-0 truncate">{option.title}</span>
                 </Button>
               ))}
             </div>

@@ -17,6 +17,7 @@ import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import Button from '@/components/atoms/button';
 import { FILE_UPLOAD_URL, TENANT } from '@/constants/file-upload-constants';
 import axios from 'axios';
+import { LOADING_LABEL } from '@/constants/messages';
 
 interface PersonalDetailsTabProps {
   user: MeUser | undefined;
@@ -279,8 +280,9 @@ const PersonalDetailsTab = ({ user }: PersonalDetailsTabProps) => {
           className="w-[143px] ml-auto btn btn-primary mt-4"
           disabled={!isValid || !isDirty || isPending}
           loading={isPending}
+          loadingText={LOADING_LABEL.save}
         >
-          {isPending ? 'Saving...' : 'Save Changes'}
+          Save Changes
         </Button>
       </form>
     </>

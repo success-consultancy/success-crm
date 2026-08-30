@@ -26,6 +26,7 @@ import { IInsurance, InsuranceStatusTypes } from '@/types/response-types/insuran
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { useGetVisaOptions } from '@/query/get-visa';
 import { getInsuranceProviderMapping, getInsuranceTypeMapping } from '@/constants/insurance-constants';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const visaInfoSchema = withDependentFields(
   insuranceFormSchema.pick({
@@ -112,11 +113,11 @@ const VisaInformation = ({ insurance }: { insurance: IInsurance }) => {
   const handleSave = handleSubmit((data) => {
     editInsurance.mutate(buildInsuranceSectionPayload(insurance, data), {
       onSuccess: () => {
-        toast.success('Visa & insurance details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.visaInsuranceDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update insurance applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.insurance));
       },
     });
   });

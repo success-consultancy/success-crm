@@ -17,6 +17,7 @@ import { ITribunalReview } from '@/types/response-types/tribunal-review-response
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const miscSchema = tribunalReviewFormSchema.pick({
   sourceId: true,
@@ -74,11 +75,11 @@ const MiscSection = ({ visa }: { visa: ITribunalReview }) => {
   const handleSave = handleSubmit((data) => {
     editTribunal.mutate(buildTribunalSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Misc info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.miscInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.tribunalReview));
       },
     });
   });

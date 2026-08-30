@@ -15,6 +15,7 @@ import Button from '@/components/atoms/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import useScrollShadows from '@/hooks/use-scroll-shadows';
 import { Skeleton } from '@/components/ui/skeleton';
+import { LOADING_LABEL } from '@/constants/messages';
 
 const MONTHS_INITIAL = ['jul', 'aug', 'sep', 'oct', 'nov', 'dec'] as const;
 const MONTHS_FINAL = ['jan', 'feb', 'mar', 'apr', 'may', 'jun'] as const;
@@ -267,7 +268,9 @@ export default function PerformanceTable({
                     onClick={onEditToggle}
                     disabled={isLoading || !hasEditableMonth}
                     title={
-                      !hasEditableMonth ? 'This fiscal year has ended — its targets can no longer be edited.' : undefined
+                      !hasEditableMonth
+                        ? 'This fiscal year has ended — its targets can no longer be edited.'
+                        : undefined
                     }
                   >
                     <Pencil className="w-3.5 h-3.5" />
@@ -290,8 +293,8 @@ export default function PerformanceTable({
                 <Button variant="outline" size="sm" onClick={onCancel} disabled={isSaving}>
                   Cancel
                 </Button>
-                <Button size="sm" onClick={onSave} disabled={isSaving}>
-                  {isSaving ? 'Saving…' : 'Save'}
+                <Button size="sm" onClick={onSave} loading={isSaving} loadingText={LOADING_LABEL.save}>
+                  Save
                 </Button>
               </>
             )}

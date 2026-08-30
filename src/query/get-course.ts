@@ -17,7 +17,9 @@ export const GET_COURSE = 'get-course';
 const getCourse = async (universityId?: number) => {
   const params = universityId ? { universityId } : {};
   const res = await api.get('/course', { params });
-  return res.data as Course[];
+  const courses = res.data as Course[];
+  // Guard against an API build that predates server-side universityId filtering.
+  return universityId ? courses.filter((course) => course.universityId === universityId) : courses;
 };
 
 export const useGetCourse = (universityId?: number) => {

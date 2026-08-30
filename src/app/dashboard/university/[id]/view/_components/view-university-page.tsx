@@ -20,7 +20,8 @@ import { ButtonLink } from '@/components/atoms/button-link';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
 import { UploadedFileMeta } from '@/types/common';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type Props = { id: string };
 
@@ -51,13 +52,13 @@ const ViewUniversityPage = ({ id }: Props) => {
     ? (rawFiles as UploadedFileMeta[])
     : typeof rawFiles === 'string'
       ? (() => {
-        try {
-          const p = JSON.parse(rawFiles);
-          return Array.isArray(p) ? p : [];
-        } catch {
-          return [];
-        }
-      })()
+          try {
+            const p = JSON.parse(rawFiles);
+            return Array.isArray(p) ? p : [];
+          } catch {
+            return [];
+          }
+        })()
       : [];
   const linkedCourses = (allCourses || []).filter((c) => c.universityId === university.id);
 
@@ -73,11 +74,11 @@ const ViewUniversityPage = ({ id }: Props) => {
       { id: university.id, files: merged, name: university.name },
       {
         onSuccess: () => {
-          toast.success('Document added successfully');
+          toast.success(toastMsg.addSuccess(ENTITY.document));
           setShowUploader(false);
           refetch();
         },
-        onError: () => toast.error('Failed to add document'),
+        onError: () => toast.error(toastMsg.addError(ENTITY.document)),
       },
     );
   };
@@ -88,10 +89,10 @@ const ViewUniversityPage = ({ id }: Props) => {
       { id: university.id, files: next, name: university.name },
       {
         onSuccess: () => {
-          toast.success('Document removed successfully');
+          toast.success(toastMsg.removeSuccess(ENTITY.document));
           refetch();
         },
-        onError: () => toast.error('Failed to remove document'),
+        onError: () => toast.error(toastMsg.removeError(ENTITY.document)),
       },
     );
   };

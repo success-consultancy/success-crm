@@ -4,6 +4,7 @@ import { api, getApiErrorMessage } from '@/lib/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useToastContext } from '@/context/toast-context';
 import { LeaveRequestSchemaType } from '@/schema/leave-schema';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 // Backend stores leave dates as DD/MM/YYYY strings (see timesheet-helpers parseLegacyDate).
 const toLegacyDate = (d: Date) => format(d, 'dd/MM/yyyy');
@@ -30,10 +31,10 @@ export const useAddLeave = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_LEAVES] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_ALL_LEAVES] });
-      success('Leave request submitted.');
+      success(toastMsg.submitSuccess(ENTITY.leaveRequest));
     },
     onError: (err) => {
-      error(getApiErrorMessage(err, 'Failed to submit leave request'));
+      error(getApiErrorMessage(err, toastMsg.submitError(ENTITY.leaveRequest)));
     },
   });
 };

@@ -42,7 +42,7 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
   const router = useRouter();
   const { update: canUpdate, delete: canDelete } = usePermissions('skill');
   const { mutate: deleteRecord } = useDeleteSkillAssessment();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
     return <SectionLoader />;
@@ -82,9 +82,13 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
               onSendEmail={(payload) => sendEmail(payload)}
               recipientEmail={skillAssessment.email}
               deleteTitle="Delete this skill assessment applicant"
-              deleteDescription={<p>Are you sure you want to delete this skill assessment applicant? This cannot be undone.</p>}
+              deleteDescription={
+                <p>Are you sure you want to delete this skill assessment applicant? This cannot be undone.</p>
+              }
               deleteConfirmText="Yes, delete"
-              onDelete={() => deleteRecord(skillAssessment.id, { onSuccess: () => router.push(ROUTES.SKILL_ASSESSMENT) })}
+              onDelete={() =>
+                deleteRecord(skillAssessment.id, { onSuccess: () => router.push(ROUTES.SKILL_ASSESSMENT) })
+              }
             />
           }
         />
@@ -96,10 +100,7 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
               <PersonalDetails skillAssessment={skillAssessment} />
               <VisaServiceDetails skillAssessment={skillAssessment} />
               <VisaServiceNoteSection skillAssessment={skillAssessment} />
-              <Accounts
-                accounts={(skillAssessment.accounts || []) as any}
-                skillAssessmentId={skillAssessment.id}
-              />
+              <Accounts accounts={(skillAssessment.accounts || []) as any} skillAssessmentId={skillAssessment.id} />
               <MiscSection skillAssessment={skillAssessment} />
               <NoteSection />
             </div>

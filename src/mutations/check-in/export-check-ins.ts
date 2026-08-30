@@ -1,10 +1,11 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation } from '@tanstack/react-query';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import QueryString from 'qs';
 import { downloadFile } from '@/utils/download';
 import { CheckInResponseType, ICheckIn } from '@/types/response-types/check-in-response';
 import { buildCheckInCsv, CheckInTab } from '@/utils/check-in-csv';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportCheckIns = async (params: Record<string, any>) => {
   const tab: CheckInTab = params.tab === 'history' ? 'history' : 'active';
@@ -13,10 +14,7 @@ const exportCheckIns = async (params: Record<string, any>) => {
   // so its columns match the tab's table. The server /checkin/export endpoint
   // returned the same (History) columns regardless of tab (CRM-149). Pagination is
   // bypassed with a high limit so the export covers every matching record.
-  const query = QueryString.stringify(
-    { ...params, tab, limit: '100000', page: '1' },
-    { arrayFormat: 'repeat' },
-  );
+  const query = QueryString.stringify({ ...params, tab, limit: '100000', page: '1' }, { arrayFormat: 'repeat' });
   const res = await api.get('/checkin?' + query);
   const rows = ((res.data as CheckInResponseType)?.rows ?? []) as ICheckIn[];
 
@@ -29,7 +27,7 @@ export const useExportCheckIns = () => {
   return useMutation({
     mutationFn: exportCheckIns,
     onError: (error: any) => {
-      toast.error('Failed to export check-ins');
+      toast.error(toastMsg.exportError(ENTITY.checkIns));
     },
   });
 };

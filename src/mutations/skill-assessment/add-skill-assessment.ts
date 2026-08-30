@@ -4,8 +4,9 @@ import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { SkillAssessmentSchemaType } from '@/schema/skill-assessment-schema';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const addSkillAssessment = async (payload: Omit<SkillAssessmentSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
   const res = await api.post('/skillAssessment', filteredPayload);
@@ -38,7 +39,6 @@ export const useAddSkillAssessment = () => {
   });
 };
 
-
 type IPayloadStatus = {
   id: string;
   status: string;
@@ -54,14 +54,10 @@ export const useUpdateSkillStatus = () => {
     mutationFn: updateServiceStatus,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'skillAssessment');
-      toast("Success!", {
-        description: "Skill assessment has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.skill));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.skill)));
     },
   });
 };

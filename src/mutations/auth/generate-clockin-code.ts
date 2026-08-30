@@ -20,11 +20,11 @@ export const useGenerateClockInCode = () => {
   return useMutation({
     mutationFn: generateClockInCode,
     onSuccess: () => {
-      success('New clock-in code generated.');
+      success('New clock-in code generated');
       qc.invalidateQueries({ queryKey: [GET_ME] });
     },
     onError: (err: any) => {
-      error(err?.response?.data?.message || 'Failed to generate code.');
+      error(err?.response?.data?.message || 'Failed to generate code');
     },
   });
 };

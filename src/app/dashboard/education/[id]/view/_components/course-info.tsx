@@ -18,6 +18,7 @@ import { useEditEducation } from '@/mutations/education/edit-education';
 import { useGetUniversity } from '@/query/get-university';
 import { useGetCourse } from '@/query/get-course';
 import { EDUCATION_STATUS_COLORS } from '@/constants/status-colors';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const courseSchema = z
   .object({
@@ -39,8 +40,7 @@ const courseSchema = z
 
 type FormValues = z.infer<typeof courseSchema>;
 
-const toDate = (value: string | null | undefined): Date | undefined =>
-  value ? new Date(value) : undefined;
+const toDate = (value: string | null | undefined): Date | undefined => (value ? new Date(value) : undefined);
 
 const toDefaults = (education: IEducation): FormValues => {
   const raw = education as unknown as Record<string, unknown>;
@@ -66,6 +66,7 @@ const CourseInfo = ({ education }: { education: IEducation }) => {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = form;
 
@@ -106,11 +107,11 @@ const CourseInfo = ({ education }: { education: IEducation }) => {
   const handleSave = handleSubmit((data) => {
     editEducation.mutate(buildEducationSectionPayload(education, data), {
       onSuccess: () => {
-        toast.success('Course information updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.courseInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update student');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.education));
       },
     });
   });
@@ -133,6 +134,8 @@ const CourseInfo = ({ education }: { education: IEducation }) => {
               label="University"
               options={universityOptions}
               placeholder="Select university"
+              // A course belongs to one university, so drop a stale course on switch.
+              onValueChange={() => setValue('courseId', '', { shouldValidate: true })}
             />
             <ComboboxField
               control={control}

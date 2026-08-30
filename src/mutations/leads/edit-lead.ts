@@ -2,8 +2,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { LeadSchemaType } from '@/schema/lead-schema';
-import { toast } from 'sonner'
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
 
 const editLead = async (
@@ -30,18 +31,13 @@ export const useEditLead = () => {
     mutationFn: editLead,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'lead');
-      toast("Success!", {
-        description: "Lead has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.lead));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.lead)));
     },
   });
 };
-
 
 type IPayload = {
   studentId?: string;
@@ -93,14 +89,10 @@ export const useReopenLead = () => {
     mutationFn: reopenLead,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'lead');
-      toast('Success!', {
-        description: 'Lead has been reopened',
-      });
+      toast.success(toastMsg.updateSuccess(ENTITY.lead));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.lead)));
     },
   });
 };
@@ -111,15 +103,10 @@ export const useUpdateLeadStatus = () => {
     mutationFn: updateLeadStatus,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'lead');
-      toast("Success!", {
-        description: "Lead has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.lead));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.lead)));
     },
   });
 };
-

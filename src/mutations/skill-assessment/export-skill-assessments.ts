@@ -2,11 +2,12 @@
 import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportSkillAssessment = async (queryParams: any) => {
   const res = await api.get('/skillAssessment/export', { params: queryParams });
   downloadFile(res.data, 'skillAssessment.csv', 'text/csv;charset=utf-8;');
-  toast.success('Skill Assessments exported successfully!');
+  toast.success(toastMsg.exportSuccess(ENTITY.skillApplicants));
 };
 
 export interface UseExportSkillAssessmentsOptions {

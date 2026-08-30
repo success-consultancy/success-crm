@@ -17,6 +17,7 @@ import { ISkillAssessment } from '@/types/response-types/skill-assessment-respon
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
 import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const miscSchema = skillAssessmentFormSchema.pick({
   sourceId: true,
@@ -74,11 +75,11 @@ const MiscSection = ({ skillAssessment }: { skillAssessment: ISkillAssessment })
   const handleSave = handleSubmit((data) => {
     editSkill.mutate(buildSkillSectionPayload(skillAssessment, data), {
       onSuccess: () => {
-        toast.success('Misc info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.miscInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update skill assessment');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.skill));
       },
     });
   });

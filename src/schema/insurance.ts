@@ -13,11 +13,11 @@ const insuranceBaseSchema = z.object({
   files: z.array(z.any()).nullable().optional(),
 
   firstName: z
-    .string()
+    .string({ message: 'First name is required' })
     .min(1, 'First name is required')
     .refine((v) => v.trim().length > 0, { message: 'First name cannot be blank' }),
   lastName: z
-    .string()
+    .string({ message: 'Last name is required' })
     .min(1, 'Last name is required')
     .refine((v) => v.trim().length > 0, { message: 'Last name cannot be blank' }),
   middleName: z.string().nullable().optional(),
@@ -30,9 +30,13 @@ const insuranceBaseSchema = z.object({
     .refine(isNotFutureDate, { message: futureDateMessage('Passport issue date') }),
   passportExpiryDate: z.string().nullable().optional(),
 
-  email: z.string().email('Please enter a valid email address'),
+  email: z
+    .string({ message: 'Email address is required' })
+    .min(1, { message: 'Email address is required' })
+    .email('Please enter a valid email address'),
   phone: z
-    .string()
+    .string({ message: 'Phone number is required' })
+    .min(1, { message: 'Phone number is required' })
     .regex(/^\+?\d+$/, { message: 'Phone number must contain only digits (with optional leading +)' })
     .min(10, { message: 'Phone number must be at least 10 digits' }),
   dob: z.string().nullable().optional().refine(isNotFutureDate, { message: DOB_FUTURE_MESSAGE }),

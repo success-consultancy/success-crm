@@ -4,8 +4,9 @@ import { updateLeadClient } from '../leads/edit-lead';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { TribunalReviewSchemaType } from '@/schema/tribunal-review';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const addTribunalReview = async (payload: Omit<TribunalReviewSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
   const res = await api.post('/tribunalReview', filteredPayload);
@@ -50,13 +51,10 @@ export const useUpdateTribunalReview = () => {
       invalidateServiceQueries(queryClient, 'tribunalReview');
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.tribunalReview)));
     },
   });
 };
-
 
 type IPayloadStatus = {
   id: string;
@@ -73,14 +71,10 @@ export const useUpdateTribunalStatus = () => {
     mutationFn: updateServiceStatus,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'tribunalReview');
-      toast("Success!", {
-        description: "Tribunal review has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.tribunalReview));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.tribunalReview)));
     },
   });
 };

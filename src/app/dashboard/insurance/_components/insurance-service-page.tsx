@@ -62,7 +62,7 @@ const ServicePage = () => {
   111;
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const InsuranceColumns = useInsuranceColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });

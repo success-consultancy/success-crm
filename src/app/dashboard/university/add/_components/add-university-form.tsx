@@ -22,13 +22,14 @@ import SelectField from '@/components/organisms/select-field';
 import TinyEditor from '@/components/organisms/text-editor';
 import FileUploader from '@/components/organisms/file-uploader';
 import { FORM_STATE, UploadedFileMeta } from '@/types/common';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 const GROUP_OPTIONS = [
   { label: 'Higher Education', value: 'Higher Education' },
@@ -164,11 +165,11 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         { ...payload, id, newCourses },
         {
           onSuccess: () => {
-            toast.success('University updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.university));
             router.push(ROUTES.UNIVERSITY);
           },
           onError: (error: any) => {
-            const message = error?.response?.data?.message || 'Failed to update university';
+            const message = error?.response?.data?.message || toastMsg.updateError(ENTITY.university);
             toast.error(message);
           },
         },
@@ -178,11 +179,11 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
         { payload, courses: newCourses },
         {
           onSuccess: () => {
-            toast.success('University created successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.university));
             router.push(ROUTES.UNIVERSITY);
           },
           onError: (error: any) => {
-            const message = error?.response?.data?.message || 'Failed to create university';
+            const message = error?.response?.data?.message || toastMsg.addError(ENTITY.university);
             toast.error(message);
           },
         },
@@ -411,7 +412,7 @@ export function UniversityForm({ formState, id, defaultValues }: Props) {
           <ButtonLink href={ROUTES.UNIVERSITY} variant="outline">
             Cancel
           </ButtonLink>
-          <Button type="submit" loading={isPending}>
+          <Button type="submit" loading={isPending} loadingText={isEditMode ? LOADING_LABEL.save : LOADING_LABEL.add}>
             {isEditMode ? 'Save changes' : 'Add university'}
           </Button>
         </FormActions>

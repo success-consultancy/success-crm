@@ -5,6 +5,7 @@ import { InsuranceService } from './_components/insurance-service';
 import { useGetMe } from '@/query/get-me';
 import PageLoader from '@/components/molecules/page-loader';
 import { FORM_STATE } from '@/types/common';
+import { getInsuranceDefaultValues } from '@/schema/insurance';
 
 const Page = () => {
   const { data: me, isLoading: meLoading } = useGetMe();
@@ -15,7 +16,7 @@ const Page = () => {
 
   return (
     <Container>
-      <InsuranceService userId={me?.data?.id} formState={FORM_STATE.ADD} />
+      <InsuranceService userId={me?.data?.id} formState={FORM_STATE.ADD} defaultValues={getInsuranceDefaultValues()} />
     </Container>
   );
 };

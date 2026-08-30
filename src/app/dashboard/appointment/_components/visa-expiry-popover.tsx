@@ -31,7 +31,7 @@ const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({ event, onClose, o
       return;
     }
     if (!event.email) {
-      warning(`No email address on file for ${event.firstName} ${event.lastName}.`);
+      warning(`No email address on file for ${event.firstName} ${event.lastName}`);
       return;
     }
     info(`Opening your email app for ${event.email}...`);
@@ -44,7 +44,7 @@ const VisaExpiryPopover: React.FC<VisaExpiryPopoverProps> = ({ event, onClose, o
       return;
     }
     if (!event.phone) {
-      warning(`No phone number on file for ${event.firstName} ${event.lastName}.`);
+      warning(`No phone number on file for ${event.firstName} ${event.lastName}`);
       return;
     }
     info(`Opening your messaging app for ${event.phone}...`);

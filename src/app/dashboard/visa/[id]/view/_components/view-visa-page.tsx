@@ -42,7 +42,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const router = useRouter();
   const { update: canUpdate, delete: canDelete } = usePermissions('visa');
   const { mutate: deleteRecord } = useDeleteVisa();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
     return <SectionLoader />;

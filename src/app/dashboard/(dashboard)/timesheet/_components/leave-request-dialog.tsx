@@ -19,6 +19,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
 import { useAddLeave } from '@/mutations/leave/add-leave';
 import { useGetLeaveApprovers } from '@/query/get-leave-approvers';
+import { LOADING_LABEL } from '@/constants/messages';
 import {
   leaveRequestSchema,
   LeaveRequestSchemaType,
@@ -136,9 +137,7 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
                       id="leave-approver"
                       className="w-full h-11 px-3 text-b16 text-neutral-black border-neutral-border data-[placeholder]:text-neutral-light-grey"
                     >
-                      <SelectValue
-                        placeholder={approversLoading ? 'Loading managers…' : 'Select a manager'}
-                      />
+                      <SelectValue placeholder={approversLoading ? 'Loading managers…' : 'Select a manager'} />
                     </SelectTrigger>
                     <SelectContent>
                       {approvers.map((approver) => (
@@ -161,8 +160,8 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               {noApprovers ? (
                 <p className="flex items-start gap-1.5 text-b14 text-neutral-light-grey">
                   <Info className="h-4 w-4 shrink-0 mt-0.5" />
-                  No manager is assigned to your branch yet, so there is nobody to send this to. Ask an
-                  administrator to assign one.
+                  No manager is assigned to your branch yet, so there is nobody to send this to. Ask an administrator to
+                  assign one.
                 </p>
               ) : (
                 <p className="text-b14 text-neutral-light-grey">
@@ -229,7 +228,12 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
               <FileUploader
                 type="leave"
                 maxFileSize={20}
-                acceptedFiles={['application/pdf', 'image/jpeg', 'image/png', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']}
+                acceptedFiles={[
+                  'application/pdf',
+                  'image/jpeg',
+                  'image/png',
+                  'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                ]}
                 onUploadComplete={(files) => {
                   const last = files[files.length - 1];
                   setValue('attachmentURL', last?.url ?? '', { shouldValidate: false });
@@ -252,10 +256,12 @@ const LeaveRequestDialog = ({ open, onOpenChange }: Props) => {
             <Button
               type="submit"
               size="sm"
-              disabled={addLeave.isPending || noApprovers}
+              disabled={noApprovers}
+              loading={addLeave.isPending}
+              loadingText={LOADING_LABEL.send}
               className="h-10 px-4 text-b14-600 text-white transition-all duration-150 active:bg-primary/80 motion-safe:active:scale-95"
             >
-              {addLeave.isPending ? 'Sending…' : 'Send request'}
+              Send request
             </Button>
           </div>
         </form>

@@ -2,9 +2,10 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { newVisaServiceSchema, NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
 
 const editVisa = async (payload: NewVisaServiceType & { id: number }) => {
@@ -27,9 +28,7 @@ export const useEditVisa = () => {
       invalidateServiceQueries(queryClient, 'visa');
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.visa)));
     },
   });
 };

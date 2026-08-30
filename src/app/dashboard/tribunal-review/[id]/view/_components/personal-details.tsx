@@ -25,6 +25,7 @@ import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
 import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ITribunalReview } from '@/types/response-types/tribunal-review-response';
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const personalSchema = withDependentFields(
   tribunalReviewFormSchema.pick({
@@ -105,11 +106,11 @@ const PersonalDetails = ({ visa }: { visa: ITribunalReview }) => {
   const handleSave = handleSubmit((data) => {
     editTribunal.mutate(buildTribunalSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.tribunalReview));
       },
     });
   });

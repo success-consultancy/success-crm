@@ -284,7 +284,7 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   const router = useRouter();
   const { update: canUpdate, delete: canDelete } = usePermissions('education');
   const { mutate: deleteRecord } = useDeleteEducation();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
     return <SectionLoader />;

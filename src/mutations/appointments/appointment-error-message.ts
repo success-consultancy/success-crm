@@ -9,7 +9,5 @@ export const getAppointmentErrorMessage = (error: any, fallback: string): string
     const flattened = Object.values(errors).flat().filter(Boolean).join(', ');
     if (flattened) return flattened;
   }
-  return (
-    error?.response?.data?.message || error?.response?.data?.error || getApiErrorMessage(error, fallback)
-  );
+  return error?.response?.data?.message || error?.response?.data?.error || getApiErrorMessage(error, fallback);
 };

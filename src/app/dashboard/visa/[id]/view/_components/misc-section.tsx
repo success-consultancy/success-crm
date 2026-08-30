@@ -18,6 +18,7 @@ import { IVisaDetail } from '@/types/response-types/visa-response';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const miscSchema = newVisaServiceSchema.pick({
   sourceId: true,
@@ -79,11 +80,11 @@ const MiscSection = ({ visa }: { visa: IVisaDetail }) => {
   const handleSave = handleSubmit((data) => {
     editVisa.mutate(buildVisaSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Misc info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.miscInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.visa));
       },
     });
   });
@@ -138,9 +139,7 @@ const MiscSection = ({ visa }: { visa: IVisaDetail }) => {
                 value={miscNote || ''}
                 onChange={(content) => setValue('miscNote', content, { shouldValidate: true })}
               />
-              {errors.miscNote?.message && (
-                <p className="text-sm text-red-500">{errors.miscNote.message}</p>
-              )}
+              {errors.miscNote?.message && <p className="text-sm text-red-500">{errors.miscNote.message}</p>}
             </div>
           </div>
         </form>

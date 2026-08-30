@@ -3,6 +3,7 @@ import { api, getApiErrorMessage } from '@/lib/api';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { useToastContext } from '@/context/toast-context';
 import { LeaveRecord } from '@/query/get-user-leaves';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export type LeaveDecision = 'approved' | 'rejected';
 
@@ -27,10 +28,10 @@ export const useUpdateLeave = () => {
     onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_USER_LEAVES] });
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_ALL_LEAVES] });
-      success(variables.status === 'approved' ? 'Leave request approved.' : 'Leave request rejected.');
+      success(variables.status === 'approved' ? 'Leave request approved' : 'Leave request rejected');
     },
     onError: (err) => {
-      error(getApiErrorMessage(err, 'Failed to update leave request'));
+      error(getApiErrorMessage(err, toastMsg.updateError(ENTITY.leaveRequest)));
     },
   });
 };

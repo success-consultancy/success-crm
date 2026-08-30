@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, countOf, toastMsg } from '@/constants/messages';
 const deleteSkillAssessment = async (id: number) => {
   const res = await api.delete(`/skillAssessment/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteSkillAssessment = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
-      toast('Success!', {
-        description: 'Skill assessment has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.skill));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.skill)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteSkillAssessmentBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENTS],
       });
-      toast('Success!', {
-        description: `${ids.length} skill assessment${ids.length > 1 ? 's have' : ' has'} been deleted`,
-      });
+      toast.success(toastMsg.deleteSuccess(countOf(ids.length, ENTITY.skill, ENTITY.skillApplicants)));
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.skill)));
     },
   });
 };

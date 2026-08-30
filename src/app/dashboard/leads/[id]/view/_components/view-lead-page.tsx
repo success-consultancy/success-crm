@@ -44,7 +44,7 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
 
   const { update: canUpdate, delete: canDelete } = usePermissions('leads');
   const { mutate: deleteLead } = useDeleteLead();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
   const { services: moveServices, moveLead } = useMoveLead();
   const [confirmService, setConfirmService] = useState<MoveService | null>(null);
 

@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import {toast} from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, countOf, toastMsg } from '@/constants/messages';
 const deleteEducation = async (id: number) => {
   const res = await api.delete(`/student/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteEducation = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_EDUCATIONS],
       });
-      toast('Success!', {
-        description: 'Student has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.education));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.education)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteEducationBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_EDUCATIONS],
       });
-      toast('Success!', {
-        description: `${ids.length} student${ids.length > 1 ? 's have' : ' has'} been deleted`,
-      });
+      toast.success(toastMsg.deleteSuccess(countOf(ids.length, ENTITY.education, ENTITY.educationApplicants)));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.education)));
     },
   });
 };

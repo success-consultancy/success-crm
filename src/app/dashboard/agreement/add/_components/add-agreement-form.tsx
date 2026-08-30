@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft, Check, ChevronDown, X } from 'lucide-react';
 import {
   agreementFormSchema,
   AgreementSchemaType,
@@ -15,7 +15,7 @@ import {
 import { useAddAgreement } from '@/mutations/agreement/add-agreement';
 import { useEditAgreement } from '@/mutations/agreement/edit-agreement';
 import { useGetUniversity } from '@/query/get-university';
-import { AgreementStatus } from '@/types/response-types/agreement-response';
+import { AGREEMENT_STATUS_LABELS, AgreementStatus } from '@/types/response-types/agreement-response';
 import Container from '@/components/atoms/container';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
@@ -27,15 +27,24 @@ import { Label } from '@/components/ui/label';
 import { DatePicker } from '@/components/organisms/date-picker';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import SelectField from '@/components/organisms/select-field';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command';
 import TinyEditor from '@/components/organisms/text-editor';
 import FileUploader from '@/components/organisms/file-uploader';
 import { cn } from '@/lib/utils';
 import { format, isValid } from 'date-fns';
 import { FORM_STATE, UploadedFileMeta } from '@/types/common';
 import { useEffect } from 'react';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -48,6 +57,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
   const router = useRouter();
   const isEditMode = formState === FORM_STATE.EDIT;
   const [note, setNote] = useState<string>(defaultValues?.note || '');
+  const [universityOpen, setUniversityOpen] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFileMeta[]>(
     (defaultValues?.files as UploadedFileMeta[]) || [],
   );
@@ -90,11 +100,11 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
   }, [universityData]);
 
   const statusOptions = [
-    { label: 'IN EFFECT', value: AgreementStatus.InEffect },
-    { label: 'IN PROCESS', value: AgreementStatus.InProcess },
-    { label: 'Cancelled', value: AgreementStatus.Cancelled },
-    { label: 'Expired', value: AgreementStatus.Expired },
-  ];
+    AgreementStatus.InEffect,
+    AgreementStatus.InProcess,
+    AgreementStatus.Cancelled,
+    AgreementStatus.Expired,
+  ].map((value) => ({ label: AGREEMENT_STATUS_LABELS[value], value }));
 
   const typeOptions = [
     { label: 'Tafe', value: 'Tafe' },
@@ -132,11 +142,11 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
         { ...payload, id },
         {
           onSuccess: () => {
-            toast.success('Agreement updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.agreement));
             router.push(ROUTES.AGENCY_AGREEMENT);
           },
           onError: (error: any) => {
-            const message = error?.response?.data?.message || 'Failed to update agreement';
+            const message = error?.response?.data?.message || toastMsg.updateError(ENTITY.agreement);
             toast.error(message);
           },
         },
@@ -144,12 +154,12 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
     } else {
       addAgreement(payload, {
         onSuccess: () => {
-          toast.success('Agreement created successfully');
+          toast.success(toastMsg.addSuccess(ENTITY.agreement));
           form.reset();
           router.push(ROUTES.AGENCY_AGREEMENT);
         },
         onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to create agreement';
+          const message = error?.response?.data?.message || toastMsg.addError(ENTITY.agreement);
           toast.error(message);
         },
       });
@@ -177,24 +187,61 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
             <Controller
               name="universityId"
               control={control}
-              render={({ field }) => (
-                <Select
-                  value={field.value?.toString() || ''}
-                  onValueChange={(value) => field.onChange(parseInt(value, 10))}
-                  disabled={universityLoading}
-                >
-                  <SelectTrigger className={cn('w-full h-12', errors.universityId && 'border-red-500')}>
-                    <SelectValue placeholder={universityLoading ? 'Loading...' : 'University *'} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {universityOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>
-                        {option.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
+              render={({ field }) => {
+                const selectedOption = universityOptions.find((option) => option.value === field.value?.toString());
+                return (
+                  <Popover open={universityOpen} onOpenChange={setUniversityOpen}>
+                    <PopoverTrigger asChild>
+                      <button
+                        type="button"
+                        role="combobox"
+                        aria-expanded={universityOpen}
+                        disabled={universityLoading}
+                        className={cn(
+                          'flex w-full h-12 items-center justify-between gap-2 rounded-md border border-input bg-transparent px-3 py-2 text-sm',
+                          'focus:outline-none focus:ring-2 focus:ring-ring disabled:cursor-not-allowed disabled:opacity-50',
+                          !selectedOption && 'text-muted-foreground',
+                          errors.universityId && 'border-red-500',
+                        )}
+                      >
+                        <span className="truncate text-left">
+                          {universityLoading ? 'Loading...' : (selectedOption?.label ?? 'University *')}
+                        </span>
+                        <ChevronDown className="h-4 w-4 shrink-0 opacity-50" />
+                      </button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
+                      <Command>
+                        <CommandInput placeholder="Search university..." />
+                        <CommandList>
+                          <CommandEmpty>No university found.</CommandEmpty>
+                          <CommandGroup>
+                            {universityOptions.map((option) => (
+                              <CommandItem
+                                key={option.value}
+                                value={option.value}
+                                keywords={[option.label]}
+                                onSelect={() => {
+                                  field.onChange(parseInt(option.value, 10));
+                                  setUniversityOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    'mr-2 h-4 w-4',
+                                    field.value?.toString() === option.value ? 'opacity-100' : 'opacity-0',
+                                  )}
+                                />
+                                <span className="min-w-0 break-words">{option.label}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                );
+              }}
             />
             <FormErrorMessage message={errors.universityId?.message} />
           </div>
@@ -351,7 +398,7 @@ export function AgreementForm({ userId, formState, id, defaultValues }: Props) {
 
         {/* Submit Button */}
         <FormActions sticky>
-          <Button type="submit" loading={isPending}>
+          <Button type="submit" loading={isPending} loadingText={isEditMode ? LOADING_LABEL.save : LOADING_LABEL.add}>
             {isEditMode ? 'Save Changes' : 'Add Agreement'}
           </Button>
           <Button type="button" variant="outline" onClick={() => router.back()}>

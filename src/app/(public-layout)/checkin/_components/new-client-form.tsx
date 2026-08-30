@@ -13,6 +13,7 @@ import { useCreateNewCheckIn } from '@/mutations/check-in/new-check-in';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { COUNTRIES } from '@/data';
 import FileGlobeIcon from '@/assets/icons/file-globe-icon';
+import { LOADING_LABEL } from '@/constants/messages';
 
 const SERVICE_OPTIONS: { label: string; Icon: React.ElementType }[] = [
   { label: 'Education', Icon: GraduationHat02 },
@@ -89,7 +90,6 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         {/* Card: matches 800px card from check-in screen */}
         <div className="bg-white w-full" style={{ maxWidth: 800, borderRadius: 16, padding: '40px 48px 48px' }}>
-
           {/* Header: ← New Client */}
           <div className="flex items-center gap-3" style={{ marginBottom: 32 }}>
             <button
@@ -100,7 +100,16 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
             >
               <ArrowLeft style={{ width: 22, height: 22 }} strokeWidth={2} />
             </button>
-            <h1 style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 24, color: '#1C1C1C', margin: 0, lineHeight: '1.25em' }}>
+            <h1
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700,
+                fontSize: 24,
+                color: '#1C1C1C',
+                margin: 0,
+                lineHeight: '1.25em',
+              }}
+            >
               New Client
             </h1>
           </div>
@@ -261,9 +270,7 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                             type="button"
                             onClick={() => {
                               const current = field.value || [];
-                              field.onChange(
-                                isSelected ? current.filter((v) => v !== label) : [...current, label],
-                              );
+                              field.onChange(isSelected ? current.filter((v) => v !== label) : [...current, label]);
                             }}
                             className="flex items-center transition-all"
                             style={{
@@ -313,7 +320,7 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                     transition: 'opacity 0.15s',
                   }}
                 >
-                  {isPending ? 'Submitting...' : 'Submit'}
+                  {isPending ? LOADING_LABEL.submit : 'Submit'}
                 </button>
                 <button
                   type="button"
@@ -329,8 +336,12 @@ const NewClientForm = ({ onBack, onSuccess }: Props) => {
                     fontSize: 15,
                     cursor: 'pointer',
                   }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F9FAFB'; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FFFFFF'; }}
+                  onMouseEnter={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F9FAFB';
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FFFFFF';
+                  }}
                 >
                   Cancel
                 </button>

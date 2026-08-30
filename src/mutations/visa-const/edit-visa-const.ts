@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_VISA_CONST } from '@/query/get-visa';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface EditVisaConstPayload {
   id: number;
@@ -19,10 +20,10 @@ export const useEditVisaConst = () => {
     mutationFn: editVisaConst,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_VISA_CONST] });
-      toast.success('Visa type updated successfully');
+      toast.success(toastMsg.updateSuccess(ENTITY.visaType));
     },
     onError: (error: any) => {
-      toast.error(getApiErrorMessage(error));
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.visaType)));
     },
   });
 };

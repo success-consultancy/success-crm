@@ -1,9 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-
+import { ENTITY, countOf, toastMsg } from '@/constants/messages';
 const deleteLead = async (id: number) => {
   const res = await api.delete(`/lead/${id}`);
   return res.data;
@@ -17,14 +17,10 @@ export const useDeleteLead = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_LEADS],
       });
-      toast('Success!', {
-        description: 'Lead has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.lead));
     },
     onError: (error: any) => {
-      toast("Error!", {
-          description: getApiErrorMessage(error),
-        })
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.lead)));
     },
   });
 };
@@ -42,14 +38,10 @@ export const useDeleteLeadBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_LEADS],
       });
-      toast('Success!', {
-        description: `${ids.length} lead${ids.length > 1 ? 's have' : ' has'} been deleted`,
-      });
+      toast.success(toastMsg.deleteSuccess(countOf(ids.length, ENTITY.lead, ENTITY.leads)));
     },
     onError: (error: any) => {
-      toast("Error!", {
-          description: getApiErrorMessage(error),
-        })
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.lead)));
     },
   });
 };

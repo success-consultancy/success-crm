@@ -61,7 +61,7 @@ const ServicePage = () => {
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const TribunalReviewColumns = useTribunalReviewColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });

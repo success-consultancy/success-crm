@@ -9,8 +9,12 @@ const userFormSchema = z.object({
   address: z.string().min(1, 'Address is required').refine((v) => v.trim().length > 0, { message: 'Address cannot be blank' }),
   color: z.string().min(1, 'Color is required'),
   roleId: z.number().min(1, 'Role is required'),
-  branchId: z.string().min(1, 'Branch is required'),
-  isActive: z.boolean().default(true),
+  // Select inputs hand back strings; coerce to the shape the API payload expects.
+  branchId: z.coerce.string().min(1, 'Branch is required'),
+  isActive: z
+    .union([z.boolean(), z.enum(['true', 'false'])])
+    .transform((v) => v === true || v === 'true')
+    .default(true),
   onlineAppointment: z.boolean().default(false),
   isPaid: z.boolean().default(false),
 });

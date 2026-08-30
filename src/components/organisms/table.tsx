@@ -68,7 +68,7 @@ interface Props<TData, TValue> {
   emptyState?: ReactNode;
   tableHeight?: string;
   onBulkDelete?: (ids: number[]) => void;
-  onSendEmail?: (payload: SendEmailSchemaType) => void;
+  onSendEmail?: (payload: SendEmailSchemaType) => void | Promise<unknown>;
   // Adds a "Move to" action to the selection toolbar.
   bulkMoveTo?: TableBulkMoveProps<TData>;
   handleDateRangeApply?: (range: { from: Date | undefined; to: Date | undefined }) => void;
@@ -403,10 +403,14 @@ const TableComponent = <TData, TValue>({
 
         {tableHeaderSection}
 
-        {/* Single scrollable container for the entire table */}
+        {/* Single scrollable container for the entire table.
+            `isolate` scopes the sticky header/pinned-column z-indexes below to
+            this container. Without it they compete with page-level sticky chrome
+            (the record tabs bar, the dashboard header) and the table head paints
+            on top of it while the page scrolls. */}
         <div
           ref={scrollContainerRef}
-          className="overflow-auto flex-1 min-h-0 custom-scrollbar"
+          className="overflow-auto flex-1 min-h-0 custom-scrollbar isolate"
           style={{ maxHeight: tableHeight }}
         >
           <table

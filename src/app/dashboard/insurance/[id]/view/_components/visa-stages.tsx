@@ -60,7 +60,7 @@ export const VisaStages = ({ insurance }: InsuranceStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
+        <div className="hide-scrollbar flex min-w-0 flex-1 overflow-x-auto">
           {stages.map((stage, index) => (
             <StageItem key={stage.name} name={stage.name} active={stage.active} isFirst={index === 0} />
           ))}

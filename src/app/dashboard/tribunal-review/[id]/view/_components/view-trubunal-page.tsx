@@ -42,7 +42,7 @@ const TribunalPageContent: React.FC<TribunalPageContentProps> = ({ studentId }) 
   const router = useRouter();
   const { update: canUpdate, delete: canDelete } = usePermissions('tribunalReview');
   const { mutate: deleteRecord } = useDeleteTribunal();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
     return <SectionLoader />;

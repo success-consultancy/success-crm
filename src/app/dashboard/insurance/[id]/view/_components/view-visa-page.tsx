@@ -42,7 +42,7 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const router = useRouter();
   const { update: canUpdate, delete: canDelete } = usePermissions('insurance');
   const { mutate: deleteRecord } = useDeleteInsurance();
-  const { mutate: sendEmail } = useSendEmail();
+  const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
     return <SectionLoader />;
@@ -80,7 +80,9 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
               onSendEmail={(payload) => sendEmail(payload)}
               recipientEmail={insurance.email}
               deleteTitle="Delete this insurance applicant"
-              deleteDescription={<p>Are you sure you want to delete this insurance applicant? This cannot be undone.</p>}
+              deleteDescription={
+                <p>Are you sure you want to delete this insurance applicant? This cannot be undone.</p>
+              }
               deleteConfirmText="Yes, delete"
               onDelete={() => deleteRecord(insurance.id, { onSuccess: () => router.push(ROUTES.INSURANCE) })}
             />

@@ -17,6 +17,7 @@ import { IInsurance } from '@/types/response-types/insurance-response';
 import { useEditInsurance } from '@/mutations/insurance/edit-insurance';
 import { useGetSource } from '@/query/get-source';
 import { useGetUsers } from '@/query/get-user';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const miscSchema = insuranceFormSchema.pick({
   sourceId: true,
@@ -74,11 +75,11 @@ const MiscSection = ({ visa }: { visa: IInsurance }) => {
   const handleSave = handleSubmit((data) => {
     editInsurance.mutate(buildInsuranceSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Misc info updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.miscInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update insurance applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.insurance));
       },
     });
   });

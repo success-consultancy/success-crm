@@ -1,7 +1,7 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
 const refreshFiscalReport = async (id: number) => {
   const res = await api.post(`/fiscalReport/${id}/refresh`);
@@ -16,7 +16,7 @@ export const useRefreshFiscalReport = () => {
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FISCAL_REPORT] });
     },
     onError: (error: any) => {
-      toast('Error!', { description: 'Failed to refresh report data.' });
+      toast.error('Failed to refresh report data');
     },
   });
 };

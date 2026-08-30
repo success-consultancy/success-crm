@@ -2,8 +2,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { CreateAccountPayload, IAccount } from '@/schema/account-schema';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 export const createAccount = async (payload: CreateAccountPayload) => {
   const { data } = await api.post('/account', payload);
   return data;
@@ -66,9 +67,7 @@ export const useDeleteAccount = () => {
       });
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.account)));
     },
   });
 };

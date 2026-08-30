@@ -61,7 +61,7 @@ const EducationServicePage = () => {
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const EducationColumns = useEducationColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });

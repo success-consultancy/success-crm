@@ -26,6 +26,7 @@ import VisaAndServiceStep from './visa-and-service-fields';
 import { ROUTES } from '@/config/routes';
 import { ArrowLeft } from 'lucide-react';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 type Props = {
   mode: 'edit' | 'add';
@@ -70,7 +71,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
         { ...payload, id: defaultValues?.id as number },
         {
           onSuccess: () => {
-            toast.success('Lead updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.lead));
           },
           onError: (error: any) => {
             const message = error?.response?.data?.message;
@@ -84,14 +85,14 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
               });
             }
 
-            toast.error(message || 'Failed to update lead');
+            toast.error(message || toastMsg.updateError(ENTITY.lead));
           },
         },
       );
     } else {
       addLead.mutate(payload, {
         onSuccess: () => {
-          toast.success('Lead added successfully');
+          toast.success(toastMsg.addSuccess(ENTITY.lead));
           router.push(ROUTES.LEADS);
         },
         onError: (error: any) => {
@@ -108,7 +109,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
             });
           }
 
-          toast.error(message || 'Failed to add lead');
+          toast.error(message || toastMsg.addError(ENTITY.lead));
         },
       });
     }
@@ -153,7 +154,7 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
         <Button
           type="button"
           loading={isSubmitting}
-          loadingText={mode === 'edit' ? 'Updating' : 'Adding'}
+          loadingText={mode === 'edit' ? LOADING_LABEL.update : LOADING_LABEL.add}
           onClick={handleSubmit(onSubmit)}
         >
           {mode === 'edit' ? 'Update Lead' : 'Add Lead'}

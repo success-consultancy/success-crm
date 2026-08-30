@@ -24,6 +24,7 @@ import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
 import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { IVisaDetail } from '@/types/response-types/visa-response';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const personalSchema = withDependentFields(
   newVisaServiceSchema.pick({
@@ -104,11 +105,11 @@ const PersonalDetails = ({ visa }: { visa: IVisaDetail }) => {
   const handleSave = handleSubmit((data) => {
     editVisa.mutate(buildVisaSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.visa));
       },
     });
   });

@@ -18,9 +18,10 @@ import { Button } from '@/components/ui/button';
 import { ButtonLink } from '@/components/atoms/button-link';
 import { ArrowLeft } from 'lucide-react';
 import { ROUTES } from '@/config/routes';
-import { AGREEMENT_STATUS_COLORS } from '@/types/response-types/agreement-response';
+import { getAgreementStatusDisplay, normalizeAgreementFiles } from '@/types/response-types/agreement-response';
 import { UploadedFileMeta } from '@/types/common';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type Props = { id: string };
 
@@ -36,11 +37,13 @@ const formatDate = (date: string | null) => {
 };
 
 const getFileType = (name: string) => {
-  const ext = name.split('.').pop()?.toUpperCase();
-  return ext || '-';
+  if (!name.includes('.')) return '-';
+  return name.split('.').pop()?.toUpperCase() || '-';
 };
 
+// Legacy records carry no size/addedDate metadata, only the file URL.
 const formatSize = (bytes: number) => {
+  if (!bytes) return '-';
   if (bytes < 1024) return `${bytes} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(2)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
@@ -56,7 +59,7 @@ const ViewAgreementPage = ({ id }: Props) => {
   if (isLoading) return <PageLoader />;
   if (!agreement) return null;
 
-  const files: UploadedFileMeta[] = agreement.files || [];
+  const files: UploadedFileMeta[] = normalizeAgreementFiles(agreement.files);
 
   const handleDelete = () => {
     deleteAgreement(agreement.id, {
@@ -70,10 +73,10 @@ const ViewAgreementPage = ({ id }: Props) => {
       { id: agreement.id, files: next, universityId: agreement.universityId, status: agreement.status },
       {
         onSuccess: () => {
-          toast.success('Document removed successfully');
+          toast.success(toastMsg.removeSuccess(ENTITY.document));
           refetch();
         },
-        onError: () => toast.error('Failed to remove document'),
+        onError: () => toast.error(toastMsg.removeError(ENTITY.document)),
       },
     );
   };
@@ -84,17 +87,16 @@ const ViewAgreementPage = ({ id }: Props) => {
       { id: agreement.id, files: merged, universityId: agreement.universityId, status: agreement.status },
       {
         onSuccess: () => {
-          toast.success('Document added successfully');
+          toast.success(toastMsg.addSuccess(ENTITY.document));
           setShowUploader(false);
           refetch();
         },
-        onError: () => toast.error('Failed to add document'),
+        onError: () => toast.error(toastMsg.addError(ENTITY.document)),
       },
     );
   };
 
-  const statusColors = AGREEMENT_STATUS_COLORS[agreement.status] ?? { bg: '#f3f4f6', text: '#374151' };
-
+  const { label: statusLabel, colors: statusColors } = getAgreementStatusDisplay(agreement.status);
 
   return (
     <Container className="flex flex-col py-10 gap-6">
@@ -152,7 +154,7 @@ const ViewAgreementPage = ({ id }: Props) => {
                 className="text-b14 px-2 py-1 rounded-[2px] inline-flex text-xs font-medium"
                 style={{ backgroundColor: statusColors.bg, color: statusColors.text }}
               >
-                {agreement.status || '-'}
+                {statusLabel}
               </span>
             </div>
           </div>
@@ -204,7 +206,9 @@ const ViewAgreementPage = ({ id }: Props) => {
               <thead>
                 <tr className="border-b border-[#EBEBEB]">
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">
-                    <span className="flex items-center gap-1">Document name <ChevronDown className="h-3 w-3" /></span>
+                    <span className="flex items-center gap-1">
+                      Document name <ChevronDown className="h-3 w-3" />
+                    </span>
                   </th>
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">Size</th>
                   <th className="text-left py-2 px-3 text-gray-500 font-medium">Type</th>
@@ -228,7 +232,7 @@ const ViewAgreementPage = ({ id }: Props) => {
                     <td className="py-3 px-3 text-gray-600">{formatSize(file.size)}</td>
                     <td className="py-3 px-3 text-gray-600">{getFileType(file.name)}</td>
                     <td className="py-3 px-3 text-gray-600">
-                      {file.addedDate ? format(new Date(file.addedDate), 'dd/MM/yyyy') : '-'}
+                      {formatDate(file.addedDate)}
                     </td>
                     <td className="py-3 px-3 text-right">
                       <DeleteDialog

@@ -20,7 +20,7 @@ const useLoginUser = () => {
   return useMutation({
     mutationFn: loginUser,
     onSuccess: (res: ILoginResponse) => {
-      success('Login successful!');
+      success('Login successful');
       if (res.token) {
         saveAccessToken(res.token);
       }

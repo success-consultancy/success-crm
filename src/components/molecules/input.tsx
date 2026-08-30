@@ -5,6 +5,7 @@ import React, { Dispatch, ReactNode, SetStateAction } from 'react';
 import { cn } from '@/lib/utils';
 import useCombinedRefs from '@/hooks/use-combined-refs';
 import { Input as ShadInput } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import Tooltip from '../atoms/tooltip';
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -75,17 +76,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     };
 
     return (
-      <div className={cn(['inline-grid w-full items-center gap-1', className, classNames?.wrapper])}>
+      <div className={cn(['inline-grid w-full items-center gap-2', className, classNames?.wrapper])}>
         {label && (
-          <label
+          <Label
             className={cn([
-              'text-b14-600 text-neutral-black',
+              // gap-1 keeps the "(optional)" suffix reading as a normal word space inside <Label>'s flex row
+              'text-b3-b font-semibold gap-1',
               props.disabled && 'text-neutral-black/40',
               classNames?.label,
             ])}
           >
             {label} {optionalText && <span className="text-neutral-light-grey font-normal">(optional)</span>}
-          </label>
+          </Label>
         )}
 
         <Tooltip
@@ -94,7 +96,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           trigger={
             <div
               className={cn([
-                'flex-between group rounded-[4px] border border-neutral-border transition-colors',
+                'flex-between group h-10 rounded-[4px] border border-neutral-border transition-colors',
                 // ? states per the design file: hover, focus, error, disabled
                 !props.disabled && (isInputFocused ? 'border-primary-blue' : 'hover:border-neutral-black'),
                 (error || errorBorder) && 'border-utility-red',
@@ -128,7 +130,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 onBlur={handleinputBlur}
                 ref={combinedRef}
                 className={cn([
-                  'border-none px-3 focus:outline-none !bg-transparent',
+                  'h-full border-none px-3 focus:outline-none !bg-transparent',
                   classNames?.input,
                   !!LeftIcon && 'pl-0',
                   !!RightIcon && 'pr-0',

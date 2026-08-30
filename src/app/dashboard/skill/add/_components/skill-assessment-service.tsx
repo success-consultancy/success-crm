@@ -40,6 +40,7 @@ import { ArrowLeft } from 'lucide-react';
 import { FORM_STATE } from '@/types/common';
 import { ROUTES } from '@/config/routes';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -231,7 +232,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         },
         {
           onSuccess: () => {
-            toast.success('Skill assessment applicant added successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.skill));
             router.push(ROUTES.SKILL_ASSESSMENT);
           },
           onError: (err: any) => {
@@ -242,7 +243,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             }
 
             const message = err?.response?.data?.message || err?.message;
-            toast.error(message || 'Failed to add skill assessment applicant');
+            toast.error(message || toastMsg.addError(ENTITY.skill));
           },
         },
       );
@@ -269,7 +270,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         },
         {
           onSuccess: () => {
-            toast.success('Skill assessment applicant updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.skill));
           },
           onError: (err: any) => {
             if (err?.response?.data?.errors) {
@@ -279,7 +280,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
             }
 
             const message = err?.response?.data?.message || err?.message;
-            toast.error(message || 'Failed to update skill assessment applicant');
+            toast.error(message || toastMsg.updateError(ENTITY.skill));
           },
         },
       );
@@ -346,7 +347,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
           {/* Personal Details */}
           <FormAccordion value="item-1" title="Personal details">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              <TextInput label="First name" required {...register('firstName')} error={errors.firstName?.message} />
+              <TextInput label="First name" {...register('firstName')} error={errors.firstName?.message} />
               <TextInput
                 label="Middle name (optional)"
                 {...register('middleName')}
@@ -372,13 +373,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
                 />
                 <FormErrorMessage message={errors.dob?.message} />
               </div>
-              <TextInput
-                type="email"
-                label="Email address"
-                required
-                {...register('email')}
-                error={errors.email?.message}
-              />
+              <TextInput type="email" label="Email address" {...register('email')} error={errors.email?.message} />
               <FormField
                 control={control}
                 name="phone"
@@ -718,7 +713,7 @@ export function SkillAssessmentService({ userId, formState, id, defaultValues }:
         <FormActions sticky>
           <Button
             loading={isPending}
-            loadingText={formState === FORM_STATE.ADD ? 'Adding...' : 'Updating...'}
+            loadingText={formState === FORM_STATE.ADD ? LOADING_LABEL.add : LOADING_LABEL.update}
             type="submit"
             variant="primary"
           >

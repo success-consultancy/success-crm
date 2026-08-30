@@ -5,6 +5,7 @@ import { useGetFollowUp } from '@/query/get-leads';
 import { ILead, LeadStatusTypes } from '@/types/response-types/leads-response';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type LeadStagesProps = {
   lead: ILead;
@@ -100,11 +101,11 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
       { id: lead.id.toString(), status: pendingStage },
       {
         onSuccess: () => {
-          toast.success('Lead updated successfully');
+          toast.success(toastMsg.updateSuccess(ENTITY.lead));
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message;
-          toast.error(message || 'Failed to update lead');
+          toast.error(message || toastMsg.updateError(ENTITY.lead));
         },
       },
     );
@@ -129,7 +130,7 @@ export const LeadStages = ({ lead, onFollowUpClick }: LeadStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-4 items-end">
-        <div className="flex min-w-0 flex-1 items-end overflow-x-auto">
+        <div className="hide-scrollbar flex min-w-0 flex-1 items-end overflow-x-auto">
           {mainStages.map((stage, index) => (
             <StageItem
               key={stage}

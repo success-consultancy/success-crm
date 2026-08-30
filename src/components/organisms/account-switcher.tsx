@@ -32,6 +32,7 @@ import { CountryDropdown } from './country-dropdown';
 import toast from 'react-hot-toast';
 import { useSidebarStore } from '@/store/sidebar-store';
 import SectionLoader from '@/components/molecules/section-loader';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 // Logo Component
 const SidebarLogo = () => {
@@ -40,14 +41,7 @@ const SidebarLogo = () => {
   if (isCollapsed) {
     return (
       <div className="border-b border-gray-100 p-4 flex items-center justify-center">
-        <Image
-          src={'/success-logo-mini.png'}
-          alt="logo"
-          height={40}
-          width={40}
-          quality={70}
-          className="h-10 w-auto"
-        />
+        <Image src={'/success-logo-mini.png'} alt="logo" height={40} width={40} quality={70} className="h-10 w-auto" />
       </div>
     );
   }
@@ -134,9 +128,7 @@ const BranchSelector = () => {
 
           <DropdownMenuSeparator />
 
-          {!hasBranches && (
-            <p className="px-2 py-1.5 text-sm text-gray-400 text-center">No branches available</p>
-          )}
+          {!hasBranches && <p className="px-2 py-1.5 text-sm text-gray-400 text-center">No branches available</p>}
 
           {Array.isArray(branches) &&
             branches.map((item) => {
@@ -148,9 +140,7 @@ const BranchSelector = () => {
                     className="flex-1 flex items-center gap-2 cursor-pointer rounded-md"
                   >
                     <div className="w-6 h-6 rounded-md bg-blue-50 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-bold text-blue-600">
-                        {getBranchInitial(item.name)}
-                      </span>
+                      <span className="text-xs font-bold text-blue-600">{getBranchInitial(item.name)}</span>
                     </div>
                     <span className="flex-1 text-sm truncate">{capitalizeFirstLetter(item.name)}</span>
                     {isSelected && <Check size={14} className="text-blue-600 shrink-0" />}
@@ -251,7 +241,7 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
             }
 
             const message = err?.response?.data?.message || err?.message;
-            toast.error(message || 'Failed to update branch');
+            toast.error(message || toastMsg.updateError(ENTITY.branch));
           },
         },
       );
@@ -268,7 +258,7 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
           }
 
           const message = err?.response?.data?.message || err?.message;
-          toast.error(message || 'Failed to add branch');
+          toast.error(message || toastMsg.addError(ENTITY.branch));
         },
       });
     }

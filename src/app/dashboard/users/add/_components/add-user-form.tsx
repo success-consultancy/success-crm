@@ -13,7 +13,7 @@ import Button from '@/components/atoms/button';
 import Input from '@/components/molecules/input';
 import PasswordInput from '@/components/molecules/password-input';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
-import SelectCommon from '@/components/molecules/select-common';
+import SelectField from '@/components/organisms/select-field';
 import { PortalIds } from '@/config/portal';
 import userFormSchema, { UserFormType } from '@/schema/user-schema';
 import { useAddUser } from '@/mutations/user/add-user';
@@ -23,14 +23,15 @@ import { getAppointColorBasedOnUserName } from '@/utils/color';
 import { useGetBranches } from '@/query/get-branches';
 import toast from 'react-hot-toast';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
+import { ROLES, ROLE_LABELS } from '@/constants/roles-constants';
 
-const ROLE_OPTIONS = [
-  { label: 'Admin', value: '1' },
-  { label: 'Manager', value: '2' },
-  { label: 'Consultant', value: '3' },
-  { label: 'Accounting', value: '4' },
-  { label: 'Lead Management', value: '5' },
-];
+// Labels come from the shared role constants so the form can't drift from the
+// rest of the app (role 3 is "General user" everywhere).
+const ROLE_OPTIONS = Object.values(ROLES).map((id) => ({
+  label: ROLE_LABELS[id],
+  value: String(id),
+}));
 
 const STATUS_OPTIONS = [
   { label: 'Active', value: 'true' },
@@ -53,7 +54,6 @@ const COLOR_OPTIONS = [
   { label: 'Rose', value: '#f43f5e' },
   { label: 'Gray', value: '#6b7280' },
 ];
-
 
 type Props = {
   mode: 'add' | 'edit';
@@ -101,16 +101,20 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
     if (defaultValues) form.reset({ ...form.getValues(), ...defaultValues });
   }, [defaultValues]);
 
-  const { control, handleSubmit, setError, formState: { errors } } = form;
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = form;
 
   const firstName = useWatch({ control, name: 'firstName' });
   const lastName = useWatch({ control, name: 'lastName' });
   const selectedColor = useWatch({ control, name: 'color' });
 
-  const activeColor = selectedColor ||
-    (firstName || lastName
-      ? getAppointColorBasedOnUserName({ firstName, lastName }, 'raw') as string
-      : '');
+  const activeColor =
+    selectedColor ||
+    (firstName || lastName ? (getAppointColorBasedOnUserName({ firstName, lastName }, 'raw') as string) : '');
 
   const onSubmit: SubmitHandler<UserFormType> = (data) => {
     if (mode === 'edit') {
@@ -135,7 +139,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         },
         {
           onSuccess: () => {
-            toast.success('User updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.user));
             router.push('/dashboard/users');
           },
           onError: (err: any) => {
@@ -143,7 +147,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
             if (serverErrors) {
               applyServerErrors(serverErrors, setError);
             }
-            toast.error(err?.response?.data?.message || 'Failed to update user');
+            toast.error(err?.response?.data?.message || toastMsg.updateError(ENTITY.user));
           },
         },
       );
@@ -172,7 +176,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
         },
         {
           onSuccess: () => {
-            toast.success('User added successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.user));
             router.push('/dashboard/users');
           },
           onError: (err: any) => {
@@ -180,7 +184,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
             if (serverErrors) {
               applyServerErrors(serverErrors, setError);
             }
-            toast.error(err?.response?.data?.message || 'Failed to add user');
+            toast.error(err?.response?.data?.message || toastMsg.addError(ENTITY.user));
           },
         },
       );
@@ -192,9 +196,7 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
   return (
     <Form {...form}>
       <Portal rootId={PortalIds.DashboardHeader}>
-        <h3 className="text-h4 text-content-heading font-bold">
-          {mode === 'edit' ? 'Edit user' : 'New user'}
-        </h3>
+        <h3 className="text-h4 text-content-heading font-bold">{mode === 'edit' ? 'Edit user' : 'New user'}</h3>
       </Portal>
 
       <Accordion type="multiple" className="w-full space-y-3.5" defaultValue={['basic']}>
@@ -203,16 +205,12 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
             <FormField
               control={control}
               name="firstName"
-              render={({ field }) => (
-                <Input label="First name" {...field} error={errors.firstName?.message} />
-              )}
+              render={({ field }) => <Input label="First name" {...field} error={errors.firstName?.message} />}
             />
             <FormField
               control={control}
               name="lastName"
-              render={({ field }) => (
-                <Input label="Last name" {...field} error={errors.lastName?.message} />
-              )}
+              render={({ field }) => <Input label="Last name" {...field} error={errors.lastName?.message} />}
             />
             <FormField
               control={control}
@@ -251,65 +249,48 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
               control={control}
               name="address"
               render={({ field }) => (
-                <Input
-                  label="Address"
-                  {...field}
-                  value={field.value ?? ''}
-                  error={errors.address?.message}
-                />
+                <Input label="Address" {...field} value={field.value ?? ''} error={errors.address?.message} />
               )}
             />
-            <FormField
+            <SelectField
               control={control}
               name="roleId"
-              render={({ field }) => (
-                <SelectCommon
-                  label="Role"
-                  options={ROLE_OPTIONS}
-                  value={field.value ? String(field.value) : undefined}
-                  onSelect={(val) => field.onChange(Number(val))}
-                  error={errors.roleId?.message}
-                />
-              )}
+              label="Role"
+              options={ROLE_OPTIONS}
+              placeholder="Select a role"
             />
-            <FormField
-              control={control}
-              name="branchId"
-              render={({ field }) => {
-                if (isSuperAdmin) {
+            {isSuperAdmin ? (
+              <SelectField
+                control={control}
+                name="branchId"
+                label="Branch"
+                options={branchOptions}
+                placeholder="Select a branch"
+              />
+            ) : (
+              <FormField
+                control={control}
+                name="branchId"
+                render={({ field }) => {
+                  // Non-admin users are locked to their own branch.
+                  const branchName = branches.find((b) => String(b.id) === String(field.value))?.name ?? field.value;
                   return (
-                    <SelectCommon
-                      label="Branch"
-                      options={branchOptions}
-                      value={field.value || undefined}
-                      onSelect={field.onChange}
-                      error={errors.branchId?.message}
-                    />
-                  );
-                }
-                // Non-admin users are locked to their own branch.
-                const branchName = branches.find((b) => String(b.id) === field.value)?.name ?? field.value;
-                return (
-                  <div className="flex flex-col gap-1.5">
-                    <Label className="text-b3-b font-semibold">Branch</Label>
-                    <div className="flex items-center h-10 px-3 rounded-md border border-gray-200 bg-gray-50 text-sm text-gray-600">
-                      {branchName || '—'}
+                    <div className="flex flex-col gap-2 w-full">
+                      <Label className="text-b3-b font-semibold">Branch</Label>
+                      <div className="flex items-center h-10 px-3 rounded-md border border-gray-200 bg-gray-50 text-sm text-gray-600">
+                        {branchName || '—'}
+                      </div>
                     </div>
-                  </div>
-                );
-              }}
-            />
-            <FormField
+                  );
+                }}
+              />
+            )}
+            <SelectField
               control={control}
               name="isActive"
-              render={({ field }) => (
-                <SelectCommon
-                  label="Status"
-                  options={STATUS_OPTIONS}
-                  value={field.value ? 'true' : 'false'}
-                  onSelect={(val) => field.onChange(val === 'true')}
-                />
-              )}
+              label="Status"
+              options={STATUS_OPTIONS}
+              placeholder="Select a status"
             />
             <FormField
               control={control}
@@ -326,10 +307,10 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
                     <div className="flex flex-col">
                       <span className="text-sm font-medium text-gray-700">
                         {field.value
-                          ? COLOR_OPTIONS.find((c) => c.value === field.value)?.label ?? field.value
+                          ? (COLOR_OPTIONS.find((c) => c.value === field.value)?.label ?? field.value)
                           : activeColor
-                          ? `Auto (${COLOR_OPTIONS.find((c) => c.value === activeColor)?.label ?? 'based on name'})`
-                          : 'No color assigned'}
+                            ? `Auto (${COLOR_OPTIONS.find((c) => c.value === activeColor)?.label ?? 'based on name'})`
+                            : 'No color assigned'}
                       </span>
                       <span className="text-xs text-gray-400">
                         {field.value ? 'Manually set' : 'Automatically assigned from name'}
@@ -362,22 +343,21 @@ const AddUserForm = ({ mode, defaultValues }: Props) => {
                       />
                     ))}
                   </div>
-                  {errors.color?.message && (
-                    <span className="text-primary-red text-sm">{errors.color.message}</span>
-                  )}
+                  {errors.color?.message && <span className="text-primary-red text-sm">{errors.color.message}</span>}
                 </div>
               )}
             />
           </div>
         </FormAccordion>
-
       </Accordion>
 
       <FormActions>
-        <Button onClick={handleSubmit(onSubmit)} disabled={isPending}>
-          {mode === 'edit'
-            ? isPending ? 'Saving...' : 'Save Changes'
-            : isPending ? 'Adding...' : 'Add User'}
+        <Button
+          onClick={handleSubmit(onSubmit)}
+          loading={isPending}
+          loadingText={mode === 'edit' ? LOADING_LABEL.save : LOADING_LABEL.add}
+        >
+          {mode === 'edit' ? 'Save Changes' : 'Add User'}
         </Button>
         <Button variant="outline" onClick={() => router.back()}>
           Cancel

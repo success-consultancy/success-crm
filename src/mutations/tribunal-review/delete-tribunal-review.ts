@@ -1,8 +1,9 @@
 ﻿import { QUERY_KEYS } from '@/constants/query-keys';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
+import { ENTITY, countOf, toastMsg } from '@/constants/messages';
 const deleteTribunal = async (id: number) => {
   const res = await api.delete(`/tribunalReview/${id}`);
   return res.data;
@@ -16,14 +17,10 @@ export const useDeleteTribunal = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
       });
-      toast('Success!', {
-        description: 'Tribunal review has been deleted',
-      });
+      toast.success(toastMsg.deleteSuccess(ENTITY.tribunalReview));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.tribunalReview)));
     },
   });
 };
@@ -41,14 +38,10 @@ export const useDeleteTribunalBulk = () => {
       queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW],
       });
-      toast('Success!', {
-        description: `${ids.length} tribunal review${ids.length > 1 ? 's have' : ' has'} been deleted`,
-      });
+      toast.success(toastMsg.deleteSuccess(countOf(ids.length, ENTITY.tribunalReview, ENTITY.tribunalApplicants)));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.tribunalReview)));
     },
   });
 };

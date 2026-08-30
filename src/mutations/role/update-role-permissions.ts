@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_ROLES, RoleCrudPermissions } from '@/query/get-roles';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface UpdateRolePermissionsPayload {
   id: number;
@@ -19,10 +20,10 @@ export const useUpdateRolePermissions = () => {
     mutationFn: updateRolePermissions,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_ROLES] });
-      toast.success('Role permissions updated');
+      toast.success(toastMsg.updateSuccess(ENTITY.rolePermissions));
     },
     onError: (error: any) => {
-      toast.error('Failed to update role permissions');
+      toast.error(toastMsg.updateError(ENTITY.rolePermissions));
     },
   });
 };

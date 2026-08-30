@@ -5,6 +5,7 @@ import { ArrowLeft, Loader2 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { PhoneNumberInput } from '@/components/molecules/phone-number-input';
 import { useVerifyAndCheckIn } from '@/mutations/check-in/returning-check-in';
+import { LOADING_LABEL } from '@/constants/messages';
 
 interface Props {
   onBack: () => void;
@@ -80,7 +81,6 @@ const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
       <div className="flex-1 flex items-center justify-center px-6 py-10">
         {/* Card: 800px wide, matching other check-in screens */}
         <div className="bg-white w-full" style={{ maxWidth: 800, borderRadius: 16, padding: '40px 48px 48px' }}>
-
           {/* Header: ← Returning Client */}
           <div className="flex items-center gap-3" style={{ marginBottom: 10 }}>
             <button
@@ -91,13 +91,31 @@ const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
             >
               <ArrowLeft style={{ width: 22, height: 22 }} strokeWidth={2} />
             </button>
-            <h1 style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: 24, color: '#1C1C1C', margin: 0, lineHeight: '1.25em' }}>
+            <h1
+              style={{
+                fontFamily: 'Inter, sans-serif',
+                fontWeight: 700,
+                fontSize: 24,
+                color: '#1C1C1C',
+                margin: 0,
+                lineHeight: '1.25em',
+              }}
+            >
               Returning Client
             </h1>
           </div>
 
           {/* Subtitle */}
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 14, color: '#484848', margin: '0 0 28px 0', lineHeight: '1.57em' }}>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 400,
+              fontSize: 14,
+              color: '#484848',
+              margin: '0 0 28px 0',
+              lineHeight: '1.57em',
+            }}
+          >
             Please enter your contact details to verify your identity and check in.
           </p>
 
@@ -121,7 +139,15 @@ const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
           </div>
 
           {/* Or */}
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 14, color: '#9CA3AF', margin: '0 0 12px 0' }}>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 400,
+              fontSize: 14,
+              color: '#9CA3AF',
+              margin: '0 0 12px 0',
+            }}
+          >
             Or
           </p>
 
@@ -175,7 +201,7 @@ const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
               }}
             >
               {isPending && <Loader2 style={{ width: 16, height: 16 }} className="animate-spin" />}
-              {isPending ? 'Verifying...' : 'Verify & check-in'}
+              {isPending ? LOADING_LABEL.verify : 'Verify & check-in'}
             </button>
             <button
               type="button"
@@ -191,19 +217,41 @@ const ReturningClientForm = ({ onBack, onNewClient, onSuccess }: Props) => {
                 fontSize: 15,
                 cursor: 'pointer',
               }}
-              onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F9FAFB'; }}
-              onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FFFFFF'; }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#F9FAFB';
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#FFFFFF';
+              }}
             >
               Cancel
             </button>
           </div>
 
           {/* First time visiting us? */}
-          <p style={{ fontFamily: 'Inter, sans-serif', fontWeight: 400, fontSize: 14, color: '#484848', textAlign: 'center', margin: 0 }}>
+          <p
+            style={{
+              fontFamily: 'Inter, sans-serif',
+              fontWeight: 400,
+              fontSize: 14,
+              color: '#484848',
+              textAlign: 'center',
+              margin: 0,
+            }}
+          >
             First time visiting us?{' '}
             <button
               onClick={onNewClient}
-              style={{ color: '#1B7FD4', fontWeight: 400, background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'Inter, sans-serif', fontSize: 14, padding: 0 }}
+              style={{
+                color: '#1B7FD4',
+                fontWeight: 400,
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'Inter, sans-serif',
+                fontSize: 14,
+                padding: 0,
+              }}
             >
               New client
             </button>

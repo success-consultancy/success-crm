@@ -20,14 +20,14 @@ export const useChangePassword = () => {
   return useMutation({
     mutationFn: changePassword,
     onSuccess: () => {
-      success('Password changed successfully!');
+      success('Password changed successfully');
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {
-        const message = err.response?.data?.message || 'Failed to change password!';
+        const message = err.response?.data?.message || 'Failed to change password';
         error(message);
       } else {
-        error('An unexpected error occurred while changing password!');
+        error('An unexpected error occurred while changing password');
       }
     },
   });

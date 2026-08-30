@@ -1,9 +1,10 @@
 ﻿import { api, getApiErrorMessage } from '@/lib/api';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { InsuranceSchemaType } from '@/schema/insurance';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 // Required fields that should keep empty strings as-is
 const REQUIRED_FIELDS = new Set(['firstName', 'lastName', 'email', 'phone']);
 
@@ -28,9 +29,7 @@ export const useEditInsurance = () => {
       invalidateServiceQueries(queryClient, 'insurance');
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.insurance)));
     },
   });
 };

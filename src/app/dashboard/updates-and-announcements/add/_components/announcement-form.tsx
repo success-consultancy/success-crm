@@ -26,8 +26,9 @@ import TinyEditor from '@/components/organisms/text-editor';
 import FormErrorMessage from '@/components/atoms/form-error-message';
 import FileUploader from '@/components/organisms/file-uploader';
 import { FORM_STATE } from '@/types/common';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   formState: FORM_STATE;
@@ -89,23 +90,23 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
       const payload: UpdateAnnouncementSchemaType = { ...data, id };
       editAnnouncement(payload, {
         onSuccess: () => {
-          toast.success('Announcement updated successfully');
+          toast.success(toastMsg.updateSuccess(ENTITY.announcement));
           router.push(ROUTES.UPDATES_AND_ANNOUNCEMENTS);
         },
         onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to update announcement';
+          const message = error?.response?.data?.message || toastMsg.updateError(ENTITY.announcement);
           toast.error(message);
         },
       });
     } else {
       addAnnouncement(data, {
         onSuccess: () => {
-          toast.success('Announcement published successfully');
+          toast.success(toastMsg.publishSuccess(ENTITY.announcement));
           form.reset();
           router.push(ROUTES.UPDATES_AND_ANNOUNCEMENTS);
         },
         onError: (error: any) => {
-          const message = error?.response?.data?.message || 'Failed to publish announcement';
+          const message = error?.response?.data?.message || toastMsg.publishError(ENTITY.announcement);
           toast.error(message);
         },
       });
@@ -131,20 +132,12 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
           <Label className="text-b2">
             Title <span className="text-red-500">*</span>
           </Label>
-          <TextInput
-            {...register('title')}
-            placeholder="Announcement title"
-            error={errors.title?.message}
-          />
+          <TextInput {...register('title')} placeholder="Announcement title" error={errors.title?.message} />
         </div>
 
         {/* Description (Rich Text) */}
         <div className="space-y-2">
-          <TinyEditor
-            label="Description *"
-            value={description}
-            onChange={handleDescriptionChange}
-          />
+          <TinyEditor label="Description *" value={description} onChange={handleDescriptionChange} />
           <FormErrorMessage message={errors.description?.message} />
         </div>
 
@@ -181,7 +174,11 @@ export function AnnouncementForm({ formState, id, defaultValues }: Props) {
 
         {/* Submit */}
         <FormActions>
-          <Button type="submit" loading={isPending}>
+          <Button
+            type="submit"
+            loading={isPending}
+            loadingText={isEditMode ? LOADING_LABEL.save : LOADING_LABEL.publish}
+          >
             {isEditMode ? 'Save Changes' : 'Publish Announcement'}
           </Button>
         </FormActions>

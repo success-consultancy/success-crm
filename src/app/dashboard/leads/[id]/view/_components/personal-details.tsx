@@ -22,6 +22,7 @@ import { ILead } from '@/types/response-types/leads-response';
 import { useEditLead } from '@/mutations/leads/edit-lead';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useMemo } from 'react';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type FormValues = z.infer<typeof personalDetailsSchema>;
 
@@ -79,11 +80,11 @@ const PersonalDetails = ({ lead }: { lead: ILead }) => {
   const handleSave = handleSubmit((data) => {
     editLead.mutate(buildLeadSectionPayload(lead, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update lead');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.lead));
       },
     });
   });
@@ -132,7 +133,12 @@ const PersonalDetails = ({ lead }: { lead: ILead }) => {
               control={control}
               name="phone"
               render={({ field }) => (
-                <PhoneNumberInput label="Phone number" value={field.value} onChange={field.onChange} error={errors.phone?.message} />
+                <PhoneNumberInput
+                  label="Phone number"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.phone?.message}
+                />
               )}
             />
             <FormField

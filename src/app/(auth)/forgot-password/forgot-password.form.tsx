@@ -35,7 +35,7 @@ const ForgotPasswordForm: React.FC = () => {
     userResetPassword(data, {
       onSuccess: () => {
         setValue('email', '');
-        toast.success('Password reset link sent to your email.');
+        toast.success('Password reset link sent to your email');
       },
       onError: (error: any) => {
         let errorMessage = error?.response?.data?.message || 'Something went wrong.';

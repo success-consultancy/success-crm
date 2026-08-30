@@ -3,6 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { FiscalReportRow } from '@/types/response-types/fiscal-report-response';
 import { useToastContext } from '@/context/toast-context';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 interface UpdateFiscalReportPayload {
   id: number;
@@ -20,13 +21,13 @@ export const useUpdateFiscalReport = () => {
   return useMutation({
     mutationFn: updateFiscalReport,
     // Keep one toast per save: the pending toast is upgraded in place to success/error.
-    onMutate: () => ({ toastId: loading('Saving targets...') }),
+    onMutate: () => ({ toastId: loading(toastMsg.updateLoading(ENTITY.fiscalTargets)) }),
     onSuccess: async (_data, _variables, context) => {
       await queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.GET_FISCAL_REPORT] });
-      success('Targets have been updated.', { id: context?.toastId });
+      success(toastMsg.updateSuccess(ENTITY.fiscalTargets), { id: context?.toastId });
     },
     onError: (err: any, _variables, context) => {
-      errorToast(getApiErrorMessage(err, 'Failed to update targets'), { id: context?.toastId });
+      errorToast(getApiErrorMessage(err, toastMsg.updateError(ENTITY.fiscalTargets)), { id: context?.toastId });
     },
   });
 };

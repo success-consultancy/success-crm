@@ -74,9 +74,9 @@ export function DatePicker({
   const endMonth = disablePastDates ? new Date(2050, 11, 31) : disableFutureDates ? today : undefined;
 
   return (
-    <div>
+    <div className="flex flex-col gap-2">
       {label && (
-        <Label htmlFor="dueDate" className="text-b3-b mb-1 font-semibold block">
+        <Label htmlFor="dueDate" className="text-b3-b font-semibold">
           {label}
         </Label>
       )}

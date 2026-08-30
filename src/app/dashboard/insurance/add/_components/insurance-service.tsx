@@ -50,6 +50,7 @@ import { PortalIds } from '@/config/portal';
 import { InsuranceStatusTypes } from '@/types/response-types/insurance-response';
 import { ArrowLeft } from 'lucide-react';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -112,7 +113,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         { payload: { ...data, sourceId: data.sourceId } },
         {
           onSuccess: () => {
-            toast.success('Insurance added successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.insurance));
             reset();
             router.push(ROUTES.INSURANCE);
           },
@@ -124,7 +125,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
               });
             }
 
-            toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
+            toast.error(error?.response?.data?.message || toastMsg.addError(ENTITY.insurance));
           },
         },
       );
@@ -133,7 +134,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
         { ...data, sourceId: data.sourceId },
         {
           onSuccess: () => {
-            toast.success('Insurance updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.insurance));
             reset();
           },
           onError: (error) => {
@@ -144,9 +145,9 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
                   setError(key as keyof InsuranceSchemaType, { type: 'manual', message: errObject[key] });
                 });
               }
-              toast.error(error?.response?.data?.message || 'Failed to update insurance');
+              toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.insurance));
             } else {
-              toast.error(error?.message || 'Failed to update insurance');
+              toast.error(error?.message || toastMsg.updateError(ENTITY.insurance));
             }
           },
         },
@@ -584,7 +585,7 @@ export function InsuranceService({ userId, formState, defaultValues }: Props) {
       <FormActions sticky>
         <Button
           loading={addTribunalReviewPending || updateTribunalReviewPending}
-          loadingText="Processing"
+          loadingText={formState === FORM_STATE.ADD ? LOADING_LABEL.add : LOADING_LABEL.update}
           type="submit"
           variant="primary"
         >

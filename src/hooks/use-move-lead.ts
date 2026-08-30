@@ -175,7 +175,7 @@ export const useMoveLead = () => {
         error('Cannot move lead: first name and email are required');
         return Promise.reject(new Error('Missing required fields: firstName and email'));
       case 'duplicate':
-        error(`This lead has already been moved to ${service?.title ?? 'this service'}.`);
+        error(`This lead has already been moved to ${service?.title ?? 'this service'}`);
         return Promise.reject(new Error('Lead already moved to this service'));
       default:
         showMoveToastOnce(toastKey, () => error('Failed to move lead. Please try again.'));
@@ -208,15 +208,14 @@ export const useMoveLead = () => {
     const leadWord = (n: number) => `${n} ${n === 1 ? 'lead' : 'leads'}`;
 
     if (moved === 0) {
-      if (skipped > 0 && failed === 0) error(`${leadWord(skipped)} already in ${serviceTitle}.`);
-      else error(`Failed to move ${failed > 0 ? leadWord(failed) : 'the selected leads'} to ${serviceTitle}.`);
+      if (skipped > 0 && failed === 0) error(`${leadWord(skipped)} already in ${serviceTitle}`);
+      else error(`Failed to move ${failed > 0 ? leadWord(failed) : 'the selected leads'} to ${serviceTitle}`);
       return outcomes;
     }
 
-    const notes = [
-      skipped > 0 ? `${skipped} already there` : null,
-      failed > 0 ? `${failed} failed` : null,
-    ].filter(Boolean);
+    const notes = [skipped > 0 ? `${skipped} already there` : null, failed > 0 ? `${failed} failed` : null].filter(
+      Boolean,
+    );
     success(`${leadWord(moved)} moved to ${serviceTitle}${notes.length ? ` (${notes.join(', ')})` : ''}`);
     return outcomes;
   };

@@ -25,6 +25,7 @@ import { isBlankValue, withDependentFields } from '@/schema/dependent-fields';
 import { useDependentFields } from '@/hooks/use-dependent-fields';
 import { ISkillAssessment } from '@/types/response-types/skill-assessment-response';
 import { useEditSkillAssessment } from '@/mutations/skill-assessment/edit-skill-assessment';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const personalSchema = withDependentFields(
   skillAssessmentFormSchema.pick({
@@ -114,11 +115,11 @@ const PersonalDetails = ({ skillAssessment }: { skillAssessment: ISkillAssessmen
   const handleSave = handleSubmit((data) => {
     editSkill.mutate(buildSkillSectionPayload(skillAssessment, data), {
       onSuccess: () => {
-        toast.success('Personal details updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.personalDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update skill assessment');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.skill));
       },
     });
   });

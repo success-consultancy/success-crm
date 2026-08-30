@@ -5,6 +5,7 @@ import DialogWrapper from '@/components/organisms/dialog-wrapper';
 import Input from '@/components/molecules/input';
 import Button from '@/components/atoms/button';
 import { useCreateFiscalReport } from '@/mutations/fiscal-report/create-fiscal-report';
+import { LOADING_LABEL } from '@/constants/messages';
 
 interface Props {
   isOpen: boolean;
@@ -66,8 +67,15 @@ export default function CreateFiscalReportModal({ isOpen, onClose, type }: Props
           <Button variant="outline" size="sm" onClick={handleClose} disabled={isPending} className="h-9">
             Cancel
           </Button>
-          <Button size="sm" onClick={handleSubmit} disabled={!valid || isPending} className="h-9">
-            {isPending ? 'Creating…' : 'Create'}
+          <Button
+            size="sm"
+            onClick={handleSubmit}
+            disabled={!valid}
+            loading={isPending}
+            loadingText={LOADING_LABEL.add}
+            className="h-9"
+          >
+            Create
           </Button>
         </div>
       </div>

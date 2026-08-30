@@ -1,7 +1,15 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { LOADING_LABEL } from '@/constants/messages';
 
 type MoveLeadDialogProps = {
   isOpen: boolean;
@@ -86,7 +94,7 @@ const MoveLeadDialog = ({
           <Button variant="outline" onClick={close} disabled={loading}>
             Cancel
           </Button>
-          <Button onClick={onConfirm} loading={loading} loadingText="Moving">
+          <Button onClick={onConfirm} loading={loading} loadingText={LOADING_LABEL.move}>
             {isBulk ? `Move ${itemLabel}s` : `Move ${itemLabel}`}
           </Button>
         </DialogFooter>

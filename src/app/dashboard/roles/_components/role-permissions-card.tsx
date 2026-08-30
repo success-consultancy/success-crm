@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import Button from '@/components/atoms/button';
 import { RolePermissions, RoleCrudPermissions, ServiceKey, CrudActions } from '@/query/get-roles';
 import { useUpdateRolePermissions } from '@/mutations/role/update-role-permissions';
+import { LOADING_LABEL } from '@/constants/messages';
 
 const SERVICES: { key: ServiceKey; label: string }[] = [
   { key: 'leads', label: 'Leads' },
@@ -137,8 +138,13 @@ export default function RolePermissionsCard({ roles, readonly = false }: Props) 
             <button type="button" onClick={handleReset} className="text-xs text-gray-400 hover:text-gray-600 underline">
               Reset
             </button>
-            <Button onClick={handleSave} disabled={isPending} className="h-8 text-xs px-3">
-              {isPending ? 'Saving…' : 'Save'}
+            <Button
+              onClick={handleSave}
+              loading={isPending}
+              loadingText={LOADING_LABEL.save}
+              className="h-8 text-xs px-3"
+            >
+              Save
             </Button>
           </div>
         )}

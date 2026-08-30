@@ -25,6 +25,7 @@ import { ITribunalReview, TribunalStatusTypes } from '@/types/response-types/tri
 import { useUpdateTribunalReview } from '@/mutations/tribunal-review/add-tribunal-review';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const visaInfoSchema = withDependentFields(
   tribunalReviewFormSchema.pick({
@@ -139,11 +140,11 @@ const VisaInformation = ({ visa }: { visa: ITribunalReview }) => {
   const handleSave = handleSubmit((data) => {
     editTribunal.mutate(buildTribunalSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Visa information updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.visaInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.tribunalReview));
       },
     });
   });

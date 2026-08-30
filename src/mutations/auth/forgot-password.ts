@@ -19,7 +19,7 @@ const useForgotPassword = () => {
   return useMutation({
     mutationFn: forgotPassword,
     onSuccess: (res: IForgotPasswordResponse) => {
-      success('Password reset email sent successfully!');
+      success('Password reset email sent successfully');
     },
     onError: (err) => {
       if (axios.isAxiosError(err)) {

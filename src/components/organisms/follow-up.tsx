@@ -17,6 +17,7 @@ import { useAddFollowUp, useDeleteFollowUp, useUpdateFollowUp } from '@/mutation
 import { useGetFollowUp } from '@/query/get-leads';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import { EmptyState } from '@/components/common/empty-state';
+import { LOADING_LABEL } from '@/constants/messages';
 
 type FollowUp = {
   id: number;
@@ -267,7 +268,7 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                   <DatePicker
                     mode="single"
                     placeholder="Select follow-up date"
-                        selected={formData.date ?? undefined}
+                    selected={formData.date ?? undefined}
                     disabled={{ before: today }}
                     onSelect={(date) => {
                       setFormData({ ...formData, date: date ?? null });
@@ -349,8 +350,8 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
                   >
                     Cancel
                   </Button>
-                  <Button type="submit" disabled={addFollowUp.isPending}>
-                    {addFollowUp.isPending ? 'Saving…' : 'Save'}
+                  <Button type="submit" loading={addFollowUp.isPending} loadingText={LOADING_LABEL.save}>
+                    Save
                   </Button>
                 </div>
               </form>
@@ -537,8 +538,8 @@ export default function FollowUp({ id, followableType }: IFollowUp) {
               >
                 Cancel
               </Button>
-              <Button type="submit" disabled={updateFollowUp.isPending}>
-                {updateFollowUp.isPending ? 'Updating…' : 'Update'}
+              <Button type="submit" loading={updateFollowUp.isPending} loadingText={LOADING_LABEL.update}>
+                Update
               </Button>
             </div>
           </form>

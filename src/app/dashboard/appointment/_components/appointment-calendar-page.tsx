@@ -39,6 +39,7 @@ import { getAppointmentErrorMessage } from '@/mutations/appointments/appointment
 import { useToastContext } from '@/context/toast-context';
 import DeleteDialog from '@/components/organisms/delete.dialog';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 // ==========================================
 // CONSTANTS
@@ -475,7 +476,7 @@ const AppointmentCalendarPage = () => {
 
   const handleReschedule = useCallback(
     async (item: IAppointment, newStart: Date, newEnd: Date) => {
-      const toastId = loading('Rescheduling appointment...');
+      const toastId = loading(toastMsg.updateLoading(ENTITY.appointment));
       try {
         await editAppointment({
           id: item.id,
@@ -489,12 +490,11 @@ const AppointmentCalendarPage = () => {
           type: item.type,
           status: item.status,
         });
-        success(
-          `"${item.title}" moved to ${format(newStart, 'EEE, d MMM')} at ${format(newStart, 'h:mm a')}.`,
-          { id: toastId },
-        );
+        success(`"${item.title}" moved to ${format(newStart, 'EEE, d MMM')} at ${format(newStart, 'h:mm a')}.`, {
+          id: toastId,
+        });
       } catch (err) {
-        showError(getAppointmentErrorMessage(err, 'Failed to reschedule appointment'), { id: toastId });
+        showError(getAppointmentErrorMessage(err, toastMsg.updateError(ENTITY.appointment)), { id: toastId });
         // Rethrow so the caller can roll back its optimistic override.
         throw err;
       }

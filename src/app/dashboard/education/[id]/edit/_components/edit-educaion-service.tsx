@@ -43,6 +43,7 @@ import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { EducationStatusTypes } from '@/types/response-types/education-response';
 import { ArrowLeft } from 'lucide-react';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   id?: number;
@@ -100,12 +101,12 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
       { ...data, id: Number(params.id) },
       {
         onSuccess: () => {
-          toast.success('Education updated successfully');
+          toast.success(toastMsg.updateSuccess(ENTITY.education));
         },
         onError: (error: any) => {
           const message = error?.response?.data?.message;
 
-          toast.error(message || 'Failed to update education');
+          toast.error(message || toastMsg.updateError(ENTITY.education));
         },
       },
     );
@@ -262,6 +263,8 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
                   })) || []
                 }
                 placeholder="Select university"
+                // A course belongs to one university, so drop a stale course on switch.
+                onValueChange={() => setValue('courseId', '', { shouldValidate: true })}
               />
               <ComboboxField
                 control={control}
@@ -398,7 +401,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
       </Accordion>
 
       <FormActions sticky>
-        <Button loading={editEducation.isPending} loadingText="Updating..." type="submit" variant="primary">
+        <Button loading={editEducation.isPending} loadingText={LOADING_LABEL.update} type="submit" variant="primary">
           Update Data
         </Button>
         <Button

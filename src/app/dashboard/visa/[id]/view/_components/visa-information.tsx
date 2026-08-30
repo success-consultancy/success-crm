@@ -27,6 +27,7 @@ import { StatusInfoField } from '@/components/atoms/status-info-field';
 import { useEditVisa } from '@/mutations/visa/edit-visa';
 import { useGetOccupations } from '@/query/get-occupations';
 import { useGetVisaOptions } from '@/query/get-visa';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const visaInfoSchema = withDependentFields(
   newVisaServiceSchema.pick({
@@ -134,11 +135,11 @@ const VisaInformation = ({ visa }: { visa: IVisaDetail }) => {
   const handleSave = handleSubmit((data) => {
     editVisa.mutate(buildVisaSectionPayload(visa, data), {
       onSuccess: () => {
-        toast.success('Visa information updated');
+        toast.success(toastMsg.updateSuccess(ENTITY.visaInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {
-        toast.error(error?.response?.data?.message || 'Failed to update visa applicant');
+        toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.visa));
       },
     });
   });

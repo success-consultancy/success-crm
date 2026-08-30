@@ -2,8 +2,9 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { QUERY_KEYS } from '@/constants/query-keys';
 import { CreateCourseFeePayload } from '@/schema/education-schema';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 export const createCourseFee = async (payload: CreateCourseFeePayload) => {
   const { data } = await api.post('/course-fee', payload);
   return data;
@@ -51,9 +52,7 @@ export const useDeleteCourseFee = () => {
       });
     },
     onError: (error: any) => {
-      toast('Error!', {
-        description: getApiErrorMessage(error),
-      });
+      toast.error(getApiErrorMessage(error, toastMsg.deleteError(ENTITY.courseFee)));
     },
   });
 };

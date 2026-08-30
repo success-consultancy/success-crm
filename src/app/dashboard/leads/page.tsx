@@ -71,7 +71,7 @@ const Leads = () => {
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const { services: moveServices, moveLeads, isBulkMoving } = useMoveLead();

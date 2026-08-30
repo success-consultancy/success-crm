@@ -15,6 +15,7 @@ import { ROUTES } from '@/config/routes';
 import Button from '@/components/atoms/button';
 import TextInput from '@/components/molecules/text-input';
 import PasswordInput from '@/components/molecules/password-input';
+import { LOADING_LABEL } from '@/constants/messages';
 
 const LoginForm = () => {
   const router = useRouter();
@@ -79,7 +80,7 @@ const LoginForm = () => {
           </div>
 
           <Button
-            loadingText="Signing In"
+            loadingText={LOADING_LABEL.signIn}
             type="submit"
             className="w-full"
             loading={loginUser.isPending}

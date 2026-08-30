@@ -60,7 +60,7 @@ const VisaServicePage = () => {
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const VisaColumns = useVisaColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });

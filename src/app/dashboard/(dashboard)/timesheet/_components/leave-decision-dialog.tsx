@@ -11,6 +11,7 @@ import { cn } from '@/lib/utils';
 import { LeaveRecord } from '@/query/get-user-leaves';
 import { useUpdateLeave, LeaveDecision } from '@/mutations/leave/update-leave';
 import { formatLeaveDate, leaveTotalHours, stripHtml } from '../_lib/leave-helpers';
+import { LOADING_LABEL } from '@/constants/messages';
 
 interface Props {
   leave: LeaveRecord | null;
@@ -116,7 +117,8 @@ const LeaveDecisionDialog = ({ leave, decision, open, onOpenChange }: Props) => 
             type="button"
             size="sm"
             onClick={handleSubmit}
-            disabled={updateLeave.isPending}
+            loading={updateLeave.isPending}
+            loadingText={LOADING_LABEL.save}
             className={cn(
               'h-10 px-4 text-b14-600 text-white transition-all duration-150 motion-safe:active:scale-95',
               isApproval
@@ -124,7 +126,7 @@ const LeaveDecisionDialog = ({ leave, decision, open, onOpenChange }: Props) => 
                 : 'bg-red-600 hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-500/40',
             )}
           >
-            {updateLeave.isPending ? 'Saving…' : isApproval ? 'Approve' : 'Reject'}
+            {isApproval ? 'Approve' : 'Reject'}
           </Button>
         </div>
       </DialogContent>

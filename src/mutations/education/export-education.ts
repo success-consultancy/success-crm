@@ -2,11 +2,12 @@
 import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportStudent = async (queryParams: any) => {
   const res = await api.get('/student/export', { params: queryParams });
   downloadFile(res.data, 'student.csv', 'text/csv;charset=utf-8;');
-  toast.success('Students exported successfully!');
+  toast.success(toastMsg.exportSuccess(ENTITY.educationApplicants));
 };
 
 export interface UseExportStudentsOptions {

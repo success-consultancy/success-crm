@@ -22,7 +22,7 @@ interface TableRowActionsMenuProps {
   onEdit?: () => void;
   onView?: () => void;
   onSendSms?: () => void;
-  onSendEmail?: (payload: SendEmailSchemaType) => void;
+  onSendEmail?: (payload: SendEmailSchemaType) => void | Promise<unknown>;
   recipientEmail?: string;
   // Optional "Move to" submenu: pass the target options and a select handler.
   moveTo?: {
@@ -79,8 +79,14 @@ const TableRowActionsMenu = ({
           <Button
             variant="ghost"
             aria-label="Open actions menu"
-            className={cn('h-5 w-5 rounded-full', open && 'bg-primary/10 text-primary', animated && animatedTriggerClassName)}
-            iconLeft={<EllipsisVertical className={cn('h-5 w-5 mx-auto', open ? 'text-primary' : 'text-muted-foreground')} />}
+            className={cn(
+              'h-5 w-5 rounded-full',
+              open && 'bg-primary/10 text-primary',
+              animated && animatedTriggerClassName,
+            )}
+            iconLeft={
+              <EllipsisVertical className={cn('h-5 w-5 mx-auto', open ? 'text-primary' : 'text-muted-foreground')} />
+            }
             iconLeftClassName="mr-0"
           />
         </PopoverTrigger>
@@ -101,7 +107,10 @@ const TableRowActionsMenu = ({
             {moveTo && moveTo.options.length > 0 && (
               <Popover open={showMove} onOpenChange={setShowMove}>
                 <PopoverTrigger asChild>
-                  <Button variant="ghost" className={cn(menuItemClassName, 'justify-between', showMove && 'bg-accent-50')}>
+                  <Button
+                    variant="ghost"
+                    className={cn(menuItemClassName, 'justify-between', showMove && 'bg-accent-50')}
+                  >
                     <span className="flex items-center gap-2">
                       <FolderInput strokeWidth={1.5} className="h-5 w-5" />
                       {moveTo.label ?? 'Move to'}
@@ -109,12 +118,13 @@ const TableRowActionsMenu = ({
                     <ChevronRight className="h-4 w-4" />
                   </Button>
                 </PopoverTrigger>
+                {/* Sized to its widest option so long service names don't spill past the panel. */}
                 <PopoverContent
                   side="left"
                   align="start"
                   sideOffset={4}
                   collisionPadding={8}
-                  className="w-[12.5rem] bg-white-100 p-2"
+                  className="w-max min-w-[12.5rem] max-w-[min(20rem,calc(100vw-2rem))] bg-white-100 p-2"
                 >
                   <div className="flex flex-col">
                     {moveTo.options.map((option) => (
@@ -128,7 +138,7 @@ const TableRowActionsMenu = ({
                         }}
                       >
                         {option.Icon && <option.Icon className="h-5 w-5 shrink-0" />}
-                        {option.title}
+                        <span className="min-w-0 truncate">{option.title}</span>
                       </Button>
                     ))}
                   </div>

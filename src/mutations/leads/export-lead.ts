@@ -2,11 +2,12 @@
 import { downloadFile } from '@/utils/download';
 import { useMutation } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 const exportLeads = async (queryParams: any) => {
   const res = await api.get('/lead/export', { params: queryParams });
   downloadFile(res.data, 'leads.csv', 'text/csv;charset=utf-8;');
-  toast.success('Leads exported successfully!');
+  toast.success(toastMsg.exportSuccess(ENTITY.leads));
 };
 
 export interface UseExportLeadsOptions {

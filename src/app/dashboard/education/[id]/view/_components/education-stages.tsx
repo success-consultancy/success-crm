@@ -5,10 +5,10 @@ import { useUpdateEducationStatus } from '@/mutations/education/add-education';
 import { EducationStatusTypes, IEducation } from '@/types/response-types/education-response';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import { useState } from 'react';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type EducationStagesProps = { education: IEducation };
 export const EducationStages = ({ education }: EducationStagesProps) => {
-
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
 
@@ -16,7 +16,10 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
     { name: EducationStatusTypes.New, active: education.status === EducationStatusTypes.New },
     { name: EducationStatusTypes.Checklist, active: education.status === EducationStatusTypes.Checklist },
     { name: EducationStatusTypes.ApplicationReady, active: education.status === EducationStatusTypes.ApplicationReady },
-    { name: EducationStatusTypes.ApplicationSubmitted, active: education.status === EducationStatusTypes.ApplicationSubmitted },
+    {
+      name: EducationStatusTypes.ApplicationSubmitted,
+      active: education.status === EducationStatusTypes.ApplicationSubmitted,
+    },
     { name: EducationStatusTypes.OfferReceived, active: education.status === EducationStatusTypes.OfferReceived },
     { name: EducationStatusTypes.WaitingPayment, active: education.status === EducationStatusTypes.WaitingPayment },
     { name: EducationStatusTypes.FeePaid, active: education.status === EducationStatusTypes.FeePaid },
@@ -33,22 +36,18 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
   const confirmStageChange = () => {
     if (!pendingStage) return;
 
-    const payload = { id: education.id.toString(), status: pendingStage }
-    updateStatus.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          toast.success('Education updated successfully');
-        },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message;
-
-          toast.error(message || 'Failed to update education');
-        },
+    const payload = { id: education.id.toString(), status: pendingStage };
+    updateStatus.mutate(payload, {
+      onSuccess: () => {
+        toast.success(toastMsg.updateSuccess(ENTITY.education));
       },
-    );
-  }
+      onError: (error: any) => {
+        const message = error?.response?.data?.message;
 
+        toast.error(message || toastMsg.updateError(ENTITY.education));
+      },
+    });
+  };
 
   return (
     <div className="border rounded-lg shadow-sm ">
@@ -68,7 +67,7 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
+        <div className="hide-scrollbar flex min-w-0 flex-1 overflow-x-auto">
           {(() => {
             const activeIndex = stages.findIndex((s) => s.active);
             return stages.map((stage, index) => (
@@ -83,7 +82,6 @@ export const EducationStages = ({ education }: EducationStagesProps) => {
             ));
           })()}
         </div>
-
 
         <ConfirmationDialog
           isOpen={confirmOpen}

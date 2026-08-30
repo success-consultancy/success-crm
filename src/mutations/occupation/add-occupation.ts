@@ -2,6 +2,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { GET_OCCUPATIONS } from '@/query/get-occupations';
 import toast from 'react-hot-toast';
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 export interface AddOccupationPayload {
   code: number;
@@ -19,10 +20,10 @@ export const useAddOccupation = () => {
     mutationFn: addOccupation,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [GET_OCCUPATIONS] });
-      toast.success('Occupation added successfully');
+      toast.success(toastMsg.addSuccess(ENTITY.occupation));
     },
     onError: (error: any) => {
-      toast.error(getApiErrorMessage(error));
+      toast.error(getApiErrorMessage(error, toastMsg.addError(ENTITY.occupation)));
     },
   });
 };

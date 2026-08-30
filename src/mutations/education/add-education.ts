@@ -5,8 +5,9 @@ import { QUERY_KEYS } from '@/constants/query-keys';
 import { invalidateServiceQueries } from '@/mutations/invalidate-service-queries';
 import { EducationSchemaType } from '@/schema/education-schema';
 import { EducationServiceType } from '@/schema/education-service/new-student.schema';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 
+import { ENTITY, toastMsg } from '@/constants/messages';
 const addEducation = async (payload: Omit<EducationSchemaType, 'serviceType'>) => {
   const { ...filteredPayload } = payload;
   const res = await api.post('/student', filteredPayload);
@@ -82,15 +83,10 @@ export const useUpdateEducationStatus = () => {
     mutationFn: updateServiceStatus,
     onSuccess: () => {
       invalidateServiceQueries(queryClient, 'education');
-      toast("Success!", {
-        description: "Education has been updated",
-      })
+      toast.success(toastMsg.updateSuccess(ENTITY.education));
     },
     onError: (error: any) => {
-      toast("Error!", {
-        description: getApiErrorMessage(error),
-      })
+      toast.error(getApiErrorMessage(error, toastMsg.updateError(ENTITY.education)));
     },
   });
 };
-

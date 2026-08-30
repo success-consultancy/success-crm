@@ -24,6 +24,8 @@ export interface ComboboxFieldProps<T extends FieldValues> {
   required?: boolean;
   searchPlaceholder?: string;
   className?: string;
+  /** Called with the new value after the user picks (or clears) an option. */
+  onValueChange?: (value: string) => void;
 }
 
 const ComboboxField = <T extends FieldValues>({
@@ -36,6 +38,7 @@ const ComboboxField = <T extends FieldValues>({
   required = false,
   searchPlaceholder = 'Search...',
   className,
+  onValueChange,
 }: ComboboxFieldProps<T>) => {
   const [open, setOpen] = useState(false);
   const {
@@ -71,11 +74,11 @@ const ComboboxField = <T extends FieldValues>({
             )}
             id={name}
           >
-            {selectedOption ? selectedOption.label : placeholder}
+            <span className="truncate text-left">{selectedOption ? selectedOption.label : placeholder}</span>
             <ChevronDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
           </Button>
         </PopoverTrigger>
-        <PopoverContent className="w-full p-0" align="start">
+        <PopoverContent className="w-(--radix-popover-trigger-width) p-0" align="start">
           <Command>
             <CommandInput placeholder={searchPlaceholder} />
             <CommandEmpty>No option found.</CommandEmpty>
@@ -87,12 +90,14 @@ const ComboboxField = <T extends FieldValues>({
                     value={option.value}
                     keywords={[option.label]}
                     onSelect={() => {
-                      field.onChange(option.value === field.value ? '' : option.value);
+                      const nextValue = option.value === field.value ? '' : option.value;
+                      field.onChange(nextValue);
+                      onValueChange?.(nextValue);
                       setOpen(false);
                     }}
                   >
                     <Check className={cn('mr-2 h-4 w-4', field.value === option.value ? 'opacity-100' : 'opacity-0')} />
-                    {option.label}
+                    <span className="min-w-0 break-words">{option.label}</span>
                   </CommandItem>
                 ))}
               </CommandGroup>

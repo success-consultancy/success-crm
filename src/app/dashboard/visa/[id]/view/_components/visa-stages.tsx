@@ -1,19 +1,17 @@
 import { cn } from '@/lib/utils';
 import { IVisa, IVisaDetail, VisaStatusTypes } from '@/types/response-types/visa-response';
 import StageItem from '@/components/organisms/stage-item';
-import { toast } from 'sonner';
+import toast from 'react-hot-toast';
 import { useUpdateVisaStatus } from '@/mutations/visa/add-visa';
 import ConfirmationDialog from '@/components/organisms/confirmation-dialog';
 import { useState } from 'react';
-
+import { ENTITY, toastMsg } from '@/constants/messages';
 
 type VisaStagesProps = { visa: IVisaDetail };
 
 export const VisaStages = ({ visa }: VisaStagesProps) => {
-
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [pendingStage, setPendingStage] = useState<string | null>(null);
-
 
   const stages = [
     { name: VisaStatusTypes.New, active: visa.status === VisaStatusTypes.New },
@@ -32,22 +30,18 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
   const confirmStageChange = () => {
     if (!pendingStage) return;
 
-    const payload = { id: visa.id.toString(), status: pendingStage }
-    updateStatus.mutate(
-      payload,
-      {
-        onSuccess: () => {
-          toast.success('Visa updated successfully');
-        },
-        onError: (error: any) => {
-          const message = error?.response?.data?.message;
-
-          toast.error(message || 'Failed to update visa');
-        },
+    const payload = { id: visa.id.toString(), status: pendingStage };
+    updateStatus.mutate(payload, {
+      onSuccess: () => {
+        toast.success(toastMsg.updateSuccess(ENTITY.visa));
       },
-    );
-  }
+      onError: (error: any) => {
+        const message = error?.response?.data?.message;
 
+        toast.error(message || toastMsg.updateError(ENTITY.visa));
+      },
+    });
+  };
 
   return (
     <div className="border rounded-lg">
@@ -67,7 +61,7 @@ export const VisaStages = ({ visa }: VisaStagesProps) => {
       </div>
 
       <div className="px-6 pb-6 flex gap-10">
-        <div className="flex min-w-0 flex-1 overflow-x-auto">
+        <div className="hide-scrollbar flex min-w-0 flex-1 overflow-x-auto">
           {(() => {
             const activeIndex = stages.findIndex((s) => s.active);
             return stages.map((stage, index) => (

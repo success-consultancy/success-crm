@@ -9,7 +9,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 import type { ColumnDef } from '@tanstack/react-table';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Edit, EllipsisVertical, Eye, Trash2 } from 'lucide-react';
-import { AGREEMENT_STATUS_COLORS, IAgreement } from '@/types/response-types/agreement-response';
+import {
+  getAgreementStatusDisplay,
+  normalizeAgreementFiles,
+  IAgreement,
+} from '@/types/response-types/agreement-response';
 import { useRouter } from 'next/navigation';
 import { Minus } from 'lucide-react';
 
@@ -167,14 +171,13 @@ export const useAgreementColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
-        const status = row.original.status;
-        const colors = AGREEMENT_STATUS_COLORS[status] ?? { bg: '#f3f4f6', text: '#374151' };
+        const { label, colors } = getAgreementStatusDisplay(row.original.status);
         return (
           <span
             className="px-2 py-1 rounded text-xs font-medium whitespace-nowrap"
             style={{ backgroundColor: colors.bg, color: colors.text }}
           >
-            {status}
+            {label}
           </span>
         );
       },
@@ -187,9 +190,9 @@ export const useAgreementColumn = (
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-24 h-6" />;
-        const files = row.original.files;
+        const files = normalizeAgreementFiles(row.original.files);
         const fileUrl = row.original.fileUrl;
-        if (files && files.length > 0) {
+        if (files.length > 0) {
           return (
             <div className="flex flex-col gap-1">
               {files.map((f, i) => (
@@ -267,7 +270,7 @@ export const useAgreementColumn = (
           </Popover>
         );
       },
-      size: 60,
+      size: 64,
       meta: { isVisible: true, sticky: 'right' },
     },
   ];

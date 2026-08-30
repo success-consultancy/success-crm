@@ -44,6 +44,7 @@ import { PortalIds } from '@/config/portal';
 import { TribunalStatusTypes } from '@/types/response-types/tribunal-review-response';
 import { ArrowLeft } from 'lucide-react';
 import { FormActions } from '@/components/organisms/form-actions';
+import { ENTITY, LOADING_LABEL, toastMsg } from '@/constants/messages';
 
 interface Props {
   userId: number | undefined;
@@ -122,7 +123,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
         { payload: { ...data, sourceId: data.sourceId } },
         {
           onSuccess: () => {
-            toast.success('Tribunal review added successfully');
+            toast.success(toastMsg.addSuccess(ENTITY.tribunalReview));
             reset();
             router.push(ROUTES.TRIBUNAL_REVIEW);
           },
@@ -134,7 +135,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
               });
             }
 
-            toast.error(error?.response?.data?.message || 'Failed to add tribunal review');
+            toast.error(error?.response?.data?.message || toastMsg.addError(ENTITY.tribunalReview));
           },
         },
       );
@@ -143,7 +144,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
         { ...data, sourceId: data.sourceId },
         {
           onSuccess: () => {
-            toast.success('Tribunal review updated successfully');
+            toast.success(toastMsg.updateSuccess(ENTITY.tribunalReview));
             reset();
           },
           onError: (error) => {
@@ -154,9 +155,9 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
                   setError(key as keyof TribunalReviewSchemaType, { type: 'manual', message: errObject[key] });
                 });
               }
-              toast.error(error?.response?.data?.message || 'Failed to update tribunal review');
+              toast.error(error?.response?.data?.message || toastMsg.updateError(ENTITY.tribunalReview));
             } else {
-              toast.error(error?.message || 'Failed to update tribunal review');
+              toast.error(error?.message || toastMsg.updateError(ENTITY.tribunalReview));
             }
           },
         },
@@ -824,7 +825,7 @@ export function TribunalService({ userId, formState, defaultValues }: Props) {
       <FormActions sticky>
         <Button
           loading={addTribunalReviewPending || updateTribunalReviewPending}
-          loadingText="Processing"
+          loadingText={formState === FORM_STATE.ADD ? LOADING_LABEL.add : LOADING_LABEL.update}
           type="submit"
           variant="primary"
         >

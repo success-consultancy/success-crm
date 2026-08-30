@@ -19,7 +19,7 @@ import { useState } from 'react';
 
 export const useLeadColumn = (
   handleDelete: (id: number) => void,
-  handleSendEmail: (payload: SendEmailSchemaType) => void,
+  handleSendEmail: (payload: SendEmailSchemaType) => void | Promise<unknown>,
   { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
 ) => {
   const router = useRouter();
@@ -74,7 +74,10 @@ export const useLeadColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/dashboard/leads/${row.original.id}/view`)}>
+          <span
+            className="max-w-10 cursor-pointer"
+            onClick={() => router.push(`/dashboard/leads/${row.original.id}/view`)}
+          >
             {row.original.id}
           </span>
         );
@@ -381,10 +384,7 @@ export const useLeadColumn = (
 
         return (
           <div className="w-full">
-            <Badge
-              className="border-transparent"
-              style={{ backgroundColor: colors.background, color: colors.text }}
-            >
+            <Badge className="border-transparent" style={{ backgroundColor: colors.background, color: colors.text }}>
               {status === LeadStatusTypes.Converted ? 'Completed' : status}
             </Badge>
           </div>

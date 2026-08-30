@@ -58,7 +58,7 @@ const SkillAssessmentServicePage = () => {
   };
 
   const handleSendEmail = (payload: SendEmailSchemaType) => {
-    sendEmail(payload);
+    return sendEmail(payload);
   };
 
   const SkillAssessmentColumns = useSkillAssessmentColumn(handleDelete, handleSendEmail, { canUpdate, canDelete });

@@ -18,7 +18,7 @@ import { SERVICE_STATUS_COLORS } from '@/constants/status-colors';
 
 export const useTribunalReviewColumn = (
   handleDelete: (id: number) => void,
-  handleSendEmail: (payload: SendEmailSchemaType) => void,
+  handleSendEmail: (payload: SendEmailSchemaType) => void | Promise<unknown>,
   { canUpdate = true, canDelete = true }: { canUpdate?: boolean; canDelete?: boolean } = {},
 ) => {
   const router = useRouter();
@@ -73,7 +73,10 @@ export const useTribunalReviewColumn = (
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-5 h-6" />;
         return (
-          <span className="max-w-10 cursor-pointer" onClick={() => router.push(`/dashboard/visa/${row.original.id}/view`)}>
+          <span
+            className="max-w-10 cursor-pointer"
+            onClick={() => router.push(`/dashboard/visa/${row.original.id}/view`)}
+          >
             {row.original.id}
           </span>
         );
@@ -225,14 +228,15 @@ export const useTribunalReviewColumn = (
       },
       size: 136,
       meta: { isVisible: true },
-    }, {
+    },
+    {
       id: 'anzsco',
       header: () => <ColumnHeader title="Anzsco / Occupation" keyParam="anzsco" />,
       cell: function Cell({ row }) {
         const tableCtx = useTableContext();
         if (tableCtx?.isLoading) return <Skeleton className="w-20 h-6" />;
         if (!row.original?.anzsco && !row.original?.occupation) {
-          return <></>
+          return <></>;
         }
         return <span className="w-full">{row.original?.anzsco + ' - ' + row.original?.occupation}</span>;
       },
@@ -293,15 +297,11 @@ export const useTribunalReviewColumn = (
 
         if (!colors) return <span>{status}</span>;
 
-        const isNotConverted =
-          status === TribunalStatusTypes.Discontinued || status === TribunalStatusTypes.Other;
+        const isNotConverted = status === TribunalStatusTypes.Discontinued || status === TribunalStatusTypes.Other;
 
         return (
           <div className="w-full">
-            <Badge
-              className="border-transparent"
-              style={{ backgroundColor: colors.background, color: colors.text }}
-            >
+            <Badge className="border-transparent" style={{ backgroundColor: colors.background, color: colors.text }}>
               {isNotConverted ? 'Not Converted' : status}
             </Badge>
           </div>
