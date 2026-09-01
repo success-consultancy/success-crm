@@ -2,7 +2,6 @@ import React, { forwardRef } from 'react';
 import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import FormErrorMessage from '../atoms/form-error-message';
-import { cn } from '@/lib/utils';
 
 type Props = React.InputHTMLAttributes<HTMLInputElement> & {
   id?: string;
@@ -14,7 +13,7 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ label, id, error, requi
   const inputId = id || 'text-input';
 
   return (
-    <div className="flex flex-col gap-2">
+    <div className="grid w-full items-center gap-2">
       {label && (
         <Label htmlFor={inputId} className="text-b3-b font-semibold">
           {label}
@@ -22,17 +21,7 @@ const TextInput = forwardRef<HTMLInputElement, Props>(({ label, id, error, requi
         </Label>
       )}
 
-      <Input
-        id={inputId}
-        ref={ref}
-        required={required}
-        {...rest}
-        className={cn(
-          'w-full rounded-md border px-3 py-2 focus:border-primary',
-          error ? 'border-red-500 focus:border-red-500' : 'border-gray-300 focus:border-primary',
-          className,
-        )}
-      />
+      <Input id={inputId} ref={ref} required={required} aria-invalid={!!error} {...rest} className={className} />
 
       <FormErrorMessage message={error} />
     </div>

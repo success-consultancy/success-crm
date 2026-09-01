@@ -1,8 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { X, Check } from 'lucide-react';
-import { ArrowDown2 } from 'iconsax-reactjs';
+import { X, Check, ChevronDown } from 'lucide-react';
 
 import { Command, CommandEmpty, CommandGroup, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -41,7 +40,7 @@ export function MultiSelect({
   error,
   onBlur,
   disabled = false,
-  icon = <ArrowDown2 className="size-5 shrink-0 opacity-50" />,
+  icon = <ChevronDown className="size-5 shrink-0 opacity-50" />,
 }: MultiSelectProps) {
   const [open, setOpen] = React.useState(false);
 

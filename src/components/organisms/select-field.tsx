@@ -3,7 +3,7 @@
 import type React from 'react';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowDown2 } from 'iconsax-reactjs';
+import { ChevronDown } from 'lucide-react';
 import { useController } from 'react-hook-form';
 import type { Control, FieldPath, FieldValues } from 'react-hook-form';
 import { Label } from '@/components/ui/label';
@@ -35,7 +35,7 @@ const SelectField = <T extends FieldValues>({
   placeholder = 'Select an option',
   disabled = false,
   required = false,
-  icon = <ArrowDown2 className="size-5 shrink-0 opacity-50" />,
+  icon = <ChevronDown className="size-5 shrink-0 opacity-50" />,
   className,
 }: SelectFieldProps<T>) => {
   const {

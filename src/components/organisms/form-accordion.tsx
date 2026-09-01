@@ -2,7 +2,7 @@
 
 import { AccordionItem, AccordionTrigger, AccordionContent } from '@/components/ui/accordion';
 import { cn } from '@/lib/utils';
-import { ArrowDown2 } from 'iconsax-reactjs';
+import { ChevronDown } from 'lucide-react';
 import { ReactNode } from 'react';
 
 interface FormAccordionProps {
@@ -37,7 +37,7 @@ export function FormAccordion({
         )}
       >
         <span className="grid size-10 shrink-0 place-items-center">
-          <ArrowDown2 className="text-muted-foreground pointer-events-none size-5 transition-transform duration-200" />
+          <ChevronDown className="text-muted-foreground pointer-events-none size-5 transition-transform duration-200" />
         </span>
         <span className="text-base font-semibold text-neutral-black">{title}</span>
       </AccordionTrigger>

@@ -37,6 +37,7 @@ const PasswordInput = forwardRef<HTMLInputElement, Props>(
             id={inputId}
             ref={ref}
             required={required}
+            aria-invalid={!!error}
             type={showPassword ? 'text' : 'password'}
             {...rest}
             className={cn('pr-10', className)}
