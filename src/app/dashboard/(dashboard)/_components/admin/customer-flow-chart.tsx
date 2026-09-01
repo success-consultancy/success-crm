@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { ChevronDown } from '@untitledui/icons';
 import { useGetCustomerFlow } from '@/query/get-analytics';
 import { EmptyState } from '@/components/common/empty-state';
@@ -41,9 +41,10 @@ const CustomerFlowChart = () => {
       ) : (
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={monthlyData} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>
+            <CartesianGrid vertical horizontal={false} strokeDasharray="3 3" stroke="#e5e7eb" />
             <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
             <YAxis domain={[0, 'auto']} tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
-            <Tooltip contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }} />
+            <Tooltip cursor={false} contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }} />
             <Legend
               content={({ payload }) => (
                 <ul className="flex justify-center text-b12-500" style={{ gap: 24, marginTop: 32 }}>
@@ -64,7 +65,7 @@ const CustomerFlowChart = () => {
                 dataKey={key}
                 stroke={color}
                 strokeWidth={2}
-                dot={false}
+                dot={{ r: 3, fill: color, strokeWidth: 0 }}
                 activeDot={{ r: 4 }}
               />
             ))}

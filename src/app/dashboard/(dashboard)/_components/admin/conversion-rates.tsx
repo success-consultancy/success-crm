@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState } from 'react';
 import { DateTime } from 'luxon';
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGetConvertedByMonth } from '@/query/get-converted-by-month';
 import ChartCard from '../shared/chart-card';
@@ -63,6 +63,7 @@ const ConversionRates = () => {
     >
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={monthlyData} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>
+          <CartesianGrid vertical horizontal={false} strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis
             tickFormatter={(v) => `${v}%`}
@@ -72,6 +73,7 @@ const ConversionRates = () => {
             tickLine={false}
           />
           <Tooltip
+            cursor={false}
             formatter={(value) => `${value}%`}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
           />
@@ -95,7 +97,7 @@ const ConversionRates = () => {
               dataKey={key}
               stroke={color}
               strokeWidth={2}
-              dot={false}
+              dot={{ r: 3, fill: color, strokeWidth: 0 }}
               activeDot={{ r: 4 }}
             />
           ))}
