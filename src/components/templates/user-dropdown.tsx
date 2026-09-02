@@ -9,6 +9,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import { User, LogoutCurve, Document } from 'iconsax-reactjs';
 import { useRouter } from 'next/navigation';
@@ -60,7 +61,7 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer select-none rounded-md px-2 py-1.5 transition-colors hover:bg-neutral-border-light active:bg-neutral-border">
+        <Button type="button" variant="ghost" className="h-auto gap-2 rounded-md px-2 py-1.5 select-none">
           <Avatar className="w-8 h-8">
             <AvatarImage src="/avatar-placeholder.png" alt="User" />
             <AvatarFallback>{avatarName}</AvatarFallback>
@@ -68,7 +69,7 @@ const UserDropdown = () => {
 
           <span className="text-sm font-medium leading-none">{fullName}</span>
           <ChevronDown className="w-4 h-4" />
-        </div>
+        </Button>
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-48">
