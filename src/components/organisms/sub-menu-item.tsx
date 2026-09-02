@@ -21,11 +21,12 @@ console.log(menuItemVariants({ size: 'large', state: getMenuItemState(isSubActiv
       tabIndex={isDisabled ? -1 : undefined}
       className={cn(
         menuItemVariants({ size: 'large', state: getMenuItemState(isSubActive, isDisabled) }),
-        'relative z-10 overflow-hidden w-[80%] ml-auto pl-2',
+        'relative z-10 overflow-hidden w-[85%] ml-auto pl-4 mt-0.5',
         collapsed && 'pointer-events-none opacity-0',
       )}
     >
-      {subItem.icon ? <subItem.icon className="shrink-0" /> : <span aria-hidden className="w-5 shrink-0" />}
+      {/*  Hidden Icons for now due to the design changes */}
+      {/* {subItem.icon ? <subItem.icon className="shrink-0" /> : <span aria-hidden className="w-5 shrink-0" />} */}
 
       <span className={cn(collapsed && 'w-0 opacity-0')}>{subItem.title}</span>
     </Link>

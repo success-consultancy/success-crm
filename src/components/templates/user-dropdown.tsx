@@ -60,7 +60,7 @@ const UserDropdown = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div className="flex items-center gap-2 cursor-pointer select-none">
+        <div className="flex items-center gap-2 cursor-pointer select-none rounded-md px-2 py-1.5 transition-colors hover:bg-neutral-border-light active:bg-neutral-border">
           <Avatar className="w-8 h-8">
             <AvatarImage src="/avatar-placeholder.png" alt="User" />
             <AvatarFallback>{avatarName}</AvatarFallback>
@@ -75,7 +75,10 @@ const UserDropdown = () => {
         {menuItems.map((item) => (
           <React.Fragment key={item.label}>
             {item.label === 'Sign Out' && <DropdownMenuSeparator />}
-            <DropdownMenuItem onClick={() => handleItemClick(item)} className="flex items-center gap-2">
+            <DropdownMenuItem
+              onClick={() => handleItemClick(item)}
+              className="flex cursor-pointer items-center gap-2"
+            >
               <item.icon className="w-4 h-4" />
               {item.label}
             </DropdownMenuItem>
