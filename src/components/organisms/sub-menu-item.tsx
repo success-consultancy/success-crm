@@ -13,7 +13,7 @@ interface SubMenuItemProps {
 export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: SubMenuItemProps) => {
   const isSubActive = pathName === subItem.href;
   const isDisabled = !!subItem.disabled;
-console.log(menuItemVariants({ size: 'large', state: getMenuItemState(isSubActive, isDisabled) }));
+  
   return (
     <Link
       href={subItem.href}
@@ -21,7 +21,7 @@ console.log(menuItemVariants({ size: 'large', state: getMenuItemState(isSubActiv
       tabIndex={isDisabled ? -1 : undefined}
       className={cn(
         menuItemVariants({ size: 'large', state: getMenuItemState(isSubActive, isDisabled) }),
-        'relative z-10 overflow-hidden w-[85%] ml-auto pl-4 mt-0.5',
+        'relative z-10 overflow-hidden w-[85%] ml-auto pl-4 mt-0.5 rounded-[6px]',
         collapsed && 'pointer-events-none opacity-0',
       )}
     >

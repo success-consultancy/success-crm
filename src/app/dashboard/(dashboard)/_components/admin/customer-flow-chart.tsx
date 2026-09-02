@@ -1,11 +1,12 @@
 'use client';
 
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { ChevronDown } from '@untitledui/icons';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGetCustomerFlow } from '@/query/get-analytics';
 import { EmptyState } from '@/components/common/empty-state';
 import ChartCard from '../shared/chart-card';
+import { DatePreset, getPresetDateRange } from '../shared/date-preset';
 
 const SERIES = [
   { key: 'Lead', color: '#01C5DF' },
@@ -17,7 +18,9 @@ const SERIES = [
 ] as const;
 
 const CustomerFlowChart = () => {
-  const { data, isLoading } = useGetCustomerFlow();
+  const [preset, setPreset] = useState<DatePreset>('this_year');
+  const { startDate, endDate } = useMemo(() => getPresetDateRange(preset), [preset]);
+  const { data, isLoading } = useGetCustomerFlow(startDate, endDate);
   const monthlyData = data ?? [];
 
   return (
@@ -25,10 +28,17 @@ const CustomerFlowChart = () => {
       title="Customer flow"
       isLoading={isLoading}
       headerRight={
-        <div className="border border-neutral-border-light flex h-8 items-center gap-2 px-3 rounded">
-          <span className="text-b13-500 text-neutral-dark-grey">Last Year</span>
-          <ChevronDown className="size-4 text-neutral-dark-grey" />
-        </div>
+        <Select value={preset} onValueChange={(v) => setPreset(v as DatePreset)}>
+          <SelectTrigger size="sm" className="w-[130px] text-xs border-neutral-border/60">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="this_month">This Month</SelectItem>
+            <SelectItem value="this_quarter">This Quarter</SelectItem>
+            <SelectItem value="this_year">This Year</SelectItem>
+            <SelectItem value="all_time">All Time</SelectItem>
+          </SelectContent>
+        </Select>
       }
     >
       {monthlyData.length === 0 ? (
