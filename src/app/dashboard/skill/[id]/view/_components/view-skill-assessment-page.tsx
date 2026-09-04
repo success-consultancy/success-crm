@@ -13,7 +13,7 @@ import NoteSection from './note-section';
 import SkillAssessmentHistoryContent from './skill-assessment-history-content';
 import FollowUp from '@/components/organisms/follow-up';
 import Accounts from './accounts';
-import SectionLoader from '@/components/molecules/section-loader';
+import ViewPageSkeleton from '@/components/molecules/view-page-skeleton';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { ButtonLink } from '@/components/atoms/button-link';
@@ -45,7 +45,14 @@ const SkillAssessmentPageContent: React.FC<SkillAssessmentPageContentProps> = ({
   const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
-    return <SectionLoader />;
+    return (
+      <ViewPageSkeleton
+        infoSections={[{ titleWidth: 'w-32', fields: 11 }, { titleWidth: 'w-36', fields: 8 }]}
+        showTable
+        showMisc
+        noteCount={2}
+      />
+    );
   }
 
   if (isError || !skillAssessment) {

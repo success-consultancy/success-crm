@@ -13,7 +13,7 @@ import { useGetLeadById } from '@/query/get-leads';
 import Transition from './transition';
 import { History } from './history';
 import FollowUp from '@/components/organisms/follow-up';
-import SectionLoader from '@/components/molecules/section-loader';
+import ViewPageSkeleton from '@/components/molecules/view-page-skeleton';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { ButtonLink } from '@/components/atoms/button-link';
@@ -49,7 +49,18 @@ const LeadPageContent: React.FC<LeadPageContentProps> = ({ leadId }) => {
   const [confirmService, setConfirmService] = useState<MoveService | null>(null);
 
   if (isLoading) {
-    return <SectionLoader label="Loading lead details..." />;
+    return (
+      <ViewPageSkeleton
+        tabs={4}
+        stageCount={4}
+        infoSections={[
+          { titleWidth: 'w-32', fields: 10 },
+          { titleWidth: 'w-36', fields: 6 },
+          { titleWidth: 'w-36', fields: 6 },
+        ]}
+        showTable
+      />
+    );
   }
   if (isError || !lead) {
     return <div className="flex justify-center items-center min-h-[300px] text-red-500">Lead not found.</div>;
