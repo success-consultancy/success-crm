@@ -59,7 +59,7 @@ const SimpleMenuItem: React.FC<SimpleMenuItemProps> = ({ item, isActive, onClick
           <div className="last:mb-0 flex justify-center">{buttonOrLink}</div>
         </TooltipTrigger>
 
-        <TooltipContent side="right">{item.title}</TooltipContent>
+        <TooltipContent  side="right">{item.title}</TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );

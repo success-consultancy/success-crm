@@ -6,7 +6,7 @@ import { cva, type VariantProps } from 'class-variance-authority';
  * `hover:` modifier on the default state, so callers only pick default/active/disabled.
  */
 export const menuItemVariants = cva(
-  'flex w-full items-center whitespace-nowrap rounded-[4px] px-2 text-sm font-normal tracking-[-0.01em] leading-normal text-neutral-black transition-colors cursor-pointer select-none',
+  'flex w-full items-center whitespace-nowrap rounded-[4px] px-2 tracking-[-0.01em] leading-normal text-neutral-black transition-colors cursor-pointer select-none text-b14-500',
   {
     variants: {
       size: {
@@ -16,7 +16,7 @@ export const menuItemVariants = cva(
       },
       state: {
         default: 'bg-transparent hover:bg-component-hovered-light',
-        active: 'bg-component-active text-primary hover:bg-component-active',
+        active: 'bg-component-active text-primary hover:bg-component-active text-b14-600',
         disabled: 'pointer-events-none cursor-not-allowed opacity-50',
       },
     },

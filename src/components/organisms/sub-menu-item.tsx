@@ -11,7 +11,7 @@ interface SubMenuItemProps {
 }
 
 export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: SubMenuItemProps) => {
-  const isSubActive = pathName === subItem.href;
+  const isSubActive = pathName === subItem.href || pathName.startsWith(subItem.href + '/');
   const isDisabled = !!subItem.disabled;
   
   return (

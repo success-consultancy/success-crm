@@ -86,7 +86,7 @@ const MiscSection = ({ education }: { education: IEducation }) => {
 
   return (
     <EditableTitleBox
-      title="Misc Information"
+      title="Misc"
       isEditing={isEditing}
       isSaving={editEducation.isPending}
       onEdit={() => setIsEditing(true)}
@@ -131,12 +131,12 @@ const MiscSection = ({ education }: { education: IEducation }) => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
-              <span className="text-b3-b">Source</span>
-              <span className="text-neutral-dark-grey text-base font-medium">{education?.source?.name || '-'}</span>
+              <span className="text-b14-600">Source</span>
+              <span className="text-neutral-dark-grey text-b14">{education?.source?.name || '-'}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-b3-b">Assigned To</span>
-              <span className="text-gray-900 text-base font-medium">
+              <span className="text-b14-600">Assigned To</span>
+              <span className="text-neutral-dark-grey text-b14">
                 {education?.user?.firstName
                   ? `${education.user.firstName} ${education.user.lastName ?? ''}`.trim()
                   : '-'}
@@ -145,9 +145,9 @@ const MiscSection = ({ education }: { education: IEducation }) => {
           </div>
           {education.remarks && (
             <div>
-              <span className="text-b3-b block mb-1">Note</span>
+              <span className="text-b14-600 block mb-1">Note</span>
               <div
-                className="text-gray-900 text-base prose prose-sm max-w-none"
+                className="text-neutral-dark-grey text-b14 prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ __html: education.remarks }}
               />
             </div>

@@ -138,21 +138,21 @@ const MiscSection = ({ visa }: { visa: ITribunalReview }) => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
             <div className="flex flex-col">
-              <span className="text-gray-800 text-sm">Source</span>
-              <span className="text-gray-900 text-base font-medium">{visa?.source?.name || '-'}</span>
+              <span className="text-b14-600">Source</span>
+              <span className="text-neutral-dark-grey text-b14">{visa?.source?.name || '-'}</span>
             </div>
             <div className="flex flex-col">
-              <span className="text-gray-800 text-sm">Assigned To</span>
-              <span className="text-gray-900 text-base font-medium">
+              <span className="text-b14-600">Assigned To</span>
+              <span className="text-neutral-dark-grey text-b14">
                 {visa?.user?.firstName ? `${visa.user.firstName} ${visa.user.lastName ?? ''}`.trim() : '-'}
               </span>
             </div>
           </div>
           {visa.remarks && (
             <div>
-              <span className="text-gray-800 text-sm block mb-1">Note</span>
+              <span className="text-b14-600 block mb-1">Note</span>
               <div
-                className="text-gray-900 text-base prose prose-sm max-w-none"
+                className="text-neutral-dark-grey text-b14 prose prose-sm max-w-none"
                 dangerouslySetInnerHTML={{ __html: visa.remarks }}
               />
             </div>

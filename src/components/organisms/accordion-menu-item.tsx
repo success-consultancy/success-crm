@@ -36,7 +36,7 @@ export const AccordionMenuItem = ({ item, index, pathName }: AccordionMenuItemPr
           )}
         >
           {item.icon && <item.icon className="shrink-0" size={menuItemIconSize.large} />}
-          {!isCollapsed && <span className="transition-opacity duration-300 ease-in-out">{item.title}</span>}
+          {!isCollapsed && <span className="transition-opacity duration-300 ease-in-out text-b14-500 text-neutral-black">{item.title}</span>}
         </div>
       </AccordionTrigger>
 
