@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import ViewAgreementPage from './_components/view-agreement-page';
 
 const AgreementViewPage = () => {
-  const params = useParams<{ id: string }>();
-  return <ViewAgreementPage id={params.id} />;
+  const id = useRouteId();
+  if (!id) return null;
+  return <ViewAgreementPage id={id} />;
 };
 
 export default AgreementViewPage;

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Container from '@/components/atoms/container';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import { useGetAgreementById } from '@/query/get-agreements';
 import PageLoader from '@/components/molecules/page-loader';
 import { useGetMe } from '@/query/get-me';
@@ -11,11 +11,11 @@ import { AgreementForm } from '@/app/dashboard/agreement/add/_components/add-agr
 import { getAgreementDefaultValues } from '@/schema/agreement-schema';
 
 const EditAgreementPage = () => {
-  const params = useParams<{ id: string }>();
-  const { data: agreement, isLoading: agreementLoading } = useGetAgreementById(params.id);
+  const id = useRouteId();
+  const { data: agreement, isLoading: agreementLoading } = useGetAgreementById(id);
   const { data: me, isLoading: meLoading } = useGetMe();
 
-  if (agreementLoading || meLoading) {
+  if (!id || agreementLoading || meLoading) {
     return <PageLoader />;
   }
 
@@ -24,7 +24,7 @@ const EditAgreementPage = () => {
       <AgreementForm
         userId={me?.data?.id}
         formState={FORM_STATE.EDIT}
-        id={Number(params.id)}
+        id={Number(id)}
         defaultValues={getAgreementDefaultValues(agreement)}
       />
     </Container>

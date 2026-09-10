@@ -1,0 +1,35 @@
+name: SUCCESS-CRM
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - success-crm
+
+jobs:
+  build-and-deploy:
+    name: SuccessCrm FE - Build and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+      - name: Install Dependencies
+        run: bun install --frozen-lockfile
+      # Build-time config comes from the committed .env.production.
+      # build-success-crm sets NODE_ENV=production so it outranks .env, which
+      # bun preloads into process.env.
+      - name: Build Static Export
+        run: bun run build-success-crm
+      - name: Sync to S3
+        run: bun run deploy-success-crm
+      - name: Invalidate CloudFront
+        run: bun run clear-success-crm

@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Container from '@/components/atoms/container';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import { useGetVisaDetailById } from '@/query/get-visa';
 import PageLoader from '@/components/molecules/page-loader';
 import { VisaService } from '../../add/_components/visa-service';
@@ -10,10 +10,10 @@ import { NewVisaServiceType } from '@/schema/visa-service/new-visa.schema';
 import { FORM_STATE } from '@/types/common';
 
 const EditVisaServicePage = () => {
-  const params = useParams<{ id: string }>();
-  const { data, isLoading: visaLoading } = useGetVisaDetailById(params.id);
+  const id = useRouteId();
+  const { data, isLoading: visaLoading } = useGetVisaDetailById(id);
 
-  if (visaLoading) {
+  if (!id || visaLoading) {
     return <PageLoader />;
   }
 
@@ -71,7 +71,7 @@ const EditVisaServicePage = () => {
         <VisaService
           userId={data?.userId}
           formState={FORM_STATE.EDIT}
-          id={Number(params.id)}
+          id={Number(id)}
           defaultValues={defaultValues as Partial<NewVisaServiceType>}
           accounts={data?.accounts || []}
         />

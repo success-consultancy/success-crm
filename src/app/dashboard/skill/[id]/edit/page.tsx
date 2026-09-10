@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Container from '@/components/atoms/container';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import { useGetSkillAssessmentById } from '@/query/get-skill-assessments';
 import PageLoader from '@/components/molecules/page-loader';
 import { useGetMe } from '@/query/get-me';
@@ -12,11 +12,11 @@ import { getSkillAssessmentDefaultValues } from '@/schema/skill-assessment-schem
 import Accounts from '../view/_components/accounts';
 
 const EditSkillAssessmentPage = () => {
-  const params = useParams<{ id: string }>();
-  const { data: skillAssessment, isLoading: skillAssessmentLoading } = useGetSkillAssessmentById(params.id);
+  const id = useRouteId();
+  const { data: skillAssessment, isLoading: skillAssessmentLoading } = useGetSkillAssessmentById(id);
   const { data: me, isLoading: meLoading } = useGetMe();
 
-  if (skillAssessmentLoading || meLoading) {
+  if (!id || skillAssessmentLoading || meLoading) {
     return <PageLoader />;
   }
 
@@ -25,7 +25,7 @@ const EditSkillAssessmentPage = () => {
       <SkillAssessmentService
         userId={skillAssessment?.userId || me?.data?.id}
         formState={FORM_STATE.EDIT}
-        id={Number(params.id)}
+        id={Number(id)}
         defaultValues={getSkillAssessmentDefaultValues(skillAssessment)}
       />
       <Accounts accounts={(skillAssessment?.accounts || []) as any} skillAssessmentId={skillAssessment?.id} />

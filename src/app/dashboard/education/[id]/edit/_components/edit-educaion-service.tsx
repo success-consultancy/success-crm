@@ -30,7 +30,8 @@ import { useGetCourse } from '@/query/get-course';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useEditEducation } from '@/mutations/education/edit-education';
 import toast from 'react-hot-toast';
-import { useParams, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import CourseFeeComponent from '../../../_components/course_fee_component';
 import { FormField } from '@/components/ui/form';
 import { CountryDropdown } from '@/components/organisms/country-dropdown';
@@ -89,7 +90,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   const universityId = form.watch('universityId');
   const { data: courseData, isLoading: courseLoading } = useGetCourse(Number(universityId));
   const editEducation = useEditEducation();
-  const params = useParams<{ id: string }>();
+  const id = useRouteId();
 
   const handleMiscEditorChange = (content: string) => {
     setValue('remarks', content, { shouldValidate: true });
@@ -98,7 +99,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
   const submitHandler = (data: EditEducationServiceType) => {
     //handle update
     editEducation.mutate(
-      { ...data, id: Number(params.id) },
+      { ...data, id: Number(id) },
       {
         onSuccess: () => {
           toast.success(toastMsg.updateSuccess(ENTITY.education));
@@ -355,7 +356,7 @@ export function EditEducationService({ id: userId, defaultValues }: Props) {
         </FormAccordion>
 
         {/* Fee and Accounts Structure */}
-        <CourseFeeComponent id={params.id} />
+        <CourseFeeComponent id={id} />
 
         {/* Misc */}
         <FormAccordion value="item-5" title="Misc">

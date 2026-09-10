@@ -50,6 +50,7 @@ export const useGetSkillAssessmentById = (id: string) => {
     queryFn: () => getSkillAssessmentById(id),
     queryKey: [QUERY_KEYS.GET_SKILL_ASSESSMENT_BY_ID, id],
     refetchOnWindowFocus: false,
+    enabled: !!id,
   });
 };
 

@@ -51,6 +51,7 @@ export const useGetTribunalReviewById = (id: string) => {
     queryFn: () => getTribunalReviewById(id),
     queryKey: [QUERY_KEYS.GET_TRIBUNAL_REVIEW_BY_ID, id],
     refetchOnWindowFocus: false,
+    enabled: !!id,
   });
 };
 

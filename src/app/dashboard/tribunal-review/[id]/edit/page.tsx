@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Container from '@/components/atoms/container';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import PageLoader from '@/components/molecules/page-loader';
 import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import { FORM_STATE } from '@/types/common';
@@ -11,10 +11,10 @@ import { getTribunalDefaultValues } from '@/schema/tribunal-review';
 import Accounts from '../view/_components/accounts';
 
 const TribunalServicePage = () => {
-  const params = useParams<{ id: string }>();
-  const { data, isLoading: visaLoading } = useGetTribunalReviewById(params.id);
+  const id = useRouteId();
+  const { data, isLoading: visaLoading } = useGetTribunalReviewById(id);
 
-  if (visaLoading) {
+  if (!id || visaLoading) {
     return <PageLoader />;
   }
 

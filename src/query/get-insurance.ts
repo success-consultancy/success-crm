@@ -52,6 +52,7 @@ export const useGetInsuranceById = (id: string) => {
     queryFn: () => getInsuranceById(id),
     queryKey: [QUERY_KEYS.GET_INSURANCE_BY_ID, id],
     refetchOnWindowFocus: false,
+    enabled: !!id,
   });
 };
 

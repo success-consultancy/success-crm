@@ -1,11 +1,12 @@
 'use client';
 
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import ViewUniversityPage from './_components/view-university-page';
 
 const UniversityViewPage = () => {
-  const params = useParams<{ id: string }>();
-  return <ViewUniversityPage id={params.id} />;
+  const id = useRouteId();
+  if (!id) return null;
+  return <ViewUniversityPage id={id} />;
 };
 
 export default UniversityViewPage;

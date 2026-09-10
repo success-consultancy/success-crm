@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 
 import SkillAssessmentPageContent from './_components/view-skill-assessment-page';
 
 const ViewSkillAssessmentPage = () => {
-  const params = useParams<{ id: string }>();
-  const skillAssessmentId = params.id;
+  const id = useRouteId();
+  if (!id) return null;
+  const skillAssessmentId = id;
   return <SkillAssessmentPageContent skillAssessmentId={skillAssessmentId} />;
 };
 

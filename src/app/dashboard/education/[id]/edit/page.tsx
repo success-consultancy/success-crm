@@ -4,16 +4,16 @@ import React from 'react';
 
 import Container from '@/components/atoms/container';
 import { EditEducationService } from './_components/edit-educaion-service';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import { useGetEducationById, useGetEducationDetailById } from '@/query/get-education';
 import PageLoader from '@/components/molecules/page-loader';
 
 const EditEducationServicePage = () => {
-  const params = useParams<{ id: string }>();
+  const id = useRouteId();
   const EditEducationServiceAny = EditEducationService as unknown as React.ComponentType<any>;
-  const { data, isLoading: educationLoading } = useGetEducationDetailById(params.id);
+  const { data, isLoading: educationLoading } = useGetEducationDetailById(id);
 
-  if (educationLoading) {
+  if (!id || educationLoading) {
     return <PageLoader />;
   }
 
@@ -64,7 +64,7 @@ const EditEducationServicePage = () => {
   return (
     <Container className="flex flex-col flex-1 min-h-0 overflow-hidden py-5">
       <div className="flex-1 min-h-0 overflow-y-auto custom-scrollbar pr-1">
-        <EditEducationServiceAny defaultValues={defaultValues} id={Number(params.id)} />
+        <EditEducationServiceAny defaultValues={defaultValues} id={Number(id)} />
       </div>
     </Container>
   );

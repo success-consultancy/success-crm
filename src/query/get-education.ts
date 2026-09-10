@@ -58,6 +58,7 @@ export const useGetEducationDetailById = (id: string) => {
   return useQuery({
     queryFn: () => getEducationDetailById(id),
     queryKey: [QUERY_KEYS.GET_EDUCATION_BY_ID, id],
+    enabled: !!id,
   });
 };
 

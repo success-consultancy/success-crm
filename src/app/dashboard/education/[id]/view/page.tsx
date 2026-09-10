@@ -2,11 +2,12 @@
 
 import React from 'react';
 import EducationPageContent from './_components/view-education-page';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 
 const ViewEducationPage = () => {
-  const params = useParams<{ id: string }>();
-  const educationId = params.id;
+  const id = useRouteId();
+  if (!id) return null;
+  const educationId = id;
   return <EducationPageContent studentId={educationId} />;
 };
 

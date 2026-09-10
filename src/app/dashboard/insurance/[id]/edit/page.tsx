@@ -2,7 +2,7 @@
 
 import React from 'react';
 import Container from '@/components/atoms/container';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 import PageLoader from '@/components/molecules/page-loader';
 import { FORM_STATE } from '@/types/common';
 import { InsuranceService } from '../../add/_components/insurance-service';
@@ -11,10 +11,10 @@ import { useGetInsuranceById } from '@/query/get-insurance';
 import Accounts from '../view/_components/accounts';
 
 const EditInsuranceServicePage = () => {
-  const params = useParams<{ id: string }>();
-  const { data, isLoading: insuranceLoading } = useGetInsuranceById(params.id);
+  const id = useRouteId();
+  const { data, isLoading: insuranceLoading } = useGetInsuranceById(id);
 
-  if (insuranceLoading) {
+  if (!id || insuranceLoading) {
     return <PageLoader />;
   }
 

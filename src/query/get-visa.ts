@@ -56,6 +56,7 @@ export const useGetVisaDetailById = (id: string) => {
   return useQuery({
     queryFn: () => getVisaDetailById(id),
     queryKey: [QUERY_KEYS.GET_VISA_BY_ID, id],
+    enabled: !!id,
   });
 };
 

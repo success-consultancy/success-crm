@@ -1,11 +1,11 @@
+'use client';
+
+import { useRouteId } from '@/hooks/use-route-id';
 import EmployeeTimesheetPage from './_components/employee-timesheet-page';
 
-interface Props {
-  params: Promise<{ id: string }>;
-}
-
-const EmployeeDetailPage = async ({ params }: Props) => {
-  const { id } = await params;
+const EmployeeDetailPage = () => {
+  const id = useRouteId();
+  if (!id) return null;
   return <EmployeeTimesheetPage userId={Number(id)} />;
 };
 

@@ -1,13 +1,14 @@
 'use client';
 
 import React from 'react';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 
 import TribunalReviewPageContent from './_components/view-trubunal-page';
 
 const TribunalReviewPage = () => {
-  const params = useParams<{ id: string }>();
-  const studentId = params.id;
+  const id = useRouteId();
+  if (!id) return null;
+  const studentId = id;
   return <TribunalReviewPageContent studentId={studentId} />;
 };
 

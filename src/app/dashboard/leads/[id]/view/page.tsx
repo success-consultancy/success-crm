@@ -2,11 +2,12 @@
 
 import React from 'react';
 import LeadPageContent from './_components/view-lead-page';
-import { useParams } from 'next/navigation';
+import { useRouteId } from '@/hooks/use-route-id';
 
 const ViewLeadPage = () => {
-  const params = useParams<{ id: string }>();
-  const leadId = params.id;
+  const id = useRouteId();
+  if (!id) return null;
+  const leadId = id;
   return <LeadPageContent leadId={leadId} />;
 };
 
