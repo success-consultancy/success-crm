@@ -23,6 +23,22 @@ var SECTIONS = [
   'visa',
 ];
 
+// Prefixes holding real files rather than exported routes. The extension-less
+// rewrite below must not touch them: the face-api weight shards are named
+// `tiny_face_detector_model-shard1` (no extension), so without this they get
+// rewritten to `.../shard1/index.html`, S3 404s, and CloudFront's error page
+// is handed to the model loader as if it were weights. tfjs does not check the
+// status code, so it parses the HTML and fails deep inside with a shape error
+// ("tensor should have 1152 values but has 376") that says nothing about 404s.
+var RAW_PREFIXES = ['/models/'];
+
+function isRawAsset(uri) {
+  for (var i = 0; i < RAW_PREFIXES.length; i += 1) {
+    if (uri.indexOf(RAW_PREFIXES[i]) === 0) return true;
+  }
+  return false;
+}
+
 function handler(event) {
   var request = event.request;
   var parts = request.uri.split('/'); // "/dashboard/leads/123/view/" -> ["","dashboard","leads","123","view",""]
@@ -39,7 +55,7 @@ function handler(event) {
 
   if (request.uri.endsWith('/')) {
     request.uri = request.uri + 'index.html';
-  } else if (request.uri.indexOf('.') === -1) {
+  } else if (request.uri.indexOf('.') === -1 && !isRawAsset(request.uri)) {
     request.uri = request.uri + '/index.html';
   }
 

@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
-import { format } from 'date-fns';
+import { useEffect, useMemo } from 'react';
+import { format, startOfDay } from 'date-fns';
 import { Calendar as CalendarIcon, Info } from 'lucide-react';
 import { useForm, Controller, Control, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -285,6 +285,8 @@ interface DateFieldProps {
 }
 
 const DateField = ({ label, error, control, name }: DateFieldProps) => {
+  const today = useMemo(() => startOfDay(new Date()), []);
+
   return (
     <div className="flex flex-col gap-1.5">
       <Label className="text-b14-600 text-neutral-black">{label}</Label>
@@ -315,7 +317,10 @@ const DateField = ({ label, error, control, name }: DateFieldProps) => {
                 mode="single"
                 selected={field.value as Date | undefined}
                 onSelect={(date) => field.onChange(date)}
-                initialFocus
+                disabled={{ before: today }}
+                startMonth={today}
+                defaultMonth={(field.value as Date | undefined) ?? today}
+                autoFocus
               />
             </PopoverContent>
           </Popover>

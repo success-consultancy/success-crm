@@ -31,5 +31,19 @@ jobs:
         run: bun run build-success-crm
       - name: Sync to S3
         run: bun run deploy-success-crm
+      # The edge rewrite is versioned in the repo; publish it on every deploy so
+      # the committed file and the running function cannot drift. Must precede
+      # the invalidation, or the edge keeps serving the old code's responses.
+      - name: Publish CloudFront Function
+        run: |
+          ETAG=$(aws cloudfront describe-function --name crm-v2-rewrite \
+            --query ETag --output text)
+          ETAG=$(aws cloudfront update-function --name crm-v2-rewrite \
+            --if-match "$ETAG" \
+            --function-config Comment="success-crm static export rewrite",Runtime=cloudfront-js-2.0 \
+            --function-code fileb://infra/cloudfront-rewrite.js \
+            --query ETag --output text)
+          aws cloudfront publish-function --name crm-v2-rewrite --if-match "$ETAG"
+
       - name: Invalidate CloudFront
         run: bun run clear-success-crm

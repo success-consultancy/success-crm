@@ -150,7 +150,7 @@ export function AddEducationService({ userId }: Props) {
     if (users) {
       return users?.map((user) => {
         return {
-          label: user.firstName + '' + user.lastName,
+          label: `${user.firstName} ${user.lastName}`,
           value: '' + user.id,
         };
       });

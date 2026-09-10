@@ -20,8 +20,8 @@ const SearchInput = React.forwardRef<HTMLInputElement, InputProps>(
       className={cn('max-w-[18rem]', className)}
       classNames={{
         ...classNames,
-        container: cn('border-neutral-border/60', classNames?.container),
-        input: cn('h-9', classNames?.input),
+        container: cn('h-9 rounded-md border-neutral-border/60', classNames?.container),
+        input: cn('text-b14', classNames?.input),
       }}
       {...props}
     />
