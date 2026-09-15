@@ -10,7 +10,7 @@ export interface Branch {
   country: string;
   city: string;
   timezone: string;
-  phone: string;
+  phone?: string;
 }
 
 const addBranch = async (payload: Branch) => {

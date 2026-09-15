@@ -290,6 +290,7 @@ const BranchDialog = ({ setIsOpen, id }: { setIsOpen: React.Dispatch<React.SetSt
               onChange={(country) => {
                 field.onChange(country.alpha3);
               }}
+              error={errors.country?.message}
             />
           )}
         />
