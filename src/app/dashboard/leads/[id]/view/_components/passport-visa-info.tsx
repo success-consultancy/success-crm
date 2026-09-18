@@ -72,7 +72,6 @@ const PassportVisaInfo = ({ lead }: { lead: ILead }) => {
   const handleSave = handleSubmit((data) => {
     editLead.mutate(buildLeadSectionPayload(lead, data), {
       onSuccess: () => {
-        toast.success(toastMsg.updateSuccess(ENTITY.passportVisaInfo));
         setIsEditing(false);
       },
       onError: (error: any) => {

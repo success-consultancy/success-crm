@@ -78,7 +78,6 @@ const ServiceDetails = ({ lead }: { lead: ILead }) => {
   const handleSave = handleSubmit((data) => {
     editLead.mutate(buildLeadSectionPayload(lead, data), {
       onSuccess: () => {
-        toast.success(toastMsg.updateSuccess(ENTITY.serviceDetails));
         setIsEditing(false);
       },
       onError: (error: any) => {
