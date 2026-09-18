@@ -70,9 +70,6 @@ const AddLeadForm = ({ mode, defaultValues }: Props) => {
       editLead.mutate(
         { ...payload, id: defaultValues?.id as number },
         {
-          onSuccess: () => {
-            toast.success(toastMsg.updateSuccess(ENTITY.lead));
-          },
           onError: (error: any) => {
             const message = error?.response?.data?.message;
 

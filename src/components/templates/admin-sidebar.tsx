@@ -40,7 +40,7 @@ const AdminSidebar = ({ className }: Props) => {
           </div>
         </ScrollArea>
 
-        <SidebarUserOptions />
+        {/* <SidebarUserOptions /> */}
 
         {/* Toggle Button */}
         <button

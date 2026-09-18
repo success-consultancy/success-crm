@@ -250,7 +250,6 @@ const StepSuccess = ({ data, onGoHome, onBack }: Props) => {
         {
           email: data.email,
           data: {
-            isPaid: consultant?.isPaid ?? false,
             paidAmount: paidAmount ?? '0',
             slotInfo: formatSlotInfo(data.date, data.time),
             slotInfoShort: formatSlotInfoShort(data.date, data.time),

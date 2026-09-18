@@ -13,7 +13,7 @@ import FollowUp from '@/components/organisms/follow-up';
 import { useGetTribunalReviewById } from '@/query/get-tribunalreview';
 import Accounts from './accounts';
 import { useGetInsuranceById } from '@/query/get-insurance';
-import SectionLoader from '@/components/molecules/section-loader';
+import ViewPageSkeleton from '@/components/molecules/view-page-skeleton';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { ButtonLink } from '@/components/atoms/button-link';
@@ -45,7 +45,13 @@ const VisaPageContent: React.FC<VisaPageContentProps> = ({ studentId }) => {
   const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
-    return <SectionLoader />;
+    return (
+      <ViewPageSkeleton
+        infoSections={[{ titleWidth: 'w-32', fields: 11 }, { titleWidth: 'w-36', fields: 8 }]}
+        showTable
+        showMisc
+      />
+    );
   }
 
   if (isError || !insurance) {

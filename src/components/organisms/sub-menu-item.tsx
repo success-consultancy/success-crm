@@ -11,9 +11,9 @@ interface SubMenuItemProps {
 }
 
 export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: SubMenuItemProps) => {
-  const isSubActive = pathName === subItem.href;
+  const isSubActive = pathName === subItem.href || pathName.startsWith(subItem.href + '/');
   const isDisabled = !!subItem.disabled;
-
+  
   return (
     <Link
       href={subItem.href}
@@ -21,11 +21,12 @@ export const SubMenuItemComponent = ({ subItem, pathName, collapsed = false }: S
       tabIndex={isDisabled ? -1 : undefined}
       className={cn(
         menuItemVariants({ size: 'large', state: getMenuItemState(isSubActive, isDisabled) }),
-        'relative z-10 overflow-hidden pl-8',
+        'relative z-10 overflow-hidden w-[85%] ml-auto pl-4 mt-0.5 rounded-[6px]',
         collapsed && 'pointer-events-none opacity-0',
       )}
     >
-      {subItem.icon ? <subItem.icon className="shrink-0" /> : <span aria-hidden className="w-5 shrink-0" />}
+      {/*  Hidden Icons for now due to the design changes */}
+      {/* {subItem.icon ? <subItem.icon className="shrink-0" /> : <span aria-hidden className="w-5 shrink-0" />} */}
 
       <span className={cn(collapsed && 'w-0 opacity-0')}>{subItem.title}</span>
     </Link>

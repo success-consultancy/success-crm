@@ -39,8 +39,26 @@ export interface ProcessingInsights {
   skill: InsightResponse;
 }
 
+export interface CustomerFlowMonth {
+  month: string;
+  Lead: number;
+  Education: number;
+  Visa: number;
+  Skill: number;
+  Tribunal: number;
+  Insurance: number;
+}
+
 const getClientCountry = async (): Promise<ClientCountryResponse> => {
   const res = await api.get('/analytics/clientCountry');
+  return res.data;
+};
+
+const getCustomerFlow = async (startDate?: string, endDate?: string): Promise<CustomerFlowMonth[]> => {
+  const params = new URLSearchParams();
+  if (startDate) params.set('startDate', startDate);
+  if (endDate) params.set('endDate', endDate);
+  const res = await api.get(`/analytics/customerFlow?${params.toString()}`);
   return res.data;
 };
 
@@ -68,5 +86,12 @@ export const useGetProcessingInsights = () => {
   return useQuery({
     queryFn: getProcessingInsights,
     queryKey: [QUERY_KEYS.GET_PROCESSING_INSIGHTS],
+  });
+};
+
+export const useGetCustomerFlow = (startDate?: string, endDate?: string) => {
+  return useQuery({
+    queryFn: () => getCustomerFlow(startDate, endDate),
+    queryKey: [QUERY_KEYS.GET_CUSTOMER_FLOW, startDate, endDate],
   });
 };

@@ -15,7 +15,7 @@ import CourseFeeStructure from './course-fee-structure';
 import Accounts from './accounts';
 import MiscSection from './misc-section';
 import FollowUp from '@/components/organisms/follow-up';
-import SectionLoader from '@/components/molecules/section-loader';
+import ViewPageSkeleton from '@/components/molecules/view-page-skeleton';
 import Portal from '@/components/atoms/portal';
 import { PortalIds } from '@/config/portal';
 import { ButtonLink } from '@/components/atoms/button-link';
@@ -287,7 +287,15 @@ const EducationPageContent: React.FC<EducationPageContentProps> = ({ studentId }
   const { mutateAsync: sendEmail } = useSendEmail();
 
   if (isLoading) {
-    return <SectionLoader />;
+    return (
+      <ViewPageSkeleton
+        stageCount={8}
+        infoSections={[{ titleWidth: 'w-32', fields: 9 }, { titleWidth: 'w-40', fields: 6 }]}
+        showFeeTable
+        showTable
+        showMisc
+      />
+    );
   }
   if (isError || !education) {
     return <div className="flex justify-center items-center min-h-[300px] text-red-500">Education not found.</div>;

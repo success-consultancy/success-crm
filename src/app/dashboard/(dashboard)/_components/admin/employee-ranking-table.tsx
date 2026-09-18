@@ -109,14 +109,14 @@ const EmployeeRankingTable = () => {
                       {label}
                     </th>
                   ))}
-                  <th className="pb-3 text-right">Total clients</th>
+                  <th className="pb-3 pr-4 text-right">Total clients</th>
                 </>
               ) : (
                 <>
                   <th className="pb-3 pr-4 text-right">Clients</th>
                   <th className="pb-3 pr-4 text-right">Converted</th>
                   <th className="pb-3 pr-4 text-right">Lost</th>
-                  <th className="pb-3 text-right">Rate</th>
+                  <th className="pb-3 pr-4 text-right">Rate</th>
                 </>
               )}
             </tr>
@@ -158,7 +158,7 @@ const EmployeeRankingTable = () => {
                           {emp.services[key]}
                         </td>
                       ))}
-                      <td className="py-3 text-right text-b14-600 text-neutral-black">{emp.clientCount}</td>
+                      <td className="py-3 pr-4 text-right text-b14-600 text-neutral-black">{emp.clientCount}</td>
                     </>
                   ) : (
                     <>
@@ -167,7 +167,7 @@ const EmployeeRankingTable = () => {
                         {emp.convertedCount}
                       </td>
                       <td className="py-3 pr-4 text-right text-b14 text-utility-red font-medium">{emp.lostCount}</td>
-                      <td className="py-3 text-right">
+                      <td className="py-3 pr-4 text-right">
                         <span
                           className={`text-b14-600 ${
                             emp.conversionRate >= 50

@@ -42,4 +42,5 @@ export const QUERY_KEYS = {
   GET_CONVERTED_BY_MONTH: 'get-converted-by-month',
   GET_VISA_OUTCOMES: 'get-visa-outcomes',
   GET_STUDENT_OUTCOMES: 'get-student-outcomes',
+  GET_CUSTOMER_FLOW: 'get-customer-flow',
 };

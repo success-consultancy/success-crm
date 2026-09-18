@@ -1,13 +1,11 @@
 'use client';
 
 import React, { useMemo, useState } from 'react';
-import { DateTime } from 'luxon';
-import { LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useGetConvertedByMonth } from '@/query/get-converted-by-month';
 import ChartCard from '../shared/chart-card';
-
-type DatePreset = 'this_month' | 'this_quarter' | 'this_year' | 'all_time';
+import { DatePreset, getPresetDateRange } from '../shared/date-preset';
 
 const SERIES = [
   { key: 'Education', color: '#8142CF' },
@@ -16,15 +14,6 @@ const SERIES = [
   { key: 'Tribunal', color: '#5A6CDF' },
   { key: 'Insurance', color: '#DE689F' },
 ] as const;
-
-// backend defaults omitted dates to a trailing 12-month window, not all-time —
-// "All Time" must pass an explicit early startDate to actually get everything.
-function getPresetDateRange(preset: DatePreset): { startDate?: string; endDate?: string } {
-  const now = DateTime.now();
-  if (preset === 'all_time') return { startDate: DateTime.fromObject({ year: 2000 }).toISO() ?? undefined };
-  const start = preset === 'this_month' ? now.startOf('month') : preset === 'this_quarter' ? now.startOf('quarter') : now.startOf('year');
-  return { startDate: start.toISO() ?? undefined, endDate: now.toISO() ?? undefined };
-}
 
 const ConversionRates = () => {
   const [preset, setPreset] = useState<DatePreset>('this_year');
@@ -63,6 +52,7 @@ const ConversionRates = () => {
     >
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={monthlyData} margin={{ left: 0, right: 12, top: 4, bottom: 4 }}>
+          <CartesianGrid vertical horizontal={false} strokeDasharray="3 3" stroke="#e5e7eb" />
           <XAxis dataKey="month" tick={{ fontSize: 11 }} axisLine={false} tickLine={false} />
           <YAxis
             tickFormatter={(v) => `${v}%`}
@@ -72,6 +62,7 @@ const ConversionRates = () => {
             tickLine={false}
           />
           <Tooltip
+            cursor={false}
             formatter={(value) => `${value}%`}
             contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #e5e7eb' }}
           />
@@ -95,7 +86,7 @@ const ConversionRates = () => {
               dataKey={key}
               stroke={color}
               strokeWidth={2}
-              dot={false}
+              dot={{ r: 3, fill: color, strokeWidth: 0 }}
               activeDot={{ r: 4 }}
             />
           ))}

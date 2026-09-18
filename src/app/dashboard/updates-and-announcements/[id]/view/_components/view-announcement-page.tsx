@@ -64,13 +64,13 @@ const ViewAnnouncementPage = ({ id }: Props) => {
         </div>
       </Portal>
 
-      <div className="bg-white rounded-xl p-10">
+      <div className="bg-white rounded-xl p-10 py-[32px]">
         {/* Header — title, author, and actions */}
-        <div className="max-w-[936px] mx-auto flex flex-col gap-7">
+        <div className="flex flex-col gap-7">
           <h1 className="text-h4 font-semibold leading-8 text-neutral-black">{announcement.title}</h1>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
+              <Avatar className="h-10 w-8">
                 <AvatarFallback className="text-b14-600 bg-primary/10 text-primary">{authorInitials}</AvatarFallback>
               </Avatar>
               <div className="flex flex-col">
@@ -108,21 +108,12 @@ const ViewAnnouncementPage = ({ id }: Props) => {
             </div>
           </div>
         </div>
+        <hr className="mt-6 h-px w-full border-t border-neutral-border-light bg-neutral-border-light" />
 
-        {/* Cover image — breaks out to full card width */}
-        {announcement.photoURL && (
-          <div className="mt-9 mx-9 rounded-xl overflow-hidden bg-[#e8f1fa]">
-            <img
-              src={announcement.photoURL}
-              alt={announcement.title}
-              className="w-full aspect-[1096/536] object-cover"
-            />
-          </div>
-        )}
-
-        {/* Content */}
-        <div
-          className="max-w-[936px] mx-auto mt-10 text-b16 text-neutral-dark-grey
+        <div className='flex flex-col sm:flex-row gap-4 justify-between mt-8'>
+          {/* Content */}
+          <div
+            className="text-b16 text-neutral-dark-grey max-w-[624px] xl:max-w-[900px]
             [&_p]:mb-8 [&_p:last-child]:mb-0
             [&_a]:text-blue-600 [&_a]:underline [&_a:hover]:text-blue-700 [&_a]:break-words
             [&_ul]:list-disc [&_ul]:pl-6 [&_ul]:mb-8 [&_ol]:list-decimal [&_ol]:pl-6 [&_ol]:mb-8
@@ -130,8 +121,22 @@ const ViewAnnouncementPage = ({ id }: Props) => {
             [&_h1]:text-xl [&_h1]:font-bold [&_h1]:mb-3 [&_h2]:text-lg [&_h2]:font-semibold [&_h2]:mb-2
             [&_h3]:text-base [&_h3]:font-semibold [&_h3]:mb-2
             [&_strong]:font-semibold [&_em]:italic"
-          dangerouslySetInnerHTML={{ __html: announcement.description }}
-        />
+            dangerouslySetInnerHTML={{ __html: announcement.description }}
+          />
+
+          {/* Cover image — breaks out to full card width */}
+          {announcement.photoURL && (
+            <div className="w-full sm:w-[400px] sm:shrink-0 overflow-hidden rounded-[8px]">
+              <img
+                src={announcement.photoURL}
+                alt={announcement.title}
+                loading="lazy"
+                decoding="async"
+                className="w-full aspect-[400/280] object-cover"
+              />
+            </div>
+          )}
+        </div>
       </div>
     </Container>
   );
